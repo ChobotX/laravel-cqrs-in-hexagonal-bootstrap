@@ -39,18 +39,20 @@
                                     <div>
                                         <span
                                               class="text-base font-medium text-gray-900 sm:text-sm">{{ $user->name }}</span>
-                                        <p class="mt-0.5 text-xs text-gray-400">
-                                            @forelse ($userRoles[$user->id->value] ?? [] as $role)
-                                                <a class="transition-colors hover:text-indigo-600"
-                                                   href="{{ route('roles.edit', $role->id->value) }}"
-                                                   title="{{ $role->name->value }}">{{ $role->name->value }}</a>
-                                                @if (!$loop->last)
-                                                    ,
-                                                @endif
-                                            @empty
-                                                <span class="text-gray-300">{{ __('messages.users.no_role') }}</span>
-                                            @endforelse
-                                        </p>
+                                        @if ($canReadRoles)
+                                            <p class="mt-0.5 text-xs text-gray-400">
+                                                @forelse ($userRoles[$user->id->value] ?? [] as $role)
+                                                    <a class="transition-colors hover:text-indigo-600"
+                                                       href="{{ route('roles.edit', $role->id->value) }}"
+                                                       title="{{ $role->name->value }}">{{ $role->name->value }}</a>
+                                                    @if (!$loop->last)
+                                                        ,
+                                                    @endif
+                                                @empty
+                                                    <span class="text-gray-300">{{ __('messages.users.no_role') }}</span>
+                                                @endforelse
+                                            </p>
+                                        @endif
                                     </div>
                                 </div>
                             </td>

@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controller\Web\User;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
@@ -21,22 +22,29 @@ final readonly class ListUsersController
         private QueryBus $queryBus,
         private OrganizationContext $organizationContext,
         private AuthenticatedUser $authenticatedUser,
+        private AuthorizationChecker $authorizationChecker,
     ) {}
 
     public function __invoke(): View
     {
         $users = $this->queryBus->dispatch(new ListUsersQuery);
         $orgId = $this->organizationContext->currentOrganizationId() ?? '';
-        $userRoles = $this->buildUserRolesMap($users, $orgId);
-
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
-        $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($currentUserId, $orgId));
-        $isSuperAdmin = array_any($currentUserRoles, fn (Role $role): bool => $role->isSystem);
+        $canReadRoles = $this->authorizationChecker->can($currentUserId, $orgId, 'users.roles.read');
+
+        $userRoles = $canReadRoles ? $this->buildUserRolesMap($users, $orgId) : [];
+        $isSuperAdmin = false;
+
+        if ($canReadRoles) {
+            $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($currentUserId, $orgId));
+            $isSuperAdmin = array_any($currentUserRoles, fn (Role $role): bool => $role->isSystem);
+        }
 
         return view('users.index', [
             'users' => $users,
             'userRoles' => $userRoles,
+            'canReadRoles' => $canReadRoles,
             'isSuperAdmin' => $isSuperAdmin,
             'currentUserId' => $currentUserId,
         ]);

@@ -1,7 +1,3 @@
-@php
-    $authenticatedUser = app(\App\Contract\Auth\AuthenticatedUser::class);
-@endphp
-
 <header class="flex items-center justify-between border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
     <div class="flex items-center gap-2 sm:gap-4">
         <x-control-button class="text-gray-500 hover:text-gray-700 lg:hidden"
@@ -30,13 +26,6 @@
             <span class="hidden text-base text-gray-600 sm:inline sm:text-sm">{{ auth()->user()->email }}</span>
         </div>
         @include('components.locale-dropdown')
-        @if ($authenticatedUser->isImpersonating())
-            <x-topbar-button skip-permission
-                             :action="route('impersonation.stop')"
-                             icon="heroicon-o-arrow-uturn-left"
-                             :label="__('messages.impersonation.stop')"
-                             variant="amber" />
-        @endif
         <x-topbar-button skip-permission
                          :action="route('logout')"
                          icon="heroicon-o-arrow-right-on-rectangle"
