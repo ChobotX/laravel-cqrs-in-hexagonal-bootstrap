@@ -25,4 +25,6 @@ Thumbs.db
 compose.override.yaml
 /lang/php_*.json
 .env.sentry-build-plugin
+/coverage
+/storage/phpstan
 /.claude
