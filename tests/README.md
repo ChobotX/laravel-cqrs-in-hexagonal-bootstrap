@@ -3,7 +3,7 @@
 ## Directory structure
 
 - `tests/Architecture/` — PHPat layer dependency tests (`ArchitectureTest.php`)
-- `tests/Architecture/PHPStan/` — 9 custom PHPStan rules
+- `tests/Architecture/PHPStan/` — 19 custom PHPStan rules
 - `tests/Unit/Domain/` — domain unit tests (100% coverage required)
 - `tests/Unit/Infrastructure/` — infrastructure unit tests
 - `tests/Feature/` — integration/feature tests
@@ -14,6 +14,7 @@
 - **Unreachable code must not exist** — every line must be exercisable by tests. No `@codeCoverageIgnore` or coverage suppression of any kind.
 - **100% coverage** — required across domain, infrastructure, and presentation layers. Enforced by `phpunit.coverage.xml` (unified, used by `check-and-fix`) and per-layer configs `phpunit.domain-coverage.xml`, `phpunit.infrastructure-coverage.xml`, `phpunit.presentation-coverage.xml` (used by `check` and for debugging which layer dropped).
 - **No Mockery in domain tests** — `tests/Unit/Domain/` must not use `Mockery`. Use fake implementations instead. Enforced by `NoMockeryInDomainTestsRule`.
+- **Transactional isolation** — all Feature tests use `RefreshDatabase` applied centrally in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere. Enforced by `NoDatabaseTraitsInTestsRule`.
 
 ## Quality enforcement (PHPStan rules)
 
@@ -32,6 +33,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `UseStrictRouteParametersRule` | Form requests must use `routeString()` not `route()` |
 | `CommandQueryRequiresPermissionRule` | Every Command/Query must have `#[RequiresPermission]` or `#[SkipPermissionCheck]` |
 | `ControllerRequiresPermissionRule` | Every Controller must have `#[RequiresPermission]` or `#[SkipPermissionCheck]` |
+| `NoDatabaseTraitsInTestsRule` | No direct DB trait imports in tests; `RefreshDatabase` only in `Pest.php` |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

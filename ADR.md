@@ -79,3 +79,9 @@ No `@phpstan-ignore`, no baseline file, no `@codeCoverageIgnore`.
 `tests/Unit/Domain/` must not use Mockery. Use fake implementations instead.
 **Why:** Domain tests should validate real behavior, not mock contracts. Fakes catch more integration issues.
 **Enforced by:** PHPStan rule `NoMockeryInDomainTestsRule`. See [tests/README.md](tests/README.md).
+
+### Centralized transactional test isolation
+
+All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.
+**Why:** Centralized config prevents accidental non-transactional traits that break parallel test execution and database isolation.
+**Enforced by:** PHPStan rule `NoDatabaseTraitsInTestsRule`. See [tests/README.md](tests/README.md).

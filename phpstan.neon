@@ -78,13 +78,15 @@ services:
         class: Tests\Architecture\PHPStan\ControllerRequiresPermissionRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoDatabaseTraitsInTestsRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:
         - app/
         - tests/
-    excludePaths:
-        - tests/Feature/
     level: max
     tmpDir: storage/phpstan
     checkBenevolentUnionTypes: true
@@ -116,6 +118,20 @@ parameters:
             identifier: staticMethod.dynamicCall
             paths:
                 - app/Infrastructure/
+        # Pest closure-based test files have no class declaration — PHPStan cannot
+        # resolve $this->get(), ->post(), ->actingAs(), chained assertions, or
+        # property access on models returned from mixed-typed helpers.
+        -
+            identifiers:
+                - method.notFound
+                - method.nonObject
+                - property.notFound
+                - property.nonObject
+                - staticMethod.dynamicCall
+                - binaryOp.invalid
+                - argument.type
+            paths:
+                - tests/Feature/
         # Test doubles implementing framework interfaces inherit unresolvable types.
         -
             identifiers:
