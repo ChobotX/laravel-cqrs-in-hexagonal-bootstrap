@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Authorization\Query\GetEffectivePermissions;
+
+use App\Contract\Query\Query;
+use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\EffectivePermission;
+use App\Domain\Authorization\PermissionResolver;
+use App\Domain\Authorization\UserPermissionRepository;
+
+/** @implements QueryHandler<GetEffectivePermissionsQuery, list<EffectivePermission>> */
+final readonly class GetEffectivePermissionsHandler implements QueryHandler
+{
+    /**
+     * @param  array<string, array{features: array<string, array{actions: list<string>}>}>  $availableModules
+     */
+    public function __construct(
+        private UserPermissionRepository $userPermissionRepository,
+        private PermissionResolver $permissionResolver,
+        private array $availableModules,
+    ) {}
+
+    /** @return list<EffectivePermission> */
+    public function handle(Query $query): array
+    {
+        $roles = $this->userPermissionRepository->userRoles($query->userId, $query->organizationId);
+        $overrides = $this->userPermissionRepository->userOverrides($query->userId, $query->organizationId);
+
+        return $this->permissionResolver->resolve($roles, $overrides, $this->availableModules);
+    }
+}

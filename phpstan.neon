@@ -1,0 +1,130 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/larastan/larastan/extension.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - vendor/phpat/phpat/extension.neon
+    - vendor/tomasvotruba/cognitive-complexity/config/extension.neon
+
+services:
+    -
+        class: Tests\Architecture\PHPStan\NoStaticMethodDeclarationsInDomainRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoStaticCallsInDomainRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\OnlyDomainExceptionsInDomainRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\UseStrictArgumentsInConsoleRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoCrossDomainDependenciesRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoMixedAnnotationsRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoPhpstanIgnoreRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoMockeryInDomainTestsRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\UseStrictRouteParametersRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoEnvOutsideConfigRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoLaravelHelpersInDomainRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoAssertInAppRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoMixedInDomainRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoDomainRepositoryInPresentationRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoAppHelperInPresentationRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoInlineFqcnRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\CommandQueryRequiresPermissionRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\ControllerRequiresPermissionRule
+        tags:
+            - phpstan.rules.rule
+
+parameters:
+    paths:
+        - app/
+        - tests/
+    excludePaths:
+        - tests/Feature/
+    level: max
+    tmpDir: storage/phpstan
+    checkBenevolentUnionTypes: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    cognitive_complexity:
+        class: 30
+        function: 7
+    ignoreErrors:
+        # Pest marks its public API (expect(), throws(), toBe(), etc.) as @internal.
+        -
+            identifier: method.internalClass
+            paths:
+                - tests/
+        # Handler registries map class-string<Command> => class-string<CommandHandler> where each
+        # entry has different generic types. PHPStan cannot express per-key generic correlation,
+        # and specifying generics hits either noMixedAnnotation or template covariance mismatch.
+        -
+            identifier: missingType.generics
+            paths:
+                - app/Infrastructure/Bus/LaravelCommandBus.php
+                - app/Infrastructure/Bus/LaravelQueryBus.php
+                - app/Infrastructure/Bus/QueuedEventBus.php
+                - app/Infrastructure/Bus/Job/HandleDomainEventJob.php
+                - tests/Unit/Infrastructure/Bus/LaravelQueryBusTest.php
+                - app/Infrastructure/Eloquent/
+        # Eloquent builder returns dynamic proxy objects; strict-rules flags
+        # methods like ->whereNull() and ->delete() as static-method-called-dynamically.
+        -
+            identifier: staticMethod.dynamicCall
+            paths:
+                - app/Infrastructure/
+        # Test doubles implementing framework interfaces inherit unresolvable types.
+        -
+            identifiers:
+                - missingType.iterableValue
+                - return.type
+            paths:
+                - tests/Unit/Infrastructure/Authorization/RequestAuthenticatedUserTest.php
+        # Pest loads traits at runtime via uses(), invisible to PHPStan's static analysis.
+        -
+            identifier: trait.unused
+            paths:
+                - tests/

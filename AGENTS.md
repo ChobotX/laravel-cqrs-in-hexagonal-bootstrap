@@ -1,0 +1,74 @@
+# Agent Navigation
+
+Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer architecture with 100% coverage.
+
+## Documentation map
+
+| File | Topic |
+|---|---|
+| [README.md](README.md) | Project overview, principles, architecture table |
+| [ADR.md](ADR.md) | 12 enforced architecture decisions with rationale |
+| [QUICKSTART.md](QUICKSTART.md) | Setup, commands, verification, adding contexts |
+| [app/README.md](app/README.md) | Cross-layer class rules, code style conventions |
+| [app/Contract/README.md](app/Contract/README.md) | Contract layer — pure interfaces, generic types |
+| [app/Domain/README.md](app/Domain/README.md) | Domain layer — handlers, value objects, CQRS patterns, events |
+| [app/Application/README.md](app/Application/README.md) | Application layer — bus interfaces |
+| [app/Infrastructure/README.md](app/Infrastructure/README.md) | Infrastructure — handler registration, repository pattern |
+| [app/Presentation/README.md](app/Presentation/README.md) | Presentation — controllers, form requests, console, views, Vue |
+| [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md) | Authorization module — permissions, RBAC, impersonation |
+| [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
+| [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |
+
+## Critical rules before touching code
+
+1. **Run via Sail** — `./vendor/bin/sail composer check-and-fix` for development (auto-fixes then verifies). `./vendor/bin/sail composer check` for CI (check-only, no modifications). Append `-- --frontend` or `-- --backend` to run only one side. Never run PHP on host.
+2. **`composer check` must pass** — linting & static analysis (pint, blade-formatter, blade lint, biome, rector, phpstan, vite build) then tests & per-layer 100% coverage, all in parallel waves. No warnings, no baselines, no ignores.
+3. **Permission attributes required** — every Command/Query and every Controller needs `#[RequiresPermission]` or `#[SkipPermissionCheck]`.
+4. **No cross-domain imports** — `App\Domain\{A}` must not import from `App\Domain\{B}`. Use QueryBus.
+5. **100% coverage** — domain, infrastructure, and presentation layers. No `@codeCoverageIgnore`.
+6. **No PHPStan suppression** — no `@phpstan-ignore`, no baseline.
+7. **No Mockery in domain tests** — use fakes.
+
+## Keeping documentation consistent
+
+Every code change that alters rules, patterns, or architecture **must** update all affected docs in the same commit. Information is intentionally duplicated across files for discoverability — inconsistency is a bug.
+
+### Cross-reference map
+
+When you change **one** of these, check **all** listed files:
+
+| Change | Files to update |
+|---|---|
+| Add/remove PHPStan rule | `tests/README.md` (rule table), relevant layer README (e.g. `app/Domain/README.md`), `ADR.md` if it enforces an architecture decision |
+| Add/change layer dependency rule | `README.md` (architecture table), `ADR.md`, affected layer READMEs |
+| Add/change CQRS pattern | `app/Domain/README.md`, `app/Infrastructure/README.md` (registration), `QUICKSTART.md` (adding a context) |
+| Add/change authorization module/feature | `app/Domain/Authorization/README.md`, `config/authorization.php`, `QUICKSTART.md` |
+| Add/change code style rule | `app/README.md`, `pint.json` or `rector.php` (whichever enforces it) |
+| Add/change class structural rule | `app/README.md` (class rules table), `ADR.md` if it's a new decision |
+| Add/change presentation pattern | `app/Presentation/README.md` |
+| Add/change infrastructure pattern | `app/Infrastructure/README.md` |
+| Add/change contract interface | `app/Contract/README.md` (contents list + generic type docs if applicable) |
+| Add/change coverage config | `tests/README.md`, `AGENTS.md` (coverage config row) |
+| Add/change observability config | `docker/README.md` |
+| Add/remove a documentation file | `AGENTS.md` (documentation map table) |
+
+### Rules
+
+1. **Same commit** — doc updates go in the same commit as the code change, not as a follow-up.
+2. **Check the map above** — before committing, scan the cross-reference map for every category your change touches.
+3. **ADR.md gets a new entry** when the change introduces a new enforced architecture decision (not for minor tweaks to existing ones).
+4. **AGENTS.md documentation map** must list every `README.md` and top-level doc. If you create a new doc, add it here.
+5. **No stale examples** — if a code pattern changes, update all code snippets that demonstrate it across all docs.
+6. **Verify links** — when renaming or moving files, update all `[text](path)` references across all docs.
+
+## Key files for common tasks
+
+| Task | Key files |
+|---|---|
+| Add a command/query | [app/Domain/README.md](app/Domain/README.md), `app/Infrastructure/Provider/BusServiceProvider.php` |
+| Add authorization | [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md), `config/authorization.php` |
+| Add a controller | [app/Presentation/README.md](app/Presentation/README.md) |
+| Architecture tests | `tests/Architecture/ArchitectureTest.php` |
+| PHPStan custom rules | `tests/Architecture/PHPStan/` |
+| Code style config | `pint.json`, `rector.php` |
+| Coverage config | `phpunit.coverage.xml` (unified), `phpunit.domain-coverage.xml`, `phpunit.infrastructure-coverage.xml`, `phpunit.presentation-coverage.xml` (per-layer) |

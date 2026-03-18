@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Presentation\Http\Controller\Web\Auth;
+
+use App\Application\Authorization\SkipPermissionCheck;
+use App\Presentation\Http\Request\Auth\LoginRequest;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
+
+#[SkipPermissionCheck('Guest login endpoint')]
+final readonly class LoginController
+{
+    public function __invoke(LoginRequest $loginRequest): RedirectResponse
+    {
+        $credentials = $loginRequest->only('email', 'password');
+
+        if (! Auth::attempt($credentials)) {
+            return back()->withErrors(['email' => __('messages.auth.invalid_credentials')])->onlyInput('email');
+        }
+
+        $loginRequest->session()->regenerate();
+
+        return redirect()->intended('/users');
+    }
+}

@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Authorization\Exception;
+
+use App\Contract\Exception\DomainException;
+use App\Contract\Translation\Translator;
+use RuntimeException;
+
+final class InvalidPermissionKeyException extends RuntimeException implements DomainException
+{
+    public function __construct(public readonly string $invalidValue)
+    {
+        parent::__construct(sprintf('Value [%s] is not a valid permission key.', $invalidValue));
+    }
+
+    public function userMessage(Translator $translator): string
+    {
+        return $translator->translate('messages.exceptions.invalid_permission_key', ['value' => $this->invalidValue]);
+    }
+
+    public function statusCode(): int
+    {
+        return 422;
+    }
+}

@@ -1,0 +1,4 @@
+services:
+    laravel.test:
+        labels:
+            dev.orbstack.domains: laravel-bootstrap.local

@@ -1,0 +1,75 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Infrastructure\Authorization;
+
+use App\Contract\Authorization\AccessDecision;
+use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Action;
+use App\Domain\Authorization\EffectivePermission;
+use App\Domain\Authorization\PermissionResolver;
+use App\Domain\Authorization\RecordShareRepository;
+use App\Domain\Authorization\UserPermissionRepository;
+
+final readonly class ResolverAuthorizationChecker implements AuthorizationChecker
+{
+    /**
+     * @param  array<string, array{features: array<string, array{actions: list<string>}>}>  $availableModules
+     */
+    public function __construct(
+        private UserPermissionRepository $userPermissionRepository,
+        private RecordShareRepository $recordShareRepository,
+        private PermissionResolver $permissionResolver,
+        private array $availableModules,
+    ) {}
+
+    public function can(string $userId, string $organizationId, string $permission): bool
+    {
+        $effectivePermissions = $this->resolveEffectivePermissions($userId, $organizationId);
+
+        return array_any($effectivePermissions, fn ($effectivePermission): bool => (string) $effectivePermission->permissionKey === $permission && $effectivePermission->granted);
+    }
+
+    public function canWithScope(string $userId, string $organizationId, string $permission): AccessDecision
+    {
+        $effectivePermissions = $this->resolveEffectivePermissions($userId, $organizationId);
+
+        foreach ($effectivePermissions as $effectivePermission) {
+            if ((string) $effectivePermission->permissionKey === $permission) {
+                return new SimpleAccessDecision(
+                    granted: $effectivePermission->granted,
+                    scope: $effectivePermission->scope->value,
+                );
+            }
+        }
+
+        return new SimpleAccessDecision(granted: false, scope: 'all');
+    }
+
+    /** @return list<string> */
+    public function accessibleResourceIds(
+        string $userId,
+        string $organizationId,
+        string $resourceType,
+        string $action,
+    ): array {
+        return $this->recordShareRepository->accessibleResourceIds(
+            $userId,
+            $organizationId,
+            $resourceType,
+            Action::from($action),
+        );
+    }
+
+    /**
+     * @return list<EffectivePermission>
+     */
+    private function resolveEffectivePermissions(string $userId, string $organizationId): array
+    {
+        $roles = $this->userPermissionRepository->userRoles($userId, $organizationId);
+        $overrides = $this->userPermissionRepository->userOverrides($userId, $organizationId);
+
+        return $this->permissionResolver->resolve($roles, $overrides, $this->availableModules);
+    }
+}

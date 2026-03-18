@@ -1,0 +1,22 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Authorization\Event;
+
+use App\Contract\Event\DomainEvent;
+use DateTimeImmutable;
+
+final readonly class ImpersonationStopped implements DomainEvent
+{
+    public function __construct(
+        public string $impersonatorId,
+        public string $targetUserId,
+        public DateTimeImmutable $occurredAt,
+    ) {}
+
+    public function occurredAt(): DateTimeImmutable
+    {
+        return $this->occurredAt;
+    }
+}

@@ -1,0 +1,120 @@
+{
+    "$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+    "files": {
+        "includes": ["resources/js/**/*.ts", "resources/js/**/*.vue"]
+    },
+    "formatter": {
+        "enabled": true,
+        "indentStyle": "space",
+        "indentWidth": 4,
+        "lineWidth": 120,
+        "lineEnding": "lf"
+    },
+    "javascript": {
+        "formatter": {
+            "quoteStyle": "single",
+            "semicolons": "always",
+            "arrowParentheses": "always"
+        }
+    },
+    "linter": {
+        "enabled": true,
+        "rules": {
+            "recommended": true,
+            "complexity": {
+                "noExcessiveCognitiveComplexity": {
+                    "level": "error",
+                    "options": {
+                        "maxAllowedComplexity": 7
+                    }
+                },
+                "noForEach": "error",
+                "noFlatMapIdentity": "error",
+                "useArrowFunction": "error"
+            },
+            "correctness": {
+                "noSwitchDeclarations": "error",
+                "noUnusedVariables": "error",
+                "noUnusedImports": "error"
+            },
+            "performance": {
+                "noAwaitInLoops": "error",
+                "noDelete": "error",
+                "noBarrelFile": "error"
+            },
+            "style": {
+                "noInferrableTypes": "error",
+                "noNegationElse": "error",
+                "noNestedTernary": "error",
+                "noParameterAssign": "error",
+                "noYodaExpression": "error",
+                "useConst": "error",
+                "useForOf": "error",
+                "useTemplate": "error",
+                "useConsistentArrayType": {
+                    "level": "error",
+                    "options": {
+                        "syntax": "shorthand"
+                    }
+                },
+                "noMagicNumbers": "warn",
+                "noUselessElse": "error",
+                "noRestrictedGlobals": "error"
+            },
+            "suspicious": {
+                "noConsole": "error",
+                "noDoubleEquals": "error",
+                "useAwait": "error",
+                "noEmptyBlockStatements": "error",
+                "noAlert": "error",
+                "noImportCycles": "error",
+                "noVar": "error"
+            },
+            "nursery": {
+                "noShadow": "error",
+                "noFloatingPromises": "error",
+                "useExplicitType": "error"
+            },
+            "a11y": {
+                "noAriaHiddenOnFocusable": "error",
+                "noDistractingElements": "error",
+                "noHeaderScope": "error",
+                "noNoninteractiveElementToInteractiveRole": "error",
+                "noPositiveTabindex": "error",
+                "noRedundantAlt": "error",
+                "useAltText": "error",
+                "useAnchorContent": "error",
+                "useAriaActivedescendantWithTabindex": "error",
+                "useAriaPropsForRole": "error",
+                "useButtonType": "error",
+                "useFocusableInteractive": "error",
+                "useHeadingContent": "error",
+                "useMediaCaption": "error",
+                "useSemanticElements": "error",
+                "useValidAnchor": "error",
+                "useValidAriaProps": "error",
+                "useValidAriaRole": "error",
+                "useValidAriaValues": "error"
+            }
+        }
+    },
+    "overrides": [
+        {
+            "includes": ["resources/js/**/*.vue"],
+            "linter": {
+                "rules": {
+                    "correctness": {
+                        "noUnusedVariables": "off",
+                        "noUnusedImports": "off"
+                    },
+                    "style": {
+                        "useConst": "off"
+                    },
+                    "nursery": {
+                        "useExplicitType": "off"
+                    }
+                }
+            }
+        }
+    ]
+}

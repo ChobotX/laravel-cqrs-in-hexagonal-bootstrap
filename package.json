@@ -1,0 +1,37 @@
+{
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "lint:ts": "biome check resources/js/",
+        "lint:ts:fix": "biome check --write resources/js/",
+        "test:ts": "vitest run --coverage",
+        "test:ts:watch": "vitest",
+        "typecheck": "vue-tsc --noEmit",
+        "format:blade": "blade-formatter --write resources/views/**/*.blade.php",
+        "format:blade:check": "blade-formatter --check-formatted resources/views/**/*.blade.php"
+    },
+    "devDependencies": {
+        "@biomejs/biome": "2.4.7",
+        "@sentry/vite-plugin": "^5.1.1",
+        "@vitejs/plugin-vue": "^6.0.5",
+        "@vitest/coverage-v8": "^4.1.0",
+        "@vue/test-utils": "^2.4.6",
+        "blade-formatter": "^1.44.2",
+        "concurrently": "^9.2.1",
+        "jsdom": "^29.0.0",
+        "laravel-vite-plugin": "^1.2",
+        "typescript": "^5.9.3",
+        "vite": "^6.3",
+        "vitest": "^4.1.0",
+        "vue-tsc": "^3.2.6"
+    },
+    "dependencies": {
+        "@sentry/browser": "^10.43.0",
+        "@tailwindcss/vite": "^4.2.1",
+        "laravel-vue-i18n": "^2.8.0",
+        "tailwindcss": "^4.2.1",
+        "vue": "^3.5.30"
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "indentSize": 4,
+    "indentInnerHtml": false,
+    "endWithNewLine": true,
+    "endOfLine": "LF",
+    "useTabs": false,
+    "wrapLineLength": 120,
+    "wrapAttributes": "force-aligned",
+    "wrapAttributesMinAttrs": 2,
+    "sortTailwindcssClasses": true,
+    "sortHtmlAttributes": "code-guide",
+    "noMultipleEmptyLines": true,
+    "noPhpSyntaxCheck": false,
+    "noSingleQuote": false,
+    "noTrailingCommaPhp": false,
+    "componentPrefix": ["x-"],
+    "phpVersion": "8.4"
+}

@@ -1,0 +1,145 @@
+# Domain Layer
+
+Core business logic. All classes must be `final readonly` (interfaces and throwables skip `readonly`).
+
+## Handlers as Domain Orchestrators
+
+In this architecture, handlers ARE the domain-level orchestrators. The `User` aggregate is intentionally a data carrier — a "Transaction Script within Hexagonal Shell" pattern. Events are raised in handlers, not in the aggregate itself.
+
+The key invariant enforced: nothing mutates users outside the handler flow. All user operations must go through the CQRS bus pipeline.
+
+Handlers live in `App\Domain` (not `App\Application`) because in this architecture, Domain = business logic + use cases. The `Application` layer contains only bus interfaces (ports). No extra indirection layer is needed between Presentation and Domain.
+
+## Value Objects
+
+Use value objects for values with validation rules, equality semantics, or that appear in multiple places.
+
+- `Email` — validates format via `filter_var(FILTER_VALIDATE_EMAIL)`, normalizes to lowercase, implements `equals()` and `Stringable`
+- `UserId` — validates UUID format via regex
+
+Candidates to consider when adding new domains: `UserName` (if name validation grows complex), monetary values, dates with domain meaning.
+
+## Domain rules
+
+Custom PHPStan rules in `tests/Architecture/PHPStan/`.
+
+- **No static method declarations** in `App\Domain` (`NoStaticMethodDeclarationsInDomainRule`) — this means domain exceptions must use public constructors (like `new UserNotFoundException($id)`), NOT static factory methods (like `UserNotFoundException::forId($id)`). The `parent::__construct()` call is the only allowed static call.
+- **No static calls** in `App\Domain` except `parent::` (`NoStaticCallsInDomainRule`)
+- **Only `App\Contract\Exception\DomainException` implementors** can be thrown — the interface requires a `userMessage(Translator): string` method and a `statusCode(): int` method (`OnlyDomainExceptionsInDomainRule`)
+- **No Laravel helpers** in `App\Domain` — `__()`, `app()`, `config()`, etc. are blocked; use Contract interfaces instead (`NoLaravelHelpersInDomainRule`)
+- **No cross-domain dependencies** — `App\Domain\{ContextA}` must not depend on `App\Domain\{ContextB}` (`NoCrossDomainDependenciesRule`)
+- **No `assert()` calls** in `App\` namespace — use proper exceptions (`NoAssertInAppRule`)
+- **No `mixed` native type** in `App\Domain` — parameters, return types, and properties must use specific types (`NoMixedInDomainRule`)
+- **100% test coverage** of `app/Domain/` enforced by `phpunit.domain-coverage.xml`
+
+## CQRS patterns
+
+### Adding a command
+
+1. Create `app/Domain/{Context}/Command/{Name}/{Name}Command.php`:
+   ```php
+   final readonly class {Name}Command implements \App\Contract\Command\Command
+   {
+       public function __construct(
+           public string $field,
+       ) {}
+   }
+   ```
+
+2. Create `app/Domain/{Context}/Command/{Name}/{Name}Handler.php`:
+   ```php
+   /** @implements CommandHandler<{Name}Command> */
+   final readonly class {Name}Handler implements \App\Contract\Command\CommandHandler
+   {
+       public function __construct(private SomeDependency $dep) {}
+
+       public function handle(Command $command): void
+       {
+           // PHPStan resolves $command as {Name}Command via @implements
+           // domain logic
+       }
+   }
+   ```
+
+3. Register in `app/Infrastructure/Provider/BusServiceProvider.php` (see [Infrastructure README](../Infrastructure/README.md)):
+   ```php
+   {Name}Command::class => {Name}Handler::class,
+   ```
+
+4. Dispatch via `App\Application\Bus\CommandBus::dispatch()`.
+
+### Adding a query
+
+1. Create `app/Domain/{Context}/Query/{Name}/{Name}Query.php`:
+   ```php
+   /** @implements Query<ReturnType> */
+   final readonly class {Name}Query implements \App\Contract\Query\Query
+   {
+       public function __construct(
+           public string $field,
+       ) {}
+   }
+   ```
+
+2. Create `app/Domain/{Context}/Query/{Name}/{Name}Handler.php`:
+   ```php
+   /** @implements QueryHandler<{Name}Query, ReturnType> */
+   final readonly class {Name}Handler implements \App\Contract\Query\QueryHandler
+   {
+       public function __construct(private SomeDependency $dep) {}
+
+       public function handle(Query $query): ReturnType
+       {
+           // PHPStan resolves $query as {Name}Query via @implements
+       }
+   }
+   ```
+
+3. Register in `BusServiceProvider` under `QueryBus`. Dispatch via `App\Application\Bus\QueryBus::dispatch()`.
+   PHPStan infers the return type from `Query<ReturnType>` — no `assert()` or `@var` needed at call sites.
+
+## Cross-domain communication
+
+Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule.
+
+### Adding a domain event
+
+1. Create `app/Domain/{Context}/Event/{Name}.php`:
+   ```php
+   final readonly class {Name} implements \App\Contract\Event\DomainEvent
+   {
+       public function __construct(
+           public string $someId,
+           public string $relevantData,
+           public \DateTimeImmutable $occurredAt,
+       ) {}
+
+       public function occurredAt(): \DateTimeImmutable
+       {
+           return $this->occurredAt;
+       }
+   }
+   ```
+
+   Events carry primitives (`string`, not value objects) for serialization safety. `DateTimeImmutable` is natively PHP-serializable.
+
+2. Collect events in the handler via `EventCollector`:
+   ```php
+   $this->eventCollector->collect(new {Name}($id, $data, new \DateTimeImmutable()));
+   ```
+
+3. The `DispatchCollectedEvents` middleware flushes collected events after handler success.
+
+### Adding an event handler
+
+1. Create handler implementing `App\Contract\Event\DomainEventHandler`.
+2. Register in `BusServiceProvider` under `EventBus` handlers (see [Infrastructure README](../Infrastructure/README.md)):
+   ```php
+   {EventClass}::class => [{HandlerClass}::class],
+   ```
+
+3. Handlers run asynchronously via `HandleDomainEventJob` on the queue.
+
+### Cross-context data
+
+Never import from another context's Domain. Query on-demand via `QueryBus` instead.
