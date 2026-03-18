@@ -60,6 +60,7 @@ When you change **one** of these, check **all** listed files:
 4. **AGENTS.md documentation map** must list every `README.md` and top-level doc. If you create a new doc, add it here.
 5. **No stale examples** — if a code pattern changes, update all code snippets that demonstrate it across all docs.
 6. **Verify links** — when renaming or moving files, update all `[text](path)` references across all docs.
+7. **Isolated atomic commits** — each commit must be self-contained and independently valid. Do not mix unrelated changes. One logical change (feature, fix, refactor) = one commit with its docs.
 
 ## Key files for common tasks
 
