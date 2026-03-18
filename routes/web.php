@@ -10,6 +10,7 @@ use App\Presentation\Http\Controller\Web\Authorization\DeleteRoleController as W
 use App\Presentation\Http\Controller\Web\Authorization\ListRolesController as WebListRolesController;
 use App\Presentation\Http\Controller\Web\Authorization\ShowCreateRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\ShowEditRoleController;
+use App\Presentation\Http\Controller\Web\Authorization\ShowRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\StartImpersonationController as WebStartImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\StopImpersonationController as WebStopImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as WebUpdateRoleController;
@@ -46,6 +47,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/roles', WebListRolesController::class)->name('roles.index');
     Route::get('/roles/create', ShowCreateRoleController::class)->name('roles.create');
     Route::post('/roles', WebCreateRoleController::class)->name('roles.store');
+    Route::get('/roles/{roleId}', ShowRoleController::class)->name('roles.show');
     Route::get('/roles/{roleId}/edit', ShowEditRoleController::class)->name('roles.edit');
     Route::put('/roles/{roleId}', WebUpdateRoleController::class)->name('roles.update');
     Route::delete('/roles/{roleId}', WebDeleteRoleController::class)->name('roles.destroy');

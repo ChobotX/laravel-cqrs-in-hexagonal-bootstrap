@@ -1,8 +1,12 @@
 @php
-    use App\Domain\Authorization\AccessScope;
+    $mode = $mode ?? 'edit';
+    $colCount = $mode === 'effective' ? 6 : 5;
 
-    $existingPermissions = collect($permissions ?? [])->keyBy(fn($p) => (string) $p->permissionKey);
-    $scopes = AccessScope::cases();
+    if ($mode === 'effective') {
+        $effectiveByKey = collect($effectivePermissions)->keyBy(fn($ep) => (string) $ep->permissionKey);
+    } else {
+        $existingPermissions = collect($permissions ?? [])->keyBy(fn($p) => (string) $p->permissionKey);
+    }
 @endphp
 
 <div class="overflow-x-auto">
@@ -20,21 +24,29 @@
                     scope="col">{{ __('messages.roles.update_perm') }}</th>
                 <th class="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
                     scope="col">{{ __('messages.roles.delete_perm') }}</th>
+                @if ($mode === 'effective')
+                    <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+                        scope="col">{{ __('messages.permissions.source') }}</th>
+                @endif
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
             @foreach ($modules as $moduleSlug => $module)
                 <tr class="bg-gray-50/30">
                     <td class="px-4 py-2"
-                        colspan="5">
+                        colspan="{{ $colCount }}">
                         <div class="flex items-center gap-2">
-                            <label class="flex cursor-pointer items-center gap-2">
-                                <input class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                       data-module-toggle="{{ $moduleSlug }}"
-                                       type="checkbox"
-                                       aria-label="{{ $module['label'] }} - toggle all">
+                            @if ($mode === 'edit')
+                                <label class="flex cursor-pointer items-center gap-2">
+                                    <input class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                           data-module-toggle="{{ $moduleSlug }}"
+                                           type="checkbox"
+                                           aria-label="{{ $module['label'] }} - toggle all">
+                                    <span class="text-sm font-semibold text-gray-700">{{ $module['label'] }}</span>
+                                </label>
+                            @else
                                 <span class="text-sm font-semibold text-gray-700">{{ $module['label'] }}</span>
-                            </label>
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -45,39 +57,21 @@
                             @php
                                 $permKey = "{$moduleSlug}.{$featureSlug}.{$action}";
                                 $hasAction = in_array($action, $feature['actions'], true);
-                                $existing = $existingPermissions->get($permKey);
-                                $isEnabled = $existing !== null;
-                                $currentScope = $existing?->scope->value ?? 'all';
                             @endphp
                             <td class="px-4 py-2 text-center">
                                 @if ($hasAction)
-                                    <div class="flex flex-col items-center gap-1">
-                                        <input class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                               name="permissions[{{ $permKey }}][enabled]"
-                                               data-module="{{ $moduleSlug }}"
-                                               data-permission="{{ $permKey }}"
-                                               type="checkbox"
-                                               value="1"
-                                               aria-label="{{ $feature['label'] }} - {{ $action }}"
-                                               @checked(old("permissions.{$permKey}.enabled", $isEnabled))>
-                                        <select class="rounded border-gray-300 px-1 py-0.5 text-xs focus:border-indigo-600 focus:ring-indigo-600"
-                                                name="permissions[{{ $permKey }}][scope]"
-                                                data-scope-for="{{ $permKey }}"
-                                                aria-label="{{ $feature['label'] }} - {{ $action }} {{ __('messages.roles.scope') }}">
-                                            @foreach ($scopes as $scope)
-                                                <option value="{{ $scope->value }}"
-                                                        @selected(old("permissions.{$permKey}.scope", $currentScope) === $scope->value)>
-                                                    {{ __("messages.scopes.{$scope->value}") }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    @include("components.permission-matrix.cell-{$mode}")
                                 @else
                                     <span class="text-gray-300"
                                           aria-hidden="true">&mdash;</span>
                                 @endif
                             </td>
                         @endforeach
+                        @if ($mode === 'effective')
+                            <td class="px-4 py-2 text-xs text-gray-500">
+                                {{ collect(['read', 'create', 'update', 'delete'])->map(fn($a) => $effectiveByKey->get("{$moduleSlug}.{$featureSlug}.{$a}")?->source)->filter()->unique()->implode(', ') }}
+                            </td>
+                        @endif
                     </tr>
                 @endforeach
             @endforeach

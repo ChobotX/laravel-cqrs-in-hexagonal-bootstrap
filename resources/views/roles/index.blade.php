@@ -44,6 +44,10 @@
                             <td class="px-6 py-4 text-base text-gray-500 sm:text-sm">{{ $role->description }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-1">
+                                    <x-action-button permission="users.roles.read"
+                                                     :href="route('roles.show', $role->id)"
+                                                     icon="heroicon-o-eye"
+                                                     :label="__('messages.roles.view_action') . ' ' . $role->name" />
                                     <x-action-button permission="users.roles.update"
                                                      :href="route('roles.edit', $role->id)"
                                                      icon="heroicon-o-pencil-square"

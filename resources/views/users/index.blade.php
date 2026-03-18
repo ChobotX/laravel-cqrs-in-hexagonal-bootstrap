@@ -43,7 +43,7 @@
                                             <p class="mt-0.5 text-xs text-gray-400">
                                                 @forelse ($userRoles[$user->id->value] ?? [] as $role)
                                                     <a class="transition-colors hover:text-indigo-600"
-                                                       href="{{ route('roles.edit', $role->id->value) }}"
+                                                       href="{{ route('roles.show', $role->id->value) }}"
                                                        title="{{ $role->name->value }}">{{ $role->name->value }}</a>
                                                     @if (!$loop->last)
                                                         ,

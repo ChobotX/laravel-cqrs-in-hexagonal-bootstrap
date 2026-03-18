@@ -39,6 +39,20 @@ it('creates a role via web', function (): void {
     $this->assertDatabaseHas('roles', ['name' => 'Web Role']);
 });
 
+it('shows role detail page', function (): void {
+    $userModel = webUser();
+    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440960', 'name' => 'ViewRole', 'description' => 'Viewable', 'is_system' => false, 'organization_id' => '00000000-0000-0000-0000-000000000001']);
+
+    $response = $this->actingAs($userModel)->get('/roles/550e8400-e29b-41d4-a716-446655440960');
+    $response->assertOk();
+
+    $content = $response->getContent();
+    expect($content)
+        ->toContain('ViewRole')
+        ->toContain('Viewable')
+        ->toContain(__('messages.roles.permissions'));
+});
+
 it('shows edit role form', function (): void {
     $userModel = webUser();
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440951', 'name' => 'ToEdit', 'description' => 'E', 'is_system' => false, 'organization_id' => '00000000-0000-0000-0000-000000000001']);

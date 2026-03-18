@@ -80,94 +80,11 @@
         <div class="border-b border-gray-200 px-6 py-4">
             <h3 class="text-base font-medium text-gray-900">{{ __('messages.permissions.effective_permissions') }}</h3>
         </div>
-        <div class="overflow-x-auto">
-            @php
-                $effectiveByKey = collect($effectivePermissions)->keyBy(fn($ep) => (string) $ep->permissionKey);
-            @endphp
-            <table class="min-w-full divide-y divide-gray-200"
-                   aria-label="{{ __('messages.permissions.effective_permissions') }}">
-                <thead class="bg-gray-50/50">
-                    <tr>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.roles.module') }}</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.roles.read') }}</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.roles.create_perm') }}</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.roles.update_perm') }}</th>
-                        <th class="px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.roles.delete_perm') }}</th>
-                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.permissions.source') }}</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    @foreach ($modules as $moduleSlug => $module)
-                        <tr class="bg-gray-50/30">
-                            <td class="px-4 py-2"
-                                colspan="6">
-                                <span class="text-sm font-semibold text-gray-700">{{ $module['label'] }}</span>
-                            </td>
-                        </tr>
-                        @foreach ($module['features'] as $featureSlug => $feature)
-                            <tr class="transition-colors hover:bg-gray-50/50">
-                                <td class="px-4 py-2 pl-10 text-sm text-gray-600">{{ $feature['label'] }}</td>
-                                @foreach (['read', 'create', 'update', 'delete'] as $action)
-                                    @php
-                                        $permKey = "{$moduleSlug}.{$featureSlug}.{$action}";
-                                        $hasAction = in_array($action, $feature['actions'], true);
-                                        $ep = $effectiveByKey->get($permKey);
-                                    @endphp
-                                    <td class="px-4 py-2 text-center">
-                                        @if ($hasAction && $ep !== null)
-                                            @if ($ep->granted && str_starts_with($ep->source, 'role:'))
-                                                <span class="inline-flex items-center rounded bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700"
-                                                      title="{{ __('messages.permissions.granted') }}: {{ $ep->source }}">
-                                                    {{ __("messages.scopes.{$ep->scope->value}") }}
-                                                </span>
-                                            @elseif ($ep->granted && str_starts_with($ep->source, 'override:'))
-                                                <span class="inline-flex items-center rounded bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700"
-                                                      title="{{ __('messages.permissions.granted') }}: {{ $ep->source }}">
-                                                    {{ __("messages.scopes.{$ep->scope->value}") }}
-                                                </span>
-                                            @elseif (!$ep->granted)
-                                                <span class="inline-flex items-center rounded bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 line-through"
-                                                      title="{{ __('messages.permissions.deny_tooltip', ['source' => $ep->source]) }}">
-                                                    {{ __('messages.permissions.denied') }}
-                                                </span>
-                                            @endif
-                                        @elseif ($hasAction)
-                                            <span class="text-gray-300">&mdash;</span>
-                                        @else
-                                            <span class="text-gray-300"
-                                                  aria-hidden="true">&mdash;</span>
-                                        @endif
-                                    </td>
-                                @endforeach
-                                <td class="px-4 py-2 text-xs text-gray-500">
-                                    @php
-                                        $sources = [];
-                                        foreach (['read', 'create', 'update', 'delete'] as $a) {
-                                            $k = "{$moduleSlug}.{$featureSlug}.{$a}";
-                                            $e = $effectiveByKey->get($k);
-                                            if (
-                                                $e !== null &&
-                                                $e->source !== '' &&
-                                                !in_array($e->source, $sources, true)
-                                            ) {
-                                                $sources[] = $e->source;
-                                            }
-                                        }
-                                    @endphp
-                                    {{ implode(', ', $sources) }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+        @include('components.permission-matrix', [
+            'modules' => $modules,
+            'effectivePermissions' => $effectivePermissions,
+            'mode' => 'effective',
+        ])
     </div>
 
     {{-- Override Controls --}}

@@ -7,6 +7,71 @@ use Illuminate\Support\Facades\Hash;
 
 // -- Roles page: impersonated viewer can see and perform edit/delete --
 
+it('impersonated viewer sees view button on roles list', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440750',
+        'name' => 'Admin Impersonator',
+        'email' => 'admin-impperm-view@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $viewerRole = $this->seedRoleWithPermissions(
+        '00000000-0000-0000-0000-000000000001',
+        'Viewer',
+        'Read-only access',
+        ['users.list.read' => 'all', 'users.roles.read' => 'all'],
+    );
+
+    $viewer = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440751',
+        'name' => 'Tillman Harvey',
+        'email' => 'tillman-view@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+
+    $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
+
+    $response = $this->actingAs($admin)->get('/roles');
+
+    $content = $response->getContent();
+    expect($content)->toContain('aria-label="'.__('messages.roles.view_action').' Viewer"');
+});
+
+it('impersonated viewer can access role detail page', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440752',
+        'name' => 'Admin Impersonator',
+        'email' => 'admin-impperm-show@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $viewerRole = $this->seedRoleWithPermissions(
+        '00000000-0000-0000-0000-000000000001',
+        'Viewer',
+        'Read-only access',
+        ['users.list.read' => 'all', 'users.roles.read' => 'all'],
+    );
+
+    $viewer = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440753',
+        'name' => 'Tillman Harvey',
+        'email' => 'tillman-show@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+
+    $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
+
+    $this->actingAs($admin)
+        ->get('/roles/'.$viewerRole->id)
+        ->assertOk();
+});
+
 it('impersonated viewer sees edit button on roles list', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
