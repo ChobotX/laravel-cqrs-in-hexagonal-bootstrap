@@ -8,8 +8,8 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Domain\Organization\Command\AddMember\AddMemberCommand;
 use App\Domain\Organization\Command\RemoveMember\RemoveMemberCommand;
+use App\Presentation\Http\Request\Web\Organization\ManageUserOrganizationsRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 #[RequiresPermission('organizations.members.update')]
 final readonly class ManageUserOrganizationsController
@@ -18,21 +18,19 @@ final readonly class ManageUserOrganizationsController
         private CommandBus $commandBus,
     ) {}
 
-    public function __invoke(Request $request, string $userId): RedirectResponse
+    public function __invoke(ManageUserOrganizationsRequest $manageUserOrganizationsRequest, string $userId): RedirectResponse
     {
-        $action = $request->string('_action')->toString();
-
-        if ($action === 'add_organization') {
+        if ($manageUserOrganizationsRequest->action() === 'add_organization') {
             $this->commandBus->dispatch(new AddMemberCommand(
                 userId: $userId,
-                organizationId: $request->string('organization_id')->toString(),
+                organizationId: $manageUserOrganizationsRequest->organizationId(),
             ));
         }
 
-        if ($action === 'remove_organization') {
+        if ($manageUserOrganizationsRequest->action() === 'remove_organization') {
             $this->commandBus->dispatch(new RemoveMemberCommand(
                 userId: $userId,
-                organizationId: $request->string('organization_id')->toString(),
+                organizationId: $manageUserOrganizationsRequest->organizationId(),
             ));
         }
 

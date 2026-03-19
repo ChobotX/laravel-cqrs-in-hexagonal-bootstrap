@@ -62,6 +62,12 @@ Every controller in `App\Presentation\Http\Controller\` must have `#[RequiresPer
 **Why:** Eliminates duplicated boilerplate and forces a conscious authorization decision for every endpoint — same rationale as the Command/Query rule. Controller-level permission may differ from the underlying query (e.g. edit form needs `update` permission but renders via a `read` query).
 **Enforced by:** PHPStan rule `ControllerRequiresPermissionRule` + middleware in `bootstrap/app.php`. See [app/Presentation/README.md](app/Presentation/README.md).
 
+### Controllers must use FormRequest, never raw Request
+
+Controllers must not type-hint `Illuminate\Http\Request` directly. If a controller needs request data, it must create a custom `FormRequest` subclass with validation rules and typed accessor methods.
+**Why:** Raw `Request` bypasses validation and scatters input reading across controller bodies. `FormRequest` centralizes validation and provides typed accessors.
+**Enforced by:** PHPStan rule `ControllerMustUseFormRequestRule`. See [app/Presentation/README.md](app/Presentation/README.md).
+
 ### 100% coverage, unreachable code must not exist
 
 Domain, Infrastructure, and Presentation layers require 100% test coverage. Every line must be exercisable.

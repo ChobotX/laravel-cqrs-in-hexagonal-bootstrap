@@ -7,8 +7,8 @@ namespace App\Presentation\Http\Controller\Web\Organization;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Organization\OrganizationMembershipChecker;
+use App\Presentation\Http\Request\Web\Organization\SwitchOrganizationRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
 
 #[SkipPermissionCheck(reason: 'Every authenticated user can switch between their own organizations')]
@@ -19,9 +19,9 @@ final readonly class SwitchOrganizationController
         private OrganizationMembershipChecker $organizationMembershipChecker,
     ) {}
 
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(SwitchOrganizationRequest $switchOrganizationRequest): RedirectResponse
     {
-        $organizationId = $request->string('organization_id')->toString();
+        $organizationId = $switchOrganizationRequest->organizationId();
         $userId = $this->authenticatedUser->id();
 
         if ($userId !== null && $this->organizationMembershipChecker->isMember($userId, $organizationId)) {

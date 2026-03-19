@@ -17,6 +17,12 @@ $id = $this->routeString('id');
 
 Enforced by `UseStrictRouteParametersRule` — direct `$this->route()` calls are forbidden in form requests.
 
+## Controller request parameters
+
+Controllers must not type-hint `Illuminate\Http\Request` directly. If a controller needs request data, it must use a custom `FormRequest` subclass. Controllers that take no request parameter are fine.
+
+Enforced by `ControllerMustUseFormRequestRule` PHPStan rule.
+
 ## Console commands
 
 All Artisan commands must `use StrictArguments` (`App\Presentation\Console\Trait\StrictArguments`).

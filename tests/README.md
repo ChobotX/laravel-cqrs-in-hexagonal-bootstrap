@@ -3,7 +3,7 @@
 ## Directory structure
 
 - `tests/Architecture/` — PHPat layer dependency tests (`ArchitectureTest.php`)
-- `tests/Architecture/PHPStan/` — 20 custom PHPStan rules
+- `tests/Architecture/PHPStan/` — 21 custom PHPStan rules
 - `tests/Unit/Domain/` — domain unit tests (100% coverage required)
 - `tests/Unit/Infrastructure/` — infrastructure unit tests
 - `tests/Feature/` — integration/feature tests
@@ -35,8 +35,19 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `ControllerRequiresPermissionRule` | Every Controller must have `#[RequiresPermission]` or `#[SkipPermissionCheck]` |
 | `NoDatabaseTraitsInTestsRule` | No direct DB trait imports in tests; `RefreshDatabase` only in `Pest.php` |
 | `AggregateRequiresOrganizationIdRule` | Domain aggregates (classes with a matching `{Name}Repository` interface) must have `$organizationId` constructor param or `#[TenantAgnostic]` attribute |
+| `ControllerMustUseFormRequestRule` | Controllers must not type-hint `Illuminate\Http\Request` directly — use a custom `FormRequest` subclass |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
+
+## Adding a new PHPStan rule
+
+1. Create the rule class in `tests/Architecture/PHPStan/`
+2. Register in `phpstan.neon` as a service with `phpstan.rules.rule` tag
+3. Run PHPStan to verify it reports expected violations
+4. Fix all violations
+5. Run full `composer check-and-fix`
+
+PHPStan rules do not need dedicated unit tests — they are validated by running against the real codebase. The codebase itself is the test fixture.
 
 ## Running tests
 
