@@ -20,6 +20,19 @@ return [
                 ],
             ],
         ],
+        'organizations' => [
+            'label' => 'Organizations',
+            'features' => [
+                'management' => [
+                    'label' => 'Organization Management',
+                    'actions' => ['read', 'create', 'update', 'delete'],
+                ],
+                'members' => [
+                    'label' => 'Member Management',
+                    'actions' => ['read', 'update'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['admin', 'editor', 'viewer'],
 ];

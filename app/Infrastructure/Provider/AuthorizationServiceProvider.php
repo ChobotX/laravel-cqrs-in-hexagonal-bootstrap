@@ -20,8 +20,8 @@ use App\Infrastructure\Auth\RequestAuthenticatedUser;
 use App\Infrastructure\Authorization\CachedAuthorizationChecker;
 use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use App\Infrastructure\Authorization\SessionImpersonationManager;
-use App\Infrastructure\Organization\StubOrganizationContext;
-use App\Infrastructure\Organization\StubOrganizationMembershipChecker;
+use App\Infrastructure\Organization\CookieOrganizationContext;
+use App\Infrastructure\Organization\EloquentOrganizationMembershipChecker;
 use App\Infrastructure\Organization\StubTeamMembershipChecker;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Blade;
@@ -62,14 +62,18 @@ final class AuthorizationServiceProvider extends ServiceProvider
         $this->app->bind(AuthenticatedUser::class, RequestAuthenticatedUser::class);
         $this->app->bind(ImpersonationManager::class, SessionImpersonationManager::class);
 
-        $this->app->bind(OrganizationContext::class, function (): StubOrganizationContext {
+        $this->app->bind(OrganizationContext::class, function (): CookieOrganizationContext {
             /** @var string|null $orgId */
             $orgId = config('authorization.default_organization_id');
 
-            return new StubOrganizationContext(defaultOrganizationId: $orgId);
+            return new CookieOrganizationContext(
+                organizationMembershipChecker: $this->app->make(OrganizationMembershipChecker::class),
+                authenticatedUser: $this->app->make(AuthenticatedUser::class),
+                defaultOrganizationId: $orgId,
+            );
         });
 
-        $this->app->bind(OrganizationMembershipChecker::class, StubOrganizationMembershipChecker::class);
+        $this->app->bind(OrganizationMembershipChecker::class, EloquentOrganizationMembershipChecker::class);
         $this->app->bind(TeamMembershipChecker::class, StubTeamMembershipChecker::class);
 
         $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class])

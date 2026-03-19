@@ -12,4 +12,9 @@
                 icon="heroicon-o-shield-check"
                 :label="__('messages.nav.roles')"
                 :active="request()->routeIs('roles.*')" />
+    <x-nav-link permission="organizations.management.read"
+                :href="route('organizations.index')"
+                icon="heroicon-o-building-office"
+                :label="__('messages.nav.organizations')"
+                :active="request()->routeIs('organizations.*')" />
 </nav>

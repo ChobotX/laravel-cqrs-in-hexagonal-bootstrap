@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Contract\Exception\DomainException;
 use App\Contract\Translation\Translator;
 use App\Presentation\Http\Middleware\CheckPermission;
+use App\Presentation\Http\Middleware\SetAuthContextMiddleware;
 use App\Presentation\Http\Middleware\SetLocaleMiddleware;
 use App\Presentation\Http\Middleware\SetTraceIdMiddleware;
 use Illuminate\Foundation\Application;
@@ -34,9 +35,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(SetTraceIdMiddleware::class);
         $middleware->trustProxies(at: env('TRUSTED_PROXIES', ''));
         $middleware->redirectTo(guests: '/login', users: '/users');
-        $middleware->web(append: [SetLocaleMiddleware::class, CheckPermission::class, 'throttle:web']);
+        $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([
             Illuminate\Auth\Middleware\Authenticate::class,
+            SetAuthContextMiddleware::class,
             CheckPermission::class,
         ]);
         $middleware->api(append: ['throttle:api']);

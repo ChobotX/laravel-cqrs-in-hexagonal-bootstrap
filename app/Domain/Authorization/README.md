@@ -33,7 +33,8 @@ Higher-level grants cascade down:
 - `AuthorizationChecker` — main entry point for permission checks
 - `AuthenticatedUser` — provides current user context including impersonation
 - `ImpersonationManager` — manages impersonation sessions
-- `OrganizationContext` — resolves current organization from request
+- `OrganizationContext` — resolves current organization from request (see [Organization module](../Organization/README.md))
+- `OrganizationMembershipChecker` — verifies user belongs to an organization (see [Organization module](../Organization/README.md))
 
 ## Adding a New Module
 

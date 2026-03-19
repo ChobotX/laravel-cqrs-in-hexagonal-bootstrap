@@ -7,3 +7,4 @@ import './toast/toast-bridge';
 import './confirm-delete';
 import './permission-matrix';
 import './role-selector/role-selector-app';
+import './auto-submit';

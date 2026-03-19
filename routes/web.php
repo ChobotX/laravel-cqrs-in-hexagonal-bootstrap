@@ -17,6 +17,16 @@ use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as W
 use App\Presentation\Http\Controller\Web\Authorization\UserPermissionsController;
 use App\Presentation\Http\Controller\Web\DashboardController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
+use App\Presentation\Http\Controller\Web\Organization\CreateOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\DeleteOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\ListOrganizationsController;
+use App\Presentation\Http\Controller\Web\Organization\ManageOrganizationMembersController;
+use App\Presentation\Http\Controller\Web\Organization\ManageUserOrganizationsController;
+use App\Presentation\Http\Controller\Web\Organization\ShowCreateOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\ShowEditOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\ShowOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\SwitchOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\UpdateOrganizationController;
 use App\Presentation\Http\Controller\Web\User\CreateUserController;
 use App\Presentation\Http\Controller\Web\User\DeleteUserController;
 use App\Presentation\Http\Controller\Web\User\ListUsersController;
@@ -43,6 +53,7 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/users/{userId}', UpdateUserController::class)->name('users.update');
     Route::delete('/users/{userId}', DeleteUserController::class)->name('users.destroy');
     Route::get('/users/{userId}/permissions', UserPermissionsController::class)->name('users.permissions');
+    Route::post('/users/{userId}/organizations', ManageUserOrganizationsController::class)->name('users.organizations');
 
     Route::get('/roles', WebListRolesController::class)->name('roles.index');
     Route::get('/roles/create', ShowCreateRoleController::class)->name('roles.create');
@@ -51,6 +62,17 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/roles/{roleId}/edit', ShowEditRoleController::class)->name('roles.edit');
     Route::put('/roles/{roleId}', WebUpdateRoleController::class)->name('roles.update');
     Route::delete('/roles/{roleId}', WebDeleteRoleController::class)->name('roles.destroy');
+
+    Route::get('/organizations', ListOrganizationsController::class)->name('organizations.index');
+    Route::get('/organizations/create', ShowCreateOrganizationController::class)->name('organizations.create');
+    Route::post('/organizations', CreateOrganizationController::class)->name('organizations.store');
+    Route::get('/organizations/{organizationId}', ShowOrganizationController::class)->name('organizations.show');
+    Route::get('/organizations/{organizationId}/edit', ShowEditOrganizationController::class)->name('organizations.edit');
+    Route::put('/organizations/{organizationId}', UpdateOrganizationController::class)->name('organizations.update');
+    Route::delete('/organizations/{organizationId}', DeleteOrganizationController::class)->name('organizations.destroy');
+    Route::post('/organizations/{organizationId}/members', ManageOrganizationMembersController::class)->name('organizations.members');
+
+    Route::post('/switch-organization', SwitchOrganizationController::class)->name('organizations.switch');
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');

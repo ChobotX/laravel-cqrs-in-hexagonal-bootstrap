@@ -62,6 +62,8 @@ Override root path (useful for CI with non-standard working directories):
 5. Add controllers in `app/Presentation/Http/Controller/` — see [app/Presentation/README.md](app/Presentation/README.md)
 6. Write tests, ensure 100% coverage across all layers
 
+See [app/Domain/Organization/README.md](app/Domain/Organization/README.md) for a complete example of a bounded context with domain model, CRUD, cross-domain events, and multi-tenant membership.
+
 ## Customizing the template
 
 - **App name**: Update `config/app.php`, `docker-compose.yml`, `.env`

@@ -7,6 +7,8 @@ namespace Database\Seeders;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,6 +20,8 @@ final class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
+        $this->seedOrganization();
+
         $superAdminRole = $this->seedSuperAdminRole();
         $roles = $this->seedDefaultRoles();
 
@@ -28,6 +32,7 @@ final class DatabaseSeeder extends Seeder
         ]);
 
         $this->assignRole($admin->id, $superAdminRole->id);
+        $this->addMember($admin->id);
 
         UserModel::factory()
             ->count(19)
@@ -35,7 +40,28 @@ final class DatabaseSeeder extends Seeder
             ->each(function (UserModel $user) use ($roles): void {
                 $role = $roles[array_rand($roles)];
                 $this->assignRole($user->id, $role->id);
+                $this->addMember($user->id);
             });
+    }
+
+    private function seedOrganization(): void
+    {
+        OrganizationModel::create([
+            'id' => self::ORGANIZATION_ID,
+            'name' => 'Default Organization',
+            'slug' => 'default',
+            'description' => 'Default organization for development',
+        ]);
+    }
+
+    private function addMember(string $userId): void
+    {
+        OrganizationMemberModel::create([
+            'id' => Str::uuid()->toString(),
+            'user_id' => $userId,
+            'organization_id' => self::ORGANIZATION_ID,
+            'joined_at' => now(),
+        ]);
     }
 
     private function seedSuperAdminRole(): RoleModel

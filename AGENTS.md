@@ -16,6 +16,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Infrastructure/README.md](app/Infrastructure/README.md) | Infrastructure — handler registration, repository pattern |
 | [app/Presentation/README.md](app/Presentation/README.md) | Presentation — controllers, form requests, console, views, Vue |
 | [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md) | Authorization module — permissions, RBAC, impersonation |
+| [app/Domain/Organization/README.md](app/Domain/Organization/README.md) | Organization module — multi-tenancy, membership, context resolution |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |
 

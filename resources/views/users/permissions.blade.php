@@ -8,6 +8,73 @@
         <p class="text-base text-gray-500 sm:text-sm">{{ __('messages.permissions.subtitle', ['name' => $user->name]) }}</p>
     </div>
 
+    {{-- Organizations --}}
+    <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
+        <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+            <h3 class="text-base font-medium text-gray-900">{{ __('messages.organizations.title') }}</h3>
+            @hasPermission('organizations.members.update')
+                <form class="flex items-center gap-2"
+                      id="add-org-form"
+                      method="POST"
+                      action="{{ route('users.organizations', $user->id) }}">
+                    @csrf
+                    <input name="_action"
+                           type="hidden"
+                           value="add_organization">
+                    <label class="sr-only"
+                           for="add-org-select">{{ __('messages.organizations.add_organization') }}</label>
+                    <select class="rounded-lg border-gray-300 px-3 py-2 text-sm focus:border-indigo-600 focus:ring-indigo-600"
+                            id="add-org-select"
+                            name="organization_id">
+                        @php
+                            $userOrgIds = collect($userOrganizations)->map(fn($o) => (string) $o->id)->all();
+                        @endphp
+                        @foreach ($allOrganizations as $availableOrg)
+                            @unless (in_array((string) $availableOrg->id, $userOrgIds, true))
+                                <option value="{{ $availableOrg->id }}">{{ $availableOrg->name }}</option>
+                            @endunless
+                        @endforeach
+                    </select>
+                    <x-primary-button skip-permission
+                                      :label="__('messages.organizations.add_organization')" />
+                </form>
+            @endhasPermission
+        </div>
+        <div class="px-6 py-4">
+            @if (count($userOrganizations) > 0)
+                <div class="flex flex-wrap gap-2">
+                    @foreach ($userOrganizations as $userOrg)
+                        <div
+                             class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ring-1 ring-emerald-700/10">
+                            <span>{{ $userOrg->name }}</span>
+                            @hasPermission('organizations.members.update')
+                                <form class="inline"
+                                      method="POST"
+                                      action="{{ route('users.organizations', $user->id) }}">
+                                    @csrf
+                                    <input name="_action"
+                                           type="hidden"
+                                           value="remove_organization">
+                                    <input name="organization_id"
+                                           type="hidden"
+                                           value="{{ $userOrg->id }}">
+                                    <x-icon-button class="text-emerald-400 transition-colors hover:text-emerald-700"
+                                                   skip-permission
+                                                   icon="heroicon-o-x-mark"
+                                                   :label="__('messages.organizations.remove_organization') .
+                                                       ' ' .
+                                                       $userOrg->name" />
+                                </form>
+                            @endhasPermission
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-sm text-gray-500">{{ __('messages.organizations.no_organizations') }}</p>
+            @endif
+        </div>
+    </div>
+
     {{-- Assigned Roles --}}
     <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
         <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">

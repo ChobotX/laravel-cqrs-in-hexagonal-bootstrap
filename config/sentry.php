@@ -27,18 +27,54 @@ return [
     'send_default_pii' => env('SENTRY_SEND_DEFAULT_PII', false),
 
     'before_send' => function (Sentry\Event $event): Sentry\Event {
-        $traceId = Illuminate\Support\Facades\Context::get('trace_id');
+        $context = Illuminate\Support\Facades\Context::class;
+
+        $traceId = $context::get('trace_id');
         if (is_string($traceId)) {
             $event->setTag('trace_id', $traceId);
+        }
+
+        $userId = $context::get('user_id');
+        if (is_string($userId)) {
+            $event->setTag('user_id', $userId);
+            $event->setUser(Sentry\UserDataBag::createFromArray(['id' => $userId]));
+        }
+
+        $organizationId = $context::get('organization_id');
+        if (is_string($organizationId)) {
+            $event->setTag('organization_id', $organizationId);
+        }
+
+        $impersonatorId = $context::get('impersonator_id');
+        if (is_string($impersonatorId)) {
+            $event->setTag('impersonator_id', $impersonatorId);
         }
 
         return $event;
     },
 
     'before_send_transaction' => function (Sentry\Event $event): Sentry\Event {
-        $traceId = Illuminate\Support\Facades\Context::get('trace_id');
+        $context = Illuminate\Support\Facades\Context::class;
+
+        $traceId = $context::get('trace_id');
         if (is_string($traceId)) {
             $event->setTag('trace_id', $traceId);
+        }
+
+        $userId = $context::get('user_id');
+        if (is_string($userId)) {
+            $event->setTag('user_id', $userId);
+            $event->setUser(Sentry\UserDataBag::createFromArray(['id' => $userId]));
+        }
+
+        $organizationId = $context::get('organization_id');
+        if (is_string($organizationId)) {
+            $event->setTag('organization_id', $organizationId);
+        }
+
+        $impersonatorId = $context::get('impersonator_id');
+        if (is_string($impersonatorId)) {
+            $event->setTag('impersonator_id', $impersonatorId);
         }
 
         return $event;

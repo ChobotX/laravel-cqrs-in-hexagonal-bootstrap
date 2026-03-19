@@ -82,6 +82,10 @@ services:
         class: Tests\Architecture\PHPStan\NoDatabaseTraitsInTestsRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\AggregateRequiresOrganizationIdRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

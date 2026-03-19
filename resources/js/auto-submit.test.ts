@@ -1,0 +1,57 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const AUTO_SUBMIT_HTML = `
+<form id="test-form">
+    <select id="auto-select" data-auto-submit>
+        <option value="a">A</option>
+        <option value="b">B</option>
+    </select>
+    <select id="normal-select">
+        <option value="x">X</option>
+        <option value="y">Y</option>
+    </select>
+</form>
+`;
+
+beforeEach(async () => {
+    document.body.innerHTML = AUTO_SUBMIT_HTML;
+    await import('./auto-submit');
+});
+
+afterEach(() => {
+    document.body.innerHTML = '';
+});
+
+function triggerChange(el: Element): void {
+    el.dispatchEvent(new Event('change', { bubbles: true }));
+}
+
+describe('auto-submit', () => {
+    it('submits form on change of element with data-auto-submit', () => {
+        const form = document.getElementById('test-form') as HTMLFormElement;
+        const select = document.getElementById('auto-select') as HTMLSelectElement;
+        const submitSpy = vi.spyOn(form, 'submit').mockImplementation(vi.fn());
+
+        triggerChange(select);
+
+        expect(submitSpy).toHaveBeenCalledOnce();
+    });
+
+    it('does not submit form on change of normal element', () => {
+        const form = document.getElementById('test-form') as HTMLFormElement;
+        const select = document.getElementById('normal-select') as HTMLSelectElement;
+        const submitSpy = vi.spyOn(form, 'submit').mockImplementation(vi.fn());
+
+        triggerChange(select);
+
+        expect(submitSpy).not.toHaveBeenCalled();
+    });
+
+    it('handles element without parent form gracefully', () => {
+        const orphan = document.createElement('select');
+        orphan.setAttribute('data-auto-submit', '');
+        document.body.appendChild(orphan);
+
+        triggerChange(orphan);
+    });
+});
