@@ -114,14 +114,17 @@ return [
         'add_role' => 'Add Role',
         'remove_role' => 'Remove Role',
         'effective_permissions' => 'Effective Permissions',
-        'overrides' => 'Overrides',
+        'overrides' => 'Add Override',
+        'active_overrides' => 'Active Overrides',
         'add_override' => 'Add Override',
+        'remove_override' => 'Remove Override',
         'source' => 'Source',
         'scope' => 'Scope',
         'granted' => 'Granted',
         'denied' => 'Denied',
         'not_granted' => 'Not granted',
         'deny_tooltip' => 'Denied by user override — overrides role grant from :source',
+        'updated' => 'Permissions updated.',
     ],
 
     'impersonation' => [

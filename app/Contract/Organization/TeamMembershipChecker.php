@@ -10,4 +10,7 @@ interface TeamMembershipChecker
 
     /** @return list<string> */
     public function memberTeamIds(string $userId, string $organizationId): array;
+
+    /** @return list<string> User IDs visible under team scope (members of user's teams + descendants) */
+    public function visibleUserIds(string $userId, string $organizationId): array;
 }

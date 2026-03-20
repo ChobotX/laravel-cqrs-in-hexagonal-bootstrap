@@ -8,6 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
+use App\Domain\Authorization\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Presentation\Http\Request\Web\Authorization\ManageUserPermissionsRequest;
@@ -41,6 +42,14 @@ final readonly class ManageUserPermissionsController
             ));
         }
 
+        if ($manageUserPermissionsRequest->action() === 'remove_override') {
+            $this->commandBus->dispatch(new RemovePermissionOverrideCommand(
+                userId: $userId,
+                organizationId: $organizationId,
+                permission: $manageUserPermissionsRequest->string('permission')->toString(),
+            ));
+        }
+
         if ($manageUserPermissionsRequest->action() === 'set_override') {
             $this->commandBus->dispatch(new SetPermissionOverrideCommand(
                 userId: $userId,
@@ -51,6 +60,6 @@ final readonly class ManageUserPermissionsController
             ));
         }
 
-        return redirect()->route('users.permissions', $userId);
+        return redirect()->route('users.permissions', $userId)->with('success', __('messages.permissions.updated'));
     }
 }

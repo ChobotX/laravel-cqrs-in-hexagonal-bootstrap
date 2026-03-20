@@ -114,14 +114,17 @@ return [
         'add_role' => 'Přidat roli',
         'remove_role' => 'Odebrat roli',
         'effective_permissions' => 'Výsledná oprávnění',
-        'overrides' => 'Přepisy',
+        'overrides' => 'Přidat přepis',
+        'active_overrides' => 'Aktivní přepisy',
         'add_override' => 'Přidat přepis',
+        'remove_override' => 'Odebrat přepis',
         'source' => 'Zdroj',
         'scope' => 'Rozsah',
         'granted' => 'Povoleno',
         'denied' => 'Zamítnuto',
         'not_granted' => 'Neuděleno',
         'deny_tooltip' => 'Zamítnuto uživatelským přepisem — přepisuje udělení z role :source',
+        'updated' => 'Oprávnění aktualizována.',
     ],
 
     'impersonation' => [

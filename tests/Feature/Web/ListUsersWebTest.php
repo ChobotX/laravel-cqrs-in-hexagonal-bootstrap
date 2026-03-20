@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationModel;
+use App\Infrastructure\Eloquent\Organization\TeamMemberModel;
+use App\Infrastructure\Eloquent\Organization\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 
@@ -240,4 +244,108 @@ it('user with full permissions sees all action buttons', function (): void {
         ->toContain('aria-label="'.__('messages.users.edit_action').' Target Full"')
         ->toContain('aria-label="'.__('messages.users.delete_action').' Target Full"')
         ->toContain('aria-label="'.__('messages.users.permissions_action').' Target Full"');
+});
+
+it('team-scoped user only sees teammates', function (): void {
+    OrganizationModel::create([
+        'id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Scope Org',
+        'slug' => 'scope-org',
+        'description' => '',
+    ]);
+
+    TeamModel::create([
+        'id' => '00000000-0000-0000-0000-000000000090',
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Alpha',
+        'slug' => 'alpha',
+        'description' => '',
+    ]);
+
+    TeamModel::create([
+        'id' => '00000000-0000-0000-0000-000000000091',
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Beta',
+        'slug' => 'beta',
+        'description' => '',
+    ]);
+
+    $role = $this->seedRoleWithPermissions(
+        '00000000-0000-0000-0000-000000000001',
+        'Team Scoped',
+        'Team scope on users',
+        ['users.list.read' => 'team', 'users.roles.read' => 'team'],
+    );
+
+    $viewer = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440e50',
+        'name' => 'Team Viewer',
+        'email' => 'team-viewer@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignRole($viewer->id, $role->id, '00000000-0000-0000-0000-000000000001');
+
+    OrganizationMemberModel::create(['user_id' => $viewer->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
+    TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000090', 'user_id' => $viewer->id, 'joined_at' => now()]);
+
+    $teammate = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440e51',
+        'name' => 'Teammate Alpha',
+        'email' => 'teammate-alpha@example.com',
+    ]);
+    OrganizationMemberModel::create(['user_id' => $teammate->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
+    TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000090', 'user_id' => $teammate->id, 'joined_at' => now()]);
+
+    $outsider = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440e52',
+        'name' => 'Outsider Beta',
+        'email' => 'outsider-beta@example.com',
+    ]);
+    OrganizationMemberModel::create(['user_id' => $outsider->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
+    TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000091', 'user_id' => $outsider->id, 'joined_at' => now()]);
+
+    $this->actingAs($viewer)
+        ->get('/users')
+        ->assertOk()
+        ->assertSee('Teammate Alpha')
+        ->assertSee('Team Viewer')
+        ->assertDontSee('Outsider Beta');
+});
+
+it('own-scoped user only sees themselves', function (): void {
+    OrganizationModel::create([
+        'id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Own Org',
+        'slug' => 'own-org',
+        'description' => '',
+    ]);
+
+    $role = $this->seedRoleWithPermissions(
+        '00000000-0000-0000-0000-000000000001',
+        'Own Scoped',
+        'Own scope on users',
+        ['users.list.read' => 'own'],
+    );
+
+    $viewer = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440e60',
+        'name' => 'Own Viewer',
+        'email' => 'own-viewer@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignRole($viewer->id, $role->id, '00000000-0000-0000-0000-000000000001');
+
+    OrganizationMemberModel::create(['user_id' => $viewer->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440e61',
+        'name' => 'Other Own User',
+        'email' => 'other-own@example.com',
+    ]);
+
+    $this->actingAs($viewer)
+        ->get('/users')
+        ->assertOk()
+        ->assertSee('Own Viewer')
+        ->assertDontSee('Other Own User');
 });

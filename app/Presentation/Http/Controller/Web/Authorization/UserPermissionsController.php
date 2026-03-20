@@ -9,6 +9,7 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
+use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use Illuminate\View\View;
@@ -29,12 +30,14 @@ final readonly class UserPermissionsController
         $userRoles = $this->queryBus->dispatch(new GetUserRolesQuery($userId, $orgId));
         $effectivePermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($userId, $orgId));
         $modules = $this->queryBus->dispatch(new GetAvailableModulesQuery);
+        $userOverrides = $this->queryBus->dispatch(new GetUserOverridesQuery($userId, $orgId));
 
         return view('users.permissions', [
             'user' => $user,
             'userRoles' => $userRoles,
             'effectivePermissions' => $effectivePermissions,
             'modules' => $modules,
+            'userOverrides' => $userOverrides,
         ]);
     }
 }

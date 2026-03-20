@@ -143,6 +143,38 @@ it('revokes a role via web permissions form', function (): void {
     ]);
 });
 
+it('removes a permission override via web form', function (): void {
+    [$admin, $target] = permissionsWebAdmin();
+
+    $this->actingAs($admin)
+        ->post('/users/'.$target->id.'/permissions', [
+            '_action' => 'set_override',
+            'permission' => 'teams.members.read',
+            'type' => 'grant',
+            'scope' => 'team',
+        ])->assertRedirect();
+
+    $this->assertDatabaseHas('user_permission_overrides', [
+        'user_id' => $target->id,
+        'module' => 'teams',
+        'feature' => 'members',
+        'action' => 'read',
+    ]);
+
+    $this->actingAs($admin)
+        ->post('/users/'.$target->id.'/permissions', [
+            '_action' => 'remove_override',
+            'permission' => 'teams.members.read',
+        ])->assertRedirect(route('users.permissions', $target->id));
+
+    $this->assertDatabaseMissing('user_permission_overrides', [
+        'user_id' => $target->id,
+        'module' => 'teams',
+        'feature' => 'members',
+        'action' => 'read',
+    ]);
+});
+
 it('returns 405 for GET on manage route', function (): void {
     [$admin] = permissionsWebAdmin();
 

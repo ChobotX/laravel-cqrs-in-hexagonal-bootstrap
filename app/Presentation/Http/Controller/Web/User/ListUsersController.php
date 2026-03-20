@@ -9,6 +9,7 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Organization\OrganizationContext;
+use App\Contract\Organization\TeamMembershipChecker;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
@@ -25,13 +26,16 @@ final readonly class ListUsersController
         private OrganizationContext $organizationContext,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
+        private TeamMembershipChecker $teamMembershipChecker,
     ) {}
 
     public function __invoke(): View
     {
-        $users = $this->queryBus->dispatch(new ListUsersQuery);
         $orgId = $this->organizationContext->currentOrganizationId();
         $currentUserId = $this->authenticatedUser->id() ?? '';
+
+        $allUsers = $this->queryBus->dispatch(new ListUsersQuery);
+        $users = $this->filterByScope($allUsers, $currentUserId, $orgId);
 
         $canReadRoles = $this->authorizationChecker->can($currentUserId, $orgId, 'users.roles.read');
 
@@ -89,5 +93,38 @@ final readonly class ListUsersController
         }
 
         return $map;
+    }
+
+    /**
+     * @param  list<User>  $allUsers
+     * @return list<User>
+     */
+    private function filterByScope(array $allUsers, string $currentUserId, string $orgId): array
+    {
+        $accessDecision = $this->authorizationChecker->canWithScope($currentUserId, $orgId, 'users.list.read');
+
+        return match ($accessDecision->scope()) {
+            'all' => $allUsers,
+            'team' => $this->filterByTeamScope($allUsers, $currentUserId, $orgId),
+            'own' => array_values(array_filter(
+                $allUsers,
+                fn (User $user): bool => $user->id->value === $currentUserId,
+            )),
+            default => $allUsers,
+        };
+    }
+
+    /**
+     * @param  list<User>  $allUsers
+     * @return list<User>
+     */
+    private function filterByTeamScope(array $allUsers, string $currentUserId, string $orgId): array
+    {
+        $visibleUserIds = $this->teamMembershipChecker->visibleUserIds($currentUserId, $orgId);
+
+        return array_values(array_filter(
+            $allUsers,
+            fn (User $user): bool => in_array($user->id->value, $visibleUserIds, true),
+        ));
     }
 }
