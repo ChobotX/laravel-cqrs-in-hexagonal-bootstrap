@@ -3,62 +3,54 @@ set -euo pipefail
 source "$(dirname "$0")/_common.sh" "$@"
 
 # === Wave 1: Auto-fix (parallel) ===
-header "Wave 1: Auto-fix"
+wave "Wave 1 · Auto-fix"
 
 frontend_fix() {
-    npx biome check --write resources/js/
-    npx blade-formatter --write resources/views/**/*.blade.php
+    run_step "biome-fix" npx biome check --write resources/js/
+    run_step "blade-formatter-fix" npx blade-formatter --write resources/views/**/*.blade.php
 }
 
 php_fix() {
-    php vendor/bin/rector
+    run_step "rector-fix" php vendor/bin/rector
 }
 
-FE_PID=""
-PHP_PID=""
+if [[ "$RUN_FRONTEND" -eq 1 ]]; then run_group fe_fix frontend_fix & FE_PID=$!; else FE_PID=""; fi
+if [[ "$RUN_BACKEND" -eq 1 ]]; then run_group php_fix php_fix & PHP_PID=$!; else PHP_PID=""; fi
 
-if [[ "$RUN_FRONTEND" -eq 1 ]]; then frontend_fix & FE_PID=$!; fi
-if [[ "$RUN_BACKEND" -eq 1 ]]; then php_fix & PHP_PID=$!; fi
+[[ -n "$FE_PID" ]] && wait "$FE_PID"
+[[ -n "$PHP_PID" ]] && wait "$PHP_PID"
 
-if [[ -n "$FE_PID" ]]; then
-    if wait "$FE_PID"; then pass "Frontend fix"; else fail "Frontend fix"; FAILED=1; fi
-fi
-if [[ -n "$PHP_PID" ]]; then
-    if wait "$PHP_PID"; then pass "PHP refactor"; else fail "PHP refactor"; FAILED=1; fi
-fi
+[[ -n "$FE_PID" ]] && replay_group fe_fix
+[[ -n "$PHP_PID" ]] && replay_group php_fix
 
 # === Wave 2: Pint fix (after rector) ===
 if [[ "$RUN_BACKEND" -eq 1 ]]; then
-    header "Wave 2: Pint fix"
-    if php vendor/bin/pint; then pass "Pint fix"; else fail "Pint fix"; FAILED=1; fi
+    wave "Wave 2 · Pint fix"
+    run_step "pint-fix" php vendor/bin/pint
 fi
 
 # === Wave 3: Check (parallel) ===
-header "Wave 3: Check"
+wave "Wave 3 · Check"
 
 frontend_check() {
-    bash bin/lint-blade-no-js.sh
-    bash bin/lint-blade-a11y.sh
-    npx vitest run --coverage
-    npx vite build
+    run_step "blade-no-js" bash bin/lint-blade-no-js.sh
+    run_step "blade-a11y" bash bin/lint-blade-a11y.sh
+    run_step "vitest" npx vitest run --coverage
+    run_step "vite-build" npx vite build
 }
 
 php_check() {
-    php vendor/bin/pest --configuration=phpunit.coverage.xml --coverage --min=100
-    php vendor/bin/phpstan analyse --memory-limit=512M
+    run_step "pest-coverage" php vendor/bin/pest --configuration=phpunit.coverage.xml --coverage --min=100
+    run_step "phpstan" php vendor/bin/phpstan analyse --memory-limit=512M
 }
 
-FE_PID=""
-PHP_PID=""
+if [[ "$RUN_FRONTEND" -eq 1 ]]; then run_group fe_check frontend_check & FE_PID=$!; else FE_PID=""; fi
+if [[ "$RUN_BACKEND" -eq 1 ]]; then run_group php_check php_check & PHP_PID=$!; else PHP_PID=""; fi
 
-if [[ "$RUN_FRONTEND" -eq 1 ]]; then frontend_check & FE_PID=$!; fi
-if [[ "$RUN_BACKEND" -eq 1 ]]; then php_check & PHP_PID=$!; fi
+[[ -n "$FE_PID" ]] && wait "$FE_PID"
+[[ -n "$PHP_PID" ]] && wait "$PHP_PID"
 
-if [[ -n "$FE_PID" ]]; then
-    if wait "$FE_PID"; then pass "Frontend checks"; else fail "Frontend checks"; FAILED=1; fi
-fi
-if [[ -n "$PHP_PID" ]]; then
-    if wait "$PHP_PID"; then pass "PHP checks"; else fail "PHP checks"; FAILED=1; fi
-fi
+[[ -n "$FE_PID" ]] && replay_group fe_check
+[[ -n "$PHP_PID" ]] && replay_group php_check
 
-result
+summary
