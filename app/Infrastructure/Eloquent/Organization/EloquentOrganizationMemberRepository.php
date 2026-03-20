@@ -6,6 +6,7 @@ namespace App\Infrastructure\Eloquent\Organization;
 
 use App\Domain\Organization\OrganizationMember;
 use App\Domain\Organization\OrganizationMemberRepository;
+use App\Domain\Organization\TeamMemberRepository;
 use App\Infrastructure\Eloquent\Authorization\UserPermissionOverrideModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
 use DateTimeImmutable;
@@ -15,6 +16,7 @@ final readonly class EloquentOrganizationMemberRepository implements Organizatio
 {
     public function __construct(
         private OrganizationMemberMapper $organizationMemberMapper,
+        private TeamMemberRepository $teamMemberRepository,
     ) {}
 
     public function add(string $userId, string $organizationId): void
@@ -29,6 +31,8 @@ final readonly class EloquentOrganizationMemberRepository implements Organizatio
     public function remove(string $userId, string $organizationId): void
     {
         DB::transaction(function () use ($userId, $organizationId): void {
+            $this->teamMemberRepository->removeAllByUserAndOrganization($userId, $organizationId);
+
             UserRoleModel::where('user_id', $userId)
                 ->where('organization_id', $organizationId)
                 ->delete();

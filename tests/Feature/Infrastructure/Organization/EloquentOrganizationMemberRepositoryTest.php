@@ -6,14 +6,19 @@ use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\UserPermissionOverrideModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
 use App\Infrastructure\Eloquent\Organization\EloquentOrganizationMemberRepository;
+use App\Infrastructure\Eloquent\Organization\EloquentTeamMemberRepository;
 use App\Infrastructure\Eloquent\Organization\OrganizationMemberMapper;
 use App\Infrastructure\Eloquent\Organization\OrganizationModel;
+use App\Infrastructure\Eloquent\Organization\TeamMemberMapper;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Str;
 
 function memberRepo(): EloquentOrganizationMemberRepository
 {
-    return new EloquentOrganizationMemberRepository(new OrganizationMemberMapper);
+    return new EloquentOrganizationMemberRepository(
+        new OrganizationMemberMapper,
+        new EloquentTeamMemberRepository(new TeamMemberMapper),
+    );
 }
 
 function createOrgMemberTestOrg(string $id): void

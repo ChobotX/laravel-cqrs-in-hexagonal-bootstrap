@@ -10,12 +10,16 @@ use App\Domain\Authorization\RoleRepository;
 use App\Domain\Authorization\UserPermissionRepository;
 use App\Domain\Organization\OrganizationMemberRepository;
 use App\Domain\Organization\OrganizationRepository;
+use App\Domain\Organization\TeamMemberRepository;
+use App\Domain\Organization\TeamRepository;
 use App\Domain\User\UserRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentRecordShareRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentUserPermissionRepository;
 use App\Infrastructure\Eloquent\Organization\EloquentOrganizationMemberRepository;
 use App\Infrastructure\Eloquent\Organization\EloquentOrganizationRepository;
+use App\Infrastructure\Eloquent\Organization\EloquentTeamMemberRepository;
+use App\Infrastructure\Eloquent\Organization\EloquentTeamRepository;
 use App\Infrastructure\Eloquent\User\EloquentUserRepository;
 use App\Infrastructure\UuidIdGenerator;
 use Illuminate\Support\ServiceProvider;
@@ -32,6 +36,8 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(RecordShareRepository::class, EloquentRecordShareRepository::class);
         $this->app->bind(OrganizationRepository::class, EloquentOrganizationRepository::class);
         $this->app->bind(OrganizationMemberRepository::class, EloquentOrganizationMemberRepository::class);
+        $this->app->bind(TeamRepository::class, EloquentTeamRepository::class);
+        $this->app->bind(TeamMemberRepository::class, EloquentTeamMemberRepository::class);
         $this->app->bind(IdGenerator::class, UuidIdGenerator::class);
     }
 }

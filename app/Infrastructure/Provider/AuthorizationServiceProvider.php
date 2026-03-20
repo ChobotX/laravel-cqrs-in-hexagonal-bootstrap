@@ -22,7 +22,7 @@ use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use App\Infrastructure\Authorization\SessionImpersonationManager;
 use App\Infrastructure\Organization\CookieOrganizationContext;
 use App\Infrastructure\Organization\EloquentOrganizationMembershipChecker;
-use App\Infrastructure\Organization\StubTeamMembershipChecker;
+use App\Infrastructure\Organization\EloquentTeamMembershipChecker;
 use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
 use App\Presentation\Http\Controller\Web\User\UpdateUserController;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
@@ -76,7 +76,7 @@ final class AuthorizationServiceProvider extends ServiceProvider
         });
 
         $this->app->bind(OrganizationMembershipChecker::class, EloquentOrganizationMembershipChecker::class);
-        $this->app->bind(TeamMembershipChecker::class, StubTeamMembershipChecker::class);
+        $this->app->bind(TeamMembershipChecker::class, EloquentTeamMembershipChecker::class);
 
         $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, ShowEditUserController::class, UpdateUserController::class])
             ->needs('$availableModules')

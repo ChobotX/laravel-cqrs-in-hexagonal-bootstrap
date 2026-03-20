@@ -8,6 +8,7 @@ use App\Presentation\Http\Controller\Web\Auth\ShowLoginController;
 use App\Presentation\Http\Controller\Web\Authorization\CreateRoleController as WebCreateRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\DeleteRoleController as WebDeleteRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\ListRolesController as WebListRolesController;
+use App\Presentation\Http\Controller\Web\Authorization\ManageUserPermissionsController;
 use App\Presentation\Http\Controller\Web\Authorization\ShowCreateRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\ShowEditRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\ShowRoleController;
@@ -25,6 +26,14 @@ use App\Presentation\Http\Controller\Web\Organization\ShowCreateOrganizationCont
 use App\Presentation\Http\Controller\Web\Organization\ShowEditOrganizationController;
 use App\Presentation\Http\Controller\Web\Organization\ShowOrganizationController;
 use App\Presentation\Http\Controller\Web\Organization\SwitchOrganizationController;
+use App\Presentation\Http\Controller\Web\Organization\Team\CreateTeamController;
+use App\Presentation\Http\Controller\Web\Organization\Team\DeleteTeamController;
+use App\Presentation\Http\Controller\Web\Organization\Team\ListTeamsController;
+use App\Presentation\Http\Controller\Web\Organization\Team\ManageTeamMembersController;
+use App\Presentation\Http\Controller\Web\Organization\Team\ShowCreateTeamController;
+use App\Presentation\Http\Controller\Web\Organization\Team\ShowEditTeamController;
+use App\Presentation\Http\Controller\Web\Organization\Team\ShowTeamController;
+use App\Presentation\Http\Controller\Web\Organization\Team\UpdateTeamController;
 use App\Presentation\Http\Controller\Web\Organization\UpdateOrganizationController;
 use App\Presentation\Http\Controller\Web\User\CreateUserController;
 use App\Presentation\Http\Controller\Web\User\DeleteUserController;
@@ -52,6 +61,7 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/users/{userId}', UpdateUserController::class)->name('users.update');
     Route::delete('/users/{userId}', DeleteUserController::class)->name('users.destroy');
     Route::get('/users/{userId}/permissions', UserPermissionsController::class)->name('users.permissions');
+    Route::post('/users/{userId}/permissions', ManageUserPermissionsController::class)->name('users.permissions.manage');
 
     Route::get('/roles', WebListRolesController::class)->name('roles.index');
     Route::get('/roles/create', ShowCreateRoleController::class)->name('roles.create');
@@ -69,6 +79,15 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/organizations/{organizationId}', UpdateOrganizationController::class)->name('organizations.update');
     Route::delete('/organizations/{organizationId}', DeleteOrganizationController::class)->name('organizations.destroy');
     Route::post('/organizations/{organizationId}/members', ManageOrganizationMembersController::class)->name('organizations.members');
+
+    Route::get('/organizations/{organizationId}/teams', ListTeamsController::class)->name('teams.index');
+    Route::get('/organizations/{organizationId}/teams/create', ShowCreateTeamController::class)->name('teams.create');
+    Route::post('/organizations/{organizationId}/teams', CreateTeamController::class)->name('teams.store');
+    Route::get('/organizations/{organizationId}/teams/{teamId}', ShowTeamController::class)->name('teams.show');
+    Route::get('/organizations/{organizationId}/teams/{teamId}/edit', ShowEditTeamController::class)->name('teams.edit');
+    Route::put('/organizations/{organizationId}/teams/{teamId}', UpdateTeamController::class)->name('teams.update');
+    Route::delete('/organizations/{organizationId}/teams/{teamId}', DeleteTeamController::class)->name('teams.destroy');
+    Route::post('/organizations/{organizationId}/teams/{teamId}/members', ManageTeamMembersController::class)->name('teams.members');
 
     Route::post('/switch-organization', SwitchOrganizationController::class)->name('organizations.switch');
 

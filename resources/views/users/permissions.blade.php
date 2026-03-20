@@ -16,7 +16,7 @@
                 <form class="flex items-center gap-2"
                       id="assign-role-form"
                       method="POST"
-                      action="{{ route('users.permissions', $user->id) }}">
+                      action="{{ route('users.permissions.manage', $user->id) }}">
                     @csrf
                     <input name="_action"
                            type="hidden"
@@ -43,7 +43,7 @@
                             @hasPermission('users.roles.update')
                                 <form class="inline"
                                       method="POST"
-                                      action="{{ route('users.permissions', $user->id) }}">
+                                      action="{{ route('users.permissions.manage', $user->id) }}">
                                     @csrf
                                     <input name="_action"
                                            type="hidden"
@@ -89,7 +89,7 @@
             <div class="p-6">
                 <form class="flex flex-wrap items-end gap-3"
                       method="POST"
-                      action="{{ route('users.permissions', $user->id) }}">
+                      action="{{ route('users.permissions.manage', $user->id) }}">
                     @csrf
                     <input name="_action"
                            type="hidden"

@@ -35,6 +35,7 @@ Higher-level grants cascade down:
 - `ImpersonationManager` — manages impersonation sessions
 - `OrganizationContext` — resolves current organization from request (see [Organization module](../Organization/README.md))
 - `OrganizationMembershipChecker` — verifies user belongs to an organization (see [Organization module](../Organization/README.md))
+- `TeamMembershipChecker` — resolves team memberships with descendant expansion for `AccessScope::Team` filtering (see [Organization module](../Organization/README.md))
 
 ## Adding a New Module
 
@@ -106,10 +107,12 @@ if (!$decision->granted()) {
 
 match ($decision->scope()) {
     'all' => $query,                           // no filter
-    'team' => $query->whereTeam($teamIds),     // filter by team
+    'team' => $query->whereTeam($teamIds),     // filter by team (uses TeamMembershipChecker::memberTeamIds)
     'own' => $query->whereOwner($userId),      // filter by owner (includes shared)
 };
 ```
+
+The `team` scope uses `TeamMembershipChecker::memberTeamIds()` which returns the user's direct team IDs **plus all descendant team IDs** via recursive CTE. This means a member of "Engineering" also sees data from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Organization module](../Organization/README.md#scope-filtering).
 
 ## Role Assignment (Superset Enforcement)
 

@@ -105,6 +105,21 @@
                     </div>
                 @endif
 
+                @if ($canManageTeams)
+                    <div class="border-t border-gray-200 pt-5">
+                        <label
+                               class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.users.teams') }}</label>
+                        <p class="mb-2 text-xs text-gray-400">{{ __('messages.users.teams_subtitle') }}</p>
+                        <div data-chip-selector
+                             data-search-url="{{ route('internal-api.teams.search') }}"
+                             data-selected-items="{{ json_encode(array_map(fn($t) => ['id' => $t->id->value, 'name' => $t->name->value], $userTeams)) }}"
+                             data-input-name="teams[]"
+                             data-placeholder="{{ __('messages.users.teams_search') }}"
+                             data-no-results-text="{{ __('messages.teams.no_results') }}">
+                        </div>
+                    </div>
+                @endif
+
                 <div class="flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
                                       :label="__('messages.users.update_action')" />

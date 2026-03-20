@@ -33,6 +33,19 @@ return [
                 ],
             ],
         ],
+        'teams' => [
+            'label' => 'Teams',
+            'features' => [
+                'management' => [
+                    'label' => 'Team Management',
+                    'actions' => ['read', 'create', 'update', 'delete'],
+                ],
+                'members' => [
+                    'label' => 'Team Members',
+                    'actions' => ['read', 'update'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['admin', 'editor', 'viewer'],
 ];

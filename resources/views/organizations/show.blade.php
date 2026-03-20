@@ -19,6 +19,10 @@
                                       variant="secondary"
                                       :href="route('organizations.index')"
                                       :label="__('messages.organizations.back')" />
+                    <x-primary-button permission="teams.management.read"
+                                      variant="secondary"
+                                      :href="route('teams.index', $organization->id)"
+                                      :label="__('messages.teams.title')" />
                 </div>
             </div>
         </div>

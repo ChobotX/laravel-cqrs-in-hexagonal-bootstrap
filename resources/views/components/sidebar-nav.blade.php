@@ -17,4 +17,14 @@
                 icon="heroicon-o-building-office"
                 :label="__('messages.nav.organizations')"
                 :active="request()->routeIs('organizations.*')" />
+    @php
+        $navOrgId = app(\App\Contract\Organization\OrganizationContext::class)->currentOrganizationId();
+    @endphp
+    @if ($navOrgId !== null)
+        <x-nav-link permission="teams.management.read"
+                    :href="route('teams.index', $navOrgId)"
+                    icon="heroicon-o-user-group"
+                    :label="__('messages.nav.teams')"
+                    :active="request()->routeIs('teams.*')" />
+    @endif
 </nav>

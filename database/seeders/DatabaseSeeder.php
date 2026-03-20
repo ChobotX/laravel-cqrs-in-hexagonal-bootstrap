@@ -9,6 +9,8 @@ use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
 use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
 use App\Infrastructure\Eloquent\Organization\OrganizationModel;
+use App\Infrastructure\Eloquent\Organization\TeamMemberModel;
+use App\Infrastructure\Eloquent\Organization\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -18,9 +20,16 @@ final class DatabaseSeeder extends Seeder
 {
     private const string ORGANIZATION_ID = '00000000-0000-0000-0000-000000000001';
 
+    private const string TEAM_MANAGERS_ID = '00000000-0000-0000-0000-000000000010';
+
+    private const string TEAM_ENGINEERING_ID = '00000000-0000-0000-0000-000000000011';
+
+    private const string TEAM_DESIGN_ID = '00000000-0000-0000-0000-000000000012';
+
     public function run(): void
     {
         $this->seedOrganization();
+        $this->seedTeams();
 
         $superAdminRole = $this->seedSuperAdminRole();
         $roles = $this->seedDefaultRoles();
@@ -33,14 +42,18 @@ final class DatabaseSeeder extends Seeder
 
         $this->assignRole($admin->id, $superAdminRole->id);
         $this->addMember($admin->id);
+        $this->addTeamMember($admin->id, self::TEAM_MANAGERS_ID);
+
+        $teamIds = [self::TEAM_MANAGERS_ID, self::TEAM_ENGINEERING_ID, self::TEAM_DESIGN_ID];
 
         UserModel::factory()
             ->count(19)
             ->create()
-            ->each(function (UserModel $user) use ($roles): void {
+            ->each(function (UserModel $user) use ($roles, $teamIds): void {
                 $role = $roles[array_rand($roles)];
                 $this->assignRole($user->id, $role->id);
                 $this->addMember($user->id);
+                $this->addTeamMember($user->id, $teamIds[array_rand($teamIds)]);
             });
     }
 
@@ -60,6 +73,45 @@ final class DatabaseSeeder extends Seeder
             'id' => Str::uuid()->toString(),
             'user_id' => $userId,
             'organization_id' => self::ORGANIZATION_ID,
+            'joined_at' => now(),
+        ]);
+    }
+
+    private function seedTeams(): void
+    {
+        TeamModel::create([
+            'id' => self::TEAM_MANAGERS_ID,
+            'organization_id' => self::ORGANIZATION_ID,
+            'name' => 'Managers',
+            'slug' => 'managers',
+            'description' => 'Management team with visibility into all sub-teams',
+        ]);
+
+        TeamModel::create([
+            'id' => self::TEAM_ENGINEERING_ID,
+            'organization_id' => self::ORGANIZATION_ID,
+            'parent_team_id' => self::TEAM_MANAGERS_ID,
+            'name' => 'Engineering',
+            'slug' => 'engineering',
+            'description' => 'Engineering sub-team',
+        ]);
+
+        TeamModel::create([
+            'id' => self::TEAM_DESIGN_ID,
+            'organization_id' => self::ORGANIZATION_ID,
+            'parent_team_id' => self::TEAM_MANAGERS_ID,
+            'name' => 'Design',
+            'slug' => 'design',
+            'description' => 'Design sub-team',
+        ]);
+    }
+
+    private function addTeamMember(string $userId, string $teamId): void
+    {
+        TeamMemberModel::create([
+            'id' => Str::uuid()->toString(),
+            'user_id' => $userId,
+            'team_id' => $teamId,
             'joined_at' => now(),
         ]);
     }

@@ -15,6 +15,7 @@ use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleAssignmentPolicy;
 use App\Domain\Organization\Query\GetUserOrganizations\GetUserOrganizationsQuery;
+use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use Illuminate\View\View;
 
@@ -62,6 +63,14 @@ final readonly class ShowEditUserController
             $userOrganizations = $this->queryBus->dispatch(new GetUserOrganizationsQuery($userId));
         }
 
+        $canManageTeams = $this->authorizationChecker->can($currentUserId, $orgId, 'teams.members.update');
+
+        $userTeams = [];
+
+        if ($canManageTeams) {
+            $userTeams = $this->queryBus->dispatch(new GetUserTeamsQuery($userId, $orgId));
+        }
+
         return view('users.edit', [
             'user' => $user,
             'canManageRoles' => $canManageRoles,
@@ -69,6 +78,8 @@ final readonly class ShowEditUserController
             'userRoleIds' => $userRoleIds,
             'canManageOrganizations' => $canManageOrganizations,
             'userOrganizations' => $userOrganizations,
+            'canManageTeams' => $canManageTeams,
+            'userTeams' => $userTeams,
         ]);
     }
 }

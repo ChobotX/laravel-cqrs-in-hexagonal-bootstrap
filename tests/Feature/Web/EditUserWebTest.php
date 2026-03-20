@@ -6,6 +6,8 @@ use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
 use App\Infrastructure\Eloquent\Organization\OrganizationModel;
+use App\Infrastructure\Eloquent\Organization\TeamMemberModel;
+use App\Infrastructure\Eloquent\Organization\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -552,6 +554,128 @@ it('removes organization via form submission', function (): void {
     $this->assertDatabaseMissing('organization_members', [
         'user_id' => $target->id,
         'organization_id' => '00000000-0000-0000-0000-000000000012',
+    ]);
+});
+
+it('adds team membership via form submission', function (): void {
+    $this->seedSuperAdminRole();
+
+    OrganizationModel::create([
+        'id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Default Org',
+        'slug' => 'default-addteam',
+        'description' => '',
+    ]);
+
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440101',
+        'name' => 'Admin Add Team',
+        'email' => 'admin-addteam@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    OrganizationMemberModel::create([
+        'user_id' => $admin->id,
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'joined_at' => now(),
+    ]);
+
+    TeamModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440102',
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Team to Add',
+        'slug' => 'team-to-add',
+        'description' => '',
+    ]);
+
+    $target = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440103',
+        'name' => 'Target Add Team',
+        'email' => 'target-addteam@example.com',
+    ]);
+
+    OrganizationMemberModel::create([
+        'user_id' => $target->id,
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'joined_at' => now(),
+    ]);
+
+    $this->actingAs($admin)
+        ->put('/users/'.$target->id, [
+            'name' => 'Target Add Team',
+            'email' => 'target-addteam@example.com',
+            'organizations' => ['00000000-0000-0000-0000-000000000001'],
+            'teams' => ['550e8400-e29b-41d4-a716-446655440102'],
+        ])->assertRedirect('/users');
+
+    $this->assertDatabaseHas('team_members', [
+        'user_id' => $target->id,
+        'team_id' => '550e8400-e29b-41d4-a716-446655440102',
+    ]);
+});
+
+it('removes team membership via form submission', function (): void {
+    $this->seedSuperAdminRole();
+
+    OrganizationModel::create([
+        'id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Default Org',
+        'slug' => 'default-rmteam',
+        'description' => '',
+    ]);
+
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440104',
+        'name' => 'Admin Rm Team',
+        'email' => 'admin-rmteam@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    OrganizationMemberModel::create([
+        'user_id' => $admin->id,
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'joined_at' => now(),
+    ]);
+
+    TeamModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440105',
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'name' => 'Team to Remove',
+        'slug' => 'team-to-remove',
+        'description' => '',
+    ]);
+
+    $target = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440106',
+        'name' => 'Target Rm Team',
+        'email' => 'target-rmteam@example.com',
+    ]);
+
+    OrganizationMemberModel::create([
+        'user_id' => $target->id,
+        'organization_id' => '00000000-0000-0000-0000-000000000001',
+        'joined_at' => now(),
+    ]);
+
+    TeamMemberModel::create([
+        'team_id' => '550e8400-e29b-41d4-a716-446655440105',
+        'user_id' => $target->id,
+        'joined_at' => now(),
+    ]);
+
+    $this->actingAs($admin)
+        ->put('/users/'.$target->id, [
+            'name' => 'Target Rm Team',
+            'email' => 'target-rmteam@example.com',
+            'organizations' => ['00000000-0000-0000-0000-000000000001'],
+            'teams' => [],
+        ])->assertRedirect('/users');
+
+    $this->assertDatabaseMissing('team_members', [
+        'user_id' => $target->id,
+        'team_id' => '550e8400-e29b-41d4-a716-446655440105',
     ]);
 });
 

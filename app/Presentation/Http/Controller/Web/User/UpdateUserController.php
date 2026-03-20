@@ -18,9 +18,13 @@ use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleAssignmentPolicy;
 use App\Domain\Organization\Command\AddMember\AddMemberCommand;
+use App\Domain\Organization\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Organization\Command\RemoveMember\RemoveMemberCommand;
+use App\Domain\Organization\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Organization\Organization;
 use App\Domain\Organization\Query\GetUserOrganizations\GetUserOrganizationsQuery;
+use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\Organization\Team;
 use App\Domain\User\Command\SetPassword\SetPasswordCommand;
 use App\Presentation\Http\Request\Web\User\UpdateUserRequest;
 use Illuminate\Http\RedirectResponse;
@@ -52,6 +56,7 @@ final readonly class UpdateUserController
 
         $this->syncRoles($updateUserRequest, $updateUserCommand->id);
         $this->syncOrganizations($updateUserRequest, $updateUserCommand->id);
+        $this->syncTeams($updateUserRequest, $updateUserCommand->id);
 
         return redirect('/users')->with('success', __('messages.users.updated'));
     }
@@ -119,6 +124,33 @@ final readonly class UpdateUserController
 
         foreach ($toRemove as $removeOrgId) {
             $this->commandBus->dispatch(new RemoveMemberCommand($targetUserId, $removeOrgId));
+        }
+    }
+
+    private function syncTeams(UpdateUserRequest $updateUserRequest, string $targetUserId): void
+    {
+        $orgId = $this->organizationContext->currentOrganizationId();
+        $currentUserId = $this->authenticatedUser->id() ?? '';
+
+        if (! $this->authorizationChecker->can($currentUserId, $orgId, 'teams.members.update')) {
+            return;
+        }
+
+        /** @var list<string> $submittedTeamIds */
+        $submittedTeamIds = $updateUserRequest->input('teams', []);
+
+        $currentTeams = $this->queryBus->dispatch(new GetUserTeamsQuery($targetUserId, $orgId));
+        $currentTeamIds = array_map(fn (Team $team): string => $team->id->value, $currentTeams);
+
+        $toAdd = array_diff($submittedTeamIds, $currentTeamIds);
+        $toRemove = array_diff($currentTeamIds, $submittedTeamIds);
+
+        foreach ($toAdd as $teamId) {
+            $this->commandBus->dispatch(new AddTeamMemberCommand($targetUserId, $teamId));
+        }
+
+        foreach ($toRemove as $teamId) {
+            $this->commandBus->dispatch(new RemoveTeamMemberCommand($targetUserId, $teamId));
         }
     }
 }

@@ -11,6 +11,8 @@ use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\Organization\Team;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
 use Illuminate\View\View;
@@ -41,10 +43,15 @@ final readonly class ListUsersController
             $isSuperAdmin = array_any($currentUserRoles, fn (Role $role): bool => $role->isSystem);
         }
 
+        $canReadTeams = $this->authorizationChecker->can($currentUserId, $orgId, 'teams.members.read');
+        $userTeams = $canReadTeams ? $this->buildUserTeamsMap($users, $orgId) : [];
+
         return view('users.index', [
             'users' => $users,
             'userRoles' => $userRoles,
             'canReadRoles' => $canReadRoles,
+            'canReadTeams' => $canReadTeams,
+            'userTeams' => $userTeams,
             'isSuperAdmin' => $isSuperAdmin,
             'currentUserId' => $currentUserId,
         ]);
@@ -61,6 +68,23 @@ final readonly class ListUsersController
         foreach ($users as $user) {
             $map[$user->id->value] = $this->queryBus->dispatch(
                 new GetUserRolesQuery($user->id->value, $orgId),
+            );
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param  list<User>  $users
+     * @return array<string, list<Team>>
+     */
+    private function buildUserTeamsMap(array $users, string $orgId): array
+    {
+        $map = [];
+
+        foreach ($users as $user) {
+            $map[$user->id->value] = $this->queryBus->dispatch(
+                new GetUserTeamsQuery($user->id->value, $orgId),
             );
         }
 

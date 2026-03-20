@@ -39,18 +39,32 @@
                                     <div>
                                         <span
                                               class="text-base font-medium text-gray-900 sm:text-sm">{{ $user->name }}</span>
-                                        @if ($canReadRoles)
+                                        @if ($canReadRoles || $canReadTeams)
                                             <p class="mt-0.5 text-xs text-gray-400">
-                                                @forelse ($userRoles[$user->id->value] ?? [] as $role)
-                                                    <a class="transition-colors hover:text-indigo-600"
-                                                       href="{{ route('roles.show', $role->id->value) }}"
-                                                       title="{{ $role->name->value }}">{{ $role->name->value }}</a>
-                                                    @if (!$loop->last)
-                                                        ,
-                                                    @endif
-                                                @empty
-                                                    <span class="text-gray-300">{{ __('messages.users.no_role') }}</span>
-                                                @endforelse
+                                                @if ($canReadRoles)
+                                                    @forelse ($userRoles[$user->id->value] ?? [] as $role)
+                                                        <a class="transition-colors hover:text-indigo-600"
+                                                           href="{{ route('roles.show', $role->id->value) }}"
+                                                           title="{{ $role->name->value }}">{{ $role->name->value }}</a>
+                                                        @if (!$loop->last)
+                                                            ,
+                                                        @endif
+                                                    @empty
+                                                        <span
+                                                              class="text-gray-300">{{ __('messages.users.no_role') }}</span>
+                                                    @endforelse
+                                                @endif
+                                                @if ($canReadTeams && !empty($userTeams[$user->id->value] ?? []))
+                                                    <span class="text-gray-300">{{ __('messages.users.in_team') }}</span>
+                                                    @foreach ($userTeams[$user->id->value] as $team)
+                                                        <a class="transition-colors hover:text-indigo-600"
+                                                           href="{{ route('teams.show', [$team->organizationId, $team->id]) }}"
+                                                           title="{{ $team->name }}">{{ $team->name }}</a>
+                                                        @if (!$loop->last)
+                                                            ,
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </p>
                                         @endif
                                     </div>
