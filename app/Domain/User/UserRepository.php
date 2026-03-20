@@ -18,4 +18,11 @@ interface UserRepository
     public function update(User $user): void;
 
     public function delete(UserId $userId): void;
+
+    /**
+     * @param  list<string>  $restrictToOrganizationIds  When non-empty, only users who are members of these orgs
+     * @param  list<string>  $excludeUserIds  Users to exclude from results
+     * @return list<User>
+     */
+    public function search(string $term, array $restrictToOrganizationIds, array $excludeUserIds, int $limit): array;
 }

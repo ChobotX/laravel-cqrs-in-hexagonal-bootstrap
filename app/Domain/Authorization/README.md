@@ -195,3 +195,7 @@ When a new organization is created, these roles are seeded:
 | Viewer | Read only (including `users.roles.read`) | All |
 
 The Super Admin role is a global system role (no org) that bypasses all permission checks.
+
+## Nullable Organization ID on Role
+
+The `Role` aggregate has a nullable `$organizationId` because system roles (super-admin) are org-agnostic. This is an intentional exception — most aggregates require a non-nullable `$organizationId` (enforced by `AggregateRequiresOrganizationIdRule`). `Role` uses the `#[AllowNullableOrganizationId]` attribute to opt out of this enforcement.

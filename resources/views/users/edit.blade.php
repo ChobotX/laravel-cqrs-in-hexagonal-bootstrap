@@ -81,9 +81,26 @@
                         <label
                                class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.users.roles') }}</label>
                         <p class="mb-2 text-xs text-gray-400">{{ __('messages.users.roles_subtitle') }}</p>
-                        <div id="role-selector"
-                             data-available-roles="{{ json_encode(array_map(fn($r) => ['id' => $r->id->value, 'name' => $r->name->value, 'isSystem' => $r->isSystem], $assignableRoles)) }}"
-                             data-selected-role-ids="{{ json_encode($userRoleIds) }}">
+                        <div data-chip-selector
+                             data-options="{{ json_encode(array_map(fn($r) => ['id' => $r->id->value, 'name' => $r->name->value, 'badge' => $r->isSystem ? __('messages.roles.system_badge') : null], $assignableRoles)) }}"
+                             data-selected-ids="{{ json_encode($userRoleIds) }}"
+                             data-input-name="roles[]"
+                             data-placeholder="{{ __('messages.users.roles_search') }}">
+                        </div>
+                    </div>
+                @endif
+
+                @if ($canManageOrganizations)
+                    <div class="border-t border-gray-200 pt-5">
+                        <label
+                               class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.users.organizations') }}</label>
+                        <p class="mb-2 text-xs text-gray-400">{{ __('messages.users.organizations_subtitle') }}</p>
+                        <div data-chip-selector
+                             data-search-url="{{ route('internal-api.organizations.search') }}"
+                             data-selected-items="{{ json_encode(array_map(fn($o) => ['id' => $o->id->value, 'name' => $o->name->value], $userOrganizations)) }}"
+                             data-input-name="organizations[]"
+                             data-placeholder="{{ __('messages.users.organizations_search') }}"
+                             data-no-results-text="{{ __('messages.organizations.no_results') }}">
                         </div>
                     </div>
                 @endif

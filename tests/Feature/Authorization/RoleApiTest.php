@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Laravel\Sanctum\Sanctum;
 
@@ -75,8 +77,10 @@ it('returns 401 when unauthenticated', function (): void {
 });
 
 it('returns 403 when organization context is null', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    apiUser();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
+    $user = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440905', 'name' => 'No Perms', 'email' => 'noperms@test.com']);
+    OrganizationMemberModel::create(['user_id' => $user->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
+    Sanctum::actingAs($user);
 
     $this->getJson('/api/roles')->assertForbidden();
 });

@@ -1,38 +1,54 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue';
 
-interface RoleOption {
+export interface ChipOption {
     id: string;
     name: string;
-    isSystem: boolean;
+    badge?: string;
 }
 
-const props = defineProps<{
-    availableRoles: RoleOption[];
-    selectedRoleIds: string[];
+const props = withDefaults(
+    defineProps<{
+        options: ChipOption[];
+        modelValue: string[];
+        inputName?: string;
+        placeholder?: string;
+        noResultsText?: string;
+    }>(),
+    {
+        inputName: 'items[]',
+        placeholder: undefined,
+        noResultsText: undefined,
+    },
+);
+
+const emit = defineEmits<{
+    'update:modelValue': [ids: string[]];
+    focus: [];
+    search: [term: string];
 }>();
 
 const search = ref('');
 const isOpen = ref(false);
 const activeIndex = ref(-1);
-const selected = ref<Set<string>>(new Set(props.selectedRoleIds));
 const inputRef = ref<HTMLInputElement | null>(null);
 const listRef = ref<HTMLUListElement | null>(null);
 
-const filteredRoles = computed(() =>
-    props.availableRoles.filter(
-        (r) => !selected.value.has(r.id) && r.name.toLowerCase().includes(search.value.toLowerCase()),
-    ),
+const selected = computed(() => new Set(props.modelValue));
+
+const filteredOptions = computed(() =>
+    props.options.filter((o) => !selected.value.has(o.id) && o.name.toLowerCase().includes(search.value.toLowerCase())),
 );
 
-const selectedRoles = computed(() => props.availableRoles.filter((r) => selected.value.has(r.id)));
+const selectedOptions = computed(() => props.options.filter((o) => selected.value.has(o.id)));
 
-watch(filteredRoles, () => {
+watch(filteredOptions, () => {
     activeIndex.value = -1;
 });
 
 function openDropdown(): void {
     isOpen.value = true;
+    emit('focus');
 }
 
 function closeDropdown(): void {
@@ -40,16 +56,21 @@ function closeDropdown(): void {
     activeIndex.value = -1;
 }
 
-function selectRole(id: string): void {
-    selected.value = new Set([...selected.value, id]);
+function selectOption(id: string): void {
+    emit('update:modelValue', [...props.modelValue, id]);
     search.value = '';
     inputRef.value?.focus();
 }
 
-function removeRole(id: string): void {
-    const next = new Set(selected.value);
-    next.delete(id);
-    selected.value = next;
+function removeOption(id: string): void {
+    emit(
+        'update:modelValue',
+        props.modelValue.filter((v) => v !== id),
+    );
+}
+
+function onSearchInput(): void {
+    emit('search', search.value);
 }
 
 function handleEscapeOrBackspace(event: KeyboardEvent): boolean {
@@ -58,9 +79,8 @@ function handleEscapeOrBackspace(event: KeyboardEvent): boolean {
         return true;
     }
 
-    if (event.key === 'Backspace' && search.value === '' && selected.value.size > 0) {
-        const ids = [...selected.value];
-        removeRole(ids[ids.length - 1]);
+    if (event.key === 'Backspace' && search.value === '' && props.modelValue.length > 0) {
+        removeOption(props.modelValue[props.modelValue.length - 1]);
         return true;
     }
 
@@ -70,7 +90,7 @@ function handleEscapeOrBackspace(event: KeyboardEvent): boolean {
 function handleArrowNavigation(event: KeyboardEvent): void {
     if (event.key === 'ArrowDown') {
         event.preventDefault();
-        activeIndex.value = Math.min(activeIndex.value + 1, filteredRoles.value.length - 1);
+        activeIndex.value = Math.min(activeIndex.value + 1, filteredOptions.value.length - 1);
         void scrollToActive();
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
@@ -78,7 +98,7 @@ function handleArrowNavigation(event: KeyboardEvent): void {
         void scrollToActive();
     } else if (event.key === 'Enter' && activeIndex.value >= 0) {
         event.preventDefault();
-        selectRole(filteredRoles.value[activeIndex.value].id);
+        selectOption(filteredOptions.value[activeIndex.value].id);
     }
 }
 
@@ -87,7 +107,7 @@ function onKeydown(event: KeyboardEvent): void {
         return;
     }
 
-    if (isOpen.value && filteredRoles.value.length > 0) {
+    if (isOpen.value && filteredOptions.value.length > 0) {
         handleArrowNavigation(event);
     }
 }
@@ -105,21 +125,21 @@ async function scrollToActive(): Promise<void> {
             @click="inputRef?.focus()"
         >
             <span
-                v-for="role in selectedRoles"
-                :key="role.id"
+                v-for="option in selectedOptions"
+                :key="option.id"
                 class="inline-flex items-center gap-1 rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-700/10"
             >
-                {{ role.name }}
+                {{ option.name }}
                 <span
-                    v-if="role.isSystem"
+                    v-if="option.badge"
                     class="text-[10px] text-indigo-400"
-                    >(System)</span
+                    >({{ option.badge }})</span
                 >
                 <button
                     type="button"
                     class="ml-0.5 text-indigo-400 hover:text-indigo-600"
-                    :aria-label="`Remove ${role.name}`"
-                    @click.stop="removeRole(role.id)"
+                    :aria-label="`Remove ${option.name}`"
+                    @click.stop="removeOption(option.id)"
                 >
                     &times;
                 </button>
@@ -128,39 +148,48 @@ async function scrollToActive(): Promise<void> {
                 ref="inputRef"
                 v-model="search"
                 type="text"
+                autocomplete="off"
                 class="flex-1 min-w-[120px] border-none p-0 text-sm focus:ring-0 outline-none"
-                :placeholder="$t('messages.users.roles_search')"
+                :placeholder="placeholder ?? ''"
                 role="combobox"
                 aria-autocomplete="list"
-                :aria-expanded="isOpen && filteredRoles.length > 0"
+                :aria-expanded="isOpen && filteredOptions.length > 0"
                 aria-haspopup="listbox"
                 @focus="openDropdown"
                 @blur="closeDropdown"
                 @keydown="onKeydown"
+                @input="onSearchInput"
             />
         </div>
 
         <ul
-            v-if="isOpen && filteredRoles.length > 0"
+            v-if="isOpen && filteredOptions.length > 0"
             ref="listRef"
             role="listbox"
             class="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg"
         >
             <li
-                v-for="(role, index) in filteredRoles"
-                :key="role.id"
+                v-for="(option, index) in filteredOptions"
+                :key="option.id"
                 role="option"
                 :aria-selected="index === activeIndex"
                 :data-active="index === activeIndex"
                 class="cursor-pointer px-3 py-2 text-sm transition-colors"
                 :class="index === activeIndex ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
-                @mousedown.prevent="selectRole(role.id)"
+                @mousedown.prevent="selectOption(option.id)"
             >
-                {{ role.name }}
-                <span v-if="role.isSystem" class="ml-1 text-xs text-gray-400">(System)</span>
+                {{ option.name }}
+                <span v-if="option.badge" class="ml-1 text-xs text-gray-400">({{ option.badge }})</span>
             </li>
         </ul>
 
-        <input v-for="id in selected" :key="id" type="hidden" name="roles[]" :value="id" />
+        <p
+            v-if="isOpen && filteredOptions.length === 0 && search !== '' && noResultsText"
+            class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500 shadow-lg"
+        >
+            {{ noResultsText }}
+        </p>
+
+        <input v-for="id in modelValue" :key="id" type="hidden" :name="inputName" :value="id" />
     </div>
 </template>

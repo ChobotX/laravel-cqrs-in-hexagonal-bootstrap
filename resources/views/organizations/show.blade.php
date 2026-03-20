@@ -36,20 +36,13 @@
                         <input name="_action"
                                type="hidden"
                                value="add_member">
-                        <label class="sr-only"
-                               for="add-member-select">{{ __('messages.organizations.add_member') }}</label>
-                        <select class="rounded-lg border-gray-300 px-3 py-2 text-sm focus:border-indigo-600 focus:ring-indigo-600"
-                                id="add-member-select"
-                                name="user_id">
-                            @php
-                                $memberUserIds = collect($members)->map(fn($m) => $m->userId)->all();
-                            @endphp
-                            @foreach ($allUsers as $availableUser)
-                                @unless (in_array((string) $availableUser->id, $memberUserIds, true))
-                                    <option value="{{ $availableUser->id }}">{{ $availableUser->name }}</option>
-                                @endunless
-                            @endforeach
-                        </select>
+                        <div data-autocomplete
+                             data-search-url="{{ route('internal-api.users.search') }}"
+                             data-exclude-ids="{{ json_encode(collect($members)->pluck('userId')->all()) }}"
+                             data-input-name="user_id"
+                             data-placeholder="{{ __('messages.organizations.search_member') }}"
+                             data-no-results-text="{{ __('messages.organizations.no_results') }}">
+                        </div>
                         <x-primary-button skip-permission
                                           :label="__('messages.organizations.add_member')" />
                     </form>

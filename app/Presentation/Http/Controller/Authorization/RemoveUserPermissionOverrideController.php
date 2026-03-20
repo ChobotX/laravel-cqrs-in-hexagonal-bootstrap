@@ -8,7 +8,6 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
 use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
-use App\Domain\Authorization\Exception\PermissionDeniedException;
 use Illuminate\Http\Response;
 
 #[SkipPermissionCheck('Permission enforced by command/query bus')]
@@ -21,8 +20,7 @@ final readonly class RemoveUserPermissionOverrideController
 
     public function __invoke(string $userId, string $permission): Response
     {
-        $organizationId = $this->organizationContext->currentOrganizationId()
-            ?? throw new PermissionDeniedException;
+        $organizationId = $this->organizationContext->currentOrganizationId();
 
         $this->commandBus->dispatch(new RemovePermissionOverrideCommand(
             userId: $userId,

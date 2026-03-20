@@ -9,6 +9,7 @@ use App\Contract\Organization\OrganizationContext;
 use App\Contract\Organization\OrganizationMembershipChecker;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Request;
+use RuntimeException;
 
 final readonly class CookieOrganizationContext implements OrganizationContext
 {
@@ -20,12 +21,14 @@ final readonly class CookieOrganizationContext implements OrganizationContext
         private ?string $defaultOrganizationId = null,
     ) {}
 
-    public function currentOrganizationId(): ?string
+    public function currentOrganizationId(): string
     {
         $userId = $this->authenticatedUser->id();
 
         if ($userId === null) {
-            return $this->defaultOrganizationId;
+            return $this->defaultOrganizationId ?? throw new RuntimeException(
+                'Organization context requires a default organization ID for unauthenticated requests.',
+            );
         }
 
         $headerValue = Request::header('X-Organization-Id');
@@ -39,10 +42,8 @@ final readonly class CookieOrganizationContext implements OrganizationContext
 
         $orgIds = $this->organizationMembershipChecker->memberOrganizationIds($userId);
 
-        if (count($orgIds) === 1) {
-            return $orgIds[0];
-        }
-
-        return $this->defaultOrganizationId;
+        return $orgIds[0] ?? $this->defaultOrganizationId ?? throw new RuntimeException(
+            'Authenticated user has no organization memberships and no default organization is configured.',
+        );
     }
 }

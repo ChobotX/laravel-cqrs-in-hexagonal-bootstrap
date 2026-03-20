@@ -20,7 +20,7 @@ final readonly class ListRolesController
 
     public function __invoke(): View
     {
-        $organizationId = $this->organizationContext->currentOrganizationId() ?? '';
+        $organizationId = $this->organizationContext->currentOrganizationId();
 
         $roles = $this->queryBus->dispatch(new ListRolesQuery($organizationId));
 

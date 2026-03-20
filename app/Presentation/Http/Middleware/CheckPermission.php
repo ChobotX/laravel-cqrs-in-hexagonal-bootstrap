@@ -44,7 +44,7 @@ final readonly class CheckPermission
         $userId = $this->authenticatedUser->id() ?? '';
         $orgId = $this->organizationContext->currentOrganizationId();
 
-        if ($orgId === null || ! $this->authorizationChecker->can($userId, $orgId, $permission)) {
+        if (! $this->authorizationChecker->can($userId, $orgId, $permission)) {
             throw new PermissionDeniedException($permission);
         }
 

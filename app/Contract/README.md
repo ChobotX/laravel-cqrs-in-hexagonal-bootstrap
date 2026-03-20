@@ -7,11 +7,13 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 ## Contents
 
 - `Auth/` — `PasswordManager` interface for password operations
+- `Authorization/` — `AuthorizationChecker`, `ImpersonationManager`, `AccessDecision`
 - `Bus/` — `Middleware` interface for bus middleware pipeline
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector` interfaces
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
 - `Translation/` — `Translator` interface for framework-agnostic translations
+- `Organization/` — `OrganizationContext` (non-nullable `currentOrganizationId(): string`), `OrganizationMembershipChecker`, `TeamMembershipChecker`
 - `Query/` — `Query`, `QueryHandler` interfaces
 
 ## Generic type parameters

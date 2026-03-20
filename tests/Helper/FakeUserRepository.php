@@ -16,9 +16,13 @@ final class FakeUserRepository implements UserRepository
     /** @var list<string> */
     public array $deleted = [];
 
-    /** @param array<string, User> $users */
+    /**
+     * @param  array<string, User>  $users
+     * @param  array<string, list<string>>  $organizationMemberships  orgId => list of userIds
+     */
     public function __construct(
         private array $users = [],
+        private readonly array $organizationMemberships = [],
     ) {}
 
     /** @return list<User> */
@@ -56,5 +60,39 @@ final class FakeUserRepository implements UserRepository
     public function delete(UserId $userId): void
     {
         $this->deleted[] = $userId->value;
+    }
+
+    /** @return list<User> */
+    public function search(string $term, array $restrictToOrganizationIds, array $excludeUserIds, int $limit): array
+    {
+        $normalizedTerm = $this->stripDiacritics(mb_strtolower($term));
+
+        $results = array_filter(
+            $this->users,
+            function (User $user) use ($normalizedTerm, $excludeUserIds, $restrictToOrganizationIds): bool {
+                if (in_array($user->id->value, $excludeUserIds, true)) {
+                    return false;
+                }
+
+                if ($restrictToOrganizationIds !== []) {
+                    $userInOrg = array_any($restrictToOrganizationIds, fn ($restrictToOrganizationId): bool => in_array($user->id->value, $this->organizationMemberships[$restrictToOrganizationId] ?? [], true));
+                    if (! $userInOrg) {
+                        return false;
+                    }
+                }
+
+                return str_contains($this->stripDiacritics(mb_strtolower($user->name)), $normalizedTerm)
+                    || str_contains($this->stripDiacritics(mb_strtolower($user->email->value)), $normalizedTerm);
+            },
+        );
+
+        return array_values(array_slice($results, 0, $limit));
+    }
+
+    private function stripDiacritics(string $value): string
+    {
+        $transliterated = transliterator_transliterate('Any-Latin; Latin-ASCII', $value);
+
+        return $transliterated === false ? $value : $transliterated;
     }
 }

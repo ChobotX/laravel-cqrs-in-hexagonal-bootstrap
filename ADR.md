@@ -86,6 +86,12 @@ No `@phpstan-ignore`, no baseline file, no `@codeCoverageIgnore`.
 **Why:** Domain tests should validate real behavior, not mock contracts. Fakes catch more integration issues.
 **Enforced by:** PHPStan rule `NoMockeryInDomainTestsRule`. See [tests/README.md](tests/README.md).
 
+### Non-nullable organization context for authenticated users
+
+`OrganizationContext::currentOrganizationId()` returns `string`, never null. For multi-org users without explicit selection, the first org is auto-selected. Aggregates must have non-nullable `$organizationId` unless exempted with `#[AllowNullableOrganizationId]` (e.g. `Role` for system roles) or `#[TenantAgnostic]`.
+**Why:** Nullable org context caused silent 403s when users belonged to multiple orgs without an explicit selection. Non-nullable contract pushes resolution to one place (`CookieOrganizationContext`) and eliminates defensive null checks scattered across controllers and middleware.
+**Enforced by:** PHP type system (`string` return type), PHPStan rule `AggregateRequiresOrganizationIdRule` (rejects nullable `$organizationId` unless exempted). See [app/Domain/Organization/README.md](app/Domain/Organization/README.md).
+
 ### Centralized transactional test isolation
 
 All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.

@@ -8,7 +8,6 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Domain\Organization\Query\GetOrganizationById\GetOrganizationByIdQuery;
 use App\Domain\Organization\Query\ListOrganizationMembers\ListOrganizationMembersQuery;
-use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use Illuminate\View\View;
 
 #[RequiresPermission('organizations.management.read')]
@@ -22,12 +21,10 @@ final readonly class ShowOrganizationController
     {
         $organization = $this->queryBus->dispatch(new GetOrganizationByIdQuery($organizationId));
         $members = $this->queryBus->dispatch(new ListOrganizationMembersQuery($organizationId));
-        $allUsers = $this->queryBus->dispatch(new ListUsersQuery);
 
         return view('organizations.show', [
             'organization' => $organization,
             'members' => $members,
-            'allUsers' => $allUsers,
         ]);
     }
 }

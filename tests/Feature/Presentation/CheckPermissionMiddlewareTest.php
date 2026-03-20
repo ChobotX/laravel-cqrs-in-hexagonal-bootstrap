@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Route;
 
@@ -103,15 +105,13 @@ it('returns 403 for edit user when user lacks permission', function (): void {
 });
 
 it('returns 403 when organization context is null', function (): void {
-    config(['authorization.default_organization_id' => null]);
-
-    $this->seedSuperAdminRole();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440607',
-        'name' => 'Admin',
+        'name' => 'No Perms',
         'email' => 'middleware-noorg@test.com',
     ]);
-    $this->assignSuperAdmin($user->id);
+    OrganizationMemberModel::create(['user_id' => $user->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
 
     $this->actingAs($user)
         ->get('/roles/create')

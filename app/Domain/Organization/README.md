@@ -43,7 +43,7 @@ The Organization bounded context manages multi-tenancy. Every authorization enti
 
 ## Context Resolution
 
-`CookieOrganizationContext` resolves the current org: encrypted cookie → `X-Organization-Id` header → auto-select for single-org users → `DEFAULT_ORGANIZATION_ID` config fallback.
+`OrganizationContext::currentOrganizationId()` returns `string` (never null for authenticated users). `CookieOrganizationContext` resolves the current org via this fallback chain: `X-Organization-Id` header → `organization_id` cookie → first org from membership → `DEFAULT_ORGANIZATION_ID` config fallback. For multi-org users without explicit selection, the first org is auto-selected (no 403). Throws `RuntimeException` if an authenticated user has zero memberships and no default is configured.
 
 ## Membership
 

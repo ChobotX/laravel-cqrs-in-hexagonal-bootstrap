@@ -206,8 +206,9 @@ Permission-gated topbar form action button (icon-only). Fail-safe: renders nothi
 ## Vue frontend rules (when applicable)
 
 - **Minimal frontend logic** — JavaScript should only handle UI interactions (toggles, transitions, form UX). All data shaping, filtering, sorting, and formatting must happen server-side. The backend serves ready-to-render payloads.
-- **Internal API routes** — Vue frontend consumes internal API routes defined in `routes/internal_api.php`, not the public API. `routes/api.php` is reserved for the public/external API and must stay decoupled from frontend concerns. `routes/web.php` is for Blade page routes only.
+- **Internal API routes** — Vue frontend consumes internal API routes defined in `routes/internal_api.php` (registered via `bootstrap/app.php` `then:` callback with the `web` middleware stack), not the public API. `routes/api.php` is reserved for the public/external API and must stay decoupled from frontend concerns. `routes/web.php` is for Blade page routes only.
 - **Dumb components** — Vue components receive well-prepared props and render them. Business logic stays in the backend, not in computed properties or watchers.
 - **Reusable components** — follow SRP and DRY. Extract shared UI patterns into small, focused components rather than duplicating templates.
+- **Composition over duplication** — when a component needs a variant with different data flow (e.g. static vs lazy-loaded), create a wrapper component that composes the base component rather than forking or adding mode flags. The wrapper owns the new concern (fetch, debounce, state sync) and feeds the base component via props and events. Example: `LazyChipSelector` wraps `ChipSelector` — it handles server-side search and feeds results as `options`, while `ChipSelector` stays a pure display/interaction component.
 
 The Presentation layer may depend on Application, Domain, and Contract. It must not depend on Infrastructure.

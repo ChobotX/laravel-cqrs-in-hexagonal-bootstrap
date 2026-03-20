@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 
@@ -132,15 +134,17 @@ it('updates a role with permissions via web', function (): void {
 });
 
 it('returns 403 when no org context on web role list', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    $userModel = webUser();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
+    $userModel = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440958', 'name' => 'No Perms', 'email' => 'noperms-web@test.com', 'password' => Hash::make('password')]);
+    OrganizationMemberModel::create(['user_id' => $userModel->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
 
     $this->actingAs($userModel)->get('/roles')->assertForbidden();
 });
 
 it('returns 403 when no org context on web user perms', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    $userModel = webUser();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
+    $userModel = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440959', 'name' => 'No Perms', 'email' => 'noperms-web2@test.com', 'password' => Hash::make('password')]);
+    OrganizationMemberModel::create(['user_id' => $userModel->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     $target = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440957', 'name' => 'T', 'email' => 'timpn@test.com']);
 
     $this->actingAs($userModel)->get(sprintf('/users/%s/permissions', $target->id))->assertForbidden();

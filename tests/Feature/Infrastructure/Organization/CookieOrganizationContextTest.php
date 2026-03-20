@@ -60,6 +60,15 @@ it('returns default org when user is not authenticated', function (): void {
     expect($context->currentOrganizationId())->toBe('default-org-id');
 });
 
+it('throws when unauthenticated and no default org configured', function (): void {
+    $context = new CookieOrganizationContext(
+        organizationMembershipChecker: fakeMembership(),
+        authenticatedUser: fakeAuth(null),
+    );
+
+    $context->currentOrganizationId();
+})->throws(RuntimeException::class, 'Organization context requires a default organization ID for unauthenticated requests.');
+
 it('auto-selects when user has single organization', function (): void {
     $context = new CookieOrganizationContext(
         organizationMembershipChecker: fakeMembership(['user-1' => ['org-1']]),
@@ -69,14 +78,14 @@ it('auto-selects when user has single organization', function (): void {
     expect($context->currentOrganizationId())->toBe('org-1');
 });
 
-it('returns default when user has multiple orgs and no cookie', function (): void {
+it('auto-selects first org when user has multiple orgs and no cookie', function (): void {
     $context = new CookieOrganizationContext(
         organizationMembershipChecker: fakeMembership(['user-1' => ['org-1', 'org-2']]),
         authenticatedUser: fakeAuth('user-1'),
         defaultOrganizationId: 'fallback',
     );
 
-    expect($context->currentOrganizationId())->toBe('fallback');
+    expect($context->currentOrganizationId())->toBe('org-1');
 });
 
 it('returns default when user has no memberships', function (): void {
@@ -88,6 +97,15 @@ it('returns default when user has no memberships', function (): void {
 
     expect($context->currentOrganizationId())->toBe('fallback');
 });
+
+it('throws when authenticated user has no memberships and no default', function (): void {
+    $context = new CookieOrganizationContext(
+        organizationMembershipChecker: fakeMembership(),
+        authenticatedUser: fakeAuth('user-1'),
+    );
+
+    $context->currentOrganizationId();
+})->throws(RuntimeException::class, 'Authenticated user has no organization memberships and no default organization is configured.');
 
 it('resolves org from X-Organization-Id header', function (): void {
     $organizationMembershipChecker = fakeMembership(['user-1' => ['org-1', 'org-2']]);

@@ -28,7 +28,7 @@ final readonly class ListUsersController
     public function __invoke(): View
     {
         $users = $this->queryBus->dispatch(new ListUsersQuery);
-        $orgId = $this->organizationContext->currentOrganizationId() ?? '';
+        $orgId = $this->organizationContext->currentOrganizationId();
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
         $canReadRoles = $this->authorizationChecker->can($currentUserId, $orgId, 'users.roles.read');

@@ -7,7 +7,6 @@ namespace App\Presentation\Http\Controller\Authorization;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Contract\Organization\OrganizationContext;
-use App\Domain\Authorization\Exception\PermissionDeniedException;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Presentation\Http\Resource\RoleResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -23,10 +22,6 @@ final readonly class ListRolesController
     public function __invoke(): AnonymousResourceCollection
     {
         $organizationId = $this->organizationContext->currentOrganizationId();
-
-        if ($organizationId === null) {
-            throw new PermissionDeniedException;
-        }
 
         $roles = $this->queryBus->dispatch(
             new ListRolesQuery($organizationId),

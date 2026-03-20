@@ -21,7 +21,6 @@ use App\Presentation\Http\Controller\Web\Organization\CreateOrganizationControll
 use App\Presentation\Http\Controller\Web\Organization\DeleteOrganizationController;
 use App\Presentation\Http\Controller\Web\Organization\ListOrganizationsController;
 use App\Presentation\Http\Controller\Web\Organization\ManageOrganizationMembersController;
-use App\Presentation\Http\Controller\Web\Organization\ManageUserOrganizationsController;
 use App\Presentation\Http\Controller\Web\Organization\ShowCreateOrganizationController;
 use App\Presentation\Http\Controller\Web\Organization\ShowEditOrganizationController;
 use App\Presentation\Http\Controller\Web\Organization\ShowOrganizationController;
@@ -53,7 +52,6 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/users/{userId}', UpdateUserController::class)->name('users.update');
     Route::delete('/users/{userId}', DeleteUserController::class)->name('users.destroy');
     Route::get('/users/{userId}/permissions', UserPermissionsController::class)->name('users.permissions');
-    Route::post('/users/{userId}/organizations', ManageUserOrganizationsController::class)->name('users.organizations');
 
     Route::get('/roles', WebListRolesController::class)->name('roles.index');
     Route::get('/roles/create', ShowCreateRoleController::class)->name('roles.create');

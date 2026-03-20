@@ -14,6 +14,7 @@ use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleAssignmentPolicy;
+use App\Domain\Organization\Query\GetUserOrganizations\GetUserOrganizationsQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use Illuminate\View\View;
 
@@ -29,7 +30,7 @@ final readonly class ShowEditUserController
 
     public function __invoke(string $userId): View
     {
-        $orgId = $this->organizationContext->currentOrganizationId() ?? '';
+        $orgId = $this->organizationContext->currentOrganizationId();
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
         $user = $this->queryBus->dispatch(new GetUserByIdQuery($userId));
@@ -51,11 +52,21 @@ final readonly class ShowEditUserController
             $userRoleIds = array_map(fn (Role $role): string => $role->id->value, $userRoles);
         }
 
+        $canManageOrganizations = $this->authorizationChecker->can($currentUserId, $orgId, 'organizations.members.update');
+
+        $userOrganizations = [];
+
+        if ($canManageOrganizations) {
+            $userOrganizations = $this->queryBus->dispatch(new GetUserOrganizationsQuery($userId));
+        }
+
         return view('users.edit', [
             'user' => $user,
             'canManageRoles' => $canManageRoles,
             'assignableRoles' => $assignableRoles,
             'userRoleIds' => $userRoleIds,
+            'canManageOrganizations' => $canManageOrganizations,
+            'userOrganizations' => $userOrganizations,
         ]);
     }
 

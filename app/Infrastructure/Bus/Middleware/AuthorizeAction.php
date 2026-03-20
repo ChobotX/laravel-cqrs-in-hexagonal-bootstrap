@@ -40,10 +40,6 @@ final readonly class AuthorizeAction implements Middleware
 
         $organizationId = $this->organizationContext->currentOrganizationId();
 
-        if ($organizationId === null) {
-            throw new PermissionDeniedException($attribute->permission);
-        }
-
         if (! $this->authorizationChecker->can($userId, $organizationId, $attribute->permission)) {
             throw new PermissionDeniedException($attribute->permission);
         }

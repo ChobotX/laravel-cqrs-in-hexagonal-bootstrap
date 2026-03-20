@@ -13,7 +13,7 @@ use App\Infrastructure\Bus\Middleware\AuthorizeAction;
 
 function buildTestMiddleware(
     ?string $userId = 'user-1',
-    ?string $orgId = 'org-1',
+    string $orgId = 'org-1',
     bool $canResult = true,
 ): AuthorizeAction {
     $authenticatedUser = new readonly class($userId) implements AuthenticatedUser
@@ -38,9 +38,9 @@ function buildTestMiddleware(
 
     $organizationContext = new readonly class($orgId) implements OrganizationContext
     {
-        public function __construct(private ?string $orgId) {}
+        public function __construct(private string $orgId) {}
 
-        public function currentOrganizationId(): ?string
+        public function currentOrganizationId(): string
         {
             return $this->orgId;
         }
@@ -95,12 +95,6 @@ it('passes through when user id is null', function (): void {
 
     expect($called)->toBeTrue();
 });
-
-it('throws when org id is null and permission required', function (): void {
-    $authorizeAction = buildTestMiddleware(orgId: null);
-
-    $authorizeAction->handle(new AuthorizeActionTestPermissionMessage, fn (): string => 'result');
-})->throws(PermissionDeniedException::class);
 
 it('throws when permission is denied', function (): void {
     $authorizeAction = buildTestMiddleware(canResult: false);

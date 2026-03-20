@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
+use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Laravel\Sanctum\Sanctum;
 
@@ -64,30 +66,27 @@ it('gets effective permissions via API', function (): void {
 });
 
 it('returns 403 on get permissions without org', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    $this->seedSuperAdminRole();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440936', 'name' => 'A', 'email' => 'permno@test.com']);
-    $this->assignSuperAdmin($admin->id);
+    OrganizationMemberModel::create(['user_id' => $admin->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     Sanctum::actingAs($admin);
 
     $this->getJson(sprintf('/api/users/%s/permissions', $admin->id))->assertForbidden();
 });
 
 it('returns 403 on effective permissions without org', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    $this->seedSuperAdminRole();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440937', 'name' => 'A', 'email' => 'effno@test.com']);
-    $this->assignSuperAdmin($admin->id);
+    OrganizationMemberModel::create(['user_id' => $admin->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     Sanctum::actingAs($admin);
 
     $this->getJson(sprintf('/api/users/%s/effective-permissions', $admin->id))->assertForbidden();
 });
 
 it('returns 403 on set override without org', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    $this->seedSuperAdminRole();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440938', 'name' => 'A', 'email' => 'setno@test.com']);
-    $this->assignSuperAdmin($admin->id);
+    OrganizationMemberModel::create(['user_id' => $admin->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     Sanctum::actingAs($admin);
 
     $this->putJson(sprintf('/api/users/%s/permissions', $admin->id), [
@@ -96,10 +95,9 @@ it('returns 403 on set override without org', function (): void {
 });
 
 it('returns 403 on remove override without org', function (): void {
-    config(['authorization.default_organization_id' => null]);
-    $this->seedSuperAdminRole();
+    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440939', 'name' => 'A', 'email' => 'rmno@test.com']);
-    $this->assignSuperAdmin($admin->id);
+    OrganizationMemberModel::create(['user_id' => $admin->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     Sanctum::actingAs($admin);
 
     $this->deleteJson(sprintf('/api/users/%s/permissions/users.list.read', $admin->id))->assertForbidden();

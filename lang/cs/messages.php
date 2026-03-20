@@ -51,6 +51,9 @@ return [
         'roles_subtitle' => 'Přiřadit role tomuto uživateli',
         'roles_search' => 'Hledat role...',
         'permissions_action' => 'Oprávnění',
+        'organizations' => 'Organizace',
+        'organizations_subtitle' => 'Správa členství v organizacích',
+        'organizations_search' => 'Hledat organizace...',
     ],
 
     'dialog' => [
@@ -166,6 +169,8 @@ return [
         'switch' => 'Přepnout organizaci',
         'add_organization' => 'Přidat organizaci',
         'remove_organization' => 'Odebrat organizaci',
+        'search_member' => 'Hledat uživatele...',
+        'no_results' => 'Nebyly nalezeny žádné výsledky.',
         'no_organizations' => 'Není členem žádné organizace.',
     ],
 

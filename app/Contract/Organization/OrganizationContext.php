@@ -6,5 +6,5 @@ namespace App\Contract\Organization;
 
 interface OrganizationContext
 {
-    public function currentOrganizationId(): ?string;
+    public function currentOrganizationId(): string;
 }

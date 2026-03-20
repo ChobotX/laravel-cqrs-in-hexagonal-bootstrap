@@ -102,12 +102,12 @@ final class AuthorizationServiceProvider extends ServiceProvider
             $organizationContext = $this->app->make(OrganizationContext::class);
 
             $userId = $authenticatedUser->id();
-            $organizationId = $organizationContext->currentOrganizationId();
 
-            if ($userId === null || $organizationId === null) {
+            if ($userId === null) {
                 return false;
             }
 
+            $organizationId = $organizationContext->currentOrganizationId();
             $authorizationChecker = $this->app->make(AuthorizationChecker::class);
 
             return $authorizationChecker->can($userId, $organizationId, $permission);

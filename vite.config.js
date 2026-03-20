@@ -58,7 +58,8 @@ export default defineConfig({
                 'resources/js/sentry.ts',
                 'resources/js/dialog/dialog-app.ts',
                 'resources/js/toast/toast-app.ts',
-                'resources/js/role-selector/role-selector-app.ts',
+                'resources/js/chip-selector/chip-selector-app.ts',
+                'resources/js/autocomplete/autocomplete-app.ts',
             ],
             thresholds: {
                 autoUpdate: true,

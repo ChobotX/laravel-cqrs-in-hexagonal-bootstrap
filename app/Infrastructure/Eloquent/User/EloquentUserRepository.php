@@ -7,6 +7,7 @@ namespace App\Infrastructure\Eloquent\User;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRepository;
+use Illuminate\Database\Query\Builder;
 
 final readonly class EloquentUserRepository implements UserRepository
 {
@@ -71,5 +72,34 @@ final readonly class EloquentUserRepository implements UserRepository
             $model->tokens()->delete();
             $model->delete();
         }
+    }
+
+    /** @return list<User> */
+    public function search(string $term, array $restrictToOrganizationIds, array $excludeUserIds, int $limit): array
+    {
+        $builder = UserModel::query()
+            ->where(function ($q) use ($term): void {
+                $q->whereRaw('unaccent(name) ILIKE unaccent(?)', [sprintf('%%%s%%', $term)])
+                    ->orWhereRaw('unaccent(email) ILIKE unaccent(?)', [sprintf('%%%s%%', $term)]);
+            });
+
+        if ($restrictToOrganizationIds !== []) {
+            $builder->whereIn('id', function (Builder $builder) use ($restrictToOrganizationIds): void {
+                $builder->select('user_id')
+                    ->from('organization_members')
+                    ->whereIn('organization_id', $restrictToOrganizationIds);
+            });
+        }
+
+        if ($excludeUserIds !== []) {
+            $builder->whereNotIn('id', $excludeUserIds);
+        }
+
+        return array_values(
+            $builder->limit($limit)
+                ->get()
+                ->map(fn (UserModel $userModel): User => $this->userMapper->toDomain($userModel))
+                ->all(),
+        );
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
+use App\Application\Organization\AllowNullableOrganizationId;
 use App\Application\Organization\TenantAgnostic;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
@@ -28,47 +29,70 @@ final readonly class AggregateRequiresOrganizationIdRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        if (! $node->isFinal() || ! $node->isReadonly() || $node->namespacedName === null) {
+        $className = $this->resolveTargetAggregateName($node);
+
+        if ($className === null) {
             return [];
         }
 
-        $className = $node->namespacedName->toString();
+        $organizationIdParam = $this->findOrganizationIdParameter($node);
 
-        if (! str_starts_with($className, 'App\\Domain\\')) {
-            return [];
+        if (! $organizationIdParam instanceof Node\Param) {
+            return [
+                RuleErrorBuilder::message(
+                    sprintf(
+                        'Aggregate %s must have an $organizationId constructor parameter or use #[TenantAgnostic] attribute.',
+                        $className,
+                    ),
+                )
+                    ->identifier('domain.aggregateRequiresOrganizationId')
+                    ->build(),
+            ];
         }
 
-        if (! $this->reflectionProvider->hasClass($className)) {
-            return [];
+        $nativeReflection = $this->reflectionProvider->getClass($className)->getNativeReflection();
+
+        if ($this->isNullableParam($organizationIdParam) && $nativeReflection->getAttributes(AllowNullableOrganizationId::class) === []) {
+            return [
+                RuleErrorBuilder::message(
+                    sprintf(
+                        'Aggregate %s has a nullable $organizationId — it must be non-nullable or use #[AllowNullableOrganizationId] attribute.',
+                        $className,
+                    ),
+                )
+                    ->identifier('domain.aggregateNullableOrganizationId')
+                    ->build(),
+            ];
+        }
+
+        return [];
+    }
+
+    private function resolveTargetAggregateName(Class_ $class): ?string
+    {
+        if (! $class->isFinal() || ! $class->isReadonly() || ! $class->namespacedName instanceof Node\Name) {
+            return null;
+        }
+
+        $className = $class->namespacedName->toString();
+
+        if (! str_starts_with($className, 'App\\Domain\\') || ! $this->reflectionProvider->hasClass($className)) {
+            return null;
         }
 
         $repositoryName = $this->deriveRepositoryName($className);
 
         if (! $this->reflectionProvider->hasClass($repositoryName)) {
-            return [];
+            return null;
         }
 
-        $classReflection = $this->reflectionProvider->getClass($className);
-        $nativeReflection = $classReflection->getNativeReflection();
+        $nativeReflection = $this->reflectionProvider->getClass($className)->getNativeReflection();
 
         if ($nativeReflection->getAttributes(TenantAgnostic::class) !== []) {
-            return [];
+            return null;
         }
 
-        if ($this->hasOrganizationIdParameter($node)) {
-            return [];
-        }
-
-        return [
-            RuleErrorBuilder::message(
-                sprintf(
-                    'Aggregate %s must have an $organizationId constructor parameter or use #[TenantAgnostic] attribute.',
-                    $className,
-                ),
-            )
-                ->identifier('domain.aggregateRequiresOrganizationId')
-                ->build(),
-        ];
+        return $className;
     }
 
     private function deriveRepositoryName(string $className): string
@@ -81,14 +105,37 @@ final readonly class AggregateRequiresOrganizationIdRule implements Rule
         return implode('\\', $parts).'\\'.$shortName.'Repository';
     }
 
-    private function hasOrganizationIdParameter(Class_ $class): bool
+    private function findOrganizationIdParameter(Class_ $class): ?Node\Param
     {
         $constructor = $class->getMethod('__construct');
 
         if (! $constructor instanceof Node\Stmt\ClassMethod) {
-            return false;
+            return null;
         }
 
-        return array_any($constructor->params, fn ($param): bool => $param->var instanceof Node\Expr\Variable && $param->var->name === 'organizationId');
+        foreach ($constructor->params as $param) {
+            if ($param->var instanceof Node\Expr\Variable && $param->var->name === 'organizationId') {
+                return $param;
+            }
+        }
+
+        return null;
+    }
+
+    private function isNullableParam(Node\Param $param): bool
+    {
+        if ($param->type instanceof Node\NullableType) {
+            return true;
+        }
+
+        if ($param->type instanceof Node\UnionType) {
+            return array_any(
+                $param->type->types,
+                static fn (Node $type): bool => $type instanceof Node\Identifier && $type->name === 'null',
+            );
+        }
+
+        return $param->default instanceof Node\Expr\ConstFetch
+            && $param->default->name->toLowerString() === 'null';
     }
 }

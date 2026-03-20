@@ -87,6 +87,8 @@ use App\Domain\User\Query\GetUserById\GetUserByIdHandler;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use App\Domain\User\Query\ListUsers\ListUsersHandler;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
+use App\Domain\User\Query\SearchUsers\SearchUsersHandler;
+use App\Domain\User\Query\SearchUsers\SearchUsersQuery;
 use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnOverrideRemoved;
 use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnOverrideSet;
 use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnRoleAssigned;
@@ -161,6 +163,7 @@ final class BusServiceProvider extends ServiceProvider
                 GetUserByIdQuery::class => GetUserByIdHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
+                SearchUsersQuery::class => SearchUsersHandler::class,
                 ListRolesQuery::class => ListRolesHandler::class,
                 GetRoleByIdQuery::class => GetRoleByIdHandler::class,
                 GetUserRolesQuery::class => GetUserRolesHandler::class,

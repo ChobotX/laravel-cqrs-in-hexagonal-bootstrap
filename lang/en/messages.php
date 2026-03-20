@@ -51,6 +51,9 @@ return [
         'roles_subtitle' => 'Assign roles to this user',
         'roles_search' => 'Search roles...',
         'permissions_action' => 'Permissions',
+        'organizations' => 'Organizations',
+        'organizations_subtitle' => 'Manage organization memberships',
+        'organizations_search' => 'Search organizations...',
     ],
 
     'dialog' => [
@@ -166,6 +169,8 @@ return [
         'switch' => 'Switch Organization',
         'add_organization' => 'Add Organization',
         'remove_organization' => 'Remove Organization',
+        'search_member' => 'Search users...',
+        'no_results' => 'No results found.',
         'no_organizations' => 'Not a member of any organization.',
     ],
 

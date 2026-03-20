@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization;
 
+use App\Application\Organization\AllowNullableOrganizationId;
+
+#[AllowNullableOrganizationId(reason: 'System roles are org-agnostic')]
 final readonly class Role
 {
     /**
