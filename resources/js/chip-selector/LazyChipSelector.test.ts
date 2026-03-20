@@ -264,6 +264,17 @@ describe('LazyChipSelector', () => {
         expect(wrapper.findAll('[role="option"]')).toHaveLength(0);
     });
 
+    it('maps description field to badge when email is absent', async () => {
+        createFetchMock({ data: [{ id: 'role-1', name: 'Editor', description: 'Edits content' }] });
+        const wrapper = mountLazy();
+        const input = wrapper.find('input[role="combobox"]');
+
+        await input.trigger('focus');
+        await flushPromises();
+
+        expect(wrapper.text()).toContain('(Edits content)');
+    });
+
     it('omits badge when email is empty string', async () => {
         createFetchMock({ data: [{ id: 'org-1', name: 'No Email Org', email: '' }] });
         const wrapper = mountLazy();

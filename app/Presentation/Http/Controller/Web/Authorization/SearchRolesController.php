@@ -38,7 +38,7 @@ final readonly class SearchRolesController
         $data = array_map(fn (Role $role): array => [
             'id' => $role->id->value,
             'name' => $role->name->value,
-            'email' => $role->description,
+            'description' => $role->description,
         ], $filtered);
 
         return new JsonResponse(['data' => $data]);

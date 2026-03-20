@@ -9,11 +9,11 @@ use Stringable;
 
 final readonly class OrganizationSlug implements Stringable
 {
-    private const string SLUG_PATTERN = '/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/';
+    public const string SLUG_PATTERN = '/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/';
 
-    private const int MIN_LENGTH = 2;
+    public const int MIN_LENGTH = 2;
 
-    private const int MAX_LENGTH = 63;
+    public const int MAX_LENGTH = 63;
 
     public function __construct(
         public string $value,

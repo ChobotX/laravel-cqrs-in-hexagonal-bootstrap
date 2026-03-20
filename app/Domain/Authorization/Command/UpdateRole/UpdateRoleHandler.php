@@ -7,17 +7,12 @@ namespace App\Domain\Authorization\Command\UpdateRole;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\AccessScope;
-use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Event\RoleUpdated;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
-use App\Domain\Authorization\RolePermission;
+use App\Domain\Authorization\RolePermissionMapper;
 use App\Domain\Authorization\RoleRepository;
 use DateTimeImmutable;
 
@@ -37,19 +32,8 @@ final readonly class UpdateRoleHandler implements CommandHandler
             throw new RoleNotFoundException($command->id);
         }
 
-        $rolePermissions = [];
-
-        foreach ($command->permissions as $permissionData) {
-            $parts = explode('.', $permissionData['permission']);
-            $module = new Module($parts[0]);
-            $feature = isset($parts[1]) ? new Feature($parts[1]) : null;
-            $action = isset($parts[2]) ? Action::from($parts[2]) : null;
-
-            $rolePermissions[] = new RolePermission(
-                new PermissionKey($module, $feature, $action),
-                AccessScope::from($permissionData['scope']),
-            );
-        }
+        $rolePermissionMapper = new RolePermissionMapper;
+        $rolePermissions = array_map($rolePermissionMapper->map(...), $command->permissions);
 
         $updatedRole = new Role(
             id: $existing->id,

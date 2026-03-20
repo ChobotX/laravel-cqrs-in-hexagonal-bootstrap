@@ -21,11 +21,13 @@ use Illuminate\View\View;
 #[RequiresPermission('users.list.update')]
 final readonly class ShowEditUserController
 {
+    /** @param array<string, array{features: array<string, array{actions: list<string>}>}> $availableModules */
     public function __construct(
         private QueryBus $queryBus,
         private OrganizationContext $organizationContext,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
+        private array $availableModules,
     ) {}
 
     public function __invoke(string $userId): View
@@ -48,7 +50,7 @@ final readonly class ShowEditUserController
             $isSuperAdmin = array_any($assignerPermissions, fn ($p): bool => $p->source === 'system:super-admin');
 
             $roleAssignmentPolicy = new RoleAssignmentPolicy;
-            $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules(), $isSuperAdmin);
+            $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules, $isSuperAdmin);
             $userRoleIds = array_map(fn (Role $role): string => $role->id->value, $userRoles);
         }
 
@@ -68,14 +70,5 @@ final readonly class ShowEditUserController
             'canManageOrganizations' => $canManageOrganizations,
             'userOrganizations' => $userOrganizations,
         ]);
-    }
-
-    /** @return array<string, array{features: array<string, array{actions: list<string>}>}> */
-    private function availableModules(): array
-    {
-        /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */
-        $modules = config('authorization.modules');
-
-        return $modules;
     }
 }

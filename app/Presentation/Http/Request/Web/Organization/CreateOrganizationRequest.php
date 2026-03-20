@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Request\Web\Organization;
 
 use App\Domain\Organization\Command\CreateOrganization\CreateOrganizationCommand;
+use App\Domain\Organization\OrganizationSlug;
 use App\Presentation\Http\Request\FormRequest;
 use Illuminate\Support\Str;
 
@@ -15,7 +16,7 @@ final class CreateOrganizationRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'slug' => ['required', 'string', 'max:63', 'regex:/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/', 'min:2'],
+            'slug' => ['required', 'string', 'max:'.OrganizationSlug::MAX_LENGTH, 'regex:'.OrganizationSlug::SLUG_PATTERN, 'min:'.OrganizationSlug::MIN_LENGTH],
             'description' => ['nullable', 'string'],
         ];
     }

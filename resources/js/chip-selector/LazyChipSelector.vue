@@ -61,10 +61,10 @@ function fetchResults(term: string): void {
         .then((response) => response.json())
         .then((json) => {
             fetchedOptions.value = (json.data ?? []).map(
-                (item: { id: string; name: string; email?: string }): ChipOption => ({
+                (item: { id: string; name: string; email?: string; description?: string }): ChipOption => ({
                     id: item.id,
                     name: item.name,
-                    badge: item.email || undefined,
+                    badge: item.email || item.description || undefined,
                 }),
             );
             isLoading.value = false;

@@ -28,12 +28,14 @@ use Illuminate\Http\RedirectResponse;
 #[RequiresPermission('users.list.update')]
 final readonly class UpdateUserController
 {
+    /** @param array<string, array{features: array<string, array{actions: list<string>}>}> $availableModules */
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
         private OrganizationContext $organizationContext,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
+        private array $availableModules,
     ) {}
 
     public function __invoke(UpdateUserRequest $updateUserRequest): RedirectResponse
@@ -71,7 +73,7 @@ final readonly class UpdateUserController
 
         $allRoles = $this->queryBus->dispatch(new ListRolesQuery($orgId));
         $roleAssignmentPolicy = new RoleAssignmentPolicy;
-        $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules(), $isSuperAdmin);
+        $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules, $isSuperAdmin);
         $assignableRoleIds = array_map(fn (Role $role): string => $role->id->value, $assignableRoles);
 
         $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($targetUserId, $orgId));
@@ -118,14 +120,5 @@ final readonly class UpdateUserController
         foreach ($toRemove as $removeOrgId) {
             $this->commandBus->dispatch(new RemoveMemberCommand($targetUserId, $removeOrgId));
         }
-    }
-
-    /** @return array<string, array{features: array<string, array{actions: list<string>}>}> */
-    private function availableModules(): array
-    {
-        /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */
-        $modules = config('authorization.modules');
-
-        return $modules;
     }
 }

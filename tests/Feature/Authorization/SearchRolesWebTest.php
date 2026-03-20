@@ -93,7 +93,7 @@ it('returns correct JSON structure', function (): void {
         ->assertOk();
 
     $response->assertJsonCount(1, 'data')
-        ->assertJsonStructure(['data' => [['id', 'name', 'email']]]);
+        ->assertJsonStructure(['data' => [['id', 'name', 'description']]]);
 });
 
 it('returns empty results for non-matching query', function (): void {
