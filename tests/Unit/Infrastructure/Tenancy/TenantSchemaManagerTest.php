@@ -71,6 +71,21 @@ it('purges when host changes', function (): void {
     expect(config('database.connections.tenant.host'))->toBe($tenantModel->database_host);
 });
 
+it('creates and drops schema via landlord connection', function (): void {
+    $tenantSchemaManager = app(TenantSchemaManager::class);
+    $tenantSchemaManager->createSchema('tenant_drop_test');
+
+    $exists = Illuminate\Support\Facades\DB::connection('landlord')
+        ->selectOne("SELECT 1 FROM information_schema.schemata WHERE schema_name = 'tenant_drop_test'");
+    expect($exists)->not->toBeNull();
+
+    $tenantSchemaManager->dropSchema('tenant_drop_test');
+
+    $exists = Illuminate\Support\Facades\DB::connection('landlord')
+        ->selectOne("SELECT 1 FROM information_schema.schemata WHERE schema_name = 'tenant_drop_test'");
+    expect($exists)->toBeNull();
+});
+
 it('resets search_path to public and purges', function (): void {
     config(['database.connections.tenant.search_path' => 'tenant_test,public']);
 

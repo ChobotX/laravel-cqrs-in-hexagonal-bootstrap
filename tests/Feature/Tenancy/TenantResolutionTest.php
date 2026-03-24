@@ -73,3 +73,10 @@ it('throws for inactive tenant domain', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapByDomain('test');
 })->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+it('throws for inactive tenant slug', function (): void {
+    TenantModel::where('slug', 'test')->update(['is_active' => false]);
+
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapBySlug('test');
+})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
