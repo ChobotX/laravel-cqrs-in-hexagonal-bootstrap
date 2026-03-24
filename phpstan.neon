@@ -7,6 +7,11 @@ includes:
 
 services:
     -
+        class: Tests\Architecture\ArchitectureTest
+        autowired: false
+        tags:
+            - phpat.test
+    -
         class: Tests\Architecture\PHPStan\NoStaticMethodDeclarationsInDomainRule
         tags:
             - phpstan.rules.rule
@@ -90,6 +95,10 @@ services:
         class: Tests\Architecture\PHPStan\ConsoleCommandRequiresTenantAttributeRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoGenericExceptionsRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:
@@ -99,6 +108,8 @@ parameters:
     tmpDir: storage/phpstan
     checkBenevolentUnionTypes: true
     checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    phpat:
+        ignore_built_in_classes: true
     cognitive_complexity:
         class: 30
         function: 7
@@ -147,6 +158,7 @@ parameters:
                 - return.type
             paths:
                 - tests/Unit/Infrastructure/Authorization/RequestAuthenticatedUserTest.php
+                - tests/Helper/FakeArtisanKernel.php
         # Pest loads traits at runtime via uses(), invisible to PHPStan's static analysis.
         -
             identifier: trait.unused

@@ -2,28 +2,27 @@
 
 declare(strict_types=1);
 
-use Illuminate\Contracts\Console\Kernel as ArtisanContract;
+use App\Presentation\Console\Tenancy\SetupCommand;
+use Illuminate\Console\OutputStyle;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\NullOutput;
+use Tests\Helper\FakeArtisanKernel;
 
 it('runs setup successfully', function (): void {
-    $realKernel = app(ArtisanContract::class);
+    $fake = new FakeArtisanKernel;
+    $command = new SetupCommand;
 
-    $legacyMock = Mockery::mock($realKernel)->makePartial();
+    $command->setLaravel($this->app);
 
-    $legacyMock->shouldReceive('call')
-        ->with('migrate', Mockery::type('array'))
-        ->once()
-        ->andReturn(0);
+    $input = new ArrayInput([]);
+    $output = new OutputStyle($input, new NullOutput);
+    $command->setInput($input);
+    $command->setOutput($output);
 
-    $legacyMock->shouldReceive('call')
-        ->with('db:seed', Mockery::type('array'))
-        ->once()
-        ->andReturn(0);
+    $exitCode = $command->handle($fake);
 
-    $legacyMock->shouldReceive('output')
-        ->andReturn('');
-
-    $this->app->instance(ArtisanContract::class, $legacyMock);
-
-    $this->artisan('tenant:setup')
-        ->assertSuccessful();
+    expect($exitCode)->toBe(0)
+        ->and($fake->calls)->toHaveCount(2)
+        ->and($fake->calls[0])->toBe('migrate')
+        ->and($fake->calls[1])->toBe('db:seed');
 });

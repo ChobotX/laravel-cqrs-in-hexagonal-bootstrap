@@ -12,8 +12,8 @@ return new class extends Migration
     {
         Schema::create('impersonation_sessions', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->uuid('impersonator_user_id');
-            $table->uuid('impersonated_user_id');
+            $table->uuid('impersonator_user_id')->nullable();
+            $table->uuid('impersonated_user_id')->nullable();
             $table->string('token')->unique();
             $table->timestamp('started_at');
             $table->timestamp('ended_at')->nullable();
@@ -21,8 +21,8 @@ return new class extends Migration
             $table->index('token');
             $table->index(['impersonator_user_id', 'ended_at']);
 
-            $table->foreign('impersonator_user_id')->references('id')->on('users');
-            $table->foreign('impersonated_user_id')->references('id')->on('users');
+            $table->foreign('impersonator_user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('impersonated_user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

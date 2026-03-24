@@ -6,7 +6,9 @@ namespace App\Infrastructure\Provider;
 
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
+use App\Contract\Tenancy\TenantProvisioner;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
+use App\Infrastructure\Tenancy\EloquentTenantProvisioner;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
 use App\Infrastructure\Tenancy\TenantBootstrapperImpl;
 use App\Infrastructure\Tenancy\TenantMigrator;
@@ -33,6 +35,7 @@ final class TenancyServiceProvider extends ServiceProvider
         $this->app->singleton(TenantSchemaManager::class);
         $this->app->singleton(TenantResolver::class);
         $this->app->singleton(TenantMigrator::class);
+        $this->app->bind(TenantProvisioner::class, EloquentTenantProvisioner::class);
     }
 
     public function boot(): void

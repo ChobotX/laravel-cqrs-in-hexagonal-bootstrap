@@ -23,6 +23,8 @@ return new class extends Migration
             $table->index('created_at');
 
             $table->foreign('actor_user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('acting_as_user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('target_user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

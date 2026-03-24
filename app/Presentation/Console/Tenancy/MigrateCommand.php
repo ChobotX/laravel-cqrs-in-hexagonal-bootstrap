@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console\Tenancy;
 
+use App\Application\Bus\CommandBus;
 use App\Application\Tenancy\TenantAgnosticCommand;
-use App\Infrastructure\Tenancy\TenantMigrator;
-use App\Infrastructure\Tenancy\TenantResolver;
+use App\Domain\Tenancy\Command\MigrateAllTenants\MigrateAllTenantsCommand;
+use App\Domain\Tenancy\Command\MigrateTenant\MigrateTenantCommand;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 
@@ -19,20 +20,19 @@ final class MigrateCommand extends Command
 
     protected $description = 'Run tenant migrations for one or all active tenants';
 
-    public function handle(TenantMigrator $tenantMigrator, TenantResolver $tenantResolver): int
+    public function handle(CommandBus $commandBus): int
     {
         $slug = $this->nullableStringOption('tenant');
 
         if ($slug !== null) {
-            $tenant = $tenantResolver->resolveBySlug($slug);
-            $this->info(sprintf('Migrating tenant "%s" (schema: %s)...', $tenant->name, $tenant->schema_name));
-            $tenantMigrator->setupTenant($tenant);
+            $this->info(sprintf('Migrating tenant "%s"...', $slug));
+            $commandBus->dispatch(new MigrateTenantCommand(slug: $slug));
 
             return self::SUCCESS;
         }
 
         $this->info('Migrating all active tenants...');
-        $tenantMigrator->migrateAll();
+        $commandBus->dispatch(new MigrateAllTenantsCommand);
         $this->info('All tenants migrated.');
 
         return self::SUCCESS;

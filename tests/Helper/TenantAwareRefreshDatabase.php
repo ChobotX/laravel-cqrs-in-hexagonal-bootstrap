@@ -20,6 +20,10 @@ trait TenantAwareRefreshDatabase
             static::$tenantMigrationsRun = true;
         }
 
+        // Reset all scoped instances to ensure clean tenant context per test.
+        // Without this, root-domain tests would see stale tenant context from previous tests.
+        app()->forgetScopedInstances();
+
         $this->switchToTenantSchema('tenant_test');
         $this->setTenantContext();
         $this->beginDatabaseTransactions();

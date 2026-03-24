@@ -8,7 +8,6 @@ use App\Application\Tenancy\TenantAwareCommand;
 use App\Contract\Tenancy\TenantBootstrapper;
 use Illuminate\Console\Events\CommandStarting;
 use ReflectionClass;
-use RuntimeException;
 
 final readonly class ConsoleTenantBootstrap
 {
@@ -34,10 +33,7 @@ final readonly class ConsoleTenantBootstrap
         $tenantSlug = $commandStarting->input->getOption('tenant');
 
         if ($tenantSlug === null || $tenantSlug === '') {
-            throw new RuntimeException(sprintf(
-                'Command %s requires --tenant option (marked with #[TenantAwareCommand]).',
-                $commandClass,
-            ));
+            throw new MissingTenantOptionException($commandClass);
         }
 
         $this->tenantBootstrapper->bootstrapBySlug($tenantSlug);

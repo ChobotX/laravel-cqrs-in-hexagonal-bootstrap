@@ -9,6 +9,8 @@ use Illuminate\Database\DatabaseManager;
 
 final readonly class TenantSchemaManager
 {
+    private const string SCHEMA_NAME_PATTERN = '/^[a-z_][a-z0-9_]{0,62}$/';
+
     public function __construct(
         private DatabaseManager $databaseManager,
     ) {}
@@ -33,12 +35,16 @@ final readonly class TenantSchemaManager
 
     public function createSchema(string $schemaName): void
     {
+        $this->assertValidSchemaName($schemaName);
+
         $this->databaseManager->connection('landlord')
             ->statement(sprintf('CREATE SCHEMA IF NOT EXISTS "%s"', $schemaName));
     }
 
     public function dropSchema(string $schemaName): void
     {
+        $this->assertValidSchemaName($schemaName);
+
         $this->databaseManager->connection('landlord')
             ->statement(sprintf('DROP SCHEMA IF EXISTS "%s" CASCADE', $schemaName));
     }
@@ -51,13 +57,21 @@ final readonly class TenantSchemaManager
 
     private function connectionDetailsChanged(TenantModel $tenantModel): bool
     {
-        /** @var array{search_path: string, host: string, port: string|int, database: string, username: string} $cfg */
+        /** @var array{search_path: string, host: string, port: string|int, database: string, username: string, password: string} $cfg */
         $cfg = config('database.connections.tenant');
 
         return $cfg['search_path'] !== $tenantModel->schema_name.',public'
             || $cfg['host'] !== $tenantModel->database_host
             || (string) $cfg['port'] !== (string) $tenantModel->database_port
             || $cfg['database'] !== $tenantModel->database_name
-            || $cfg['username'] !== $tenantModel->database_username;
+            || $cfg['username'] !== $tenantModel->database_username
+            || $cfg['password'] !== $tenantModel->database_password;
+    }
+
+    private function assertValidSchemaName(string $schemaName): void
+    {
+        if (preg_match(self::SCHEMA_NAME_PATTERN, $schemaName) !== 1) {
+            throw new InvalidSchemaNameException($schemaName);
+        }
     }
 }

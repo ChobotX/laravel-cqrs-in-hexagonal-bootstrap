@@ -5,84 +5,94 @@ declare(strict_types=1);
 use App\Application\Tenancy\TenantAwareCommand;
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
+use App\Infrastructure\Tenancy\MissingTenantOptionException;
 use Illuminate\Console\Events\CommandStarting;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\NullOutput;
 
-function fakeBootstrapper(): TenantBootstrapper
+uses()->group('unit');
+
+function createEventForConsole(string $commandClass, ?string $tenantValue = null): CommandStarting
 {
-    return new class implements TenantBootstrapper
-    {
-        public ?string $bootstrappedSlug = null;
+    $params = $tenantValue !== null ? ['--tenant' => $tenantValue] : [];
+    $input = new ArrayInput($params);
+    $input->bind(new InputDefinition([
+        new InputOption('tenant', null, InputOption::VALUE_OPTIONAL),
+    ]));
 
-        public ?string $bootstrappedDomain = null;
-
-        public bool $wasReset = false;
-
-        public function bootstrapByDomain(string $domain): void
-        {
-            $this->bootstrappedDomain = $domain;
-        }
-
-        public function bootstrapBySlug(string $slug): void
-        {
-            $this->bootstrappedSlug = $slug;
-        }
-
-        public function reset(): void
-        {
-            $this->wasReset = true;
-        }
-    };
+    return new CommandStarting($commandClass, $input, new NullOutput);
 }
 
 it('skips when command class does not exist', function (): void {
-    $consoleTenantBootstrap = new ReflectionClass(ConsoleTenantBootstrap::class)->newInstanceWithoutConstructor();
-    $event = new CommandStarting('App\\NonExistent\\FakeCommand', new ArrayInput([]), new NullOutput);
-    $consoleTenantBootstrap->handle($event);
-    expect(true)->toBeTrue();
+    $fake = new FakeBootstrapper;
+    $bootstrap = new ConsoleTenantBootstrap($fake);
+
+    $bootstrap->handle(new CommandStarting(
+        'App\\NonExistent\\FakeCommand',
+        new ArrayInput([]),
+        new NullOutput,
+    ));
+
+    expect($fake->bootstrappedSlug)->toBeNull();
 });
 
 it('skips when command does not have TenantAwareCommand attribute', function (): void {
-    $consoleTenantBootstrap = new ReflectionClass(ConsoleTenantBootstrap::class)->newInstanceWithoutConstructor();
+    $fake = new FakeBootstrapper;
+    $bootstrap = new ConsoleTenantBootstrap($fake);
+
     $commandClass = (new class {})::class;
-    $event = new CommandStarting($commandClass, new ArrayInput([]), new NullOutput);
-    $consoleTenantBootstrap->handle($event);
-    expect(true)->toBeTrue();
+
+    $bootstrap->handle(new CommandStarting($commandClass, new ArrayInput([]), new NullOutput));
+
+    expect($fake->bootstrappedSlug)->toBeNull();
 });
 
-it('throws RuntimeException when --tenant is missing', function (): void {
-    $consoleTenantBootstrap = new ReflectionClass(ConsoleTenantBootstrap::class)->newInstanceWithoutConstructor();
-    $commandClass = (new #[TenantAwareCommand] class {})::class;
-    $input = new ArrayInput([]);
-    $input->bind(new Symfony\Component\Console\Input\InputDefinition([
-        new Symfony\Component\Console\Input\InputOption('tenant', null, Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL),
-    ]));
-    $event = new CommandStarting($commandClass, $input, new NullOutput);
-    $consoleTenantBootstrap->handle($event);
-})->throws(RuntimeException::class, 'requires --tenant option');
+it('throws MissingTenantOptionException when --tenant is missing', function (): void {
+    $fake = new FakeBootstrapper;
+    $bootstrap = new ConsoleTenantBootstrap($fake);
 
-it('throws RuntimeException when --tenant is empty string', function (): void {
-    $consoleTenantBootstrap = new ReflectionClass(ConsoleTenantBootstrap::class)->newInstanceWithoutConstructor();
     $commandClass = (new #[TenantAwareCommand] class {})::class;
-    $input = new ArrayInput(['--tenant' => '']);
-    $input->bind(new Symfony\Component\Console\Input\InputDefinition([
-        new Symfony\Component\Console\Input\InputOption('tenant', null, Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL),
-    ]));
-    $event = new CommandStarting($commandClass, $input, new NullOutput);
-    $consoleTenantBootstrap->handle($event);
-})->throws(RuntimeException::class, 'requires --tenant option');
+
+    $bootstrap->handle(createEventForConsole($commandClass));
+})->throws(MissingTenantOptionException::class, 'requires --tenant option');
+
+it('throws MissingTenantOptionException when --tenant is empty string', function (): void {
+    $fake = new FakeBootstrapper;
+    $bootstrap = new ConsoleTenantBootstrap($fake);
+
+    $commandClass = (new #[TenantAwareCommand] class {})::class;
+
+    $bootstrap->handle(createEventForConsole($commandClass, ''));
+})->throws(MissingTenantOptionException::class, 'requires --tenant option');
 
 it('bootstraps by slug when command has TenantAwareCommand and --tenant option', function (): void {
-    $tenantBootstrapper = fakeBootstrapper();
-    $bootstrap = new ConsoleTenantBootstrap($tenantBootstrapper);
-    $commandClass = (new #[TenantAwareCommand] class {})::class;
-    $input = new ArrayInput(['--tenant' => 'alpha']);
-    $input->bind(new Symfony\Component\Console\Input\InputDefinition([
-        new Symfony\Component\Console\Input\InputOption('tenant', null, Symfony\Component\Console\Input\InputOption::VALUE_OPTIONAL),
-    ]));
-    $event = new CommandStarting($commandClass, $input, new NullOutput);
-    $bootstrap->handle($event);
+    $fake = new FakeBootstrapper;
+    $bootstrap = new ConsoleTenantBootstrap($fake);
 
-    expect($tenantBootstrapper)->toHaveProperty('bootstrappedSlug', 'alpha');
+    $commandClass = (new #[TenantAwareCommand] class {})::class;
+
+    $bootstrap->handle(createEventForConsole($commandClass, 'alpha'));
+
+    expect($fake->bootstrappedSlug)->toBe('alpha');
 });
+
+final class FakeBootstrapper implements TenantBootstrapper
+{
+    public ?string $bootstrappedSlug = null;
+
+    public ?string $bootstrappedDomain = null;
+
+    public function bootstrapByDomain(string $domain): void
+    {
+        $this->bootstrappedDomain = $domain;
+    }
+
+    public function bootstrapBySlug(string $slug): void
+    {
+        $this->bootstrappedSlug = $slug;
+    }
+
+    public function reset(): void {}
+}

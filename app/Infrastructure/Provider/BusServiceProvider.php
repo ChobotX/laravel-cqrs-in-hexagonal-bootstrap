@@ -72,6 +72,12 @@ use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersHandler;
 use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersQuery;
 use App\Domain\Team\Query\ListTeams\ListTeamsHandler;
 use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Tenancy\Command\CreateTenant\CreateTenantCommand;
+use App\Domain\Tenancy\Command\CreateTenant\CreateTenantHandler;
+use App\Domain\Tenancy\Command\MigrateAllTenants\MigrateAllTenantsCommand;
+use App\Domain\Tenancy\Command\MigrateAllTenants\MigrateAllTenantsHandler;
+use App\Domain\Tenancy\Command\MigrateTenant\MigrateTenantCommand;
+use App\Domain\Tenancy\Command\MigrateTenant\MigrateTenantHandler;
 use App\Domain\User\Command\CreateUser\CreateUserCommand;
 use App\Domain\User\Command\CreateUser\CreateUserHandler;
 use App\Domain\User\Command\DeleteUser\DeleteUserCommand;
@@ -147,6 +153,9 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteTeamCommand::class => DeleteTeamHandler::class,
                 AddTeamMemberCommand::class => AddTeamMemberHandler::class,
                 RemoveTeamMemberCommand::class => RemoveTeamMemberHandler::class,
+                CreateTenantCommand::class => CreateTenantHandler::class,
+                MigrateTenantCommand::class => MigrateTenantHandler::class,
+                MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

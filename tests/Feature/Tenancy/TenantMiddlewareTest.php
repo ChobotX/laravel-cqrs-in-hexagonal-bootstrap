@@ -30,6 +30,13 @@ it('allows root registration page without tenant', function (): void {
         ->assertOk();
 });
 
+it('skips tenant resolution for www subdomain', function (): void {
+    app()->forgetScopedInstances();
+
+    $this->get('http://www.laravel-bootstrap.local/login')
+        ->assertNotFound();
+});
+
 it('resolves tenant and serves login page', function (): void {
     $this->get('http://test.laravel-bootstrap.local/login')
         ->assertOk();

@@ -29,9 +29,15 @@ final readonly class ResolveTenantMiddleware
         /** @var string $rootDomain */
         $rootDomain = config('tenancy.root_domain');
 
-        $subdomain = str_replace('.'.$rootDomain, '', $host);
+        $suffix = '.'.$rootDomain;
 
-        if (in_array($subdomain, [$host, '', 'www'], true)) {
+        if (! str_ends_with($host, $suffix)) {
+            return $next($request);
+        }
+
+        $subdomain = substr($host, 0, -strlen($suffix));
+
+        if ($subdomain === '' || $subdomain === 'www') {
             return $next($request);
         }
 
