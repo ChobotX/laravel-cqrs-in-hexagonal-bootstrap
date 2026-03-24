@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Tenancy;
 
 use App\Application\Tenancy\TenantAwareCommand;
+use App\Contract\Tenancy\TenantBootstrapper;
 use Illuminate\Console\Events\CommandStarting;
 use ReflectionClass;
 use RuntimeException;
@@ -12,7 +13,7 @@ use RuntimeException;
 final readonly class ConsoleTenantBootstrap
 {
     public function __construct(
-        private TenantBootstrapperImpl $tenantBootstrapperImpl,
+        private TenantBootstrapper $tenantBootstrapper,
     ) {}
 
     public function handle(CommandStarting $commandStarting): void
@@ -39,6 +40,6 @@ final readonly class ConsoleTenantBootstrap
             ));
         }
 
-        $this->tenantBootstrapperImpl->bootstrapBySlug($tenantSlug);
+        $this->tenantBootstrapper->bootstrapBySlug($tenantSlug);
     }
 }

@@ -43,3 +43,33 @@ it('throws for unknown slug via CLI', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapBySlug('nonexistent');
 })->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+it('resets tenant context via bootstrapper', function (): void {
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapBySlug('test');
+    $tenantBootstrapper->reset();
+
+    expect(config('database.connections.tenant.search_path'))->toBe('public');
+});
+
+it('resolves tenant by domain via bootstrapper', function (): void {
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapByDomain('test');
+
+    $tenantContext = app(TenantContext::class);
+
+    expect($tenantContext->isResolved())->toBeTrue()
+        ->and($tenantContext->currentTenantSlug())->toBe('test');
+});
+
+it('throws for unknown domain via bootstrapper', function (): void {
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapByDomain('nonexistent');
+})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+
+it('throws for inactive tenant domain', function (): void {
+    TenantModel::where('slug', 'test')->update(['is_active' => false]);
+
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapByDomain('test');
+})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
