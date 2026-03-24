@@ -15,7 +15,6 @@ it('returns record shares for a user', function (): void {
         resourceId: '00000000-0000-0000-0000-000000000099',
         action: Action::Read,
         grantorUserId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     );
 
     $recordShareRepo = new FakeRecordShareRepository;
@@ -25,7 +24,6 @@ it('returns record shares for a user', function (): void {
 
     $result = $handler->handle(new GetRecordSharesQuery(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     ));
 
     expect($result)->toHaveCount(1)
@@ -39,7 +37,6 @@ it('filters by resource type when provided', function (): void {
         resourceId: '00000000-0000-0000-0000-000000000099',
         action: Action::Read,
         grantorUserId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     );
 
     $dealShare = new RecordShare(
@@ -48,7 +45,6 @@ it('filters by resource type when provided', function (): void {
         resourceId: '00000000-0000-0000-0000-000000000088',
         action: Action::Read,
         grantorUserId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     );
 
     $recordShareRepo = new FakeRecordShareRepository;
@@ -59,7 +55,6 @@ it('filters by resource type when provided', function (): void {
 
     $result = $handler->handle(new GetRecordSharesQuery(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000002',
         resourceType: 'contact',
     ));
 
@@ -74,7 +69,6 @@ it('returns empty list when no shares exist', function (): void {
 
     $result = $handler->handle(new GetRecordSharesQuery(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     ));
 
     expect($result)->toHaveCount(0);

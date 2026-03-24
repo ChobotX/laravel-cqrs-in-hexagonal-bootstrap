@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Collection;
 it('maps a role model to domain with permissions', function (): void {
     $roleModel = new RoleModel;
     $roleModel->id = '550e8400-e29b-41d4-a716-446655440001';
-    $roleModel->organization_id = 'org-1';
     $roleModel->name = 'Editor';
     $roleModel->description = 'Can edit';
     $roleModel->is_system = false;
@@ -28,7 +27,6 @@ it('maps a role model to domain with permissions', function (): void {
     $role = $mapper->toDomain($roleModel);
 
     expect($role->id->value)->toBe('550e8400-e29b-41d4-a716-446655440001')
-        ->and($role->organizationId)->toBe('org-1')
         ->and($role->name->value)->toBe('Editor')
         ->and($role->description)->toBe('Can edit')
         ->and($role->isSystem)->toBeFalse()
@@ -40,7 +38,6 @@ it('maps a role model to domain with permissions', function (): void {
 it('maps a role model with no loaded permissions to empty array', function (): void {
     $roleModel = new RoleModel;
     $roleModel->id = '550e8400-e29b-41d4-a716-446655440002';
-    $roleModel->organization_id = 'org-1';
     $roleModel->name = 'Viewer';
     $roleModel->description = 'Can view';
     $roleModel->is_system = false;
@@ -54,7 +51,6 @@ it('maps a role model with no loaded permissions to empty array', function (): v
 it('maps permission with null feature and null action', function (): void {
     $roleModel = new RoleModel;
     $roleModel->id = '550e8400-e29b-41d4-a716-446655440003';
-    $roleModel->organization_id = 'org-1';
     $roleModel->name = 'Module Admin';
     $roleModel->description = 'Full module access';
     $roleModel->is_system = false;
@@ -79,7 +75,6 @@ it('maps permission with null feature and null action', function (): void {
 it('maps permission with feature but null action', function (): void {
     $roleModel = new RoleModel;
     $roleModel->id = '550e8400-e29b-41d4-a716-446655440004';
-    $roleModel->organization_id = 'org-1';
     $roleModel->name = 'Feature Admin';
     $roleModel->description = 'Full feature access';
     $roleModel->is_system = false;
@@ -104,7 +99,6 @@ it('maps permission with feature but null action', function (): void {
 it('maps system role', function (): void {
     $roleModel = new RoleModel;
     $roleModel->id = '550e8400-e29b-41d4-a716-446655440005';
-    $roleModel->organization_id = null;
     $roleModel->name = 'Super Admin';
     $roleModel->description = 'System super admin';
     $roleModel->is_system = true;
@@ -113,6 +107,5 @@ it('maps system role', function (): void {
     $mapper = new RoleMapper;
     $role = $mapper->toDomain($roleModel);
 
-    expect($role->isSystem)->toBeTrue()
-        ->and($role->organizationId)->toBeNull();
+    expect($role->isSystem)->toBeTrue();
 });

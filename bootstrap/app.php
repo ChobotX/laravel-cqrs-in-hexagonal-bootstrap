@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Contract\Exception\DomainException;
 use App\Contract\Translation\Translator;
 use App\Presentation\Http\Middleware\CheckPermission;
+use App\Presentation\Http\Middleware\ResolveTenantMiddleware;
 use App\Presentation\Http\Middleware\SetAuthContextMiddleware;
 use App\Presentation\Http\Middleware\SetLocaleMiddleware;
 use App\Presentation\Http\Middleware\SetTraceIdMiddleware;
@@ -27,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ])
     ->withCommands([
         __DIR__.'/../app/Presentation/Console/User',
+        __DIR__.'/../app/Presentation/Console/Tenancy',
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -41,12 +43,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(SetTraceIdMiddleware::class);
         $middleware->trustProxies(at: env('TRUSTED_PROXIES', ''));
         $middleware->redirectTo(guests: '/login', users: '/users');
+        $middleware->web(prepend: [ResolveTenantMiddleware::class]);
         $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([
+            ResolveTenantMiddleware::class,
             Illuminate\Auth\Middleware\Authenticate::class,
             SetAuthContextMiddleware::class,
             CheckPermission::class,
         ]);
+        $middleware->api(prepend: [ResolveTenantMiddleware::class]);
         $middleware->api(append: ['throttle:api']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

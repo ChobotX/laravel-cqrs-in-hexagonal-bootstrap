@@ -13,7 +13,6 @@ it('maps a record share model to domain', function (): void {
     $model->resource_id = 'doc-1';
     $model->action = 'read';
     $model->grantor_user_id = 'grantor-1';
-    $model->organization_id = 'org-1';
 
     $mapper = new RecordShareMapper;
     $recordShare = $mapper->toDomain($model);
@@ -22,8 +21,7 @@ it('maps a record share model to domain', function (): void {
         ->and($recordShare->resourceType)->toBe('document')
         ->and($recordShare->resourceId)->toBe('doc-1')
         ->and($recordShare->action)->toBe(Action::Read)
-        ->and($recordShare->grantorUserId)->toBe('grantor-1')
-        ->and($recordShare->organizationId)->toBe('org-1');
+        ->and($recordShare->grantorUserId)->toBe('grantor-1');
 });
 
 it('maps different action types', function (string $actionValue, Action $expectedAction): void {
@@ -33,7 +31,6 @@ it('maps different action types', function (string $actionValue, Action $expecte
     $model->resource_id = 'doc-1';
     $model->action = $actionValue;
     $model->grantor_user_id = 'grantor-1';
-    $model->organization_id = 'org-1';
 
     $mapper = new RecordShareMapper;
     $recordShare = $mapper->toDomain($model);

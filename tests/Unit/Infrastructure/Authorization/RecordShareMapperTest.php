@@ -13,7 +13,6 @@ it('maps model to domain entity', function (): void {
     $model->resource_id = 'doc-1';
     $model->action = 'read';
     $model->grantor_user_id = 'user-2';
-    $model->organization_id = 'org-1';
 
     $mapper = new RecordShareMapper;
     $recordShare = $mapper->toDomain($model);
@@ -23,5 +22,4 @@ it('maps model to domain entity', function (): void {
     expect($recordShare->resourceId)->toBe('doc-1');
     expect($recordShare->action)->toBe(Action::Read);
     expect($recordShare->grantorUserId)->toBe('user-2');
-    expect($recordShare->organizationId)->toBe('org-1');
 });

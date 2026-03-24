@@ -46,7 +46,6 @@ function policyRole(string $name, array $permissions, bool $isSystem = false): R
 
     return new Role(
         id: new RoleId('550e8400-e29b-41d4-a716-'.substr(str_pad(dechex(crc32($name) & 0xFFFFFFFF), 12, '0', STR_PAD_LEFT), 0, 12)),
-        organizationId: '00000000-0000-0000-0000-000000000001',
         name: new RoleName($name),
         description: $name.' role',
         isSystem: $isSystem,

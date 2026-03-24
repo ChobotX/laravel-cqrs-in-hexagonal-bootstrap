@@ -35,7 +35,7 @@ function modules(): array
 }
 
 /** @param array<string, string> $permissions */
-function makeRole(string $name, array $permissions, bool $isSystem = false, ?string $orgId = null): Role
+function makeRole(string $name, array $permissions, bool $isSystem = false): Role
 {
     $rolePermissions = [];
 
@@ -53,7 +53,6 @@ function makeRole(string $name, array $permissions, bool $isSystem = false, ?str
 
     return new Role(
         id: new RoleId('550e8400-e29b-41d4-a716-'.substr(str_pad(dechex(crc32($name) & 0xFFFFFFFF), 12, '0', STR_PAD_LEFT), 0, 12)),
-        organizationId: $orgId ?? '00000000-0000-0000-0000-000000000001',
         name: new RoleName($name),
         description: $name.' role',
         isSystem: $isSystem,
@@ -104,7 +103,6 @@ it('grants all permissions with all scope for super admin role', function (): vo
 
     $superAdmin = new Role(
         id: new RoleId('550e8400-e29b-41d4-a716-446655440001'),
-        organizationId: null,
         name: new RoleName('Super Admin'),
         description: 'Super Admin',
         isSystem: true,
