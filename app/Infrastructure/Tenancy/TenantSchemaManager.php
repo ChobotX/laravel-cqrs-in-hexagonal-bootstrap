@@ -16,6 +16,8 @@ final readonly class TenantSchemaManager
 
     public function switchTo(TenantModel $tenant): void
     {
+        $needsPurge = $this->connectionDetailsChanged($tenant);
+
         config([
             'database.connections.tenant.host' => $tenant->database_host,
             'database.connections.tenant.port' => $tenant->database_port,
@@ -25,7 +27,18 @@ final readonly class TenantSchemaManager
             'database.connections.tenant.search_path' => $tenant->schema_name,
         ]);
 
-        $this->db->purge('tenant');
+        if ($needsPurge) {
+            $this->db->purge('tenant');
+        }
+    }
+
+    private function connectionDetailsChanged(TenantModel $tenant): bool
+    {
+        return (string) config('database.connections.tenant.search_path') !== $tenant->schema_name
+            || (string) config('database.connections.tenant.host') !== $tenant->database_host
+            || (string) config('database.connections.tenant.port') !== (string) $tenant->database_port
+            || (string) config('database.connections.tenant.database') !== $tenant->database_name
+            || (string) config('database.connections.tenant.username') !== $tenant->database_username;
     }
 
     public function createSchema(string $schemaName): void

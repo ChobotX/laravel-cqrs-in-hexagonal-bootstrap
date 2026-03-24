@@ -33,6 +33,8 @@ final class NoDatabaseTraitsInTestsRule implements Rule
     /** Allowed only in Pest.php for centralized configuration. */
     private const string REFRESH_DATABASE = \Illuminate\Foundation\Testing\RefreshDatabase::class;
 
+    private const string TENANT_AWARE_REFRESH_DATABASE = \Tests\Helper\TenantAwareRefreshDatabase::class;
+
     public function getNodeType(): string
     {
         return Use_::class;
@@ -65,6 +67,14 @@ final class NoDatabaseTraitsInTestsRule implements Rule
                     'RefreshDatabase must not be imported directly — it is applied centrally in Pest.php.',
                 )
                     ->identifier('test.directRefreshDatabase')
+                    ->build();
+            }
+
+            if ($name === self::TENANT_AWARE_REFRESH_DATABASE && ! str_ends_with($file, '/Pest.php')) {
+                $errors[] = RuleErrorBuilder::message(
+                    'TenantAwareRefreshDatabase must not be imported directly — it is applied centrally in Pest.php.',
+                )
+                    ->identifier('test.directTenantAwareRefreshDatabase')
                     ->build();
             }
         }

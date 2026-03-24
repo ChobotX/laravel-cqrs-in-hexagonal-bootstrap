@@ -1,3 +1,11 @@
+# Docker Configuration
+
+## Wildcard Subdomain Routing
+
+Multi-tenancy requires all `*.laravel-bootstrap.local` subdomains to route to the app container. Configure your local reverse proxy or DNS to resolve both `laravel-bootstrap.local` and `*.laravel-bootstrap.local` to the app container's address.
+
+---
+
 # Production Dockerfile TODOs
 
 ## PHP Extensions

@@ -26,6 +26,19 @@ It is made to be as strict as possible for consistent and maintainable AI develo
 
 Enforced by PHPat rules in `tests/Architecture/ArchitectureTest.php`.
 
+## Multi-Tenancy
+
+PostgreSQL schema-based isolation. Each tenant is a self-contained schema with zero cross-tenant data access.
+
+- **Landlord schema** — minimal: `tenants` + `tenant_domains` tables only
+- **Tenant schema** — everything else: users, teams, roles, permissions, jobs, cache
+- **Per-tenant users** — like Slack workspaces. No shared user store. GDPR-compliant by architecture
+- **Subdomain routing** — `tenant-a.laravel-bootstrap.local` resolves to `tenant_alpha` schema
+- **Root domain** — landing page + tenant registration (no auth required)
+- **Domain-agnostic** — `App\Domain` has zero dependencies on `App\Contract\Tenancy` (enforced by PHPat)
+
+See [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) for implementation details.
+
 ---
 
 See [ADR.md](ADR.md) | [QUICKSTART.md](QUICKSTART.md) | [AGENTS.md](AGENTS.md)

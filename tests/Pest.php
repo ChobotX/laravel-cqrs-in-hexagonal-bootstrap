@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Helper\TenantAwareRefreshDatabase;
 use Tests\TestCase;
 
-pest()->extend(TestCase::class)->use(RefreshDatabase::class, Tests\Helper\WithPermissions::class)->in('Feature');
+pest()->extend(TestCase::class)->use(TenantAwareRefreshDatabase::class, Tests\Helper\WithPermissions::class)->in('Feature');

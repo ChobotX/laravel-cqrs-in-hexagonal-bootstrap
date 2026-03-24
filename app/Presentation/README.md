@@ -77,6 +77,17 @@ Permission-gated action button for table rows. Every action button **must** spec
     icon="heroicon-o-eye" :label="__('messages.impersonation.start') . ' ' . $user->name" />
 ```
 
+## Tenant middleware
+
+Two middleware handle tenant resolution, applied globally to `web` and `api` stacks via `bootstrap/app.php`:
+
+- **`ResolveTenantMiddleware`** (prepended) — extracts subdomain from `Host` header, calls `TenantBootstrapper::bootstrapByDomain()` to resolve tenant and switch schema. Root domain requests (no subdomain) pass through without resolving.
+- **`EnsureTenantResolved`** (prepended, after resolve) — returns 404 if no tenant was resolved. Fail-safe: all routes require a tenant unless explicitly excluded.
+
+Root domain routes (`routes/root.php`) opt out via `Route::withoutMiddleware(EnsureTenantResolved::class)`.
+
+Both middleware depend only on Contract interfaces (`TenantBootstrapper`, `TenantContext`) — no Infrastructure imports.
+
 ## `CheckPermission` middleware
 
 Route middleware (`App\Presentation\Http\Middleware\CheckPermission`) that enforces permission gating on controllers via the `#[RequiresPermission]` attribute.
