@@ -6,7 +6,6 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use Illuminate\View\View;
 
@@ -15,14 +14,11 @@ final readonly class ListRolesController
 {
     public function __construct(
         private QueryBus $queryBus,
-        private OrganizationContext $organizationContext,
     ) {}
 
     public function __invoke(): View
     {
-        $organizationId = $this->organizationContext->currentOrganizationId();
-
-        $roles = $this->queryBus->dispatch(new ListRolesQuery($organizationId));
+        $roles = $this->queryBus->dispatch(new ListRolesQuery);
 
         return view('roles.index', ['roles' => $roles]);
     }

@@ -23,7 +23,6 @@ final readonly class SearchUsersHandler implements QueryHandler
     {
         return $this->userRepository->search(
             $query->term,
-            $query->restrictToOrganizationIds,
             $query->excludeUserIds,
             $query->limit,
         );

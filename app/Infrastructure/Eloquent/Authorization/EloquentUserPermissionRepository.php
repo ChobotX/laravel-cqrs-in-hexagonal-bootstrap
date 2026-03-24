@@ -22,15 +22,9 @@ final readonly class EloquentUserPermissionRepository implements UserPermissionR
     ) {}
 
     /** @return list<Role> */
-    public function userRoles(string $userId, string $organizationId): array
+    public function userRoles(string $userId): array
     {
-        $query = UserRoleModel::where('user_id', $userId);
-
-        if ($organizationId !== '') {
-            $query->where('organization_id', $organizationId);
-        }
-
-        $roleIds = $query->pluck('role_id');
+        $roleIds = UserRoleModel::where('user_id', $userId)->pluck('role_id');
 
         $roles = RoleModel::with('permissions')
             ->whereIn('id', $roleIds)
@@ -41,37 +35,33 @@ final readonly class EloquentUserPermissionRepository implements UserPermissionR
         );
     }
 
-    public function assignRole(string $userId, RoleId $roleId, string $organizationId): void
+    public function assignRole(string $userId, RoleId $roleId): void
     {
         $userRoleModel = new UserRoleModel;
         $userRoleModel->user_id = $userId;
         $userRoleModel->role_id = $roleId->value;
-        $userRoleModel->organization_id = $organizationId;
         $userRoleModel->save();
     }
 
-    public function revokeRole(string $userId, RoleId $roleId, string $organizationId): void
+    public function revokeRole(string $userId, RoleId $roleId): void
     {
         UserRoleModel::where('user_id', $userId)
             ->where('role_id', $roleId->value)
-            ->where('organization_id', $organizationId)
             ->delete();
     }
 
-    public function hasRole(string $userId, RoleId $roleId, string $organizationId): bool
+    public function hasRole(string $userId, RoleId $roleId): bool
     {
         return UserRoleModel::where('user_id', $userId)
             ->where('role_id', $roleId->value)
-            ->where('organization_id', $organizationId)
             ->exists();
     }
 
     /** @return list<UserPermissionOverride> */
-    public function userOverrides(string $userId, string $organizationId): array
+    public function userOverrides(string $userId): array
     {
         return array_values(
             UserPermissionOverrideModel::where('user_id', $userId)
-                ->where('organization_id', $organizationId)
                 ->get()
                 ->map(fn (UserPermissionOverrideModel $userPermissionOverrideModel): UserPermissionOverride => new UserPermissionOverride(
                     permissionKey: new PermissionKey(
@@ -88,7 +78,6 @@ final readonly class EloquentUserPermissionRepository implements UserPermissionR
 
     public function setOverride(
         string $userId,
-        string $organizationId,
         PermissionKey $permissionKey,
         OverrideType $overrideType,
         AccessScope $accessScope,
@@ -96,7 +85,6 @@ final readonly class EloquentUserPermissionRepository implements UserPermissionR
         UserPermissionOverrideModel::updateOrCreate(
             [
                 'user_id' => $userId,
-                'organization_id' => $organizationId,
                 'module' => $permissionKey->module->value,
                 'feature' => $permissionKey->feature?->value,
                 'action' => $permissionKey->action?->value,
@@ -108,10 +96,9 @@ final readonly class EloquentUserPermissionRepository implements UserPermissionR
         );
     }
 
-    public function removeOverride(string $userId, string $organizationId, PermissionKey $permissionKey): void
+    public function removeOverride(string $userId, PermissionKey $permissionKey): void
     {
         UserPermissionOverrideModel::where('user_id', $userId)
-            ->where('organization_id', $organizationId)
             ->where('module', $permissionKey->module->value)
             ->where('feature', $permissionKey->feature?->value)
             ->where('action', $permissionKey->action?->value)

@@ -11,7 +11,7 @@
 
             <form class="space-y-5 p-6"
                   method="POST"
-                  action="{{ route('teams.update', [$organization->id, $team->id]) }}">
+                  action="{{ route('teams.update', $team->id) }}">
                 @csrf
                 @method('PUT')
 
@@ -90,7 +90,7 @@
                                       :label="__('messages.teams.update_action')" />
                     <x-primary-button skip-permission
                                       variant="secondary"
-                                      :href="route('teams.index', $organization->id)"
+                                      :href="route('teams.index')"
                                       :label="__('messages.teams.cancel')" />
                 </div>
             </form>

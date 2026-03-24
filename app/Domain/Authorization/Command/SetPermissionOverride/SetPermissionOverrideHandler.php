@@ -38,7 +38,6 @@ final readonly class SetPermissionOverrideHandler implements CommandHandler
 
         $this->userPermissionRepository->setOverride(
             $command->userId,
-            $command->organizationId,
             $permissionKey,
             $overrideType,
             $accessScope,
@@ -46,7 +45,6 @@ final readonly class SetPermissionOverrideHandler implements CommandHandler
 
         $this->eventCollector->collect(new PermissionOverrideSet(
             userId: $command->userId,
-            organizationId: $command->organizationId,
             permission: $command->permission,
             type: $command->type,
             occurredAt: new DateTimeImmutable,

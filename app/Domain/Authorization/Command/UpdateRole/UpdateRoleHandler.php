@@ -37,7 +37,6 @@ final readonly class UpdateRoleHandler implements CommandHandler
 
         $updatedRole = new Role(
             id: $existing->id,
-            organizationId: $existing->organizationId,
             name: new RoleName($command->name),
             description: $command->description,
             isSystem: $existing->isSystem,

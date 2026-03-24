@@ -26,7 +26,7 @@
                          data-exclude-ids="{{ json_encode(collect($userRoles)->map(fn($r) => (string) $r->id)->all()) }}"
                          data-input-name="role_id"
                          data-placeholder="{{ __('messages.users.roles_search') }}"
-                         data-no-results-text="{{ __('messages.organizations.no_results') }}">
+                         data-no-results-text="{{ __('messages.roles.no_results') }}">
                     </div>
                     <x-primary-button skip-permission
                                       :label="__('messages.permissions.add_role')" />

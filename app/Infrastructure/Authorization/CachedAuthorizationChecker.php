@@ -16,11 +16,11 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
         private int $ttl,
     ) {}
 
-    public function can(string $userId, string $organizationId, string $permission): bool
+    public function can(string $userId, string $permission): bool
     {
         /** @var array<string, bool> $permissions */
         $permissions = $this->cacheRepository->remember(
-            $this->permissionsCacheKey($organizationId, $userId),
+            $this->permissionsCacheKey($userId),
             $this->ttl,
             fn (): array => [],
         );
@@ -29,11 +29,11 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
             return $permissions[$permission];
         }
 
-        $result = $this->authorizationChecker->can($userId, $organizationId, $permission);
+        $result = $this->authorizationChecker->can($userId, $permission);
 
         $permissions[$permission] = $result;
         $this->cacheRepository->put(
-            $this->permissionsCacheKey($organizationId, $userId),
+            $this->permissionsCacheKey($userId),
             $permissions,
             $this->ttl,
         );
@@ -41,39 +41,37 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
         return $result;
     }
 
-    public function canWithScope(string $userId, string $organizationId, string $permission): AccessDecision
+    public function canWithScope(string $userId, string $permission): AccessDecision
     {
-        return $this->authorizationChecker->canWithScope($userId, $organizationId, $permission);
+        return $this->authorizationChecker->canWithScope($userId, $permission);
     }
 
     /** @return list<string> */
     public function accessibleResourceIds(
         string $userId,
-        string $organizationId,
         string $resourceType,
         string $action,
     ): array {
-        $key = $this->sharesCacheKey($organizationId, $userId, $resourceType, $action);
+        $key = $this->sharesCacheKey($userId, $resourceType, $action);
 
         /* @var list<string> */
         return $this->cacheRepository->remember(
             $key,
             $this->ttl,
-            fn (): array => $this->authorizationChecker->accessibleResourceIds($userId, $organizationId, $resourceType, $action),
+            fn (): array => $this->authorizationChecker->accessibleResourceIds($userId, $resourceType, $action),
         );
     }
 
-    private function permissionsCacheKey(string $organizationId, string $userId): string
+    private function permissionsCacheKey(string $userId): string
     {
-        return sprintf('auth:perms:%s:%s', $organizationId, $userId);
+        return sprintf('auth:perms:%s', $userId);
     }
 
     private function sharesCacheKey(
-        string $organizationId,
         string $userId,
         string $resourceType,
         string $action,
     ): string {
-        return sprintf('auth:shares:%s:%s:%s:%s', $organizationId, $userId, $resourceType, $action);
+        return sprintf('auth:shares:%s:%s:%s', $userId, $resourceType, $action);
     }
 }

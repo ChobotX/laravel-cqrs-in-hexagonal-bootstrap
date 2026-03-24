@@ -35,16 +35,15 @@ final readonly class AssignRoleToUserHandler implements CommandHandler
             throw new RoleNotFoundException($command->roleId);
         }
 
-        if ($this->userPermissionRepository->hasRole($command->userId, $roleId, $command->organizationId)) {
+        if ($this->userPermissionRepository->hasRole($command->userId, $roleId)) {
             throw new DuplicateRoleAssignmentException($command->userId, $command->roleId);
         }
 
-        $this->userPermissionRepository->assignRole($command->userId, $roleId, $command->organizationId);
+        $this->userPermissionRepository->assignRole($command->userId, $roleId);
 
         $this->eventCollector->collect(new RoleAssignedToUser(
             userId: $command->userId,
             roleId: $command->roleId,
-            organizationId: $command->organizationId,
             occurredAt: new DateTimeImmutable,
         ));
     }

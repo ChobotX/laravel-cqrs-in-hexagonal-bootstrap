@@ -29,7 +29,6 @@ final readonly class ShareRecordHandler implements CommandHandler
             resourceId: $command->resourceId,
             action: Action::from($command->action),
             grantorUserId: $command->grantorUserId,
-            organizationId: $command->organizationId,
         );
 
         $this->recordShareRepository->share($recordShare);
@@ -40,7 +39,6 @@ final readonly class ShareRecordHandler implements CommandHandler
             resourceId: $command->resourceId,
             action: $command->action,
             grantorUserId: $command->grantorUserId,
-            organizationId: $command->organizationId,
             occurredAt: new DateTimeImmutable,
         ));
     }

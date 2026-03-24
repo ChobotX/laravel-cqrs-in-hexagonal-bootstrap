@@ -7,7 +7,6 @@ namespace App\Presentation\Http\Middleware;
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Exception\PermissionDeniedException;
 use Closure;
 use Illuminate\Http\Request;
@@ -19,7 +18,6 @@ final readonly class CheckPermission
     public function __construct(
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
-        private OrganizationContext $organizationContext,
     ) {}
 
     /**
@@ -42,9 +40,8 @@ final readonly class CheckPermission
 
         $permission = $attributes[0]->newInstance()->permission;
         $userId = $this->authenticatedUser->id() ?? '';
-        $orgId = $this->organizationContext->currentOrganizationId();
 
-        if (! $this->authorizationChecker->can($userId, $orgId, $permission)) {
+        if (! $this->authorizationChecker->can($userId, $permission)) {
             throw new PermissionDeniedException($permission);
         }
 

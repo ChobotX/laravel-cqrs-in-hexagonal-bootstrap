@@ -11,7 +11,6 @@ final readonly class PermissionOverrideSet implements DomainEvent
 {
     public function __construct(
         public string $userId,
-        public string $organizationId,
         public string $permission,
         public string $type,
         public DateTimeImmutable $occurredAt,

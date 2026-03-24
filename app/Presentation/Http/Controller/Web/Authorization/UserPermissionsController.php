@@ -6,7 +6,6 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
 use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
@@ -19,18 +18,15 @@ final readonly class UserPermissionsController
 {
     public function __construct(
         private QueryBus $queryBus,
-        private OrganizationContext $organizationContext,
     ) {}
 
     public function __invoke(string $userId): View
     {
-        $orgId = $this->organizationContext->currentOrganizationId();
-
         $user = $this->queryBus->dispatch(new GetUserByIdQuery($userId));
-        $userRoles = $this->queryBus->dispatch(new GetUserRolesQuery($userId, $orgId));
-        $effectivePermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($userId, $orgId));
+        $userRoles = $this->queryBus->dispatch(new GetUserRolesQuery($userId));
+        $effectivePermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($userId));
         $modules = $this->queryBus->dispatch(new GetAvailableModulesQuery);
-        $userOverrides = $this->queryBus->dispatch(new GetUserOverridesQuery($userId, $orgId));
+        $userOverrides = $this->queryBus->dispatch(new GetUserOverridesQuery($userId));
 
         return view('users.permissions', [
             'user' => $user,

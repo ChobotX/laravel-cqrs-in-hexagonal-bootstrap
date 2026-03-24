@@ -16,11 +16,9 @@ final readonly class EloquentRoleRepository implements RoleRepository
     ) {}
 
     /** @return list<Role> */
-    public function findByOrganizationId(string $organizationId): array
+    public function findAll(): array
     {
-        $models = RoleModel::with('permissions')
-            ->where('organization_id', $organizationId)
-            ->get();
+        $models = RoleModel::with('permissions')->get();
 
         return array_values(
             $models->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))->all(),
@@ -38,11 +36,10 @@ final readonly class EloquentRoleRepository implements RoleRepository
         return $this->roleMapper->toDomain($model);
     }
 
-    public function findByNameAndOrganization(string $name, string $organizationId): ?Role
+    public function findByName(string $name): ?Role
     {
         $model = RoleModel::with('permissions')
             ->where('name', $name)
-            ->where('organization_id', $organizationId)
             ->first();
 
         if (! $model instanceof RoleModel) {
@@ -69,7 +66,6 @@ final readonly class EloquentRoleRepository implements RoleRepository
         DB::transaction(function () use ($role): void {
             $roleModel = new RoleModel;
             $roleModel->id = $role->id->value;
-            $roleModel->organization_id = $role->organizationId;
             $roleModel->name = $role->name->value;
             $roleModel->description = $role->description;
             $roleModel->is_system = $role->isSystem;
@@ -90,7 +86,6 @@ final readonly class EloquentRoleRepository implements RoleRepository
     {
         DB::transaction(function () use ($role): void {
             $model = RoleModel::findOrFail($role->id->value);
-            $model->organization_id = $role->organizationId;
             $model->name = $role->name->value;
             $model->description = $role->description;
             $model->is_system = $role->isSystem;

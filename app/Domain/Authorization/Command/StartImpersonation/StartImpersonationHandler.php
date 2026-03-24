@@ -39,7 +39,7 @@ final readonly class StartImpersonationHandler implements CommandHandler
 
     private function isSuperAdmin(string $userId): bool
     {
-        $roles = $this->userPermissionRepository->userRoles($userId, '');
+        $roles = $this->userPermissionRepository->userRoles($userId);
 
         return array_any($roles, fn ($role) => $role->isSystem);
     }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Organization\OrganizationId;
-use App\Domain\Organization\Team;
-use App\Domain\Organization\TeamId;
-use App\Domain\Organization\TeamRepository;
-use App\Domain\Organization\TeamSlug;
+use App\Domain\Team\OrganizationId;
+use App\Domain\Team\Team;
+use App\Domain\Team\TeamId;
+use App\Domain\Team\TeamRepository;
+use App\Domain\Team\TeamSlug;
 
 final class FakeTeamRepository implements TeamRepository
 {

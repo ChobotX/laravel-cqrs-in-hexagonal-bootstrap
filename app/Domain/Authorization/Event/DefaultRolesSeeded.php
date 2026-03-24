@@ -13,7 +13,6 @@ final readonly class DefaultRolesSeeded implements DomainEvent
      * @param  list<string>  $roleIds
      */
     public function __construct(
-        public string $organizationId,
         public array $roleIds,
         public DateTimeImmutable $occurredAt,
     ) {}

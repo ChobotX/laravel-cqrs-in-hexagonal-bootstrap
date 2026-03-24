@@ -12,7 +12,6 @@ final readonly class RemovePermissionOverrideCommand implements Command
 {
     public function __construct(
         public string $userId,
-        public string $organizationId,
         public string $permission,
     ) {}
 }

@@ -19,6 +19,6 @@ final readonly class ListRolesHandler implements QueryHandler
     /** @return list<Role> */
     public function handle(Query $query): array
     {
-        return $this->roleRepository->findByOrganizationId($query->organizationId);
+        return $this->roleRepository->findAll();
     }
 }

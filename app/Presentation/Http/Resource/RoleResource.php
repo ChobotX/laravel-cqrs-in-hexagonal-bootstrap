@@ -21,7 +21,6 @@ final class RoleResource extends JsonResource
     {
         return [
             'id' => $this->resource->id->value,
-            'organization_id' => $this->resource->organizationId,
             'name' => $this->resource->name->value,
             'description' => $this->resource->description,
             'is_system' => $this->resource->isSystem,

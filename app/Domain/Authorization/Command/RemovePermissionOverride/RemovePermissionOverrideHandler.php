@@ -32,13 +32,11 @@ final readonly class RemovePermissionOverrideHandler implements CommandHandler
 
         $this->userPermissionRepository->removeOverride(
             $command->userId,
-            $command->organizationId,
             new PermissionKey($module, $feature, $action),
         );
 
         $this->eventCollector->collect(new PermissionOverrideRemoved(
             userId: $command->userId,
-            organizationId: $command->organizationId,
             permission: $command->permission,
             occurredAt: new DateTimeImmutable,
         ));

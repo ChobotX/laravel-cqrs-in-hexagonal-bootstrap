@@ -17,7 +17,6 @@ final readonly class RecordShareMapper
             resourceId: $recordShareModel->resource_id,
             action: Action::from($recordShareModel->action),
             grantorUserId: $recordShareModel->grantor_user_id,
-            organizationId: $recordShareModel->organization_id,
         );
     }
 }

@@ -6,7 +6,6 @@ namespace App\Presentation\Http\Controller\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use Illuminate\Http\Response;
 
@@ -15,17 +14,13 @@ final readonly class RevokeUserRoleController
 {
     public function __construct(
         private CommandBus $commandBus,
-        private OrganizationContext $organizationContext,
     ) {}
 
     public function __invoke(string $userId, string $roleId): Response
     {
-        $organizationId = $this->organizationContext->currentOrganizationId();
-
         $this->commandBus->dispatch(new RevokeRoleFromUserCommand(
             userId: $userId,
             roleId: $roleId,
-            organizationId: $organizationId,
         ));
 
         return new Response(status: 204);

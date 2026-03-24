@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Authorization;
 
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Command\CreateRole\CreateRoleCommand;
 use App\Presentation\Http\Request\FormRequest;
 use Illuminate\Support\Str;
 
 final class CreateRoleRequest extends FormRequest
 {
-    public function __construct(
-        private readonly OrganizationContext $organizationContext,
-    ) {
-        parent::__construct();
-    }
-
     /**
      * @return array<string, array<string>>
      */
@@ -38,7 +31,6 @@ final class CreateRoleRequest extends FormRequest
 
         return new CreateRoleCommand(
             id: Str::uuid()->toString(),
-            organizationId: $this->organizationContext->currentOrganizationId(),
             name: $this->string('name')->toString(),
             description: $this->string('description')->toString(),
             permissions: $permissions,

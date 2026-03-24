@@ -8,9 +8,4 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Command\Command;
 
 #[SkipPermissionCheck(reason: 'System bootstrap command run during setup')]
-final readonly class SeedDefaultRolesCommand implements Command
-{
-    public function __construct(
-        public string $organizationId,
-    ) {}
-}
+final readonly class SeedDefaultRolesCommand implements Command {}

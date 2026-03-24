@@ -54,43 +54,24 @@ use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesHandler;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Query\ListRoles\ListRolesHandler;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
-use App\Domain\Organization\Command\AddMember\AddMemberCommand;
-use App\Domain\Organization\Command\AddMember\AddMemberHandler;
-use App\Domain\Organization\Command\AddTeamMember\AddTeamMemberCommand;
-use App\Domain\Organization\Command\AddTeamMember\AddTeamMemberHandler;
-use App\Domain\Organization\Command\CreateOrganization\CreateOrganizationCommand;
-use App\Domain\Organization\Command\CreateOrganization\CreateOrganizationHandler;
-use App\Domain\Organization\Command\CreateTeam\CreateTeamCommand;
-use App\Domain\Organization\Command\CreateTeam\CreateTeamHandler;
-use App\Domain\Organization\Command\DeleteOrganization\DeleteOrganizationCommand;
-use App\Domain\Organization\Command\DeleteOrganization\DeleteOrganizationHandler;
-use App\Domain\Organization\Command\DeleteTeam\DeleteTeamCommand;
-use App\Domain\Organization\Command\DeleteTeam\DeleteTeamHandler;
-use App\Domain\Organization\Command\RemoveMember\RemoveMemberCommand;
-use App\Domain\Organization\Command\RemoveMember\RemoveMemberHandler;
-use App\Domain\Organization\Command\RemoveTeamMember\RemoveTeamMemberCommand;
-use App\Domain\Organization\Command\RemoveTeamMember\RemoveTeamMemberHandler;
-use App\Domain\Organization\Command\UpdateOrganization\UpdateOrganizationCommand;
-use App\Domain\Organization\Command\UpdateOrganization\UpdateOrganizationHandler;
-use App\Domain\Organization\Command\UpdateTeam\UpdateTeamCommand;
-use App\Domain\Organization\Command\UpdateTeam\UpdateTeamHandler;
-use App\Domain\Organization\Event\OrganizationCreated;
-use App\Domain\Organization\Query\GetOrganizationById\GetOrganizationByIdHandler;
-use App\Domain\Organization\Query\GetOrganizationById\GetOrganizationByIdQuery;
-use App\Domain\Organization\Query\GetTeamById\GetTeamByIdHandler;
-use App\Domain\Organization\Query\GetTeamById\GetTeamByIdQuery;
-use App\Domain\Organization\Query\GetUserOrganizations\GetUserOrganizationsHandler;
-use App\Domain\Organization\Query\GetUserOrganizations\GetUserOrganizationsQuery;
-use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsHandler;
-use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
-use App\Domain\Organization\Query\ListOrganizationMembers\ListOrganizationMembersHandler;
-use App\Domain\Organization\Query\ListOrganizationMembers\ListOrganizationMembersQuery;
-use App\Domain\Organization\Query\ListOrganizations\ListOrganizationsHandler;
-use App\Domain\Organization\Query\ListOrganizations\ListOrganizationsQuery;
-use App\Domain\Organization\Query\ListTeamMembers\ListTeamMembersHandler;
-use App\Domain\Organization\Query\ListTeamMembers\ListTeamMembersQuery;
-use App\Domain\Organization\Query\ListTeams\ListTeamsHandler;
-use App\Domain\Organization\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
+use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
+use App\Domain\Team\Command\CreateTeam\CreateTeamCommand;
+use App\Domain\Team\Command\CreateTeam\CreateTeamHandler;
+use App\Domain\Team\Command\DeleteTeam\DeleteTeamCommand;
+use App\Domain\Team\Command\DeleteTeam\DeleteTeamHandler;
+use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
+use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberHandler;
+use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
+use App\Domain\Team\Command\UpdateTeam\UpdateTeamHandler;
+use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
+use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
+use App\Domain\Team\Query\GetUserTeams\GetUserTeamsHandler;
+use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersHandler;
+use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersQuery;
+use App\Domain\Team\Query\ListTeams\ListTeamsHandler;
+use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
 use App\Domain\User\Command\CreateUser\CreateUserCommand;
 use App\Domain\User\Command\CreateUser\CreateUserHandler;
 use App\Domain\User\Command\DeleteUser\DeleteUserCommand;
@@ -119,7 +100,6 @@ use App\Infrastructure\Bus\LaravelQueryBus;
 use App\Infrastructure\Bus\Middleware\AuthorizeAction;
 use App\Infrastructure\Bus\Middleware\DispatchCollectedEvents;
 use App\Infrastructure\Bus\QueuedEventBus;
-use App\Infrastructure\Organization\EventHandler\SeedDefaultRolesOnOrganizationCreated;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -140,7 +120,6 @@ final class BusServiceProvider extends ServiceProvider
                 PermissionOverrideRemoved::class => [InvalidateCacheOnOverrideRemoved::class],
                 RoleUpdated::class => [InvalidateCacheOnRoleUpdated::class],
                 RoleDeleted::class => [InvalidateCacheOnRoleDeleted::class],
-                OrganizationCreated::class => [SeedDefaultRolesOnOrganizationCreated::class],
             ],
         ));
 
@@ -163,11 +142,6 @@ final class BusServiceProvider extends ServiceProvider
                 StartImpersonationCommand::class => StartImpersonationHandler::class,
                 StopImpersonationCommand::class => StopImpersonationHandler::class,
                 SeedDefaultRolesCommand::class => SeedDefaultRolesHandler::class,
-                CreateOrganizationCommand::class => CreateOrganizationHandler::class,
-                UpdateOrganizationCommand::class => UpdateOrganizationHandler::class,
-                DeleteOrganizationCommand::class => DeleteOrganizationHandler::class,
-                AddMemberCommand::class => AddMemberHandler::class,
-                RemoveMemberCommand::class => RemoveMemberHandler::class,
                 CreateTeamCommand::class => CreateTeamHandler::class,
                 UpdateTeamCommand::class => UpdateTeamHandler::class,
                 DeleteTeamCommand::class => DeleteTeamHandler::class,
@@ -195,10 +169,6 @@ final class BusServiceProvider extends ServiceProvider
                 GetRecordSharesQuery::class => GetRecordSharesHandler::class,
                 GetAvailableModulesQuery::class => GetAvailableModulesHandler::class,
                 GetActiveImpersonationQuery::class => GetActiveImpersonationHandler::class,
-                ListOrganizationsQuery::class => ListOrganizationsHandler::class,
-                GetOrganizationByIdQuery::class => GetOrganizationByIdHandler::class,
-                GetUserOrganizationsQuery::class => GetUserOrganizationsHandler::class,
-                ListOrganizationMembersQuery::class => ListOrganizationMembersHandler::class,
                 ListTeamsQuery::class => ListTeamsHandler::class,
                 GetTeamByIdQuery::class => GetTeamByIdHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,

@@ -20,7 +20,6 @@ final readonly class RoleMapper
     {
         return new Role(
             id: new RoleId($roleModel->id),
-            organizationId: $roleModel->organization_id,
             name: new RoleName($roleModel->name),
             description: $roleModel->description,
             isSystem: $roleModel->is_system,

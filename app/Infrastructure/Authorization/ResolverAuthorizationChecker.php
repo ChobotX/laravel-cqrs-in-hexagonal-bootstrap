@@ -24,16 +24,16 @@ final readonly class ResolverAuthorizationChecker implements AuthorizationChecke
         private array $availableModules,
     ) {}
 
-    public function can(string $userId, string $organizationId, string $permission): bool
+    public function can(string $userId, string $permission): bool
     {
-        $effectivePermissions = $this->resolveEffectivePermissions($userId, $organizationId);
+        $effectivePermissions = $this->resolveEffectivePermissions($userId);
 
         return array_any($effectivePermissions, fn ($effectivePermission): bool => (string) $effectivePermission->permissionKey === $permission && $effectivePermission->granted);
     }
 
-    public function canWithScope(string $userId, string $organizationId, string $permission): AccessDecision
+    public function canWithScope(string $userId, string $permission): AccessDecision
     {
-        $effectivePermissions = $this->resolveEffectivePermissions($userId, $organizationId);
+        $effectivePermissions = $this->resolveEffectivePermissions($userId);
 
         foreach ($effectivePermissions as $effectivePermission) {
             if ((string) $effectivePermission->permissionKey === $permission) {
@@ -50,13 +50,11 @@ final readonly class ResolverAuthorizationChecker implements AuthorizationChecke
     /** @return list<string> */
     public function accessibleResourceIds(
         string $userId,
-        string $organizationId,
         string $resourceType,
         string $action,
     ): array {
         return $this->recordShareRepository->accessibleResourceIds(
             $userId,
-            $organizationId,
             $resourceType,
             Action::from($action),
         );
@@ -65,10 +63,10 @@ final readonly class ResolverAuthorizationChecker implements AuthorizationChecke
     /**
      * @return list<EffectivePermission>
      */
-    private function resolveEffectivePermissions(string $userId, string $organizationId): array
+    private function resolveEffectivePermissions(string $userId): array
     {
-        $roles = $this->userPermissionRepository->userRoles($userId, $organizationId);
-        $overrides = $this->userPermissionRepository->userOverrides($userId, $organizationId);
+        $roles = $this->userPermissionRepository->userRoles($userId);
+        $overrides = $this->userPermissionRepository->userOverrides($userId);
 
         return $this->permissionResolver->resolve($roles, $overrides, $this->availableModules);
     }

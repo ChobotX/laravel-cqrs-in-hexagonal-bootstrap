@@ -12,7 +12,6 @@ final readonly class SetPermissionOverrideCommand implements Command
 {
     public function __construct(
         public string $userId,
-        public string $organizationId,
         public string $permission,
         public string $type,
         public string $scope,

@@ -9,7 +9,6 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
@@ -17,14 +16,10 @@ use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleAssignmentPolicy;
-use App\Domain\Organization\Command\AddMember\AddMemberCommand;
-use App\Domain\Organization\Command\AddTeamMember\AddTeamMemberCommand;
-use App\Domain\Organization\Command\RemoveMember\RemoveMemberCommand;
-use App\Domain\Organization\Command\RemoveTeamMember\RemoveTeamMemberCommand;
-use App\Domain\Organization\Organization;
-use App\Domain\Organization\Query\GetUserOrganizations\GetUserOrganizationsQuery;
-use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
-use App\Domain\Organization\Team;
+use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
+use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
+use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\Team\Team;
 use App\Domain\User\Command\SetPassword\SetPasswordCommand;
 use App\Presentation\Http\Request\Web\User\UpdateUserRequest;
 use Illuminate\Http\RedirectResponse;
@@ -36,7 +31,6 @@ final readonly class UpdateUserController
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
-        private OrganizationContext $organizationContext,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
         private array $availableModules,
@@ -55,7 +49,6 @@ final readonly class UpdateUserController
         }
 
         $this->syncRoles($updateUserRequest, $updateUserCommand->id);
-        $this->syncOrganizations($updateUserRequest, $updateUserCommand->id);
         $this->syncTeams($updateUserRequest, $updateUserCommand->id);
 
         return redirect('/users')->with('success', __('messages.users.updated'));
@@ -63,25 +56,24 @@ final readonly class UpdateUserController
 
     private function syncRoles(UpdateUserRequest $updateUserRequest, string $targetUserId): void
     {
-        $orgId = $this->organizationContext->currentOrganizationId();
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
-        if (! $this->authorizationChecker->can($currentUserId, $orgId, 'users.roles.update')) {
+        if (! $this->authorizationChecker->can($currentUserId, 'users.roles.update')) {
             return;
         }
 
         /** @var list<string> $submittedRoleIds */
         $submittedRoleIds = $updateUserRequest->input('roles', []);
 
-        $assignerPermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($currentUserId, $orgId));
+        $assignerPermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($currentUserId));
         $isSuperAdmin = array_any($assignerPermissions, fn ($p): bool => $p->source === 'system:super-admin');
 
-        $allRoles = $this->queryBus->dispatch(new ListRolesQuery($orgId));
+        $allRoles = $this->queryBus->dispatch(new ListRolesQuery);
         $roleAssignmentPolicy = new RoleAssignmentPolicy;
         $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules, $isSuperAdmin);
         $assignableRoleIds = array_map(fn (Role $role): string => $role->id->value, $assignableRoles);
 
-        $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($targetUserId, $orgId));
+        $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($targetUserId));
         $currentRoleIds = array_map(fn (Role $role): string => $role->id->value, $currentUserRoles);
 
         $toAdd = array_diff($submittedRoleIds, $currentRoleIds);
@@ -89,57 +81,29 @@ final readonly class UpdateUserController
 
         foreach ($toAdd as $roleId) {
             if (in_array($roleId, $assignableRoleIds, true)) {
-                $this->commandBus->dispatch(new AssignRoleToUserCommand($targetUserId, $roleId, $orgId));
+                $this->commandBus->dispatch(new AssignRoleToUserCommand($targetUserId, $roleId));
             }
         }
 
         foreach ($toRemove as $roleId) {
             if (in_array($roleId, $assignableRoleIds, true)) {
-                $this->commandBus->dispatch(new RevokeRoleFromUserCommand($targetUserId, $roleId, $orgId));
+                $this->commandBus->dispatch(new RevokeRoleFromUserCommand($targetUserId, $roleId));
             }
-        }
-    }
-
-    private function syncOrganizations(UpdateUserRequest $updateUserRequest, string $targetUserId): void
-    {
-        $orgId = $this->organizationContext->currentOrganizationId();
-        $currentUserId = $this->authenticatedUser->id() ?? '';
-
-        if (! $this->authorizationChecker->can($currentUserId, $orgId, 'organizations.members.update')) {
-            return;
-        }
-
-        /** @var list<string> $submittedOrgIds */
-        $submittedOrgIds = $updateUserRequest->input('organizations', []);
-
-        $currentOrgs = $this->queryBus->dispatch(new GetUserOrganizationsQuery($targetUserId));
-        $currentOrgIds = array_map(fn (Organization $organization): string => $organization->id->value, $currentOrgs);
-
-        $toAdd = array_diff($submittedOrgIds, $currentOrgIds);
-        $toRemove = array_diff($currentOrgIds, $submittedOrgIds);
-
-        foreach ($toAdd as $addOrgId) {
-            $this->commandBus->dispatch(new AddMemberCommand($targetUserId, $addOrgId));
-        }
-
-        foreach ($toRemove as $removeOrgId) {
-            $this->commandBus->dispatch(new RemoveMemberCommand($targetUserId, $removeOrgId));
         }
     }
 
     private function syncTeams(UpdateUserRequest $updateUserRequest, string $targetUserId): void
     {
-        $orgId = $this->organizationContext->currentOrganizationId();
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
-        if (! $this->authorizationChecker->can($currentUserId, $orgId, 'teams.members.update')) {
+        if (! $this->authorizationChecker->can($currentUserId, 'teams.members.update')) {
             return;
         }
 
         /** @var list<string> $submittedTeamIds */
         $submittedTeamIds = $updateUserRequest->input('teams', []);
 
-        $currentTeams = $this->queryBus->dispatch(new GetUserTeamsQuery($targetUserId, $orgId));
+        $currentTeams = $this->queryBus->dispatch(new GetUserTeamsQuery($targetUserId));
         $currentTeamIds = array_map(fn (Team $team): string => $team->id->value, $currentTeams);
 
         $toAdd = array_diff($submittedTeamIds, $currentTeamIds);

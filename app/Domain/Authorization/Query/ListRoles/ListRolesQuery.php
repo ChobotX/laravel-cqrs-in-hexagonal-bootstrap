@@ -10,9 +10,4 @@ use App\Domain\Authorization\Role;
 
 /** @implements Query<list<Role>> */
 #[RequiresPermission('users.roles.read')]
-final readonly class ListRolesQuery implements Query
-{
-    public function __construct(
-        public string $organizationId,
-    ) {}
-}
+final readonly class ListRolesQuery implements Query {}

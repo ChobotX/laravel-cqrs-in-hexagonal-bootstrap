@@ -14,7 +14,6 @@ final readonly class GetRecordSharesQuery implements Query
 {
     public function __construct(
         public string $userId,
-        public string $organizationId,
         public ?string $resourceType = null,
     ) {}
 }

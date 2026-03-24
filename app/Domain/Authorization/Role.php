@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization;
 
-use App\Application\Organization\AllowNullableOrganizationId;
-
-#[AllowNullableOrganizationId(reason: 'System roles are org-agnostic')]
 final readonly class Role
 {
     /**
@@ -14,7 +11,6 @@ final readonly class Role
      */
     public function __construct(
         public RoleId $id,
-        public ?string $organizationId,
         public RoleName $name,
         public string $description,
         public bool $isSystem,

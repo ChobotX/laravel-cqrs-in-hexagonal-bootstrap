@@ -22,7 +22,7 @@ final class RoleModel extends Model
 
     protected $table = 'roles';
 
-    protected $fillable = ['id', 'organization_id', 'name', 'description', 'is_system'];
+    protected $fillable = ['id', 'name', 'description', 'is_system'];
 
     protected $keyType = 'string';
 

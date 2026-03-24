@@ -8,12 +8,11 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Contract\Organization\OrganizationContext;
-use App\Contract\Organization\TeamMembershipChecker;
+use App\Contract\Team\TeamMembershipChecker;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
-use App\Domain\Organization\Query\GetUserTeams\GetUserTeamsQuery;
-use App\Domain\Organization\Team;
+use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\Team\Team;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
 use Illuminate\View\View;
@@ -23,7 +22,6 @@ final readonly class ListUsersController
 {
     public function __construct(
         private QueryBus $queryBus,
-        private OrganizationContext $organizationContext,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
         private TeamMembershipChecker $teamMembershipChecker,
@@ -31,24 +29,23 @@ final readonly class ListUsersController
 
     public function __invoke(): View
     {
-        $orgId = $this->organizationContext->currentOrganizationId();
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
         $allUsers = $this->queryBus->dispatch(new ListUsersQuery);
-        $users = $this->filterByScope($allUsers, $currentUserId, $orgId);
+        $users = $this->filterByScope($allUsers, $currentUserId);
 
-        $canReadRoles = $this->authorizationChecker->can($currentUserId, $orgId, 'users.roles.read');
+        $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
 
-        $userRoles = $canReadRoles ? $this->buildUserRolesMap($users, $orgId) : [];
+        $userRoles = $canReadRoles ? $this->buildUserRolesMap($users) : [];
         $isSuperAdmin = false;
 
         if ($canReadRoles) {
-            $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($currentUserId, $orgId));
+            $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($currentUserId));
             $isSuperAdmin = array_any($currentUserRoles, fn (Role $role): bool => $role->isSystem);
         }
 
-        $canReadTeams = $this->authorizationChecker->can($currentUserId, $orgId, 'teams.members.read');
-        $userTeams = $canReadTeams ? $this->buildUserTeamsMap($users, $orgId) : [];
+        $canReadTeams = $this->authorizationChecker->can($currentUserId, 'teams.members.read');
+        $userTeams = $canReadTeams ? $this->buildUserTeamsMap($users) : [];
 
         return view('users.index', [
             'users' => $users,
@@ -65,13 +62,13 @@ final readonly class ListUsersController
      * @param  list<User>  $users
      * @return array<string, list<Role>>
      */
-    private function buildUserRolesMap(array $users, string $orgId): array
+    private function buildUserRolesMap(array $users): array
     {
         $map = [];
 
         foreach ($users as $user) {
             $map[$user->id->value] = $this->queryBus->dispatch(
-                new GetUserRolesQuery($user->id->value, $orgId),
+                new GetUserRolesQuery($user->id->value),
             );
         }
 
@@ -82,13 +79,13 @@ final readonly class ListUsersController
      * @param  list<User>  $users
      * @return array<string, list<Team>>
      */
-    private function buildUserTeamsMap(array $users, string $orgId): array
+    private function buildUserTeamsMap(array $users): array
     {
         $map = [];
 
         foreach ($users as $user) {
             $map[$user->id->value] = $this->queryBus->dispatch(
-                new GetUserTeamsQuery($user->id->value, $orgId),
+                new GetUserTeamsQuery($user->id->value),
             );
         }
 
@@ -99,13 +96,13 @@ final readonly class ListUsersController
      * @param  list<User>  $allUsers
      * @return list<User>
      */
-    private function filterByScope(array $allUsers, string $currentUserId, string $orgId): array
+    private function filterByScope(array $allUsers, string $currentUserId): array
     {
-        $accessDecision = $this->authorizationChecker->canWithScope($currentUserId, $orgId, 'users.list.read');
+        $accessDecision = $this->authorizationChecker->canWithScope($currentUserId, 'users.list.read');
 
         return match ($accessDecision->scope()) {
             'all' => $allUsers,
-            'team' => $this->filterByTeamScope($allUsers, $currentUserId, $orgId),
+            'team' => $this->filterByTeamScope($allUsers, $currentUserId),
             'own' => array_values(array_filter(
                 $allUsers,
                 fn (User $user): bool => $user->id->value === $currentUserId,
@@ -118,9 +115,9 @@ final readonly class ListUsersController
      * @param  list<User>  $allUsers
      * @return list<User>
      */
-    private function filterByTeamScope(array $allUsers, string $currentUserId, string $orgId): array
+    private function filterByTeamScope(array $allUsers, string $currentUserId): array
     {
-        $visibleUserIds = $this->teamMembershipChecker->visibleUserIds($currentUserId, $orgId);
+        $visibleUserIds = $this->teamMembershipChecker->visibleUserIds($currentUserId);
 
         return array_values(array_filter(
             $allUsers,

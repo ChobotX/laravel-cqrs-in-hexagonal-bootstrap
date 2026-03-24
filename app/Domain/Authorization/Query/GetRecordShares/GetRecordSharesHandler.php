@@ -21,7 +21,6 @@ final readonly class GetRecordSharesHandler implements QueryHandler
     {
         return $this->recordShareRepository->findByGrantee(
             $query->userId,
-            $query->organizationId,
             $query->resourceType,
         );
     }

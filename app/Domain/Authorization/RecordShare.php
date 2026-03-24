@@ -12,6 +12,5 @@ final readonly class RecordShare
         public string $resourceId,
         public Action $action,
         public string $grantorUserId,
-        public string $organizationId,
     ) {}
 }

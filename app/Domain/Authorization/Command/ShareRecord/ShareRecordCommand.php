@@ -16,6 +16,5 @@ final readonly class ShareRecordCommand implements Command
         public string $resourceId,
         public string $action,
         public string $grantorUserId,
-        public string $organizationId,
     ) {}
 }

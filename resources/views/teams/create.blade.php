@@ -11,7 +11,7 @@
 
             <form class="space-y-5 p-6"
                   method="POST"
-                  action="{{ route('teams.store', $organization->id) }}">
+                  action="{{ route('teams.store') }}">
                 @csrf
 
                 <div>
@@ -87,7 +87,7 @@
                                       :label="__('messages.teams.create_action')" />
                     <x-primary-button skip-permission
                                       variant="secondary"
-                                      :href="route('teams.index', $organization->id)"
+                                      :href="route('teams.index')"
                                       :label="__('messages.teams.cancel')" />
                 </div>
             </form>

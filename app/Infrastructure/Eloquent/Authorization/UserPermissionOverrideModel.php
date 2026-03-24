@@ -15,7 +15,7 @@ final class UserPermissionOverrideModel extends Model
 
     protected $table = 'user_permission_overrides';
 
-    protected $fillable = ['id', 'user_id', 'organization_id', 'module', 'feature', 'action', 'type', 'scope'];
+    protected $fillable = ['id', 'user_id', 'module', 'feature', 'action', 'type', 'scope'];
 
     protected $keyType = 'string';
 }

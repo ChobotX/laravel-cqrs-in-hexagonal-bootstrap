@@ -18,6 +18,6 @@ final readonly class InvalidateCacheOnOverrideRemoved implements DomainEventHand
 
     public function handle(DomainEvent $domainEvent): void
     {
-        $this->cacheRepository->forget(sprintf('auth:perms:%s:%s', $domainEvent->organizationId, $domainEvent->userId));
+        $this->cacheRepository->forget(sprintf('auth:perms:%s', $domainEvent->userId));
     }
 }

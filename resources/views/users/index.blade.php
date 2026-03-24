@@ -58,7 +58,7 @@
                                                     <span class="text-gray-300">{{ __('messages.users.in_team') }}</span>
                                                     @foreach ($userTeams[$user->id->value] as $team)
                                                         <a class="transition-colors hover:text-indigo-600"
-                                                           href="{{ route('teams.show', [$team->organizationId, $team->id]) }}"
+                                                           href="{{ route('teams.show', $team->id) }}"
                                                            title="{{ $team->name }}">{{ $team->name }}</a>
                                                         @if (!$loop->last)
                                                             ,

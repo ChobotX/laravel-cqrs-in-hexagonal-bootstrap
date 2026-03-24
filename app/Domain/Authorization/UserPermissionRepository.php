@@ -7,26 +7,25 @@ namespace App\Domain\Authorization;
 interface UserPermissionRepository
 {
     /** @return list<Role> */
-    public function userRoles(string $userId, string $organizationId): array;
+    public function userRoles(string $userId): array;
 
-    public function assignRole(string $userId, RoleId $roleId, string $organizationId): void;
+    public function assignRole(string $userId, RoleId $roleId): void;
 
-    public function revokeRole(string $userId, RoleId $roleId, string $organizationId): void;
+    public function revokeRole(string $userId, RoleId $roleId): void;
 
-    public function hasRole(string $userId, RoleId $roleId, string $organizationId): bool;
+    public function hasRole(string $userId, RoleId $roleId): bool;
 
     /** @return list<UserPermissionOverride> */
-    public function userOverrides(string $userId, string $organizationId): array;
+    public function userOverrides(string $userId): array;
 
     public function setOverride(
         string $userId,
-        string $organizationId,
         PermissionKey $permissionKey,
         OverrideType $overrideType,
         AccessScope $accessScope,
     ): void;
 
-    public function removeOverride(string $userId, string $organizationId, PermissionKey $permissionKey): void;
+    public function removeOverride(string $userId, PermissionKey $permissionKey): void;
 
     /** @return list<string> */
     public function userIdsWithRole(RoleId $roleId): array;

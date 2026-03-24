@@ -7,11 +7,11 @@ namespace App\Domain\Authorization;
 interface RoleRepository
 {
     /** @return list<Role> */
-    public function findByOrganizationId(string $organizationId): array;
+    public function findAll(): array;
 
     public function findById(RoleId $roleId): ?Role;
 
-    public function findByNameAndOrganization(string $name, string $organizationId): ?Role;
+    public function findByName(string $name): ?Role;
 
     /** @return list<Role> */
     public function findSystemRoles(): array;

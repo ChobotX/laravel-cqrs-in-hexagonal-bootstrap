@@ -16,13 +16,9 @@ final class FakeUserRepository implements UserRepository
     /** @var list<string> */
     public array $deleted = [];
 
-    /**
-     * @param  array<string, User>  $users
-     * @param  array<string, list<string>>  $organizationMemberships  orgId => list of userIds
-     */
+    /** @param  array<string, User>  $users */
     public function __construct(
         private array $users = [],
-        private readonly array $organizationMemberships = [],
     ) {}
 
     /** @return list<User> */
@@ -63,22 +59,15 @@ final class FakeUserRepository implements UserRepository
     }
 
     /** @return list<User> */
-    public function search(string $term, array $restrictToOrganizationIds, array $excludeUserIds, int $limit): array
+    public function search(string $term, array $excludeUserIds, int $limit): array
     {
         $normalizedTerm = $this->stripDiacritics(mb_strtolower($term));
 
         $results = array_filter(
             $this->users,
-            function (User $user) use ($normalizedTerm, $excludeUserIds, $restrictToOrganizationIds): bool {
+            function (User $user) use ($normalizedTerm, $excludeUserIds): bool {
                 if (in_array($user->id->value, $excludeUserIds, true)) {
                     return false;
-                }
-
-                if ($restrictToOrganizationIds !== []) {
-                    $userInOrg = array_any($restrictToOrganizationIds, fn ($restrictToOrganizationId): bool => in_array($user->id->value, $this->organizationMemberships[$restrictToOrganizationId] ?? [], true));
-                    if (! $userInOrg) {
-                        return false;
-                    }
                 }
 
                 return str_contains($this->stripDiacritics(mb_strtolower($user->name)), $normalizedTerm)

@@ -25,13 +25,11 @@ final readonly class RevokeRoleFromUserHandler implements CommandHandler
         $this->userPermissionRepository->revokeRole(
             $command->userId,
             new RoleId($command->roleId),
-            $command->organizationId,
         );
 
         $this->eventCollector->collect(new RoleRevokedFromUser(
             userId: $command->userId,
             roleId: $command->roleId,
-            organizationId: $command->organizationId,
             occurredAt: new DateTimeImmutable,
         ));
     }

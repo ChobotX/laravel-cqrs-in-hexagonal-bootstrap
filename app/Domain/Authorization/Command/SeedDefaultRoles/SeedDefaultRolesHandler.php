@@ -41,10 +41,10 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
         $readCreateUpdatePermissions = $this->buildActionPermissions(Action::Read, Action::Create, Action::Update);
 
         $roles = [
-            $this->createRole($command->organizationId, 'Admin', 'Full access within organization', $allPermissions, AccessScope::All),
-            $this->createRole($command->organizationId, 'Editor', 'Can read, create and update', $readCreateUpdatePermissions, AccessScope::All),
-            $this->createRole($command->organizationId, 'Member', 'Team-scoped read, create and update', $readCreateUpdatePermissions, AccessScope::Team),
-            $this->createRole($command->organizationId, 'Viewer', 'Read-only access', $readPermissions, AccessScope::All),
+            $this->createRole('Admin', 'Full access within organization', $allPermissions, AccessScope::All),
+            $this->createRole('Editor', 'Can read, create and update', $readCreateUpdatePermissions, AccessScope::All),
+            $this->createRole('Member', 'Team-scoped read, create and update', $readCreateUpdatePermissions, AccessScope::Team),
+            $this->createRole('Viewer', 'Read-only access', $readPermissions, AccessScope::All),
         ];
 
         $roleIds = [];
@@ -55,7 +55,6 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
         }
 
         $this->eventCollector->collect(new DefaultRolesSeeded(
-            organizationId: $command->organizationId,
             roleIds: $roleIds,
             occurredAt: new DateTimeImmutable,
         ));
@@ -109,7 +108,6 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
      * @param  list<PermissionKey>  $permissionKeys
      */
     private function createRole(
-        string $organizationId,
         string $name,
         string $description,
         array $permissionKeys,
@@ -123,7 +121,6 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
 
         return new Role(
             id: new RoleId($this->idGenerator->generate()),
-            organizationId: $organizationId,
             name: new RoleName($name),
             description: $description,
             isSystem: false,

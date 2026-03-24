@@ -15,7 +15,6 @@ final readonly class RecordShared implements DomainEvent
         public string $resourceId,
         public string $action,
         public string $grantorUserId,
-        public string $organizationId,
         public DateTimeImmutable $occurredAt,
     ) {}
 

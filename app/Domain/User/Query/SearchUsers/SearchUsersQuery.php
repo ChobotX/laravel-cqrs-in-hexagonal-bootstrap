@@ -12,13 +12,9 @@ use App\Domain\User\User;
 #[RequiresPermission('users.list.read')]
 final readonly class SearchUsersQuery implements Query
 {
-    /**
-     * @param  list<string>  $restrictToOrganizationIds
-     * @param  list<string>  $excludeUserIds
-     */
+    /** @param  list<string>  $excludeUserIds */
     public function __construct(
         public string $term,
-        public array $restrictToOrganizationIds,
         public array $excludeUserIds,
         public int $limit = 10,
     ) {}

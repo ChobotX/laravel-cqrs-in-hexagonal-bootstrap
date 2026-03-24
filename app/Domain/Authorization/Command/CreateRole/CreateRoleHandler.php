@@ -26,14 +26,10 @@ final readonly class CreateRoleHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
-        $organizationId = $command->organizationId ?? '';
+        $existing = $this->roleRepository->findByName($command->name);
 
-        if ($organizationId !== '') {
-            $existing = $this->roleRepository->findByNameAndOrganization($command->name, $organizationId);
-
-            if ($existing instanceof Role) {
-                throw new RoleAlreadyExistsException($command->name);
-            }
+        if ($existing instanceof Role) {
+            throw new RoleAlreadyExistsException($command->name);
         }
 
         $rolePermissionMapper = new RolePermissionMapper;
@@ -41,7 +37,6 @@ final readonly class CreateRoleHandler implements CommandHandler
 
         $role = new Role(
             id: new RoleId($command->id),
-            organizationId: $command->organizationId,
             name: new RoleName($command->name),
             description: $command->description,
             isSystem: false,
@@ -52,7 +47,6 @@ final readonly class CreateRoleHandler implements CommandHandler
 
         $this->eventCollector->collect(new RoleCreated(
             roleId: $role->id->value,
-            organizationId: $role->organizationId,
             name: $role->name->value,
             occurredAt: new DateTimeImmutable,
         ));

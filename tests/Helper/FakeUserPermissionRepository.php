@@ -20,58 +20,55 @@ final class FakeUserPermissionRepository implements UserPermissionRepository
     /** @var array<string, list<UserPermissionOverride>> */
     public array $userOverridesMap = [];
 
-    /** @var list<array{userId: string, roleId: string, organizationId: string}> */
+    /** @var list<array{userId: string, roleId: string}> */
     public array $assignedRoles = [];
 
-    /** @var list<array{userId: string, roleId: string, organizationId: string}> */
+    /** @var list<array{userId: string, roleId: string}> */
     public array $revokedRoles = [];
 
     /** @return list<Role> */
-    public function userRoles(string $userId, string $organizationId): array
+    public function userRoles(string $userId): array
     {
-        return $this->userRolesMap[$userId.':'.$organizationId] ?? [];
+        return $this->userRolesMap[$userId] ?? [];
     }
 
-    public function assignRole(string $userId, RoleId $roleId, string $organizationId): void
+    public function assignRole(string $userId, RoleId $roleId): void
     {
         $this->assignedRoles[] = [
             'userId' => $userId,
             'roleId' => $roleId->value,
-            'organizationId' => $organizationId,
         ];
     }
 
-    public function revokeRole(string $userId, RoleId $roleId, string $organizationId): void
+    public function revokeRole(string $userId, RoleId $roleId): void
     {
         $this->revokedRoles[] = [
             'userId' => $userId,
             'roleId' => $roleId->value,
-            'organizationId' => $organizationId,
         ];
     }
 
-    public function hasRole(string $userId, RoleId $roleId, string $organizationId): bool
+    public function hasRole(string $userId, RoleId $roleId): bool
     {
-        $roles = $this->userRoles($userId, $organizationId);
+        $roles = $this->userRoles($userId);
 
         return array_any($roles, fn ($role) => $role->id->equals($roleId));
     }
 
     /** @return list<UserPermissionOverride> */
-    public function userOverrides(string $userId, string $organizationId): array
+    public function userOverrides(string $userId): array
     {
-        return $this->userOverridesMap[$userId.':'.$organizationId] ?? [];
+        return $this->userOverridesMap[$userId] ?? [];
     }
 
     public function setOverride(
         string $userId,
-        string $organizationId,
         PermissionKey $permissionKey,
         OverrideType $overrideType,
         AccessScope $accessScope,
     ): void {}
 
-    public function removeOverride(string $userId, string $organizationId, PermissionKey $permissionKey): void {}
+    public function removeOverride(string $userId, PermissionKey $permissionKey): void {}
 
     /** @return list<string> */
     public function userIdsWithRole(RoleId $roleId): array

@@ -18,7 +18,7 @@ final class UserRoleModel extends Model
 
     protected $table = 'user_roles';
 
-    protected $fillable = ['id', 'user_id', 'role_id', 'organization_id'];
+    protected $fillable = ['id', 'user_id', 'role_id'];
 
     protected $keyType = 'string';
 

@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Presentation\Http\Controller\Web\Team;
+
+use App\Application\Authorization\RequiresPermission;
+use App\Application\Bus\QueryBus;
+use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Team\Team;
+use App\Presentation\Http\Request\Web\Team\SearchTeamsRequest;
+use Illuminate\Http\JsonResponse;
+
+#[RequiresPermission('teams.management.read')]
+final readonly class SearchTeamsController
+{
+    public function __construct(
+        private QueryBus $queryBus,
+    ) {}
+
+    public function __invoke(SearchTeamsRequest $searchTeamsRequest): JsonResponse
+    {
+        $term = mb_strtolower($searchTeamsRequest->searchTerm());
+        $excludeIds = $searchTeamsRequest->excludeTeamIds();
+
+        /** @var list<Team> $teams */
+        $teams = $this->queryBus->dispatch(new ListTeamsQuery());
+
+        $filtered = array_values(array_filter(
+            $teams,
+            fn (Team $team): bool => ! in_array($team->id->value, $excludeIds, true)
+                && ($term === '' || str_contains(mb_strtolower($team->name->value), $term)),
+        ));
+
+        $data = array_map(fn (Team $team): array => [
+            'id' => $team->id->value,
+            'name' => $team->name->value,
+        ], array_slice($filtered, 0, 50));
+
+        return new JsonResponse(['data' => $data]);
+    }
+}

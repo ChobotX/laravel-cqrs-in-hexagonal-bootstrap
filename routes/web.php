@@ -18,23 +18,14 @@ use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as W
 use App\Presentation\Http\Controller\Web\Authorization\UserPermissionsController;
 use App\Presentation\Http\Controller\Web\DashboardController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
-use App\Presentation\Http\Controller\Web\Organization\CreateOrganizationController;
-use App\Presentation\Http\Controller\Web\Organization\DeleteOrganizationController;
-use App\Presentation\Http\Controller\Web\Organization\ListOrganizationsController;
-use App\Presentation\Http\Controller\Web\Organization\ManageOrganizationMembersController;
-use App\Presentation\Http\Controller\Web\Organization\ShowCreateOrganizationController;
-use App\Presentation\Http\Controller\Web\Organization\ShowEditOrganizationController;
-use App\Presentation\Http\Controller\Web\Organization\ShowOrganizationController;
-use App\Presentation\Http\Controller\Web\Organization\SwitchOrganizationController;
-use App\Presentation\Http\Controller\Web\Organization\Team\CreateTeamController;
-use App\Presentation\Http\Controller\Web\Organization\Team\DeleteTeamController;
-use App\Presentation\Http\Controller\Web\Organization\Team\ListTeamsController;
-use App\Presentation\Http\Controller\Web\Organization\Team\ManageTeamMembersController;
-use App\Presentation\Http\Controller\Web\Organization\Team\ShowCreateTeamController;
-use App\Presentation\Http\Controller\Web\Organization\Team\ShowEditTeamController;
-use App\Presentation\Http\Controller\Web\Organization\Team\ShowTeamController;
-use App\Presentation\Http\Controller\Web\Organization\Team\UpdateTeamController;
-use App\Presentation\Http\Controller\Web\Organization\UpdateOrganizationController;
+use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
+use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
+use App\Presentation\Http\Controller\Web\Team\ListTeamsController;
+use App\Presentation\Http\Controller\Web\Team\ManageTeamMembersController;
+use App\Presentation\Http\Controller\Web\Team\ShowCreateTeamController;
+use App\Presentation\Http\Controller\Web\Team\ShowEditTeamController;
+use App\Presentation\Http\Controller\Web\Team\ShowTeamController;
+use App\Presentation\Http\Controller\Web\Team\UpdateTeamController;
 use App\Presentation\Http\Controller\Web\User\CreateUserController;
 use App\Presentation\Http\Controller\Web\User\DeleteUserController;
 use App\Presentation\Http\Controller\Web\User\ListUsersController;
@@ -71,25 +62,14 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/roles/{roleId}', WebUpdateRoleController::class)->name('roles.update');
     Route::delete('/roles/{roleId}', WebDeleteRoleController::class)->name('roles.destroy');
 
-    Route::get('/organizations', ListOrganizationsController::class)->name('organizations.index');
-    Route::get('/organizations/create', ShowCreateOrganizationController::class)->name('organizations.create');
-    Route::post('/organizations', CreateOrganizationController::class)->name('organizations.store');
-    Route::get('/organizations/{organizationId}', ShowOrganizationController::class)->name('organizations.show');
-    Route::get('/organizations/{organizationId}/edit', ShowEditOrganizationController::class)->name('organizations.edit');
-    Route::put('/organizations/{organizationId}', UpdateOrganizationController::class)->name('organizations.update');
-    Route::delete('/organizations/{organizationId}', DeleteOrganizationController::class)->name('organizations.destroy');
-    Route::post('/organizations/{organizationId}/members', ManageOrganizationMembersController::class)->name('organizations.members');
-
-    Route::get('/organizations/{organizationId}/teams', ListTeamsController::class)->name('teams.index');
-    Route::get('/organizations/{organizationId}/teams/create', ShowCreateTeamController::class)->name('teams.create');
-    Route::post('/organizations/{organizationId}/teams', CreateTeamController::class)->name('teams.store');
-    Route::get('/organizations/{organizationId}/teams/{teamId}', ShowTeamController::class)->name('teams.show');
-    Route::get('/organizations/{organizationId}/teams/{teamId}/edit', ShowEditTeamController::class)->name('teams.edit');
-    Route::put('/organizations/{organizationId}/teams/{teamId}', UpdateTeamController::class)->name('teams.update');
-    Route::delete('/organizations/{organizationId}/teams/{teamId}', DeleteTeamController::class)->name('teams.destroy');
-    Route::post('/organizations/{organizationId}/teams/{teamId}/members', ManageTeamMembersController::class)->name('teams.members');
-
-    Route::post('/switch-organization', SwitchOrganizationController::class)->name('organizations.switch');
+    Route::get('/teams', ListTeamsController::class)->name('teams.index');
+    Route::get('/teams/create', ShowCreateTeamController::class)->name('teams.create');
+    Route::post('/teams', CreateTeamController::class)->name('teams.store');
+    Route::get('/teams/{teamId}', ShowTeamController::class)->name('teams.show');
+    Route::get('/teams/{teamId}/edit', ShowEditTeamController::class)->name('teams.edit');
+    Route::put('/teams/{teamId}', UpdateTeamController::class)->name('teams.update');
+    Route::delete('/teams/{teamId}', DeleteTeamController::class)->name('teams.destroy');
+    Route::post('/teams/{teamId}/members', ManageTeamMembersController::class)->name('teams.members');
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');

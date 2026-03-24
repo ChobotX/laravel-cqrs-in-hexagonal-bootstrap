@@ -22,7 +22,6 @@ final class RecordShareModel extends Model
         'resource_id',
         'action',
         'grantor_user_id',
-        'organization_id',
     ];
 
     protected $keyType = 'string';

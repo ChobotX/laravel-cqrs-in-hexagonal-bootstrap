@@ -22,7 +22,6 @@ final readonly class EloquentRecordShareRepository implements RecordShareReposit
         $recordShareModel->resource_id = $recordShare->resourceId;
         $recordShareModel->action = $recordShare->action->value;
         $recordShareModel->grantor_user_id = $recordShare->grantorUserId;
-        $recordShareModel->organization_id = $recordShare->organizationId;
         $recordShareModel->save();
     }
 
@@ -35,10 +34,9 @@ final readonly class EloquentRecordShareRepository implements RecordShareReposit
     }
 
     /** @return list<RecordShare> */
-    public function findByGrantee(string $granteeUserId, string $organizationId, ?string $resourceType = null): array
+    public function findByGrantee(string $granteeUserId, ?string $resourceType = null): array
     {
-        $query = RecordShareModel::where('grantee_user_id', $granteeUserId)
-            ->where('organization_id', $organizationId);
+        $query = RecordShareModel::where('grantee_user_id', $granteeUserId);
 
         if ($resourceType !== null) {
             $query->where('resource_type', $resourceType);
@@ -54,14 +52,12 @@ final readonly class EloquentRecordShareRepository implements RecordShareReposit
     /** @return list<string> */
     public function accessibleResourceIds(
         string $granteeUserId,
-        string $organizationId,
         string $resourceType,
         Action $action,
     ): array {
         /** @var list<string> $resourceIds */
         $resourceIds = array_values(
             RecordShareModel::where('grantee_user_id', $granteeUserId)
-                ->where('organization_id', $organizationId)
                 ->where('resource_type', $resourceType)
                 ->where('action', $action->value)
                 ->pluck('resource_id')

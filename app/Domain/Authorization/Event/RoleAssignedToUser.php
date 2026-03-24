@@ -12,7 +12,6 @@ final readonly class RoleAssignedToUser implements DomainEvent
     public function __construct(
         public string $userId,
         public string $roleId,
-        public string $organizationId,
         public DateTimeImmutable $occurredAt,
     ) {}
 

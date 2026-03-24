@@ -19,6 +19,6 @@ final readonly class GetUserRolesHandler implements QueryHandler
     /** @return list<Role> */
     public function handle(Query $query): array
     {
-        return $this->userPermissionRepository->userRoles($query->userId, $query->organizationId);
+        return $this->userPermissionRepository->userRoles($query->userId);
     }
 }

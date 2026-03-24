@@ -13,6 +13,5 @@ final readonly class RevokeRoleFromUserCommand implements Command
     public function __construct(
         public string $userId,
         public string $roleId,
-        public string $organizationId,
     ) {}
 }

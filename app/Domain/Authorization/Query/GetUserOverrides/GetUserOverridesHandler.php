@@ -19,6 +19,6 @@ final readonly class GetUserOverridesHandler implements QueryHandler
     /** @return list<UserPermissionOverride> */
     public function handle(Query $query): array
     {
-        return $this->userPermissionRepository->userOverrides($query->userId, $query->organizationId);
+        return $this->userPermissionRepository->userOverrides($query->userId);
     }
 }

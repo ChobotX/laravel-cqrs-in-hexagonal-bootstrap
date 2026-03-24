@@ -15,7 +15,6 @@ final readonly class CreateRoleCommand implements Command
      */
     public function __construct(
         public string $id,
-        public ?string $organizationId,
         public string $name,
         public string $description,
         public array $permissions,

@@ -17,7 +17,7 @@
                 <div class="flex items-center gap-3">
                     <x-primary-button skip-permission
                                       variant="secondary"
-                                      :href="route('teams.index', $organization->id)"
+                                      :href="route('teams.index')"
                                       :label="__('messages.teams.back')" />
                 </div>
             </div>
@@ -31,7 +31,7 @@
                     <form class="flex items-center gap-2"
                           id="add-team-member-form"
                           method="POST"
-                          action="{{ route('teams.members', [$organization->id, $team->id]) }}">
+                          action="{{ route('teams.members', $team->id) }}">
                         @csrf
                         <input name="_action"
                                type="hidden"
@@ -58,7 +58,7 @@
                                 @hasPermission('teams.members.update')
                                     <form class="inline"
                                           method="POST"
-                                          action="{{ route('teams.members', [$organization->id, $team->id]) }}">
+                                          action="{{ route('teams.members', $team->id) }}">
                                         @csrf
                                         <input name="_action"
                                                type="hidden"

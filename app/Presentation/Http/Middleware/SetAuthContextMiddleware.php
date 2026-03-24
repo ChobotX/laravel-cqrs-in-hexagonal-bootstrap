@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Middleware;
 
 use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Organization\OrganizationContext;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
@@ -15,7 +14,6 @@ final readonly class SetAuthContextMiddleware
 {
     public function __construct(
         private AuthenticatedUser $authenticatedUser,
-        private OrganizationContext $organizationContext,
     ) {}
 
     /**
@@ -27,7 +25,6 @@ final readonly class SetAuthContextMiddleware
 
         if ($userId !== null) {
             Context::add('user_id', $userId);
-            Context::add('organization_id', $this->organizationContext->currentOrganizationId());
 
             $impersonatorId = $this->authenticatedUser->impersonatorId();
 

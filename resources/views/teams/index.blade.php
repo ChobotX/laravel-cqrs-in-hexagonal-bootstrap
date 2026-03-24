@@ -9,7 +9,7 @@
             {{ count($teams) }} {{ trans_choice('messages.teams.count', count($teams)) }}
         </span>
         <x-primary-button permission="teams.management.create"
-                          :href="route('teams.create', $organization->id)"
+                          :href="route('teams.create')"
                           :label="__('messages.teams.create_action')" />
     </div>
 
@@ -57,15 +57,15 @@
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-1">
                                     <x-action-button permission="teams.management.read"
-                                                     :href="route('teams.show', [$organization->id, $team->id])"
+                                                     :href="route('teams.show', $team->id)"
                                                      icon="heroicon-o-eye"
                                                      :label="__('messages.teams.view_action') . ' ' . $team->name" />
                                     <x-action-button permission="teams.management.update"
-                                                     :href="route('teams.edit', [$organization->id, $team->id])"
+                                                     :href="route('teams.edit', $team->id)"
                                                      icon="heroicon-o-pencil-square"
                                                      :label="__('messages.teams.edit_action') . ' ' . $team->name" />
                                     <x-action-button permission="teams.management.delete"
-                                                     :action="route('teams.destroy', [$organization->id, $team->id])"
+                                                     :action="route('teams.destroy', $team->id)"
                                                      method="DELETE"
                                                      icon="heroicon-o-trash"
                                                      :label="__('messages.teams.delete_action') . ' ' . $team->name"

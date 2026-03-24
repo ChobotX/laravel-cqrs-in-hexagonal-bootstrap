@@ -83,10 +83,6 @@ services:
         tags:
             - phpstan.rules.rule
     -
-        class: Tests\Architecture\PHPStan\AggregateRequiresOrganizationIdRule
-        tags:
-            - phpstan.rules.rule
-    -
         class: Tests\Architecture\PHPStan\ControllerMustUseFormRequestRule
         tags:
             - phpstan.rules.rule

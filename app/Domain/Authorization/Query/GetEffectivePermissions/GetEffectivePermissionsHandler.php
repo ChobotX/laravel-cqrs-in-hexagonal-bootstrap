@@ -25,8 +25,8 @@ final readonly class GetEffectivePermissionsHandler implements QueryHandler
     /** @return list<EffectivePermission> */
     public function handle(Query $query): array
     {
-        $roles = $this->userPermissionRepository->userRoles($query->userId, $query->organizationId);
-        $overrides = $this->userPermissionRepository->userOverrides($query->userId, $query->organizationId);
+        $roles = $this->userPermissionRepository->userRoles($query->userId);
+        $overrides = $this->userPermissionRepository->userOverrides($query->userId);
 
         return $this->permissionResolver->resolve($roles, $overrides, $this->availableModules);
     }

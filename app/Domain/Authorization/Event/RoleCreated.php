@@ -11,7 +11,6 @@ final readonly class RoleCreated implements DomainEvent
 {
     public function __construct(
         public string $roleId,
-        public ?string $organizationId,
         public string $name,
         public DateTimeImmutable $occurredAt,
     ) {}

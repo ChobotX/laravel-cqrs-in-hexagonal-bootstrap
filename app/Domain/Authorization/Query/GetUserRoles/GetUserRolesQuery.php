@@ -14,6 +14,5 @@ final readonly class GetUserRolesQuery implements Query
 {
     public function __construct(
         public string $userId,
-        public string $organizationId,
     ) {}
 }

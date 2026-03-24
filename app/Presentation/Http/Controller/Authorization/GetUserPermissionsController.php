@@ -6,7 +6,6 @@ namespace App\Presentation\Http\Controller\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
 use App\Domain\Authorization\UserPermissionOverride;
 use Illuminate\Http\JsonResponse;
@@ -16,15 +15,12 @@ final readonly class GetUserPermissionsController
 {
     public function __construct(
         private QueryBus $queryBus,
-        private OrganizationContext $organizationContext,
     ) {}
 
     public function __invoke(string $userId): JsonResponse
     {
-        $organizationId = $this->organizationContext->currentOrganizationId();
-
         $overrides = $this->queryBus->dispatch(
-            new GetUserOverridesQuery($userId, $organizationId),
+            new GetUserOverridesQuery($userId),
         );
 
         return new JsonResponse([

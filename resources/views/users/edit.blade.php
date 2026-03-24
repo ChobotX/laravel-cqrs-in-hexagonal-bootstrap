@@ -90,21 +90,6 @@
                     </div>
                 @endif
 
-                @if ($canManageOrganizations)
-                    <div class="border-t border-gray-200 pt-5">
-                        <label
-                               class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.users.organizations') }}</label>
-                        <p class="mb-2 text-xs text-gray-400">{{ __('messages.users.organizations_subtitle') }}</p>
-                        <div data-chip-selector
-                             data-search-url="{{ route('internal-api.organizations.search') }}"
-                             data-selected-items="{{ json_encode(array_map(fn($o) => ['id' => $o->id->value, 'name' => $o->name->value], $userOrganizations)) }}"
-                             data-input-name="organizations[]"
-                             data-placeholder="{{ __('messages.users.organizations_search') }}"
-                             data-no-results-text="{{ __('messages.organizations.no_results') }}">
-                        </div>
-                    </div>
-                @endif
-
                 @if ($canManageTeams)
                     <div class="border-t border-gray-200 pt-5">
                         <label
