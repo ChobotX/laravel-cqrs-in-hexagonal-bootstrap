@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -13,13 +11,6 @@ use Illuminate\Support\Str;
 /** @return array{UserModel, UserModel} */
 function permissionsWebAdmin(): array
 {
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Default Org',
-        'slug' => 'default-perm',
-        'description' => '',
-    ]);
-
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440a10',
         'name' => 'Perm Admin',
@@ -28,12 +19,6 @@ function permissionsWebAdmin(): array
     ]);
     test()->seedSuperAdminRole();
     test()->assignSuperAdmin($admin->id);
-
-    OrganizationMemberModel::create([
-        'user_id' => $admin->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
-    ]);
 
     $target = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440a11',
@@ -57,7 +42,6 @@ it('sets a permission override via web form', function (): void {
 
     $this->assertDatabaseHas('user_permission_overrides', [
         'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'module' => 'teams',
         'feature' => 'members',
         'action' => 'read',
@@ -91,7 +75,6 @@ it('assigns a role via web permissions form', function (): void {
 
     $role = RoleModel::create([
         'id' => Str::uuid()->toString(),
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Assign Test Role',
         'description' => 'Test',
         'is_system' => false,
@@ -123,13 +106,12 @@ it('revokes a role via web permissions form', function (): void {
 
     $role = RoleModel::create([
         'id' => Str::uuid()->toString(),
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Revoke Test Role',
         'description' => 'Test',
         'is_system' => false,
     ]);
 
-    test()->assignRole($target->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    test()->assignRole($target->id, $role->id);
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [

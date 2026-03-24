@@ -13,7 +13,8 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector` interfaces
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
 - `Translation/` — `Translator` interface for framework-agnostic translations
-- `Organization/` — `OrganizationContext` (non-nullable `currentOrganizationId(): string`), `OrganizationMembershipChecker`, `TeamMembershipChecker`
+- `Team/` — `TeamMembershipChecker`
+- `Tenancy/` — `TenantContext` (current tenant ID/slug), `TenantBootstrapper` (resolve + switch schema)
 - `Query/` — `Query`, `QueryHandler` interfaces
 
 ## Generic type parameters

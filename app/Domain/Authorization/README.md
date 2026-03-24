@@ -23,7 +23,7 @@ Higher-level grants cascade down:
 
 1. If user has super-admin role (system role) → granted with scope `All`
 2. If impersonating → use impersonated user's permissions (no super-admin bypass)
-3. Collect all role permissions for user within current org (union of all assigned roles)
+3. Collect all role permissions for user (union of all assigned roles)
 4. Apply permission inheritance (module → features → actions)
 5. Merge with per-user overrides: **any explicit deny wins** over any grant
 6. For scope: when multiple grants exist, most permissive scope wins (`All` > `Team` > `Own`)
@@ -33,9 +33,7 @@ Higher-level grants cascade down:
 - `AuthorizationChecker` — main entry point for permission checks
 - `AuthenticatedUser` — provides current user context including impersonation
 - `ImpersonationManager` — manages impersonation sessions
-- `OrganizationContext` — resolves current organization from request (see [Organization module](../Organization/README.md))
-- `OrganizationMembershipChecker` — verifies user belongs to an organization (see [Organization module](../Organization/README.md))
-- `TeamMembershipChecker` — resolves team memberships with descendant expansion for `AccessScope::Team` filtering (see [Organization module](../Organization/README.md))
+- `TeamMembershipChecker` — resolves team memberships with descendant expansion for `AccessScope::Team` filtering (see [Team module](../Team/README.md))
 
 ## Adding a New Module
 
@@ -99,7 +97,7 @@ The `reason` parameter is required — forces a conscious decision.
 Query handlers call `canWithScope()` to get the access scope, then filter:
 
 ```php
-$decision = $checker->canWithScope($userId, $orgId, 'crm.contacts.read');
+$decision = $checker->canWithScope($userId, 'crm.contacts.read');
 
 if (!$decision->granted()) {
     throw new PermissionDeniedException('crm.contacts.read');
@@ -112,7 +110,7 @@ match ($decision->scope()) {
 };
 ```
 
-The `team` scope uses `TeamMembershipChecker::memberTeamIds()` which returns the user's direct team IDs **plus all descendant team IDs** via recursive CTE. This means a member of "Engineering" also sees data from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Organization module](../Organization/README.md#scope-filtering).
+The `team` scope uses `TeamMembershipChecker::memberTeamIds()` which returns the user's direct team IDs **plus all descendant team IDs** via recursive CTE. This means a member of "Engineering" also sees data from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Team module](../Team/README.md).
 
 ## Role Assignment (Superset Enforcement)
 
@@ -158,12 +156,12 @@ Super admins can impersonate any user to see the application from their perspect
 
 - `$this->seedSuperAdminRole()` — creates the system super admin role
 - `$this->assignSuperAdmin($userId)` — grants all permissions
-- `$this->seedRoleWithPermissions($orgId, $name, $desc, $perms)` — custom role
-- `$this->assignRole($userId, $roleId, $orgId)` — assigns any role
+- `$this->seedRoleWithPermissions($name, $desc, $perms)` — custom role
+- `$this->assignRole($userId, $roleId)` — assigns any role
 
 ## Caching
 
-- Effective permissions are cached per user+org with key `auth:perms:{orgId}:{userId}`
+- Effective permissions are cached per user with key `auth:perms:{userId}`
 - TTL: 5 minutes (configurable via `AUTH_PERMISSION_CACHE_TTL` env var)
 - Cache is automatically invalidated when:
   - Role assigned/revoked to/from user
@@ -172,16 +170,16 @@ Super admins can impersonate any user to see the application from their perspect
 
 To debug cache issues, clear the authorization cache:
 ```bash
-php artisan cache:forget "auth:perms:{orgId}:{userId}"
+php artisan cache:forget "auth:perms:{userId}"
 ```
 
 ## Database Tables
 
 | Table | Purpose |
 |-------|---------|
-| `roles` | Role definitions (per-org + system) |
+| `roles` | Role definitions (per-tenant + system) |
 | `role_permissions` | Permissions assigned to roles |
-| `user_roles` | Role-to-user assignments per org |
+| `user_roles` | Role-to-user assignments |
 | `user_permission_overrides` | Per-user grant/deny overrides |
 | `record_shares` | Record-level sharing |
 | `permission_audit_log` | Audit trail for permission changes |
@@ -189,7 +187,7 @@ php artisan cache:forget "auth:perms:{orgId}:{userId}"
 
 ## Default Roles
 
-When a new organization is created, these roles are seeded:
+When a new tenant is set up, these roles are seeded:
 
 | Role | Permissions | Scope |
 |------|------------|-------|
@@ -197,8 +195,4 @@ When a new organization is created, these roles are seeded:
 | Editor | Read, Create, Update (including `users.roles.read`, `users.roles.update`) | All |
 | Viewer | Read only (including `users.roles.read`) | All |
 
-The Super Admin role is a global system role (no org) that bypasses all permission checks.
-
-## Nullable Organization ID on Role
-
-The `Role` aggregate has a nullable `$organizationId` because system roles (super-admin) are org-agnostic. This is an intentional exception — most aggregates require a non-nullable `$organizationId` (enforced by `AggregateRequiresOrganizationIdRule`). `Role` uses the `#[AllowNullableOrganizationId]` attribute to opt out of this enforcement.
+The Super Admin role is a system role that bypasses all permission checks.

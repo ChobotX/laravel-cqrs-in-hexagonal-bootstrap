@@ -11,7 +11,6 @@ use App\Domain\Team\Exception\TeamMemberAlreadyExistsException;
 use App\Domain\Team\Exception\TeamMemberNotFoundException;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
-use App\Domain\Team\Exception\UserNotOrganizationMemberException;
 
 function teamTestTranslator(): Translator
 {
@@ -86,16 +85,6 @@ it('TeamMemberNotFoundException has status 404 and translates', function (): voi
         ->and($e->userMessage(teamTestTranslator()))->toBe('messages.exceptions.team_member_not_found:')
         ->and($e->userId)->toBe('user-1')
         ->and($e->teamId)->toBe('team-1');
-});
-
-it('UserNotOrganizationMemberException has status 422 and translates', function (): void {
-    $e = new UserNotOrganizationMemberException('user-1', 'org-1');
-
-    expect($e->statusCode())->toBe(422)
-        ->and($e->getMessage())->toContain('user-1')
-        ->and($e->userMessage(teamTestTranslator()))->toBe('messages.exceptions.user_not_organization_member:')
-        ->and($e->userId)->toBe('user-1')
-        ->and($e->organizationId)->toBe('org-1');
 });
 
 it('TeamCycleDetectedException has status 422 and translates', function (): void {

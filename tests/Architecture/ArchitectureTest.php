@@ -60,6 +60,14 @@ final class ArchitectureTest
             ->classes(Selector::inNamespace('App\Infrastructure'));
     }
 
+    public function testDomainDoesNotDependOnTenancy(): Rule
+    {
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Domain'))
+            ->shouldNotDependOn()
+            ->classes(Selector::inNamespace('App\Contract\Tenancy'));
+    }
+
     // ── Structural rules ────────────────────────────────────────
 
     public function testContractClassesAreInterfaces(): Rule

@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 
@@ -19,22 +17,8 @@ function searchRolesAdmin(): UserModel
     test()->seedSuperAdminRole();
     test()->assignSuperAdmin($admin->id);
 
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Org',
-        'slug' => 'search-roles-org',
-        'description' => '',
-    ]);
-
-    OrganizationMemberModel::create([
-        'user_id' => $admin->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
-    ]);
-
     RoleModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440810',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Content Editor',
         'description' => 'Edits content',
         'is_system' => false,
@@ -42,7 +26,6 @@ function searchRolesAdmin(): UserModel
 
     RoleModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440811',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Content Viewer',
         'description' => 'Views content',
         'is_system' => false,

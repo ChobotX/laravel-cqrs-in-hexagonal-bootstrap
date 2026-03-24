@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Domain\Team\Exception\TeamNotFoundException;
-use App\Domain\Team\OrganizationId;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
 use App\Domain\Team\Team;
@@ -15,7 +14,6 @@ use Tests\Helper\FakeTeamRepository;
 it('returns team by id', function (): void {
     $team = new Team(
         new TeamId('550e8400-e29b-41d4-a716-446655440000'),
-        new OrganizationId('660e8400-e29b-41d4-a716-446655440000'),
         new TeamName('Engineering'),
         new TeamSlug('engineering'),
         'Test',

@@ -4,25 +4,16 @@ declare(strict_types=1);
 
 use App\Contract\Team\TeamMembershipChecker;
 use App\Infrastructure\Eloquent\Team\EloquentTeamMemberRepository;
-use App\Infrastructure\Eloquent\Team\OrganizationModel;
 use App\Infrastructure\Eloquent\Team\TeamMemberMapper;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 
-/** @return array{OrganizationModel, UserModel, UserModel, UserModel, EloquentTeamMemberRepository} */
+/** @return array{UserModel, UserModel, UserModel, EloquentTeamMemberRepository} */
 function scopeTestSetup(): array
 {
-    $org = OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Scope Test Org',
-        'slug' => 'scope-test-org',
-        'description' => '',
-    ]);
-
     // Team hierarchy: Managers -> Engineering, Managers -> Design
     TeamModel::create([
         'id' => '00000000-0000-0000-0000-100000000001',
-        'organization_id' => $org->id,
         'name' => 'Managers',
         'slug' => 'managers',
         'description' => 'Management team',
@@ -30,7 +21,6 @@ function scopeTestSetup(): array
 
     TeamModel::create([
         'id' => '00000000-0000-0000-0000-100000000002',
-        'organization_id' => $org->id,
         'parent_team_id' => '00000000-0000-0000-0000-100000000001',
         'name' => 'Engineering',
         'slug' => 'engineering',
@@ -39,7 +29,6 @@ function scopeTestSetup(): array
 
     TeamModel::create([
         'id' => '00000000-0000-0000-0000-100000000003',
-        'organization_id' => $org->id,
         'parent_team_id' => '00000000-0000-0000-0000-100000000001',
         'name' => 'Design',
         'slug' => 'design',
@@ -59,13 +48,13 @@ function scopeTestSetup(): array
     // Designer is in Design sub-team only
     $repo->add($designer->id, '00000000-0000-0000-0000-100000000003');
 
-    return [$org, $manager, $engineer, $designer, $repo];
+    return [$manager, $engineer, $designer, $repo];
 }
 
 it('manager sees data from all descendant teams', function (): void {
-    [$org, $manager, $engineer, $designer, $repo] = scopeTestSetup();
+    [$manager, $engineer, $designer, $repo] = scopeTestSetup();
 
-    $teamIds = $repo->memberTeamIds($manager->id, $org->id);
+    $teamIds = $repo->memberTeamIds($manager->id);
 
     // Manager's direct team (Managers) + both children (Engineering, Design)
     expect($teamIds)->toHaveCount(3)
@@ -77,43 +66,43 @@ it('manager sees data from all descendant teams', function (): void {
 });
 
 it('engineer sees only their own team', function (): void {
-    [$org, $manager, $engineer, $designer, $repo] = scopeTestSetup();
+    [$manager, $engineer, $designer, $repo] = scopeTestSetup();
 
-    $teamIds = $repo->memberTeamIds($engineer->id, $org->id);
+    $teamIds = $repo->memberTeamIds($engineer->id);
 
     expect($teamIds)->toHaveCount(1)
         ->and($teamIds)->toContain('00000000-0000-0000-0000-100000000002');
 });
 
 it('designer sees only their own team', function (): void {
-    [$org, $manager, $engineer, $designer, $repo] = scopeTestSetup();
+    [$manager, $engineer, $designer, $repo] = scopeTestSetup();
 
-    $teamIds = $repo->memberTeamIds($designer->id, $org->id);
+    $teamIds = $repo->memberTeamIds($designer->id);
 
     expect($teamIds)->toHaveCount(1)
         ->and($teamIds)->toContain('00000000-0000-0000-0000-100000000003');
 });
 
 it('engineer cannot see manager or design team data', function (): void {
-    [$org, $manager, $engineer, $designer, $repo] = scopeTestSetup();
+    [$manager, $engineer, $designer, $repo] = scopeTestSetup();
 
-    $teamIds = $repo->memberTeamIds($engineer->id, $org->id);
+    $teamIds = $repo->memberTeamIds($engineer->id);
 
     expect($teamIds)->not->toContain('00000000-0000-0000-0000-100000000001')
         ->and($teamIds)->not->toContain('00000000-0000-0000-0000-100000000003');
 });
 
 it('TeamMembershipChecker delegates to repository for scope resolution', function (): void {
-    [$org, $manager, $engineer] = scopeTestSetup();
+    [$manager, $engineer] = scopeTestSetup();
 
     $teamMembershipChecker = app(TeamMembershipChecker::class);
 
     // Manager sees all 3 teams
-    $managerTeamIds = $teamMembershipChecker->memberTeamIds($manager->id, $org->id);
+    $managerTeamIds = $teamMembershipChecker->memberTeamIds($manager->id);
     expect($managerTeamIds)->toHaveCount(3);
 
     // Engineer sees only Engineering
-    $engineerTeamIds = $teamMembershipChecker->memberTeamIds($engineer->id, $org->id);
+    $engineerTeamIds = $teamMembershipChecker->memberTeamIds($engineer->id);
     expect($engineerTeamIds)->toHaveCount(1)
         ->and($engineerTeamIds)->toContain('00000000-0000-0000-0000-100000000002');
 
@@ -124,14 +113,14 @@ it('TeamMembershipChecker delegates to repository for scope resolution', functio
 });
 
 it('directMemberTeamIds returns only direct assignments', function (): void {
-    [$org, $manager, $engineer, $designer, $repo] = scopeTestSetup();
+    [$manager, $engineer, $designer, $repo] = scopeTestSetup();
 
     // Manager's direct team is only Managers (not the descendants)
-    $directIds = $repo->directMemberTeamIds($manager->id, $org->id);
+    $directIds = $repo->directMemberTeamIds($manager->id);
     expect($directIds)->toHaveCount(1)
         ->and($directIds)->toContain('00000000-0000-0000-0000-100000000001');
 
     // memberTeamIds includes descendants
-    $allIds = $repo->memberTeamIds($manager->id, $org->id);
+    $allIds = $repo->memberTeamIds($manager->id);
     expect($allIds)->toHaveCount(3);
 });

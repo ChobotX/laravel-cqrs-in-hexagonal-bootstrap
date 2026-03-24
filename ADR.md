@@ -86,11 +86,17 @@ No `@phpstan-ignore`, no baseline file, no `@codeCoverageIgnore`.
 **Why:** Domain tests should validate real behavior, not mock contracts. Fakes catch more integration issues.
 **Enforced by:** PHPStan rule `NoMockeryInDomainTestsRule`. See [tests/README.md](tests/README.md).
 
-### Non-nullable organization context for authenticated users
+### Schema-based multi-tenancy
 
-`OrganizationContext::currentOrganizationId()` returns `string`, never null. For multi-org users without explicit selection, the first org is auto-selected. Aggregates must have non-nullable `$organizationId` unless exempted with `#[AllowNullableOrganizationId]` (e.g. `Role` for system roles) or `#[TenantAgnostic]`.
-**Why:** Nullable org context caused silent 403s when users belonged to multiple orgs without an explicit selection. Non-nullable contract pushes resolution to one place (`CookieOrganizationContext`) and eliminates defensive null checks scattered across controllers and middleware.
-**Enforced by:** PHP type system (`string` return type), PHPStan rule `AggregateRequiresOrganizationIdRule` (rejects nullable `$organizationId` unless exempted). See [app/Domain/Organization/README.md](app/Domain/Organization/README.md).
+Each tenant gets a dedicated PostgreSQL schema. The domain layer is fully tenant-agnostic — it reads/writes "the database" without knowing which tenant is active. Infrastructure transparently routes queries to the correct schema via `search_path`.
+**Why:** Enterprise-grade isolation. Per-tenant users, jobs, cache — zero cross-tenant data leakage by architecture. GDPR-compliant tenant deletion = `DROP SCHEMA CASCADE`.
+**Enforced by:** PHPat rule `testDomainDoesNotDependOnTenancy` (domain cannot import `App\Contract\Tenancy`), PHPStan rule `ConsoleCommandRequiresTenantAttributeRule` (every console command must declare `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]`).
+
+### Every console command needs tenant attribute
+
+Every command in `App\Presentation\Console\` must have `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]`.
+**Why:** Forces a conscious decision about whether each CLI command operates within a tenant schema or is tenant-agnostic (e.g. migration commands).
+**Enforced by:** PHPStan rule `ConsoleCommandRequiresTenantAttributeRule`. See [tests/README.md](tests/README.md).
 
 ### Centralized transactional test isolation
 

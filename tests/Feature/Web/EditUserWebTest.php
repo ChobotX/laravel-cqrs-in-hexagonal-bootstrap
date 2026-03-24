@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
-use App\Infrastructure\Eloquent\Organization\TeamMemberModel;
-use App\Infrastructure\Eloquent\Organization\TeamModel;
+use App\Infrastructure\Eloquent\Team\TeamMemberModel;
+use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -165,7 +163,6 @@ it('shows role selector with users.roles.read permission', function (): void {
 
 it('hides role selector without users.roles.read permission', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Basic Editor',
         'Can edit users but not roles',
         ['users.list.read' => 'all', 'users.list.update' => 'all'],
@@ -177,7 +174,7 @@ it('hides role selector without users.roles.read permission', function (): void 
         'email' => 'noroles-perm@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($user->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($user->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440063',
@@ -209,7 +206,6 @@ it('assigns role via form submission', function (): void {
 
     $editorRole = RoleModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440070',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Test Editor',
         'description' => 'Editor',
         'is_system' => false,
@@ -240,7 +236,6 @@ it('assigns role via form submission', function (): void {
 it('non-super-admin cannot assign system role via form', function (): void {
     $this->seedSuperAdminRole();
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Full Editor',
         'Can manage users and roles',
         [
@@ -259,7 +254,7 @@ it('non-super-admin cannot assign system role via form', function (): void {
         'email' => 'editor-sys@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($editor->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($editor->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440067',
@@ -300,7 +295,6 @@ it('revokes role via form submission when removed from selection', function (): 
 
     $editorRole = RoleModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440082',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Revoke Editor',
         'description' => 'Editor',
         'is_system' => false,
@@ -315,7 +309,7 @@ it('revokes role via form submission when removed from selection', function (): 
         'scope' => 'all',
     ]);
 
-    $this->assignRole($targetUser->id, $editorRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($targetUser->id, $editorRole->id);
 
     $this->assertDatabaseHas('user_roles', [
         'user_id' => $targetUser->id,
@@ -337,7 +331,6 @@ it('revokes role via form submission when removed from selection', function (): 
 
 it('skips role sync without users.roles.update permission', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'No Role Perm',
         'Can update users only',
         ['users.list.read' => 'all', 'users.list.update' => 'all'],
@@ -349,7 +342,7 @@ it('skips role sync without users.roles.update permission', function (): void {
         'email' => 'nosync@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($user->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($user->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440084',
@@ -371,7 +364,6 @@ it('skips role sync without users.roles.update permission', function (): void {
 
 it('non-super-admin cannot assign role with wider permissions', function (): void {
     $narrowRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Narrow Editor',
         'Limited permissions',
         [
@@ -383,7 +375,6 @@ it('non-super-admin cannot assign role with wider permissions', function (): voi
     );
 
     $wideRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Wide Admin',
         'Full permissions',
         ['users.list.read' => 'all', 'users.list.delete' => 'all'],
@@ -395,7 +386,7 @@ it('non-super-admin cannot assign role with wider permissions', function (): voi
         'email' => 'narrow@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($editor->id, $narrowRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($editor->id, $narrowRole->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440069',
@@ -416,156 +407,65 @@ it('non-super-admin cannot assign role with wider permissions', function (): voi
     ]);
 });
 
-it('shows organization selector with organizations.members.update permission', function (): void {
+it('shows team selector with teams.members.update permission', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440090',
-        'name' => 'Admin Org',
-        'email' => 'admin-org-edit@example.com',
+        'name' => 'Admin Team',
+        'email' => 'admin-team-edit@example.com',
         'password' => Hash::make('password123'),
     ]);
     $this->assignSuperAdmin($admin->id);
 
-    OrganizationModel::create([
+    TeamModel::create([
         'id' => '00000000-0000-0000-0000-000000000010',
-        'name' => 'Test Org',
-        'slug' => 'test-org-edit',
+        'name' => 'Test Team',
+        'slug' => 'test-team-edit',
         'description' => 'Test',
     ]);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440091',
-        'name' => 'Target Org',
-        'email' => 'target-org@example.com',
+        'name' => 'Target Team',
+        'email' => 'target-team@example.com',
     ]);
 
     $this->actingAs($admin)
         ->get('/users/550e8400-e29b-41d4-a716-446655440091/edit')
         ->assertStatus(200)
         ->assertSee('data-search-url=', false)
-        ->assertSee('data-input-name="organizations[]"', false);
+        ->assertSee('data-input-name="teams[]"', false);
 });
 
-it('hides organization selector without organizations.members.update permission', function (): void {
+it('hides team selector without teams.members.update permission', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
-        'No Org Perm',
-        'Can edit users but not org members',
+        'No Team Perm',
+        'Can edit users but not team members',
         ['users.list.read' => 'all', 'users.list.update' => 'all'],
     );
 
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440092',
-        'name' => 'No Org Perm User',
-        'email' => 'noorg-perm@example.com',
+        'name' => 'No Team Perm User',
+        'email' => 'noteam-perm@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($user->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($user->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440093',
-        'name' => 'Target No Org Perm',
-        'email' => 'target-noorg-perm@example.com',
+        'name' => 'Target No Team Perm',
+        'email' => 'target-noteam-perm@example.com',
     ]);
 
     $this->actingAs($user)
         ->get('/users/550e8400-e29b-41d4-a716-446655440093/edit')
         ->assertStatus(200)
-        ->assertDontSee('data-input-name="organizations[]"', false);
-});
-
-it('adds organization via form submission', function (): void {
-    $this->seedSuperAdminRole();
-    $admin = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440094',
-        'name' => 'Admin Add Org',
-        'email' => 'admin-addorg@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($admin->id);
-
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000011',
-        'name' => 'Add Org',
-        'slug' => 'add-org-edit',
-        'description' => 'To add',
-    ]);
-
-    $target = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440095',
-        'name' => 'Target Add Org',
-        'email' => 'target-addorg@example.com',
-    ]);
-
-    $this->actingAs($admin)
-        ->put('/users/'.$target->id, [
-            'name' => 'Target Add Org',
-            'email' => 'target-addorg@example.com',
-            'organizations' => ['00000000-0000-0000-0000-000000000011'],
-        ])->assertRedirect('/users');
-
-    $this->assertDatabaseHas('organization_members', [
-        'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000011',
-    ]);
-});
-
-it('removes organization via form submission', function (): void {
-    $this->seedSuperAdminRole();
-    $admin = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440096',
-        'name' => 'Admin Rm Org',
-        'email' => 'admin-rmorg@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($admin->id);
-
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000012',
-        'name' => 'Rm Org',
-        'slug' => 'rm-org-edit',
-        'description' => 'To remove',
-    ]);
-
-    $target = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440097',
-        'name' => 'Target Rm Org',
-        'email' => 'target-rmorg@example.com',
-    ]);
-
-    OrganizationMemberModel::create([
-        'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000012',
-        'joined_at' => now(),
-    ]);
-
-    $this->assertDatabaseHas('organization_members', [
-        'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000012',
-    ]);
-
-    $this->actingAs($admin)
-        ->put('/users/'.$target->id, [
-            'name' => 'Target Rm Org',
-            'email' => 'target-rmorg@example.com',
-            'organizations' => [],
-        ])->assertRedirect('/users');
-
-    $this->assertDatabaseMissing('organization_members', [
-        'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000012',
-    ]);
+        ->assertDontSee('data-input-name="teams[]"', false);
 });
 
 it('adds team membership via form submission', function (): void {
     $this->seedSuperAdminRole();
-
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Default Org',
-        'slug' => 'default-addteam',
-        'description' => '',
-    ]);
 
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440101',
@@ -575,15 +475,8 @@ it('adds team membership via form submission', function (): void {
     ]);
     $this->assignSuperAdmin($admin->id);
 
-    OrganizationMemberModel::create([
-        'user_id' => $admin->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
-    ]);
-
     TeamModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440102',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Team to Add',
         'slug' => 'team-to-add',
         'description' => '',
@@ -595,17 +488,10 @@ it('adds team membership via form submission', function (): void {
         'email' => 'target-addteam@example.com',
     ]);
 
-    OrganizationMemberModel::create([
-        'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
-    ]);
-
     $this->actingAs($admin)
         ->put('/users/'.$target->id, [
             'name' => 'Target Add Team',
             'email' => 'target-addteam@example.com',
-            'organizations' => ['00000000-0000-0000-0000-000000000001'],
             'teams' => ['550e8400-e29b-41d4-a716-446655440102'],
         ])->assertRedirect('/users');
 
@@ -618,13 +504,6 @@ it('adds team membership via form submission', function (): void {
 it('removes team membership via form submission', function (): void {
     $this->seedSuperAdminRole();
 
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Default Org',
-        'slug' => 'default-rmteam',
-        'description' => '',
-    ]);
-
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440104',
         'name' => 'Admin Rm Team',
@@ -633,15 +512,8 @@ it('removes team membership via form submission', function (): void {
     ]);
     $this->assignSuperAdmin($admin->id);
 
-    OrganizationMemberModel::create([
-        'user_id' => $admin->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
-    ]);
-
     TeamModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440105',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Team to Remove',
         'slug' => 'team-to-remove',
         'description' => '',
@@ -651,12 +523,6 @@ it('removes team membership via form submission', function (): void {
         'id' => '550e8400-e29b-41d4-a716-446655440106',
         'name' => 'Target Rm Team',
         'email' => 'target-rmteam@example.com',
-    ]);
-
-    OrganizationMemberModel::create([
-        'user_id' => $target->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
     ]);
 
     TeamMemberModel::create([
@@ -669,7 +535,6 @@ it('removes team membership via form submission', function (): void {
         ->put('/users/'.$target->id, [
             'name' => 'Target Rm Team',
             'email' => 'target-rmteam@example.com',
-            'organizations' => ['00000000-0000-0000-0000-000000000001'],
             'teams' => [],
         ])->assertRedirect('/users');
 
@@ -679,43 +544,42 @@ it('removes team membership via form submission', function (): void {
     ]);
 });
 
-it('skips org sync without organizations.members.update permission', function (): void {
+it('skips team sync without teams.members.update permission', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
-        'No Org Sync Perm',
+        'No Team Sync Perm',
         'Can update users only',
         ['users.list.read' => 'all', 'users.list.update' => 'all'],
     );
 
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440098',
-        'name' => 'No Org Sync User',
-        'email' => 'noorgsync@example.com',
+        'name' => 'No Team Sync User',
+        'email' => 'noteamsync@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($user->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($user->id, $role->id);
 
-    OrganizationModel::create([
+    TeamModel::create([
         'id' => '00000000-0000-0000-0000-000000000013',
-        'name' => 'No Sync Org',
-        'slug' => 'nosync-org-edit',
+        'name' => 'No Sync Team',
+        'slug' => 'nosync-team-edit',
         'description' => 'Should not be added',
     ]);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440100',
-        'name' => 'Target No Org Sync',
-        'email' => 'target-noorgsync@example.com',
+        'name' => 'Target No Team Sync',
+        'email' => 'target-noteamsync@example.com',
     ]);
 
     $this->actingAs($user)
         ->put('/users/550e8400-e29b-41d4-a716-446655440100', [
-            'name' => 'Target No Org Sync Updated',
-            'email' => 'target-noorgsync@example.com',
-            'organizations' => ['00000000-0000-0000-0000-000000000013'],
+            'name' => 'Target No Team Sync Updated',
+            'email' => 'target-noteamsync@example.com',
+            'teams' => ['00000000-0000-0000-0000-000000000013'],
         ])->assertRedirect('/users');
 
-    $this->assertDatabaseMissing('organization_members', [
+    $this->assertDatabaseMissing('team_members', [
         'user_id' => '550e8400-e29b-41d4-a716-446655440100',
     ]);
 });

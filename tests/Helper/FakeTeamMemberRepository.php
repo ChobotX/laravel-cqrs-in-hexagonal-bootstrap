@@ -18,12 +18,10 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
 
     /**
      * @param  array<string, list<string>>  $memberships  userId => list<teamId>
-     * @param  array<string, string>  $teamOrganizations  teamId => organizationId
      * @param  array<string, array{name: string, email: string}>  $userInfo
      */
     public function __construct(
         private array $memberships = [],
-        private array $teamOrganizations = [],
         private array $userInfo = [],
     ) {}
 
@@ -56,22 +54,15 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
     }
 
     /** @return list<string> */
-    public function directMemberTeamIds(string $userId, string $organizationId): array
+    public function memberTeamIds(string $userId): array
     {
-        return $this->memberTeamIds($userId, $organizationId);
+        return $this->memberships[$userId] ?? [];
     }
 
     /** @return list<string> */
-    public function memberTeamIds(string $userId, string $organizationId): array
+    public function directMemberTeamIds(string $userId): array
     {
-        if (! isset($this->memberships[$userId])) {
-            return [];
-        }
-
-        return array_values(array_filter(
-            $this->memberships[$userId],
-            fn (string $teamId): bool => ($this->teamOrganizations[$teamId] ?? '') === $organizationId,
-        ));
+        return $this->memberships[$userId] ?? [];
     }
 
     /** @return list<TeamMember> */
@@ -95,15 +86,8 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
         return $members;
     }
 
-    public function removeAllByUserAndOrganization(string $userId, string $organizationId): void
+    public function removeAllByUser(string $userId): void
     {
-        if (! isset($this->memberships[$userId])) {
-            return;
-        }
-
-        $this->memberships[$userId] = array_values(array_filter(
-            $this->memberships[$userId],
-            fn (string $teamId): bool => ($this->teamOrganizations[$teamId] ?? '') !== $organizationId,
-        ));
+        unset($this->memberships[$userId]);
     }
 }

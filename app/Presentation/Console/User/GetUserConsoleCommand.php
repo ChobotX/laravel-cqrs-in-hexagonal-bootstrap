@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Presentation\Console\User;
 
 use App\Application\Bus\QueryBus;
+use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 
+#[TenantAwareCommand]
 final class GetUserConsoleCommand extends Command
 {
     use StrictArguments;
 
-    protected $signature = 'user:get {id}';
+    protected $signature = 'user:get {id} {--tenant= : Tenant slug}';
 
     protected $description = 'Get a user by ID';
 

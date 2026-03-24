@@ -2,20 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
-
-function createSearchWebOrg(string $id, string $slug): void
-{
-    OrganizationModel::create([
-        'id' => $id,
-        'name' => 'Org '.$slug,
-        'slug' => $slug,
-        'description' => 'Test',
-    ]);
-}
 
 function createSearchWebUser(string $id, string $name, string $email): UserModel
 {
@@ -27,22 +15,10 @@ function createSearchWebUser(string $id, string $name, string $email): UserModel
     ]);
 }
 
-function addSearchWebMember(string $userId, string $orgId): void
-{
-    OrganizationMemberModel::create([
-        'user_id' => $userId,
-        'organization_id' => $orgId,
-        'joined_at' => now(),
-    ]);
-}
-
 /** @return array{admin: UserModel} */
 function setupSuperAdmin(): array
 {
-    createSearchWebOrg('00000000-0000-0000-0000-000000000001', 'default');
-
     $userModel = createSearchWebUser('550e8400-e29b-41d4-a716-446655440a00', 'Super Admin', 'superadmin@test.com');
-    addSearchWebMember($userModel->id, '00000000-0000-0000-0000-000000000001');
 
     test()->seedSuperAdminRole();
     test()->assignSuperAdmin($userModel->id);
@@ -50,50 +26,40 @@ function setupSuperAdmin(): array
     return ['admin' => $userModel];
 }
 
-/** @return array{user: UserModel, orgId: string} */
+/** @return array{user: UserModel} */
 function setupRegularUser(): array
 {
-    createSearchWebOrg('00000000-0000-0000-0000-000000000001', 'default');
-    $orgId = '00000000-0000-0000-0000-000000000002';
-    createSearchWebOrg($orgId, 'user-org');
-
     $userModel = createSearchWebUser('550e8400-e29b-41d4-a716-446655440b00', 'Regular User', 'regular@test.com');
-    addSearchWebMember($userModel->id, '00000000-0000-0000-0000-000000000001');
-    addSearchWebMember($userModel->id, $orgId);
 
     test()->seedSuperAdminRole();
 
     $role = test()->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Member',
         'Basic member',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
     );
-    test()->assignRole($userModel->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    test()->assignRole($userModel->id, $role->id);
 
-    return ['user' => $userModel, 'orgId' => $orgId];
+    return ['user' => $userModel];
 }
 
-it('superadmin can search and sees users from any organization', function (): void {
+it('superadmin can search and sees all users', function (): void {
     ['admin' => $admin] = setupSuperAdmin();
 
-    createSearchWebOrg('00000000-0000-0000-0000-000000000003', 'other-org');
-    $userModel = createSearchWebUser('550e8400-e29b-41d4-a716-446655440c00', 'Other Org User', 'other@test.com');
-    addSearchWebMember($userModel->id, '00000000-0000-0000-0000-000000000003');
+    createSearchWebUser('550e8400-e29b-41d4-a716-446655440c00', 'Other User', 'other@test.com');
 
     $response = $this->actingAs($admin)
         ->getJson('/internal-api/users/search?q=Other');
 
     $response->assertOk();
     $response->assertJsonCount(1, 'data');
-    $response->assertJsonPath('data.0.name', 'Other Org User');
+    $response->assertJsonPath('data.0.name', 'Other User');
 });
 
-it('regular user only sees co-members from same organizations', function (): void {
-    ['user' => $user, 'orgId' => $orgId] = setupRegularUser();
+it('regular user can search users', function (): void {
+    ['user' => $user] = setupRegularUser();
 
-    $userModel = createSearchWebUser('550e8400-e29b-41d4-a716-446655440d00', 'Co Member', 'comember@test.com');
-    addSearchWebMember($userModel->id, $orgId);
+    createSearchWebUser('550e8400-e29b-41d4-a716-446655440d00', 'Co Member', 'comember@test.com');
 
     $response = $this->actingAs($user)
         ->getJson('/internal-api/users/search?q=Co+Member');
@@ -101,20 +67,6 @@ it('regular user only sees co-members from same organizations', function (): voi
     $response->assertOk();
     $response->assertJsonCount(1, 'data');
     $response->assertJsonPath('data.0.name', 'Co Member');
-});
-
-it('regular user cannot see users from other organizations', function (): void {
-    ['user' => $user] = setupRegularUser();
-
-    createSearchWebOrg('00000000-0000-0000-0000-000000000004', 'alien-org');
-    $userModel = createSearchWebUser('550e8400-e29b-41d4-a716-446655440e00', 'Alien User', 'alien@test.com');
-    addSearchWebMember($userModel->id, '00000000-0000-0000-0000-000000000004');
-
-    $response = $this->actingAs($user)
-        ->getJson('/internal-api/users/search?q=Alien');
-
-    $response->assertOk();
-    $response->assertJsonCount(0, 'data');
 });
 
 it('excludes specified user ids', function (): void {

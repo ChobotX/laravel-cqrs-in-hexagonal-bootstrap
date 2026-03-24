@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
-use App\Infrastructure\Eloquent\Organization\TeamMemberModel;
-use App\Infrastructure\Eloquent\Organization\TeamModel;
+use App\Infrastructure\Eloquent\Team\TeamMemberModel;
+use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 
@@ -133,7 +131,6 @@ it('super admin does not see impersonate button for self', function (): void {
 
 it('non-super-admin does not see impersonate button', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Editor Imp',
         'Can view users',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -145,7 +142,7 @@ it('non-super-admin does not see impersonate button', function (): void {
         'email' => 'editor-imp@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($editor->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($editor->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440030',
@@ -161,7 +158,6 @@ it('non-super-admin does not see impersonate button', function (): void {
 
 it('user without users.list.update does not see edit button', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer NoEdit',
         'Can only view users',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -173,7 +169,7 @@ it('user without users.list.update does not see edit button', function (): void 
         'email' => 'viewer-noedit@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440032',
@@ -191,7 +187,6 @@ it('user without users.list.update does not see edit button', function (): void 
 
 it('user without users.list.delete does not see delete button', function (): void {
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer NoDel',
         'Can only view users',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -203,7 +198,7 @@ it('user without users.list.delete does not see delete button', function (): voi
         'email' => 'viewer-nodel@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440034',
@@ -247,16 +242,8 @@ it('user with full permissions sees all action buttons', function (): void {
 });
 
 it('team-scoped user only sees teammates', function (): void {
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Scope Org',
-        'slug' => 'scope-org',
-        'description' => '',
-    ]);
-
     TeamModel::create([
         'id' => '00000000-0000-0000-0000-000000000090',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Alpha',
         'slug' => 'alpha',
         'description' => '',
@@ -264,14 +251,12 @@ it('team-scoped user only sees teammates', function (): void {
 
     TeamModel::create([
         'id' => '00000000-0000-0000-0000-000000000091',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Beta',
         'slug' => 'beta',
         'description' => '',
     ]);
 
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Team Scoped',
         'Team scope on users',
         ['users.list.read' => 'team', 'users.roles.read' => 'team'],
@@ -283,9 +268,8 @@ it('team-scoped user only sees teammates', function (): void {
         'email' => 'team-viewer@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $role->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $role->id);
 
-    OrganizationMemberModel::create(['user_id' => $viewer->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000090', 'user_id' => $viewer->id, 'joined_at' => now()]);
 
     $teammate = UserModel::create([
@@ -293,7 +277,6 @@ it('team-scoped user only sees teammates', function (): void {
         'name' => 'Teammate Alpha',
         'email' => 'teammate-alpha@example.com',
     ]);
-    OrganizationMemberModel::create(['user_id' => $teammate->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000090', 'user_id' => $teammate->id, 'joined_at' => now()]);
 
     $outsider = UserModel::create([
@@ -301,7 +284,6 @@ it('team-scoped user only sees teammates', function (): void {
         'name' => 'Outsider Beta',
         'email' => 'outsider-beta@example.com',
     ]);
-    OrganizationMemberModel::create(['user_id' => $outsider->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000091', 'user_id' => $outsider->id, 'joined_at' => now()]);
 
     $this->actingAs($viewer)
@@ -313,15 +295,7 @@ it('team-scoped user only sees teammates', function (): void {
 });
 
 it('own-scoped user only sees themselves', function (): void {
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Own Org',
-        'slug' => 'own-org',
-        'description' => '',
-    ]);
-
     $role = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Own Scoped',
         'Own scope on users',
         ['users.list.read' => 'own'],
@@ -333,9 +307,7 @@ it('own-scoped user only sees themselves', function (): void {
         'email' => 'own-viewer@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $role->id, '00000000-0000-0000-0000-000000000001');
-
-    OrganizationMemberModel::create(['user_id' => $viewer->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
+    $this->assignRole($viewer->id, $role->id);
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440e61',

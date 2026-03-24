@@ -9,7 +9,6 @@ it('viewer can access users list directly', function (): void {
     $this->seedSuperAdminRole();
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all'],
@@ -21,7 +20,7 @@ it('viewer can access users list directly', function (): void {
         'email' => 'tillman-direct@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->post('/login', ['email' => 'tillman-direct@example.com', 'password' => 'password123']);
 
@@ -45,7 +44,6 @@ it('impersonated viewer can access users list', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all'],
@@ -57,7 +55,7 @@ it('impersonated viewer can access users list', function (): void {
         'email' => 'tillman-realflow@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->post('/login', ['email' => 'admin-realflow@example.com', 'password' => 'password123']);
     $this->post('/impersonate/'.$viewer->id);

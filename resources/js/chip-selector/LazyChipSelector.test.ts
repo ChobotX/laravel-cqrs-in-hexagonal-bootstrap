@@ -30,7 +30,7 @@ function createFetchMock(response: unknown = mockResults): void {
 function mountLazy(props: Partial<InstanceType<typeof LazyChipSelector>['$props']> = {}): ReturnType<typeof mount> {
     return mount(LazyChipSelector, {
         props: {
-            searchUrl: '/internal-api/organizations/search',
+            searchUrl: '/internal-api/teams/search',
             selectedItems: [],
             debounceMs: 0,
             ...props,
@@ -74,7 +74,7 @@ describe('LazyChipSelector', () => {
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
         const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-        expect(fetchUrl).toContain('/internal-api/organizations/search');
+        expect(fetchUrl).toContain('/internal-api/teams/search');
     });
 
     it('shows loading indicator during fetch', async () => {
@@ -168,7 +168,7 @@ describe('LazyChipSelector', () => {
 
     it('shows empty state message when fetch returns 0 results', async () => {
         createFetchMock(emptyResults);
-        const wrapper = mountLazy({ noResultsText: 'No organizations found' });
+        const wrapper = mountLazy({ noResultsText: 'No teams found' });
         const input = wrapper.find('input[role="combobox"]');
 
         await input.trigger('focus');
@@ -179,7 +179,7 @@ describe('LazyChipSelector', () => {
         await vi.advanceTimersByTimeAsync(0);
         await flushPromises();
 
-        expect(wrapper.text()).toContain('No organizations found');
+        expect(wrapper.text()).toContain('No teams found');
     });
 
     it('passes exclude[] for all selected IDs in fetch request', async () => {
@@ -202,11 +202,11 @@ describe('LazyChipSelector', () => {
     it('uses custom inputName for hidden inputs', () => {
         const wrapper = mountLazy({
             selectedItems: [{ id: 'org-x', name: 'Org X' }],
-            inputName: 'organizations[]',
+            inputName: 'teams[]',
         });
 
         const hidden = wrapper.find('input[type="hidden"][value="org-x"]');
-        expect(hidden.attributes('name')).toBe('organizations[]');
+        expect(hidden.attributes('name')).toBe('teams[]');
     });
 
     it('does not re-fetch on subsequent focus if already fetched', async () => {

@@ -5,16 +5,18 @@ declare(strict_types=1);
 namespace App\Presentation\Console\User;
 
 use App\Application\Bus\CommandBus;
+use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Command\CreateUser\CreateUserCommand;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
+#[TenantAwareCommand]
 final class CreateUserConsoleCommand extends Command
 {
     use StrictArguments;
 
-    protected $signature = 'user:create {name} {email}';
+    protected $signature = 'user:create {name} {email} {--tenant= : Tenant slug}';
 
     protected $description = 'Create a new user';
 

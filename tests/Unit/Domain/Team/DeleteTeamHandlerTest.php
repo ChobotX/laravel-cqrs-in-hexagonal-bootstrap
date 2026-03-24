@@ -6,7 +6,6 @@ use App\Domain\Team\Command\DeleteTeam\DeleteTeamCommand;
 use App\Domain\Team\Command\DeleteTeam\DeleteTeamHandler;
 use App\Domain\Team\Event\TeamDeleted;
 use App\Domain\Team\Exception\TeamNotFoundException;
-use App\Domain\Team\OrganizationId;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
@@ -17,7 +16,6 @@ use Tests\Helper\FakeTeamRepository;
 it('deletes a team and emits event', function (): void {
     $team = new Team(
         new TeamId('550e8400-e29b-41d4-a716-446655440000'),
-        new OrganizationId('660e8400-e29b-41d4-a716-446655440000'),
         new TeamName('Engineering'),
         new TeamSlug('engineering'),
         'Test',

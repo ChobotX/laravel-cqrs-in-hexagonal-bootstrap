@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Team\OrganizationId;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamRepository;
@@ -24,12 +23,9 @@ final class FakeTeamRepository implements TeamRepository
     ) {}
 
     /** @return list<Team> */
-    public function findAllByOrganization(OrganizationId $organizationId): array
+    public function findAll(): array
     {
-        return array_values(array_filter(
-            $this->teams,
-            fn (Team $team): bool => $team->organizationId->value === $organizationId->value,
-        ));
+        return array_values($this->teams);
     }
 
     public function findById(TeamId $teamId): ?Team
@@ -37,10 +33,10 @@ final class FakeTeamRepository implements TeamRepository
         return $this->teams[$teamId->value] ?? null;
     }
 
-    public function findBySlugInOrganization(TeamSlug $teamSlug, OrganizationId $organizationId): ?Team
+    public function findBySlug(TeamSlug $teamSlug): ?Team
     {
         foreach ($this->teams as $team) {
-            if ($team->slug->value === $teamSlug->value && $team->organizationId->value === $organizationId->value) {
+            if ($team->slug->value === $teamSlug->value) {
                 return $team;
             }
         }

@@ -18,7 +18,6 @@ it('impersonated viewer sees view button on roles list', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -30,7 +29,7 @@ it('impersonated viewer sees view button on roles list', function (): void {
         'email' => 'tillman-view@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
@@ -51,7 +50,6 @@ it('impersonated viewer can access role detail page', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -63,7 +61,7 @@ it('impersonated viewer can access role detail page', function (): void {
         'email' => 'tillman-show@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
@@ -83,7 +81,6 @@ it('impersonated viewer sees edit button on roles list', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -95,7 +92,7 @@ it('impersonated viewer sees edit button on roles list', function (): void {
         'email' => 'tillman@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
@@ -117,7 +114,6 @@ it('impersonated viewer can access role edit form', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -129,7 +125,7 @@ it('impersonated viewer can access role edit form', function (): void {
         'email' => 'tillman2@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
@@ -150,7 +146,6 @@ it('impersonated viewer can submit role edit form', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -162,7 +157,7 @@ it('impersonated viewer can submit role edit form', function (): void {
         'email' => 'tillman3@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
@@ -195,7 +190,6 @@ it('impersonated viewer sees edit button on users list', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -207,7 +201,7 @@ it('impersonated viewer sees edit button on users list', function (): void {
         'email' => 'tillman4@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
@@ -231,7 +225,6 @@ it('impersonated viewer can submit user edit form', function (): void {
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only access',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -243,7 +236,7 @@ it('impersonated viewer can submit user edit form', function (): void {
         'email' => 'tillman5@example.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $target = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440710',

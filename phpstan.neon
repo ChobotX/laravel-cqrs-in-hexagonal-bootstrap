@@ -86,6 +86,10 @@ services:
         class: Tests\Architecture\PHPStan\ControllerMustUseFormRequestRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\ConsoleCommandRequiresTenantAttributeRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

@@ -16,7 +16,6 @@ it('shows stop impersonation button on 403 when impersonating', function (): voi
     $this->assignSuperAdmin($admin->id);
 
     $viewerRole = $this->seedRoleWithPermissions(
-        '00000000-0000-0000-0000-000000000001',
         'Viewer',
         'Read-only',
         ['users.list.read' => 'all', 'users.roles.read' => 'all'],
@@ -28,7 +27,7 @@ it('shows stop impersonation button on 403 when impersonating', function (): voi
         'email' => '403-viewer@test.com',
         'password' => Hash::make('password123'),
     ]);
-    $this->assignRole($viewer->id, $viewerRole->id, '00000000-0000-0000-0000-000000000001');
+    $this->assignRole($viewer->id, $viewerRole->id);
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 

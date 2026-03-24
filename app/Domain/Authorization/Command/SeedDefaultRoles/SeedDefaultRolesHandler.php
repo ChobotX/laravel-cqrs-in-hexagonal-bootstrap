@@ -41,7 +41,7 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
         $readCreateUpdatePermissions = $this->buildActionPermissions(Action::Read, Action::Create, Action::Update);
 
         $roles = [
-            $this->createRole('Admin', 'Full access within organization', $allPermissions, AccessScope::All),
+            $this->createRole('Admin', 'Full access within tenant', $allPermissions, AccessScope::All),
             $this->createRole('Editor', 'Can read, create and update', $readCreateUpdatePermissions, AccessScope::All),
             $this->createRole('Member', 'Team-scoped read, create and update', $readCreateUpdatePermissions, AccessScope::Team),
             $this->createRole('Viewer', 'Read-only access', $readPermissions, AccessScope::All),

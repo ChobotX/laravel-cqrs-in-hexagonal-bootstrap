@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Eloquent\Team\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Team\OrganizationModel;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
@@ -19,22 +17,8 @@ function searchTeamsAdmin(): UserModel
     test()->seedSuperAdminRole();
     test()->assignSuperAdmin($admin->id);
 
-    OrganizationModel::create([
-        'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Default Org',
-        'slug' => 'default',
-        'description' => '',
-    ]);
-
-    OrganizationMemberModel::create([
-        'user_id' => $admin->id,
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
-        'joined_at' => now(),
-    ]);
-
     TeamModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440e10',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Engineering',
         'slug' => 'engineering',
         'description' => '',
@@ -42,7 +26,6 @@ function searchTeamsAdmin(): UserModel
 
     TeamModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440e11',
-        'organization_id' => '00000000-0000-0000-0000-000000000001',
         'name' => 'Design',
         'slug' => 'design',
         'description' => '',

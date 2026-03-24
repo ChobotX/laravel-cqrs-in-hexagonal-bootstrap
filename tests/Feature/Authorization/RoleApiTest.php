@@ -3,8 +3,6 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Laravel\Sanctum\Sanctum;
 
@@ -20,7 +18,7 @@ function apiUser(): UserModel
 
 it('lists roles via API', function (): void {
     apiUser();
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440901', 'name' => 'Editor', 'description' => 'Ed', 'is_system' => false, 'organization_id' => '00000000-0000-0000-0000-000000000001']);
+    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440901', 'name' => 'Editor', 'description' => 'Ed', 'is_system' => false]);
 
     $this->getJson('/api/roles')->assertOk()->assertJsonCount(1, 'data');
 });
@@ -39,7 +37,7 @@ it('creates a role via API', function (): void {
 
 it('gets a role by id via API', function (): void {
     apiUser();
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440902', 'name' => 'Viewer', 'description' => 'V', 'is_system' => false, 'organization_id' => '00000000-0000-0000-0000-000000000001']);
+    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440902', 'name' => 'Viewer', 'description' => 'V', 'is_system' => false]);
 
     $this->getJson('/api/roles/550e8400-e29b-41d4-a716-446655440902')
         ->assertOk()
@@ -48,7 +46,7 @@ it('gets a role by id via API', function (): void {
 
 it('updates a role via API', function (): void {
     apiUser();
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440903', 'name' => 'Old', 'description' => 'Old', 'is_system' => false, 'organization_id' => '00000000-0000-0000-0000-000000000001']);
+    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440903', 'name' => 'Old', 'description' => 'Old', 'is_system' => false]);
 
     $this->putJson('/api/roles/550e8400-e29b-41d4-a716-446655440903', [
         'name' => 'Updated',
@@ -61,7 +59,7 @@ it('updates a role via API', function (): void {
 
 it('deletes a role via API', function (): void {
     apiUser();
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440904', 'name' => 'ToDelete', 'description' => 'D', 'is_system' => false, 'organization_id' => '00000000-0000-0000-0000-000000000001']);
+    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440904', 'name' => 'ToDelete', 'description' => 'D', 'is_system' => false]);
 
     $this->deleteJson('/api/roles/550e8400-e29b-41d4-a716-446655440904')->assertNoContent();
 });
@@ -76,10 +74,8 @@ it('returns 401 when unauthenticated', function (): void {
     $this->getJson('/api/roles')->assertUnauthorized();
 });
 
-it('returns 403 when organization context is null', function (): void {
-    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
+it('returns 403 when user has no permissions', function (): void {
     $user = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440905', 'name' => 'No Perms', 'email' => 'noperms@test.com']);
-    OrganizationMemberModel::create(['user_id' => $user->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
     Sanctum::actingAs($user);
 
     $this->getJson('/api/roles')->assertForbidden();

@@ -2,17 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Organization;
-use App\Domain\Team\OrganizationId;
-use App\Domain\Team\OrganizationName;
-use App\Domain\Team\OrganizationSlug;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
-use App\Infrastructure\Eloquent\Team\EloquentOrganizationRepository;
 use App\Infrastructure\Eloquent\Team\EloquentTeamRepository;
-use App\Infrastructure\Eloquent\Team\OrganizationMapper;
 use App\Infrastructure\Eloquent\Team\TeamMapper;
 
 function teamRepo(): EloquentTeamRepository
@@ -20,22 +14,10 @@ function teamRepo(): EloquentTeamRepository
     return new EloquentTeamRepository(new TeamMapper);
 }
 
-function createTeamTestOrg(string $id, string $slug): void
-{
-    $orgRepo = new EloquentOrganizationRepository(new OrganizationMapper);
-    $orgRepo->create(new Organization(
-        id: new OrganizationId($id),
-        name: new OrganizationName('Test Org'),
-        slug: new OrganizationSlug($slug),
-        description: 'Test',
-    ));
-}
-
-function makeTestTeam(string $id, string $orgId, string $name, string $slug, ?string $parentId = null): Team
+function makeTestTeam(string $id, string $name, string $slug, ?string $parentId = null): Team
 {
     return new Team(
         id: new TeamId($id),
-        organizationId: new OrganizationId($orgId),
         name: new TeamName($name),
         slug: new TeamSlug($slug),
         description: $name.' description',
@@ -44,11 +26,8 @@ function makeTestTeam(string $id, string $orgId, string $name, string $slug, ?st
 }
 
 it('creates and finds a team by id', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a00';
-    createTeamTestOrg($orgId, 'team-test-org-a00');
-
     $eloquentTeamRepository = teamRepo();
-    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b00', $orgId, 'Engineering', 'engineering');
+    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b00', 'Engineering', 'engineering');
 
     $eloquentTeamRepository->create($team);
     $found = $eloquentTeamRepository->findById($team->id);
@@ -59,51 +38,39 @@ it('creates and finds a team by id', function (): void {
         ->and($found->parentTeamId)->toBeNull();
 });
 
-it('finds a team by slug in organization', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a01';
-    createTeamTestOrg($orgId, 'team-test-org-a01');
-
+it('finds a team by slug', function (): void {
     $eloquentTeamRepository = teamRepo();
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b01', $orgId, 'Backend', 'backend'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b01', 'Backend', 'backend'));
 
-    $found = $eloquentTeamRepository->findBySlugInOrganization(new TeamSlug('backend'), new OrganizationId($orgId));
+    $found = $eloquentTeamRepository->findBySlug(new TeamSlug('backend'));
 
     expect($found)->not->toBeNull()
         ->and($found->name->value)->toBe('Backend');
 });
 
 it('returns null for non-existent slug', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a02';
-    createTeamTestOrg($orgId, 'team-test-org-a02');
-
     $eloquentTeamRepository = teamRepo();
 
-    $found = $eloquentTeamRepository->findBySlugInOrganization(new TeamSlug('no-such-slug'), new OrganizationId($orgId));
+    $found = $eloquentTeamRepository->findBySlug(new TeamSlug('no-such-slug'));
 
     expect($found)->toBeNull();
 });
 
-it('finds all teams by organization', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a03';
-    createTeamTestOrg($orgId, 'team-test-org-a03');
-
+it('finds all teams', function (): void {
     $eloquentTeamRepository = teamRepo();
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b03', $orgId, 'Team A', 'team-aa'));
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b04', $orgId, 'Team B', 'team-bb'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b03', 'Team A', 'team-aa'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b04', 'Team B', 'team-bb'));
 
-    $all = $eloquentTeamRepository->findAllByOrganization(new OrganizationId($orgId));
+    $all = $eloquentTeamRepository->findAll();
 
     expect($all)->toHaveCount(2);
 });
 
 it('updates a team', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a04';
-    createTeamTestOrg($orgId, 'team-test-org-a04');
-
     $eloquentTeamRepository = teamRepo();
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b05', $orgId, 'Original', 'original'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b05', 'Original', 'original'));
 
-    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b05', $orgId, 'Updated', 'updated');
+    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b05', 'Updated', 'updated');
     $eloquentTeamRepository->update($team);
 
     $found = $eloquentTeamRepository->findById(new TeamId('550e8400-e29b-41d4-a716-446655440b05'));
@@ -113,12 +80,9 @@ it('updates a team', function (): void {
 });
 
 it('soft-deletes a team and reparents children', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a05';
-    createTeamTestOrg($orgId, 'team-test-org-a05');
-
     $eloquentTeamRepository = teamRepo();
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b06', $orgId, 'Parent', 'parent'));
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b07', $orgId, 'Child', 'child', '550e8400-e29b-41d4-a716-446655440b06'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b06', 'Parent', 'parent'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b07', 'Child', 'child', '550e8400-e29b-41d4-a716-446655440b06'));
 
     $eloquentTeamRepository->delete(new TeamId('550e8400-e29b-41d4-a716-446655440b06'));
 
@@ -131,13 +95,10 @@ it('soft-deletes a team and reparents children', function (): void {
 });
 
 it('creates team with parent', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a06';
-    createTeamTestOrg($orgId, 'team-test-org-a06');
-
     $eloquentTeamRepository = teamRepo();
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b08', $orgId, 'Parent', 'parent-tm'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b08', 'Parent', 'parent-tm'));
 
-    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b09', $orgId, 'Child', 'child-tm', '550e8400-e29b-41d4-a716-446655440b08');
+    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b09', 'Child', 'child-tm', '550e8400-e29b-41d4-a716-446655440b08');
     $eloquentTeamRepository->create($team);
 
     $found = $eloquentTeamRepository->findById($team->id);
@@ -147,14 +108,11 @@ it('creates team with parent', function (): void {
 });
 
 it('detects cycle on update when setting descendant as parent', function (): void {
-    $orgId = '550e8400-e29b-41d4-a716-446655440a07';
-    createTeamTestOrg($orgId, 'team-test-org-a07');
-
     $eloquentTeamRepository = teamRepo();
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', $orgId, 'Grandparent', 'grandparent'));
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b11', $orgId, 'Parent', 'parent-cy', '550e8400-e29b-41d4-a716-446655440b10'));
-    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b12', $orgId, 'Child', 'child-cy', '550e8400-e29b-41d4-a716-446655440b11'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', 'Grandparent', 'grandparent'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b11', 'Parent', 'parent-cy', '550e8400-e29b-41d4-a716-446655440b10'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b12', 'Child', 'child-cy', '550e8400-e29b-41d4-a716-446655440b11'));
 
-    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', $orgId, 'Grandparent', 'grandparent', '550e8400-e29b-41d4-a716-446655440b12');
+    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', 'Grandparent', 'grandparent', '550e8400-e29b-41d4-a716-446655440b12');
     $eloquentTeamRepository->update($team);
 })->throws(App\Domain\Team\Exception\TeamCycleDetectedException::class);

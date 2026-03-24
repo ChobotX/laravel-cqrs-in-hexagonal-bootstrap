@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Eloquent\Organization\OrganizationMemberModel;
-use App\Infrastructure\Eloquent\Organization\OrganizationModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Route;
 
@@ -60,8 +58,7 @@ it('returns 403 when user lacks the required permission', function (): void {
 });
 
 it('returns 403 for edit role when user lacks permission', function (): void {
-    $orgId = '00000000-0000-0000-0000-000000000001';
-    $role = $this->seedRoleWithPermissions($orgId, 'Test Role', 'desc', []);
+    $role = $this->seedRoleWithPermissions('Test Role', 'desc', []);
 
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440603',
@@ -104,14 +101,12 @@ it('returns 403 for edit user when user lacks permission', function (): void {
         ->assertForbidden();
 });
 
-it('returns 403 when organization context is null', function (): void {
-    OrganizationModel::create(['id' => '00000000-0000-0000-0000-000000000001', 'name' => 'Org', 'slug' => 'org', 'description' => '']);
+it('returns 403 when user has no permissions', function (): void {
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440607',
         'name' => 'No Perms',
         'email' => 'middleware-noorg@test.com',
     ]);
-    OrganizationMemberModel::create(['user_id' => $user->id, 'organization_id' => '00000000-0000-0000-0000-000000000001', 'joined_at' => now()]);
 
     $this->actingAs($user)
         ->get('/roles/create')

@@ -8,7 +8,6 @@ use App\Domain\Team\Event\TeamUpdated;
 use App\Domain\Team\Exception\TeamCycleDetectedException;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
-use App\Domain\Team\OrganizationId;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
@@ -20,7 +19,6 @@ function updateTeamExisting(): Team
 {
     return new Team(
         new TeamId('550e8400-e29b-41d4-a716-446655440000'),
-        new OrganizationId('660e8400-e29b-41d4-a716-446655440000'),
         new TeamName('Engineering'),
         new TeamSlug('engineering'),
         'Original',
@@ -36,7 +34,6 @@ it('updates a team and emits event', function (): void {
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '660e8400-e29b-41d4-a716-446655440000',
         name: 'Updated Engineering',
         slug: 'engineering',
         description: 'Updated',
@@ -57,7 +54,6 @@ it('throws when team not found', function (): void {
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '660e8400-e29b-41d4-a716-446655440000',
         name: 'Test',
         slug: 'test',
         description: '',
@@ -68,7 +64,6 @@ it('throws when team not found', function (): void {
 it('throws when slug already taken by another team', function (): void {
     $otherTeam = new Team(
         new TeamId('770e8400-e29b-41d4-a716-446655440000'),
-        new OrganizationId('660e8400-e29b-41d4-a716-446655440000'),
         new TeamName('Other'),
         new TeamSlug('taken'),
         'Other',
@@ -85,7 +80,6 @@ it('throws when slug already taken by another team', function (): void {
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '660e8400-e29b-41d4-a716-446655440000',
         name: 'Engineering',
         slug: 'taken',
         description: '',
@@ -101,7 +95,6 @@ it('throws when setting self as parent', function (): void {
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '660e8400-e29b-41d4-a716-446655440000',
         name: 'Engineering',
         slug: 'engineering',
         description: '',
@@ -117,7 +110,6 @@ it('throws when parent team not found', function (): void {
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '660e8400-e29b-41d4-a716-446655440000',
         name: 'Engineering',
         slug: 'engineering',
         description: '',

@@ -3,7 +3,7 @@
 ## Directory structure
 
 - `tests/Architecture/` — PHPat layer dependency tests (`ArchitectureTest.php`)
-- `tests/Architecture/PHPStan/` — 21 custom PHPStan rules
+- `tests/Architecture/PHPStan/` — custom PHPStan rules
 - `tests/Unit/Domain/` — domain unit tests (100% coverage required)
 - `tests/Unit/Infrastructure/` — infrastructure unit tests
 - `tests/Feature/` — integration/feature tests
@@ -34,8 +34,8 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `CommandQueryRequiresPermissionRule` | Every Command/Query must have `#[RequiresPermission]` or `#[SkipPermissionCheck]` |
 | `ControllerRequiresPermissionRule` | Every Controller must have `#[RequiresPermission]` or `#[SkipPermissionCheck]` |
 | `NoDatabaseTraitsInTestsRule` | No direct DB trait imports in tests; `RefreshDatabase` only in `Pest.php` |
-| `AggregateRequiresOrganizationIdRule` | Domain aggregates (classes with a matching `{Name}Repository` interface) must have a non-nullable `$organizationId` constructor param, or `#[TenantAgnostic]` attribute, or `#[AllowNullableOrganizationId]` for justified nullable cases |
 | `ControllerMustUseFormRequestRule` | Controllers must not type-hint `Illuminate\Http\Request` directly — use a custom `FormRequest` subclass |
+| `ConsoleCommandRequiresTenantAttributeRule` | Every console command must have `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]` |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

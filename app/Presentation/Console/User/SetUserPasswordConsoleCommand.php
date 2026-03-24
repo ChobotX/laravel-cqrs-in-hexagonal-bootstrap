@@ -6,17 +6,19 @@ namespace App\Presentation\Console\User;
 
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
+use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Command\SetPassword\SetPasswordCommand;
 use App\Domain\User\Query\GetUserByEmail\GetUserByEmailQuery;
 use App\Domain\User\User;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 
+#[TenantAwareCommand]
 final class SetUserPasswordConsoleCommand extends Command
 {
     use StrictArguments;
 
-    protected $signature = 'user:set-password {email}';
+    protected $signature = 'user:set-password {email} {--tenant= : Tenant slug}';
 
     protected $description = 'Set password for an existing user';
 

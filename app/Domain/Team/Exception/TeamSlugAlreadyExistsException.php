@@ -12,7 +12,7 @@ final class TeamSlugAlreadyExistsException extends RuntimeException implements D
 {
     public function __construct(public readonly string $slug)
     {
-        parent::__construct(sprintf('A team with slug [%s] already exists in this organization.', $slug));
+        parent::__construct(sprintf('A team with slug [%s] already exists.', $slug));
     }
 
     public function userMessage(Translator $translator): string

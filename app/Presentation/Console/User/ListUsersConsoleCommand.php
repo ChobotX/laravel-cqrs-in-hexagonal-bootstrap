@@ -5,13 +5,15 @@ declare(strict_types=1);
 namespace App\Presentation\Console\User;
 
 use App\Application\Bus\QueryBus;
+use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
 use Illuminate\Console\Command;
 
+#[TenantAwareCommand]
 final class ListUsersConsoleCommand extends Command
 {
-    protected $signature = 'user:list';
+    protected $signature = 'user:list {--tenant= : Tenant slug}';
 
     protected $description = 'List all users';
 

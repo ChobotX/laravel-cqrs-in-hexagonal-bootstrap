@@ -21,7 +21,6 @@ final class RoleModelFactory extends Factory
             'name' => fake()->unique()->jobTitle(),
             'description' => fake()->sentence(),
             'is_system' => false,
-            'organization_id' => null,
         ];
     }
 }
