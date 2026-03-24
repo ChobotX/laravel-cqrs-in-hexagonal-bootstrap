@@ -9,10 +9,10 @@ use Illuminate\Cache\Repository as CacheRepository;
 
 it('invalidates cache on override removed', function (): void {
     $cache = new CacheRepository(new ArrayStore);
-    $cache->put('auth:perms:org-1:user-1', ['users.list.read' => true], 300);
+    $cache->put('auth:perms:user-1', ['users.list.read' => true], 300);
 
     $handler = new InvalidateCacheOnOverrideRemoved($cache);
-    $handler->handle(new PermissionOverrideRemoved('user-1', 'org-1', 'users.list.read', new DateTimeImmutable));
+    $handler->handle(new PermissionOverrideRemoved('user-1', 'users.list.read', new DateTimeImmutable));
 
-    expect($cache->has('auth:perms:org-1:user-1'))->toBeFalse();
+    expect($cache->has('auth:perms:user-1'))->toBeFalse();
 });

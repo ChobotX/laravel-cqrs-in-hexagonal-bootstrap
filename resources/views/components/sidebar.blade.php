@@ -16,6 +16,5 @@
         <span class="text-base font-semibold">Bootstrap</span>
     </div>
 
-    @include('components.org-switcher')
     @include('components.sidebar-nav')
 </aside>

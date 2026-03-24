@@ -114,7 +114,7 @@ trait TenantAwareRefreshDatabase
 
     private function switchToTenantSchema(string $schema): void
     {
-        config(['database.connections.tenant.search_path' => $schema]);
+        config(['database.connections.tenant.search_path' => $schema.',public']);
         DB::purge('tenant');
     }
 

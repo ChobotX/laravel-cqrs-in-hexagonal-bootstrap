@@ -16,7 +16,6 @@ use Tests\Helper\FakeUserPermissionRepository;
 it('starts impersonation for super admin', function (): void {
     $superAdmin = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440001'),
-        null,
         new RoleName('Super Admin'),
         'Super Admin',
         true,
@@ -24,7 +23,7 @@ it('starts impersonation for super admin', function (): void {
     );
 
     $userPermRepo = new FakeUserPermissionRepository;
-    $userPermRepo->userRolesMap['00000000-0000-0000-0000-000000000001:'] = [$superAdmin];
+    $userPermRepo->userRolesMap['00000000-0000-0000-0000-000000000001'] = [$superAdmin];
     $impersonationManager = new FakeImpersonationManager;
     $eventCollector = new FakeEventCollector;
 

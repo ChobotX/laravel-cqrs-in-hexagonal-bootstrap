@@ -20,7 +20,7 @@ it('lists roles via API', function (): void {
     apiUser();
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440901', 'name' => 'Editor', 'description' => 'Ed', 'is_system' => false]);
 
-    $this->getJson('/api/roles')->assertOk()->assertJsonCount(1, 'data');
+    $this->getJson('/api/roles')->assertOk()->assertJsonCount(2, 'data');
 });
 
 it('creates a role via API', function (): void {

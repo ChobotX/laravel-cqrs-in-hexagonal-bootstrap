@@ -23,7 +23,7 @@ final readonly class TenantSchemaManager
             'database.connections.tenant.database' => $tenantModel->database_name,
             'database.connections.tenant.username' => $tenantModel->database_username,
             'database.connections.tenant.password' => $tenantModel->database_password,
-            'database.connections.tenant.search_path' => $tenantModel->schema_name,
+            'database.connections.tenant.search_path' => $tenantModel->schema_name.',public',
         ]);
 
         if ($needsPurge) {
@@ -54,7 +54,7 @@ final readonly class TenantSchemaManager
         /** @var array{search_path: string, host: string, port: string|int, database: string, username: string} $cfg */
         $cfg = config('database.connections.tenant');
 
-        return $cfg['search_path'] !== $tenantModel->schema_name
+        return $cfg['search_path'] !== $tenantModel->schema_name.',public'
             || $cfg['host'] !== $tenantModel->database_host
             || (string) $cfg['port'] !== (string) $tenantModel->database_port
             || $cfg['database'] !== $tenantModel->database_name

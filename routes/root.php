@@ -8,8 +8,13 @@ use App\Presentation\Http\Controller\Web\Root\ShowRegisterTenantController;
 use App\Presentation\Http\Middleware\EnsureTenantResolved;
 use Illuminate\Support\Facades\Route;
 
-Route::withoutMiddleware(EnsureTenantResolved::class)->group(function (): void {
-    Route::get('/', LandingController::class)->name('root.landing');
-    Route::get('/register', ShowRegisterTenantController::class)->name('root.register');
-    Route::post('/register', RegisterTenantController::class)->name('root.register.store');
-});
+/** @var string $rootDomain */
+$rootDomain = config('tenancy.root_domain');
+
+Route::domain($rootDomain)
+    ->withoutMiddleware(EnsureTenantResolved::class)
+    ->group(function (): void {
+        Route::get('/', LandingController::class)->name('root.landing');
+        Route::get('/register', ShowRegisterTenantController::class)->name('root.register');
+        Route::post('/register', RegisterTenantController::class)->name('root.register.store');
+    });

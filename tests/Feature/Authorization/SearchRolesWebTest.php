@@ -65,7 +65,7 @@ it('returns all roles with empty query', function (): void {
     $this->actingAs($userModel)
         ->getJson('/internal-api/roles/search')
         ->assertOk()
-        ->assertJsonCount(2, 'data');
+        ->assertJsonCount(3, 'data');
 });
 
 it('returns correct JSON structure', function (): void {

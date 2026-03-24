@@ -15,7 +15,6 @@ use Tests\Helper\FakeRoleRepository;
 it('deletes a role and emits event', function (): void {
     $role = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440000'),
-        '00000000-0000-0000-0000-000000000001',
         new RoleName('Editor'),
         'Editor role',
         false,
