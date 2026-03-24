@@ -10,22 +10,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table): void {
+        Schema::create('teams', function (Blueprint $table): void {
             $table->uuid('id')->primary();
-            $table->uuid('organization_id')->nullable();
+            $table->uuid('parent_team_id')->nullable();
             $table->string('name');
+            $table->string('slug', 63)->unique();
             $table->text('description');
-            $table->boolean('is_system')->default(false);
             $table->timestamps();
             $table->softDeletes();
 
-            $table->unique(['organization_id', 'name']);
-            $table->index('organization_id');
+            $table->foreign('parent_team_id')->references('id')->on('teams')->onDelete('set null');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('teams');
     }
 };

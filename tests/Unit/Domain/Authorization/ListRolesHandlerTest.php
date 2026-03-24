@@ -9,7 +9,7 @@ use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeRoleRepository;
 
-it('returns roles for the given organization', function (): void {
+it('returns all roles', function (): void {
     $role = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440000'),
         '00000000-0000-0000-0000-000000000001',
@@ -23,22 +23,18 @@ it('returns roles for the given organization', function (): void {
 
     $handler = new ListRolesHandler($roleRepo);
 
-    $result = $handler->handle(new ListRolesQuery(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
+    $result = $handler->handle(new ListRolesQuery);
 
     expect($result)->toHaveCount(1)
         ->and($result[0]->name->value)->toBe('Editor');
 });
 
-it('returns empty list when no roles exist for organization', function (): void {
+it('returns empty list when no roles exist', function (): void {
     $roleRepo = new FakeRoleRepository;
 
     $handler = new ListRolesHandler($roleRepo);
 
-    $result = $handler->handle(new ListRolesQuery(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
+    $result = $handler->handle(new ListRolesQuery);
 
     expect($result)->toHaveCount(0);
 });

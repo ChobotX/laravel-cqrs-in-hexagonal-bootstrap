@@ -17,13 +17,11 @@ it('revokes a role from a user and emits event', function (): void {
     $handler->handle(new RevokeRoleFromUserCommand(
         userId: '00000000-0000-0000-0000-000000000010',
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
     ));
 
     expect($userPermRepo->revokedRoles)->toHaveCount(1);
     expect($userPermRepo->revokedRoles[0]['userId'])->toBe('00000000-0000-0000-0000-000000000010');
     expect($userPermRepo->revokedRoles[0]['roleId'])->toBe('550e8400-e29b-41d4-a716-446655440000');
-    expect($userPermRepo->revokedRoles[0]['organizationId'])->toBe('00000000-0000-0000-0000-000000000001');
     expect($eventCollector->collected)->toHaveCount(1);
     expect($eventCollector->collected[0])->toBeInstanceOf(RoleRevokedFromUser::class);
 
@@ -32,5 +30,4 @@ it('revokes a role from a user and emits event', function (): void {
 
     expect($event->userId)->toBe('00000000-0000-0000-0000-000000000010');
     expect($event->roleId)->toBe('550e8400-e29b-41d4-a716-446655440000');
-    expect($event->organizationId)->toBe('00000000-0000-0000-0000-000000000001');
 });

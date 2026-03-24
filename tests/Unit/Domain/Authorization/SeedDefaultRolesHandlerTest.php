@@ -34,35 +34,12 @@ it('seeds four default roles', function (): void {
         testModules(),
     );
 
-    $handler->handle(new SeedDefaultRolesCommand(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
+    $handler->handle(new SeedDefaultRolesCommand);
 
     expect($repository->saved)->toHaveCount(4);
 
     $names = array_map(fn (Role $role): string => $role->name->value, $repository->saved);
     expect($names)->toContain('Admin', 'Editor', 'Member', 'Viewer');
-});
-
-it('assigns correct organization id to all roles', function (): void {
-    $repository = new FakeRoleRepository;
-    $eventCollector = new FakeEventCollector;
-    $idGenerator = new FakeIdGenerator;
-
-    $handler = new SeedDefaultRolesHandler(
-        $repository,
-        $eventCollector,
-        $idGenerator,
-        testModules(),
-    );
-
-    $handler->handle(new SeedDefaultRolesCommand(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
-
-    foreach ($repository->saved as $role) {
-        expect($role->organizationId)->toBe('00000000-0000-0000-0000-000000000001');
-    }
 });
 
 it('emits DefaultRolesSeeded event with role ids', function (): void {
@@ -77,14 +54,11 @@ it('emits DefaultRolesSeeded event with role ids', function (): void {
         testModules(),
     );
 
-    $handler->handle(new SeedDefaultRolesCommand(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
+    $handler->handle(new SeedDefaultRolesCommand);
 
     expect($eventCollector->collected)->toHaveCount(1);
     assert($eventCollector->collected[0] instanceof DefaultRolesSeeded);
-    expect($eventCollector->collected[0]->roleIds)->toHaveCount(4)
-        ->and($eventCollector->collected[0]->organizationId)->toBe('00000000-0000-0000-0000-000000000001');
+    expect($eventCollector->collected[0]->roleIds)->toHaveCount(4);
 });
 
 it('admin role has all module permissions', function (): void {
@@ -99,9 +73,7 @@ it('admin role has all module permissions', function (): void {
         testModules(),
     );
 
-    $handler->handle(new SeedDefaultRolesCommand(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
+    $handler->handle(new SeedDefaultRolesCommand);
 
     $admin = null;
 
@@ -129,9 +101,7 @@ it('viewer role has only read permissions', function (): void {
         testModules(),
     );
 
-    $handler->handle(new SeedDefaultRolesCommand(
-        organizationId: '00000000-0000-0000-0000-000000000001',
-    ));
+    $handler->handle(new SeedDefaultRolesCommand);
 
     $viewer = null;
 

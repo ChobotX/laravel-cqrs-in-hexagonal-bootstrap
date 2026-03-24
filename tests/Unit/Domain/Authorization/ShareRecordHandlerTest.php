@@ -21,7 +21,6 @@ it('shares a record and emits event', function (): void {
         resourceId: '00000000-0000-0000-0000-000000000099',
         action: 'read',
         grantorUserId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     ));
 
     expect($recordShareRepo->shared)->toHaveCount(1);
@@ -30,7 +29,6 @@ it('shares a record and emits event', function (): void {
     expect($recordShareRepo->shared[0]->resourceId)->toBe('00000000-0000-0000-0000-000000000099');
     expect($recordShareRepo->shared[0]->action)->toBe(Action::Read);
     expect($recordShareRepo->shared[0]->grantorUserId)->toBe('00000000-0000-0000-0000-000000000001');
-    expect($recordShareRepo->shared[0]->organizationId)->toBe('00000000-0000-0000-0000-000000000002');
     expect($eventCollector->collected)->toHaveCount(1);
     expect($eventCollector->collected[0])->toBeInstanceOf(RecordShared::class);
 
@@ -42,5 +40,4 @@ it('shares a record and emits event', function (): void {
     expect($event->resourceId)->toBe('00000000-0000-0000-0000-000000000099');
     expect($event->action)->toBe('read');
     expect($event->grantorUserId)->toBe('00000000-0000-0000-0000-000000000001');
-    expect($event->organizationId)->toBe('00000000-0000-0000-0000-000000000002');
 });

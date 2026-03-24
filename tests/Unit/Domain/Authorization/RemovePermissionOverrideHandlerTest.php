@@ -16,7 +16,6 @@ it('removes a permission override and emits event', function (): void {
 
     $handler->handle(new RemovePermissionOverrideCommand(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users.list.read',
     ));
 
@@ -27,7 +26,6 @@ it('removes a permission override and emits event', function (): void {
     assert($event instanceof PermissionOverrideRemoved);
 
     expect($event->userId)->toBe('00000000-0000-0000-0000-000000000010');
-    expect($event->organizationId)->toBe('00000000-0000-0000-0000-000000000001');
     expect($event->permission)->toBe('users.list.read');
 });
 
@@ -39,7 +37,6 @@ it('handles module-only permission removal', function (): void {
 
     $handler->handle(new RemovePermissionOverrideCommand(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users',
     ));
 
@@ -60,7 +57,6 @@ it('handles module.feature permission removal', function (): void {
 
     $handler->handle(new RemovePermissionOverrideCommand(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'crm.contacts',
     ));
 

@@ -15,13 +15,12 @@ return new class extends Migration
             $table->uuid('actor_user_id')->nullable();
             $table->uuid('acting_as_user_id')->nullable();
             $table->uuid('target_user_id')->nullable();
-            $table->uuid('organization_id');
             $table->string('action');
             $table->json('payload');
             $table->timestamp('created_at');
 
             $table->index(['target_user_id', 'created_at']);
-            $table->index(['organization_id', 'created_at']);
+            $table->index('created_at');
 
             $table->foreign('actor_user_id')->references('id')->on('users')->onDelete('set null');
         });

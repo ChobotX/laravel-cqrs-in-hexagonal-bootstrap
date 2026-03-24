@@ -13,7 +13,6 @@ return new class extends Migration
         Schema::create('user_permission_overrides', function (Blueprint $table): void {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->uuid('organization_id');
             $table->string('module');
             $table->string('feature')->nullable();
             $table->string('action')->nullable();
@@ -21,8 +20,8 @@ return new class extends Migration
             $table->string('scope')->default('all');
             $table->timestamps();
 
-            $table->unique(['user_id', 'organization_id', 'module', 'feature', 'action']);
-            $table->index(['user_id', 'organization_id']);
+            $table->unique(['user_id', 'module', 'feature', 'action']);
+            $table->index('user_id');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });

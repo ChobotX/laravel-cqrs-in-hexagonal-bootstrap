@@ -12,13 +12,11 @@ it('can be constructed with all properties', function (): void {
         resourceId: '00000000-0000-0000-0000-000000000099',
         action: Action::Read,
         grantorUserId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000002',
     );
 
     expect($recordShare->granteeUserId)->toBe('00000000-0000-0000-0000-000000000010')
         ->and($recordShare->resourceType)->toBe('contact')
         ->and($recordShare->resourceId)->toBe('00000000-0000-0000-0000-000000000099')
         ->and($recordShare->action)->toBe(Action::Read)
-        ->and($recordShare->grantorUserId)->toBe('00000000-0000-0000-0000-000000000001')
-        ->and($recordShare->organizationId)->toBe('00000000-0000-0000-0000-000000000002');
+        ->and($recordShare->grantorUserId)->toBe('00000000-0000-0000-0000-000000000001');
 });

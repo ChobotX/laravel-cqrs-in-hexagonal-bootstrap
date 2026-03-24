@@ -23,6 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         App\Infrastructure\Provider\AppServiceProvider::class,
+        App\Infrastructure\Provider\TenancyServiceProvider::class,
     ])
     ->withCommands([
         __DIR__.'/../app/Presentation/Console/User',

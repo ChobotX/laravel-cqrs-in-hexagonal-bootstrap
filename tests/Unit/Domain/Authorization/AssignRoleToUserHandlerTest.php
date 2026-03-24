@@ -17,7 +17,6 @@ use Tests\Helper\FakeUserPermissionRepository;
 it('assigns a role to a user', function (): void {
     $role = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440000'),
-        '00000000-0000-0000-0000-000000000001',
         new RoleName('Editor'),
         'Editor role',
         false,
@@ -33,7 +32,6 @@ it('assigns a role to a user', function (): void {
     $handler->handle(new AssignRoleToUserCommand(
         userId: '00000000-0000-0000-0000-000000000010',
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
     ));
 
     expect($userPermRepo->assignedRoles)->toHaveCount(1);
@@ -52,14 +50,12 @@ it('throws when role does not exist', function (): void {
     $handler->handle(new AssignRoleToUserCommand(
         userId: '00000000-0000-0000-0000-000000000010',
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
     ));
 })->throws(RoleNotFoundException::class);
 
 it('throws on duplicate assignment', function (): void {
     $role = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440000'),
-        '00000000-0000-0000-0000-000000000001',
         new RoleName('Editor'),
         'Editor role',
         false,
@@ -68,7 +64,7 @@ it('throws on duplicate assignment', function (): void {
 
     $roleRepo = new FakeRoleRepository(['550e8400-e29b-41d4-a716-446655440000' => $role]);
     $userPermRepo = new FakeUserPermissionRepository;
-    $userPermRepo->userRolesMap['00000000-0000-0000-0000-000000000010:00000000-0000-0000-0000-000000000001'] = [$role];
+    $userPermRepo->userRolesMap['00000000-0000-0000-0000-000000000010'] = [$role];
     $eventCollector = new FakeEventCollector;
 
     $handler = new AssignRoleToUserHandler($roleRepo, $userPermRepo, $eventCollector);
@@ -76,6 +72,5 @@ it('throws on duplicate assignment', function (): void {
     $handler->handle(new AssignRoleToUserCommand(
         userId: '00000000-0000-0000-0000-000000000010',
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
     ));
 })->throws(DuplicateRoleAssignmentException::class);

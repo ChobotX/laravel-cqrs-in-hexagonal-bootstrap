@@ -25,7 +25,7 @@ it('resolves effective permissions for a user', function (): void {
     );
 
     $userPermRepo = new FakeUserPermissionRepository;
-    $userPermRepo->userRolesMap['00000000-0000-0000-0000-000000000010:00000000-0000-0000-0000-000000000001'] = [$role];
+    $userPermRepo->userRolesMap['00000000-0000-0000-0000-000000000010'] = [$role];
 
     $availableModules = [
         'users' => [
@@ -43,7 +43,6 @@ it('resolves effective permissions for a user', function (): void {
 
     $result = $handler->handle(new GetEffectivePermissionsQuery(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
     ));
 
     expect($result)->toHaveCount(2);
@@ -65,7 +64,6 @@ it('returns empty permissions when no available modules', function (): void {
 
     $result = $handler->handle(new GetEffectivePermissionsQuery(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
     ));
 
     expect($result)->toHaveCount(0);

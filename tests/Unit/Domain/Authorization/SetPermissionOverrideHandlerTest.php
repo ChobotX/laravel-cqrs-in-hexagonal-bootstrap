@@ -16,7 +16,6 @@ it('sets a permission override and emits event', function (): void {
 
     $handler->handle(new SetPermissionOverrideCommand(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users.list.read',
         type: 'grant',
         scope: 'all',
@@ -29,7 +28,6 @@ it('sets a permission override and emits event', function (): void {
     assert($event instanceof PermissionOverrideSet);
 
     expect($event->userId)->toBe('00000000-0000-0000-0000-000000000010');
-    expect($event->organizationId)->toBe('00000000-0000-0000-0000-000000000001');
     expect($event->permission)->toBe('users.list.read');
     expect($event->type)->toBe('grant');
 });
@@ -42,7 +40,6 @@ it('handles module-only permission override', function (): void {
 
     $handler->handle(new SetPermissionOverrideCommand(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users',
         type: 'deny',
         scope: 'own',
@@ -65,7 +62,6 @@ it('handles module.feature permission override', function (): void {
 
     $handler->handle(new SetPermissionOverrideCommand(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users.list',
         type: 'grant',
         scope: 'team',

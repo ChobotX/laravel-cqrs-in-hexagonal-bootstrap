@@ -17,7 +17,6 @@ return new class extends Migration
             $table->uuid('resource_id');
             $table->string('action');
             $table->uuid('grantor_user_id');
-            $table->uuid('organization_id');
             $table->timestamps();
 
             $table->unique(['grantee_user_id', 'resource_type', 'resource_id', 'action']);

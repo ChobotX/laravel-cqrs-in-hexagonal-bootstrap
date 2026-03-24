@@ -14,10 +14,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('user_id');
             $table->uuid('role_id');
-            $table->uuid('organization_id');
 
-            $table->unique(['user_id', 'role_id', 'organization_id']);
-            $table->index(['user_id', 'organization_id']);
+            $table->unique(['user_id', 'role_id']);
+            $table->index('user_id');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');

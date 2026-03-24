@@ -7,13 +7,11 @@ use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
-use App\Contract\Organization\OrganizationContext;
 use App\Domain\Authorization\Exception\PermissionDeniedException;
 use App\Infrastructure\Bus\Middleware\AuthorizeAction;
 
 function buildTestMiddleware(
     ?string $userId = 'user-1',
-    string $orgId = 'org-1',
     bool $canResult = true,
 ): AuthorizeAction {
     $authenticatedUser = new readonly class($userId) implements AuthenticatedUser
@@ -36,38 +34,28 @@ function buildTestMiddleware(
         }
     };
 
-    $organizationContext = new readonly class($orgId) implements OrganizationContext
-    {
-        public function __construct(private string $orgId) {}
-
-        public function currentOrganizationId(): string
-        {
-            return $this->orgId;
-        }
-    };
-
     $authorizationChecker = new readonly class($canResult) implements AuthorizationChecker
     {
         public function __construct(private bool $result) {}
 
-        public function can(string $userId, string $organizationId, string $permission): bool
+        public function can(string $userId, string $permission): bool
         {
             return $this->result;
         }
 
-        public function canWithScope(string $userId, string $organizationId, string $permission): AccessDecision
+        public function canWithScope(string $userId, string $permission): AccessDecision
         {
             throw new RuntimeException('not implemented');
         }
 
         /** @return list<string> */
-        public function accessibleResourceIds(string $userId, string $organizationId, string $resourceType, string $action): array
+        public function accessibleResourceIds(string $userId, string $resourceType, string $action): array
         {
             return [];
         }
     };
 
-    return new AuthorizeAction($authenticatedUser, $organizationContext, $authorizationChecker);
+    return new AuthorizeAction($authenticatedUser, $authorizationChecker);
 }
 
 it('passes through when no RequiresPermission attribute', function (): void {

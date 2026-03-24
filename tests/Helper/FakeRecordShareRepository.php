@@ -31,12 +31,11 @@ final class FakeRecordShareRepository implements RecordShareRepository
     }
 
     /** @return list<RecordShare> */
-    public function findByGrantee(string $granteeUserId, string $organizationId, ?string $resourceType = null): array
+    public function findByGrantee(string $granteeUserId, ?string $resourceType = null): array
     {
         return array_values(array_filter(
             $this->shared,
             fn (RecordShare $recordShare): bool => $recordShare->granteeUserId === $granteeUserId
-                && $recordShare->organizationId === $organizationId
                 && ($resourceType === null || $recordShare->resourceType === $resourceType),
         ));
     }
@@ -44,7 +43,6 @@ final class FakeRecordShareRepository implements RecordShareRepository
     /** @return list<string> */
     public function accessibleResourceIds(
         string $granteeUserId,
-        string $organizationId,
         string $resourceType,
         Action $action,
     ): array {
@@ -52,7 +50,6 @@ final class FakeRecordShareRepository implements RecordShareRepository
 
         foreach ($this->shared as $share) {
             if ($share->granteeUserId === $granteeUserId
-                && $share->organizationId === $organizationId
                 && $share->resourceType === $resourceType
                 && $share->action === $action
             ) {

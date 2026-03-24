@@ -22,12 +22,9 @@ final class FakeRoleRepository implements RoleRepository
     ) {}
 
     /** @return list<Role> */
-    public function findByOrganizationId(string $organizationId): array
+    public function findAll(): array
     {
-        return array_values(array_filter(
-            $this->roles,
-            fn (Role $role): bool => $role->organizationId === $organizationId,
-        ));
+        return array_values($this->roles);
     }
 
     public function findById(RoleId $roleId): ?Role
@@ -35,10 +32,10 @@ final class FakeRoleRepository implements RoleRepository
         return $this->roles[$roleId->value] ?? null;
     }
 
-    public function findByNameAndOrganization(string $name, string $organizationId): ?Role
+    public function findByName(string $name): ?Role
     {
         foreach ($this->roles as $role) {
-            if ($role->name->value === $name && $role->organizationId === $organizationId) {
+            if ($role->name->value === $name) {
                 return $role;
             }
         }

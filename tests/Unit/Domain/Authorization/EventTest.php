@@ -19,14 +19,12 @@ use App\Domain\Authorization\Event\RoleUpdated;
 it('DefaultRolesSeeded implements DomainEvent and exposes occurredAt', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
     $event = new DefaultRolesSeeded(
-        organizationId: '00000000-0000-0000-0000-000000000001',
         roleIds: ['id-1', 'id-2'],
         occurredAt: $occurredAt,
     );
 
     expect($event)->toBeInstanceOf(DomainEvent::class)
         ->and($event->occurredAt())->toBe($occurredAt)
-        ->and($event->organizationId)->toBe('00000000-0000-0000-0000-000000000001')
         ->and($event->roleIds)->toBe(['id-1', 'id-2']);
 });
 
@@ -62,7 +60,6 @@ it('PermissionOverrideSet implements DomainEvent and exposes occurredAt', functi
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
     $event = new PermissionOverrideSet(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users.list.read',
         type: 'grant',
         occurredAt: $occurredAt,
@@ -79,7 +76,6 @@ it('PermissionOverrideRemoved implements DomainEvent and exposes occurredAt', fu
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
     $event = new PermissionOverrideRemoved(
         userId: '00000000-0000-0000-0000-000000000010',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         permission: 'users.list.read',
         occurredAt: $occurredAt,
     );
@@ -98,7 +94,6 @@ it('RecordShared implements DomainEvent and exposes occurredAt', function (): vo
         resourceId: '00000000-0000-0000-0000-000000000099',
         action: 'read',
         grantorUserId: '00000000-0000-0000-0000-000000000001',
-        organizationId: '00000000-0000-0000-0000-000000000002',
         occurredAt: $occurredAt,
     );
 
@@ -129,7 +124,6 @@ it('RoleAssignedToUser implements DomainEvent and exposes occurredAt', function 
     $event = new RoleAssignedToUser(
         userId: '00000000-0000-0000-0000-000000000010',
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         occurredAt: $occurredAt,
     );
 
@@ -143,7 +137,6 @@ it('RoleCreated implements DomainEvent and exposes occurredAt', function (): voi
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
     $event = new RoleCreated(
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         name: 'Editor',
         occurredAt: $occurredAt,
     );
@@ -171,7 +164,6 @@ it('RoleRevokedFromUser implements DomainEvent and exposes occurredAt', function
     $event = new RoleRevokedFromUser(
         userId: '00000000-0000-0000-0000-000000000010',
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        organizationId: '00000000-0000-0000-0000-000000000001',
         occurredAt: $occurredAt,
     );
 

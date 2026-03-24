@@ -15,7 +15,6 @@ use Tests\Helper\FakeRoleRepository;
 it('updates a role and emits event', function (): void {
     $role = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440000'),
-        '00000000-0000-0000-0000-000000000001',
         new RoleName('Editor'),
         'Old description',
         false,
@@ -58,10 +57,9 @@ it('throws when role does not exist', function (): void {
     ));
 })->throws(RoleNotFoundException::class);
 
-it('preserves isSystem and organizationId from existing role', function (): void {
+it('preserves isSystem from existing role', function (): void {
     $role = new Role(
         new RoleId('550e8400-e29b-41d4-a716-446655440000'),
-        '00000000-0000-0000-0000-000000000001',
         new RoleName('Admin'),
         'Admin',
         false,
@@ -80,6 +78,5 @@ it('preserves isSystem and organizationId from existing role', function (): void
         permissions: [],
     ));
 
-    expect($repository->saved[0]->organizationId)->toBe('00000000-0000-0000-0000-000000000001');
     expect($repository->saved[0]->isSystem)->toBeFalse();
 });
