@@ -29,17 +29,17 @@ it('serves root domain routes without tenant', function (): void {
 });
 
 it('resolves tenant via CLI bootstrapper', function (): void {
-    $bootstrapper = app(TenantBootstrapper::class);
-    $bootstrapper->bootstrapBySlug('test');
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapBySlug('test');
 
-    $context = app(TenantContext::class);
+    $tenantContext = app(TenantContext::class);
 
-    expect($context->isResolved())->toBeTrue()
-        ->and($context->currentTenantSlug())->toBe('test')
-        ->and($context->currentTenantId())->toBe('00000000-0000-0000-0000-000000000001');
+    expect($tenantContext->isResolved())->toBeTrue()
+        ->and($tenantContext->currentTenantSlug())->toBe('test')
+        ->and($tenantContext->currentTenantId())->toBe('00000000-0000-0000-0000-000000000001');
 });
 
 it('throws for unknown slug via CLI', function (): void {
-    $bootstrapper = app(TenantBootstrapper::class);
-    $bootstrapper->bootstrapBySlug('nonexistent');
-})->throws(\Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapBySlug('nonexistent');
+})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);

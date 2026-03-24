@@ -8,7 +8,8 @@
 
     <div class="space-y-3">
         <a class="flex w-full items-center justify-center rounded-lg bg-indigo-600 px-4 py-2.5 text-base font-medium text-white shadow-sm hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 sm:text-sm"
-           href="{{ route('root.register') }}">
+           href="{{ route('root.register') }}"
+           title="Create a new workspace">
             Create a new workspace
         </a>
     </div>

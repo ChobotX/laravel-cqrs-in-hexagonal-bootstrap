@@ -18,7 +18,7 @@ final readonly class ListTeamsController
 
     public function __invoke(): View
     {
-        $teams = $this->queryBus->dispatch(new ListTeamsQuery());
+        $teams = $this->queryBus->dispatch(new ListTeamsQuery);
 
         return view('teams.index', [
             'teams' => $teams,

@@ -15,7 +15,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final readonly class ResolveTenantMiddleware
 {
     public function __construct(
-        private TenantBootstrapper $bootstrapper,
+        private TenantBootstrapper $tenantBootstrapper,
         private TenantContext $tenantContext,
     ) {}
 
@@ -31,12 +31,12 @@ final readonly class ResolveTenantMiddleware
 
         $subdomain = str_replace('.'.$rootDomain, '', $host);
 
-        if ($subdomain === $host || $subdomain === '' || $subdomain === 'www') {
+        if (in_array($subdomain, [$host, '', 'www'], true)) {
             return $next($request);
         }
 
         try {
-            $this->bootstrapper->bootstrapByDomain($subdomain);
+            $this->tenantBootstrapper->bootstrapByDomain($subdomain);
         } catch (NotFoundHttpException) {
             abort(404);
         }

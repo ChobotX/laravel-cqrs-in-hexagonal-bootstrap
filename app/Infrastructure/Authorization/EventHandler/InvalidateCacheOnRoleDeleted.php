@@ -19,8 +19,10 @@ final readonly class InvalidateCacheOnRoleDeleted implements DomainEventHandler
 
     public function handle(DomainEvent $domainEvent): void
     {
+        /** @var list<string> $userIds */
         $userIds = UserRoleModel::where('role_id', $domainEvent->roleId)
-            ->pluck('user_id');
+            ->pluck('user_id')
+            ->all();
 
         foreach ($userIds as $userId) {
             $this->cacheRepository->forget(sprintf('auth:perms:%s', $userId));

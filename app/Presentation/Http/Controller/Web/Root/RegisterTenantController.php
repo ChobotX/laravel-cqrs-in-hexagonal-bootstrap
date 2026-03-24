@@ -15,40 +15,28 @@ use Illuminate\Support\Str;
 #[SkipPermissionCheck('Public tenant registration')]
 final readonly class RegisterTenantController
 {
-    public function __invoke(RegisterTenantFormRequest $request, TenantMigrator $migrator): RedirectResponse
+    public function __invoke(RegisterTenantFormRequest $registerTenantFormRequest, TenantMigrator $tenantMigrator): RedirectResponse
     {
-        /** @var string $dbHost */
-        $dbHost = config('database.connections.tenant.host');
+        /** @var array{host: string, port: string|int, database: string, username: string, password: string} $cfg */
+        $cfg = config('database.connections.tenant');
 
-        /** @var int $dbPort */
-        $dbPort = (int) config('database.connections.tenant.port');
-
-        /** @var string $dbName */
-        $dbName = config('database.connections.tenant.database');
-
-        /** @var string $dbUser */
-        $dbUser = config('database.connections.tenant.username');
-
-        /** @var string $dbPass */
-        $dbPass = config('database.connections.tenant.password');
-
-        $slug = $request->string('slug')->toString();
+        $slug = $registerTenantFormRequest->string('slug')->toString();
 
         $tenant = TenantModel::create([
             'id' => Str::uuid()->toString(),
-            'name' => $request->string('name')->toString(),
+            'name' => $registerTenantFormRequest->string('name')->toString(),
             'slug' => $slug,
             'schema_name' => 'tenant_'.$slug,
-            'database_host' => $dbHost,
-            'database_port' => $dbPort,
-            'database_name' => $dbName,
-            'database_username' => $dbUser,
-            'database_password' => $dbPass,
+            'database_host' => $cfg['host'],
+            'database_port' => (int) $cfg['port'],
+            'database_name' => $cfg['database'],
+            'database_username' => $cfg['username'],
+            'database_password' => $cfg['password'],
             'is_active' => true,
             'config' => [],
         ]);
 
-        $domain = $request->string('domain')->toString();
+        $domain = $registerTenantFormRequest->string('domain')->toString();
 
         TenantDomainModel::create([
             'id' => Str::uuid()->toString(),
@@ -57,12 +45,12 @@ final readonly class RegisterTenantController
             'is_primary' => true,
         ]);
 
-        $migrator->setupTenant($tenant);
+        $tenantMigrator->setupTenant($tenant);
 
         /** @var string $rootDomain */
         $rootDomain = config('tenancy.root_domain');
 
-        $tenantUrl = $request->getScheme().'://'.$domain.'.'.$rootDomain.'/login';
+        $tenantUrl = $registerTenantFormRequest->getScheme().'://'.$domain.'.'.$rootDomain.'/login';
 
         return redirect($tenantUrl);
     }

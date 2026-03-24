@@ -11,7 +11,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('teams', function (Blueprint $table): void {
-            $table->uuid('id')->primary();
+            $table->uuid('id');
             $table->uuid('parent_team_id')->nullable();
             $table->string('name');
             $table->string('slug', 63)->unique();
@@ -19,6 +19,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
+            $table->primary('id');
             $table->foreign('parent_team_id')->references('id')->on('teams')->onDelete('set null');
         });
     }

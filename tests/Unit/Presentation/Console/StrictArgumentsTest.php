@@ -15,6 +15,11 @@ it('throws when argument is not a string', function (): void {
             return 123;
         }
 
+        public function option(mixed $key = null): mixed
+        {
+            return null;
+        }
+
         public function call(): string
         {
             return $this->stringArgument('name');

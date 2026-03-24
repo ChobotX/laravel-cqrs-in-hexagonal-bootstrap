@@ -46,6 +46,11 @@ final readonly class ConsoleCommandRequiresTenantAttributeRule implements Rule
         }
 
         $classReflection = $this->reflectionProvider->getClass($className);
+
+        if (! $classReflection->isSubclassOf(\Illuminate\Console\Command::class)) {
+            return [];
+        }
+
         $nativeReflection = $classReflection->getNativeReflection();
 
         if ($nativeReflection->getAttributes(TenantAwareCommand::class) !== []) {

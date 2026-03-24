@@ -7,37 +7,38 @@ namespace App\Infrastructure\Tenancy;
 use App\Application\Tenancy\TenantAwareCommand;
 use Illuminate\Console\Events\CommandStarting;
 use ReflectionClass;
+use RuntimeException;
 
 final readonly class ConsoleTenantBootstrap
 {
     public function __construct(
-        private TenantBootstrapperImpl $bootstrapper,
+        private TenantBootstrapperImpl $tenantBootstrapperImpl,
     ) {}
 
-    public function handle(CommandStarting $event): void
+    public function handle(CommandStarting $commandStarting): void
     {
-        $commandClass = $event->command;
+        $commandClass = $commandStarting->command;
 
-        if ($commandClass === null || ! class_exists($commandClass)) {
+        if (! class_exists($commandClass)) {
             return;
         }
 
-        $reflection = new ReflectionClass($commandClass);
+        $reflectionClass = new ReflectionClass($commandClass);
 
-        if ($reflection->getAttributes(TenantAwareCommand::class) === []) {
+        if ($reflectionClass->getAttributes(TenantAwareCommand::class) === []) {
             return;
         }
 
         /** @var string|null $tenantSlug */
-        $tenantSlug = $event->input->getOption('tenant');
+        $tenantSlug = $commandStarting->input->getOption('tenant');
 
         if ($tenantSlug === null || $tenantSlug === '') {
-            throw new \RuntimeException(sprintf(
+            throw new RuntimeException(sprintf(
                 'Command %s requires --tenant option (marked with #[TenantAwareCommand]).',
                 $commandClass,
             ));
         }
 
-        $this->bootstrapper->bootstrapBySlug($tenantSlug);
+        $this->tenantBootstrapperImpl->bootstrapBySlug($tenantSlug);
     }
 }

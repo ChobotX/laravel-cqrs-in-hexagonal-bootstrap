@@ -40,13 +40,13 @@ it('returns true when permission is granted', function (): void {
 
     $resolverAuthorizationChecker = resolverChecker($userPermRepo);
 
-    expect($resolverAuthorizationChecker->can('user-1', 'org-1', 'users.list.read'))->toBeTrue();
+    expect($resolverAuthorizationChecker->can('user-1', 'org-1'))->toBeTrue();
 });
 
 it('returns false when permission is not granted', function (): void {
     $resolverAuthorizationChecker = resolverChecker();
 
-    expect($resolverAuthorizationChecker->can('user-1', 'org-1', 'users.list.read'))->toBeFalse();
+    expect($resolverAuthorizationChecker->can('user-1', 'org-1'))->toBeFalse();
 });
 
 it('returns access decision with scope', function (): void {
@@ -62,7 +62,7 @@ it('returns access decision with scope', function (): void {
     $userPermRepo->userRolesMap['user-1:org-1'] = [$role];
 
     $resolverAuthorizationChecker = resolverChecker($userPermRepo);
-    $accessDecision = $resolverAuthorizationChecker->canWithScope('user-1', 'org-1', 'users.list.read');
+    $accessDecision = $resolverAuthorizationChecker->canWithScope('user-1', 'org-1');
 
     expect($accessDecision->granted())->toBeTrue();
     expect($accessDecision->scope())->toBe('team');
@@ -70,14 +70,14 @@ it('returns access decision with scope', function (): void {
 
 it('returns denied decision for non-existent permission', function (): void {
     $resolverAuthorizationChecker = resolverChecker();
-    $accessDecision = $resolverAuthorizationChecker->canWithScope('user-1', 'org-1', 'users.list.read');
+    $accessDecision = $resolverAuthorizationChecker->canWithScope('user-1', 'org-1');
 
     expect($accessDecision->granted())->toBeFalse();
 });
 
 it('returns denied decision for unknown permission key', function (): void {
     $resolverAuthorizationChecker = resolverChecker();
-    $accessDecision = $resolverAuthorizationChecker->canWithScope('user-1', 'org-1', 'unknown.module.read');
+    $accessDecision = $resolverAuthorizationChecker->canWithScope('user-1', 'org-1');
 
     expect($accessDecision->granted())->toBeFalse();
     expect($accessDecision->scope())->toBe('all');
@@ -85,7 +85,7 @@ it('returns denied decision for unknown permission key', function (): void {
 
 it('delegates accessibleResourceIds to record share repository', function (): void {
     $resolverAuthorizationChecker = resolverChecker();
-    $result = $resolverAuthorizationChecker->accessibleResourceIds('user-1', 'org-1', 'document', 'read');
+    $result = $resolverAuthorizationChecker->accessibleResourceIds('user-1', 'org-1', 'document');
 
     expect($result)->toBe([]);
 });

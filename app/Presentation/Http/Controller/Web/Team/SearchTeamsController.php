@@ -24,7 +24,7 @@ final readonly class SearchTeamsController
         $excludeIds = $searchTeamsRequest->excludeTeamIds();
 
         /** @var list<Team> $teams */
-        $teams = $this->queryBus->dispatch(new ListTeamsQuery());
+        $teams = $this->queryBus->dispatch(new ListTeamsQuery);
 
         $filtered = array_values(array_filter(
             $teams,

@@ -10,26 +10,26 @@ final readonly class TenantBootstrapperImpl implements TenantBootstrapper
 {
     public function __construct(
         private TenantResolver $tenantResolver,
-        private TenantSchemaManager $schemaManager,
-        private ResolvedTenantContext $tenantContext,
+        private TenantSchemaManager $tenantSchemaManager,
+        private ResolvedTenantContext $resolvedTenantContext,
     ) {}
 
     public function bootstrapByDomain(string $domain): void
     {
-        $tenant = $this->tenantResolver->resolveByDomain($domain);
-        $this->tenantContext->set($tenant->id, $tenant->slug);
-        $this->schemaManager->switchTo($tenant);
+        $tenantModel = $this->tenantResolver->resolveByDomain($domain);
+        $this->resolvedTenantContext->set($tenantModel->id, $tenantModel->slug);
+        $this->tenantSchemaManager->switchTo($tenantModel);
     }
 
     public function bootstrapBySlug(string $slug): void
     {
-        $tenant = $this->tenantResolver->resolveBySlug($slug);
-        $this->tenantContext->set($tenant->id, $tenant->slug);
-        $this->schemaManager->switchTo($tenant);
+        $tenantModel = $this->tenantResolver->resolveBySlug($slug);
+        $this->resolvedTenantContext->set($tenantModel->id, $tenantModel->slug);
+        $this->tenantSchemaManager->switchTo($tenantModel);
     }
 
     public function reset(): void
     {
-        $this->schemaManager->reset();
+        $this->tenantSchemaManager->reset();
     }
 }

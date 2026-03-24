@@ -24,45 +24,29 @@ final class CreateTenantCommand extends Command
 
     protected $description = 'Create a new tenant with schema and run migrations';
 
-    public function handle(TenantMigrator $migrator): int
+    public function handle(TenantMigrator $tenantMigrator): int
     {
-        /** @var string $name */
-        $name = $this->argument('name');
+        $name = $this->stringArgument('name');
+        $slug = $this->stringArgument('slug');
 
-        /** @var string $slug */
-        $slug = $this->argument('slug');
-
-        /** @var string $dbHost */
-        $dbHost = config('database.connections.tenant.host');
-
-        /** @var int $dbPort */
-        $dbPort = (int) config('database.connections.tenant.port');
-
-        /** @var string $dbName */
-        $dbName = config('database.connections.tenant.database');
-
-        /** @var string $dbUser */
-        $dbUser = config('database.connections.tenant.username');
-
-        /** @var string $dbPass */
-        $dbPass = config('database.connections.tenant.password');
+        /** @var array{host: string, port: string|int, database: string, username: string, password: string} $cfg */
+        $cfg = config('database.connections.tenant');
 
         $tenant = TenantModel::create([
             'id' => Str::uuid()->toString(),
             'name' => $name,
             'slug' => $slug,
             'schema_name' => 'tenant_'.$slug,
-            'database_host' => $dbHost,
-            'database_port' => $dbPort,
-            'database_name' => $dbName,
-            'database_username' => $dbUser,
-            'database_password' => $dbPass,
+            'database_host' => $cfg['host'],
+            'database_port' => (int) $cfg['port'],
+            'database_name' => $cfg['database'],
+            'database_username' => $cfg['username'],
+            'database_password' => $cfg['password'],
             'is_active' => true,
             'config' => [],
         ]);
 
-        /** @var string|null $domain */
-        $domain = $this->option('domain');
+        $domain = $this->nullableStringOption('domain');
 
         if ($domain !== null) {
             TenantDomainModel::create([
@@ -74,7 +58,7 @@ final class CreateTenantCommand extends Command
         }
 
         $this->info(sprintf('Creating schema "%s"...', $tenant->schema_name));
-        $migrator->setupTenant($tenant);
+        $tenantMigrator->setupTenant($tenant);
 
         $this->info(sprintf('Tenant "%s" created successfully.', $name));
 

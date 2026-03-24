@@ -10,14 +10,14 @@ use Illuminate\Contracts\Console\Kernel as Artisan;
 final readonly class TenantMigrator
 {
     public function __construct(
-        private TenantSchemaManager $schemaManager,
+        private TenantSchemaManager $tenantSchemaManager,
         private Artisan $artisan,
     ) {}
 
-    public function setupTenant(TenantModel $tenant): void
+    public function setupTenant(TenantModel $tenantModel): void
     {
-        $this->schemaManager->createSchema($tenant->schema_name);
-        $this->schemaManager->switchTo($tenant);
+        $this->tenantSchemaManager->createSchema($tenantModel->schema_name);
+        $this->tenantSchemaManager->switchTo($tenantModel);
 
         $this->artisan->call('migrate', [
             '--database' => 'tenant',
@@ -25,7 +25,7 @@ final readonly class TenantMigrator
             '--force' => true,
         ]);
 
-        $this->schemaManager->reset();
+        $this->tenantSchemaManager->reset();
     }
 
     public function migrateAll(): void

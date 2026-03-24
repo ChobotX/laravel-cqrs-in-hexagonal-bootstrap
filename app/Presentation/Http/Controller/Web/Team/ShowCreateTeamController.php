@@ -18,7 +18,7 @@ final readonly class ShowCreateTeamController
 
     public function __invoke(): View
     {
-        $teams = $this->queryBus->dispatch(new ListTeamsQuery());
+        $teams = $this->queryBus->dispatch(new ListTeamsQuery);
 
         return view('teams.create', [
             'teams' => $teams,

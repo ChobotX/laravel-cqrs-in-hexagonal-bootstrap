@@ -45,6 +45,7 @@ trait TenantAwareRefreshDatabase
 
         DB::connection('landlord')->statement('CREATE SCHEMA IF NOT EXISTS "tenant_test"');
         $this->switchToTenantSchema('tenant_test');
+
         $this->artisan('migrate', [
             '--database' => 'tenant',
             '--path' => 'database/migrations/tenant',
@@ -119,8 +120,8 @@ trait TenantAwareRefreshDatabase
 
     private function setTenantContext(): void
     {
-        $context = app(ResolvedTenantContext::class);
-        $context->set('00000000-0000-0000-0000-000000000001', 'test');
+        $resolvedTenantContext = app(ResolvedTenantContext::class);
+        $resolvedTenantContext->set('00000000-0000-0000-0000-000000000001', 'test');
     }
 
     private function beginDatabaseTransactions(): void

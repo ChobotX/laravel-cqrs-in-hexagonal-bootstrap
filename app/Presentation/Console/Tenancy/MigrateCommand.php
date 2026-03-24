@@ -19,21 +19,20 @@ final class MigrateCommand extends Command
 
     protected $description = 'Run tenant migrations for one or all active tenants';
 
-    public function handle(TenantMigrator $migrator, TenantResolver $resolver): int
+    public function handle(TenantMigrator $tenantMigrator, TenantResolver $tenantResolver): int
     {
-        /** @var string|null $slug */
-        $slug = $this->option('tenant');
+        $slug = $this->nullableStringOption('tenant');
 
         if ($slug !== null) {
-            $tenant = $resolver->resolveBySlug($slug);
+            $tenant = $tenantResolver->resolveBySlug($slug);
             $this->info(sprintf('Migrating tenant "%s" (schema: %s)...', $tenant->name, $tenant->schema_name));
-            $migrator->setupTenant($tenant);
+            $tenantMigrator->setupTenant($tenant);
 
             return self::SUCCESS;
         }
 
         $this->info('Migrating all active tenants...');
-        $migrator->migrateAll();
+        $tenantMigrator->migrateAll();
         $this->info('All tenants migrated.');
 
         return self::SUCCESS;

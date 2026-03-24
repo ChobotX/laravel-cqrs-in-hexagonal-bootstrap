@@ -8,19 +8,18 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Crypt;
+use Override;
 
 final class TenantModel extends Model
 {
     use HasUuids;
     use SoftDeletes;
 
-    /** @var string */
+    public $incrementing = false;
+
     protected $connection = 'landlord';
 
     protected $table = 'tenants';
-
-    public $incrementing = false;
 
     protected $keyType = 'string';
 
@@ -38,9 +37,16 @@ final class TenantModel extends Model
         'config',
     ];
 
+    /** @return HasMany<TenantDomainModel, $this> */
+    public function domains(): HasMany
+    {
+        return $this->hasMany(TenantDomainModel::class, 'tenant_id');
+    }
+
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
@@ -48,11 +54,5 @@ final class TenantModel extends Model
             'config' => 'array',
             'database_password' => 'encrypted',
         ];
-    }
-
-    /** @return HasMany<TenantDomainModel, $this> */
-    public function domains(): HasMany
-    {
-        return $this->hasMany(TenantDomainModel::class, 'tenant_id');
     }
 }

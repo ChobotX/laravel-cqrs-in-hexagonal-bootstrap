@@ -7,17 +7,17 @@ namespace App\Infrastructure\Eloquent\Tenancy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Override;
 
 final class TenantDomainModel extends Model
 {
     use HasUuids;
 
-    /** @var string */
+    public $incrementing = false;
+
     protected $connection = 'landlord';
 
     protected $table = 'tenant_domains';
-
-    public $incrementing = false;
 
     protected $keyType = 'string';
 
@@ -28,19 +28,20 @@ final class TenantDomainModel extends Model
         'is_primary',
     ];
 
+    /** @return BelongsTo<TenantModel, $this> */
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(TenantModel::class, 'tenant_id');
+    }
+
     /**
      * @return array<string, string>
      */
+    #[Override]
     protected function casts(): array
     {
         return [
             'is_primary' => 'boolean',
         ];
-    }
-
-    /** @return BelongsTo<TenantModel, $this> */
-    public function tenant(): BelongsTo
-    {
-        return $this->belongsTo(TenantModel::class, 'tenant_id');
     }
 }

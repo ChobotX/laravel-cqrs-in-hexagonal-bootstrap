@@ -17,11 +17,13 @@ it('isolates users between tenant schemas', function (): void {
     ]);
 
     $countA = DB::connection('tenant')->table('users')->count();
-    $countB = DB::connection('tenant')
+
+    /** @var object{cnt: int} $row */
+    $row = DB::connection('tenant')
         ->selectOne('SELECT count(*) as cnt FROM tenant_test_b.users');
 
     expect($countA)->toBe(1)
-        ->and((int) $countB->cnt)->toBe(0);
+        ->and($row->cnt)->toBe(0);
 });
 
 it('allows same-named roles in different schemas', function (): void {
@@ -38,11 +40,13 @@ it('allows same-named roles in different schemas', function (): void {
     );
 
     $countA = DB::connection('tenant')->table('roles')->where('name', 'Editor')->count();
-    $countB = DB::connection('tenant')
+
+    /** @var object{cnt: int} $row */
+    $row = DB::connection('tenant')
         ->selectOne("SELECT count(*) as cnt FROM tenant_test_b.roles WHERE name = 'Editor'");
 
     expect($countA)->toBe(1)
-        ->and((int) $countB->cnt)->toBe(1);
+        ->and($row->cnt)->toBe(1);
 });
 
 it('does not leak user data across schemas', function (): void {
@@ -53,8 +57,9 @@ it('does not leak user data across schemas', function (): void {
         'password' => Hash::make('password'),
     ]);
 
-    $leaked = DB::connection('tenant')
+    /** @var object{cnt: int} $row */
+    $row = DB::connection('tenant')
         ->selectOne("SELECT count(*) as cnt FROM tenant_test_b.users WHERE email = 'secret@test.com'");
 
-    expect((int) $leaked->cnt)->toBe(0);
+    expect($row->cnt)->toBe(0);
 });
