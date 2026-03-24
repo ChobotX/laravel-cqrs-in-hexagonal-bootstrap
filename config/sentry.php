@@ -40,9 +40,14 @@ return [
             $event->setUser(Sentry\UserDataBag::createFromArray(['id' => $userId]));
         }
 
-        $organizationId = $context::get('organization_id');
-        if (is_string($organizationId)) {
-            $event->setTag('organization_id', $organizationId);
+        $tenantId = $context::get('tenant_id');
+        if (is_string($tenantId)) {
+            $event->setTag('tenant_id', $tenantId);
+        }
+
+        $tenantSlug = $context::get('tenant_slug');
+        if (is_string($tenantSlug)) {
+            $event->setTag('tenant_slug', $tenantSlug);
         }
 
         $impersonatorId = $context::get('impersonator_id');
@@ -67,9 +72,14 @@ return [
             $event->setUser(Sentry\UserDataBag::createFromArray(['id' => $userId]));
         }
 
-        $organizationId = $context::get('organization_id');
-        if (is_string($organizationId)) {
-            $event->setTag('organization_id', $organizationId);
+        $tenantId = $context::get('tenant_id');
+        if (is_string($tenantId)) {
+            $event->setTag('tenant_id', $tenantId);
+        }
+
+        $tenantSlug = $context::get('tenant_slug');
+        if (is_string($tenantSlug)) {
+            $event->setTag('tenant_slug', $tenantSlug);
         }
 
         $impersonatorId = $context::get('impersonator_id');

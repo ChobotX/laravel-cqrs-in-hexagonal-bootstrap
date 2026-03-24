@@ -11,29 +11,47 @@ return [
     | Default Database Connection Name
     |--------------------------------------------------------------------------
     |
-    | Here you may specify which of the database connections below you wish
-    | to use as your default connection for database operations. This is
-    | the connection which will be utilized unless another connection
-    | is explicitly specified when you execute a query / statement.
+    | The default connection used for all models without an explicit $connection.
+    | Set to 'tenant' so that all tenant-scoped models (the majority) use the
+    | dynamically switched tenant connection by default.
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql'),
+    'default' => env('DB_CONNECTION', 'tenant'),
 
     /*
     |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
     |
-    | Below are all of the database connections defined for your application.
-    | An example configuration is provided for each database system which
-    | is supported by Laravel. You're free to add / remove connections.
+    | Two named connections for schema-based multi-tenancy:
+    |
+    | - landlord: fixed search_path to 'landlord' schema. Used only for
+    |   tenant resolution (tenants, tenant_domains tables).
+    |
+    | - tenant: dynamic search_path switched per-request to the active
+    |   tenant's schema. All tenant-scoped models use this (default).
     |
     */
 
     'connections' => [
 
-        'pgsql' => [
+        'landlord' => [
+            'driver' => 'pgsql',
+            'url' => env('DB_URL'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
+            'database' => env('DB_DATABASE', 'laravel'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', ''),
+            'charset' => env('DB_CHARSET', 'utf8'),
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'search_path' => 'landlord',
+            'sslmode' => env('DB_SSLMODE', 'prefer'),
+        ],
+
+        'tenant' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
