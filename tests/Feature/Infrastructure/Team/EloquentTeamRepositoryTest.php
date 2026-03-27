@@ -116,3 +116,15 @@ it('detects cycle on update when setting descendant as parent', function (): voi
     $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', 'Grandparent', 'grandparent', '550e8400-e29b-41d4-a716-446655440b12');
     $eloquentTeamRepository->update($team);
 })->throws(App\Domain\Team\Exception\TeamCycleDetectedException::class);
+
+it('counts teams', function (): void {
+    $eloquentTeamRepository = teamRepo();
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b20', 'Count A', 'count-a'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b21', 'Count B', 'count-b'));
+
+    expect($eloquentTeamRepository->count())->toBe(2);
+});
+
+it('returns zero count when no teams exist', function (): void {
+    expect(teamRepo()->count())->toBe(0);
+});

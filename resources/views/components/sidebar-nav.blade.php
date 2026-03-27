@@ -1,6 +1,13 @@
 <nav class="flex-1 px-3 py-4"
      aria-label="{{ __('messages.a11y.main_navigation') }}">
-    <p class="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">{{ __('messages.nav.management') }}
+    <x-nav-link skip-permission
+                :href="route('dashboard')"
+                icon="heroicon-o-home"
+                :label="__('messages.nav.dashboard')"
+                :active="request()->routeIs('dashboard')" />
+
+    <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        {{ __('messages.nav.management') }}
     </p>
     <x-nav-link permission="users.list.read"
                 :href="route('users.index')"

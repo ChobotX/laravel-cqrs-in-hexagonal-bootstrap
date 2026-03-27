@@ -18,3 +18,5 @@ Route::domain($rootDomain)
         Route::get('/register', ShowRegisterTenantController::class)->name('root.register');
         Route::post('/register', RegisterTenantController::class)->name('root.register.store');
     });
+
+Route::redirect('/', '/dashboard')->middleware('auth');

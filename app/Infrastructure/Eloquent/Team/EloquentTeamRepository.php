@@ -82,6 +82,11 @@ final readonly class EloquentTeamRepository implements TeamRepository
         });
     }
 
+    public function count(): int
+    {
+        return TeamModel::count();
+    }
+
     public function delete(TeamId $teamId): void
     {
         $model = TeamModel::find($teamId->value);

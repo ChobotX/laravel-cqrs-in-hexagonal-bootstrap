@@ -38,6 +38,8 @@ use App\Domain\Authorization\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Event\RoleDeleted;
 use App\Domain\Authorization\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Event\RoleUpdated;
+use App\Domain\Authorization\Query\CountRoles\CountRolesHandler;
+use App\Domain\Authorization\Query\CountRoles\CountRolesQuery;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationHandler;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationQuery;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesHandler;
@@ -64,6 +66,8 @@ use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberHandler;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamHandler;
+use App\Domain\Team\Query\CountTeams\CountTeamsHandler;
+use App\Domain\Team\Query\CountTeams\CountTeamsQuery;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsHandler;
@@ -86,6 +90,8 @@ use App\Domain\User\Command\SetPassword\SetPasswordCommand;
 use App\Domain\User\Command\SetPassword\SetPasswordHandler;
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
+use App\Domain\User\Query\CountUsers\CountUsersHandler;
+use App\Domain\User\Query\CountUsers\CountUsersQuery;
 use App\Domain\User\Query\GetUserByEmail\GetUserByEmailHandler;
 use App\Domain\User\Query\GetUserByEmail\GetUserByEmailQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdHandler;
@@ -169,8 +175,10 @@ final class BusServiceProvider extends ServiceProvider
                 GetUserByIdQuery::class => GetUserByIdHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
+                CountUsersQuery::class => CountUsersHandler::class,
                 SearchUsersQuery::class => SearchUsersHandler::class,
                 ListRolesQuery::class => ListRolesHandler::class,
+                CountRolesQuery::class => CountRolesHandler::class,
                 GetRoleByIdQuery::class => GetRoleByIdHandler::class,
                 GetUserRolesQuery::class => GetUserRolesHandler::class,
                 GetUserOverridesQuery::class => GetUserOverridesHandler::class,
@@ -179,6 +187,7 @@ final class BusServiceProvider extends ServiceProvider
                 GetAvailableModulesQuery::class => GetAvailableModulesHandler::class,
                 GetActiveImpersonationQuery::class => GetActiveImpersonationHandler::class,
                 ListTeamsQuery::class => ListTeamsHandler::class,
+                CountTeamsQuery::class => CountTeamsHandler::class,
                 GetTeamByIdQuery::class => GetTeamByIdHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,
                 GetUserTeamsQuery::class => GetUserTeamsHandler::class,

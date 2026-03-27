@@ -104,6 +104,11 @@ final readonly class EloquentRoleRepository implements RoleRepository
         });
     }
 
+    public function count(): int
+    {
+        return RoleModel::count();
+    }
+
     public function delete(RoleId $roleId): void
     {
         $model = RoleModel::find($roleId->value);

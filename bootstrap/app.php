@@ -46,7 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(SetTraceIdMiddleware::class);
         $middleware->trustProxies(at: env('TRUSTED_PROXIES', ''));
-        $middleware->redirectTo(guests: '/login', users: '/users');
+        $middleware->redirectTo(guests: '/login', users: '/dashboard');
         $middleware->web(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);
         $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([

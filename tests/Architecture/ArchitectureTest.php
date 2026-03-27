@@ -158,7 +158,4 @@ final class ArchitectureTest
             ->shouldNotExtend()
             ->classes(Selector::inNamespace('App'));
     }
-
-    // testNoGenericExceptions — enforced by NoGenericExceptionsRule (custom PHPStan rule)
-    // because PHPat's ignore_built_in_classes suppresses shouldNotConstruct for built-in exceptions.
 }

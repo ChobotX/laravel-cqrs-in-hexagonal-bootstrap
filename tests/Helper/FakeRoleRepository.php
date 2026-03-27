@@ -64,6 +64,11 @@ final class FakeRoleRepository implements RoleRepository
         $this->roles[$role->id->value] = $role;
     }
 
+    public function count(): int
+    {
+        return count($this->roles);
+    }
+
     public function delete(RoleId $roleId): void
     {
         $this->deleted[] = $roleId->value;

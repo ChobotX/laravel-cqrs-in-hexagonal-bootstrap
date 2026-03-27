@@ -58,6 +58,11 @@ final class FakeUserRepository implements UserRepository
         $this->deleted[] = $userId->value;
     }
 
+    public function count(): int
+    {
+        return count($this->users);
+    }
+
     /** @return list<User> */
     public function search(string $term, array $excludeUserIds, int $limit): array
     {

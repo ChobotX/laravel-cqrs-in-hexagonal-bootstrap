@@ -115,3 +115,15 @@ it('delete is no-op for non-existent role', function (): void {
     roleRepo()->delete(new RoleId('550e8400-e29b-41d4-a716-446655440899'));
     expect(true)->toBeTrue();
 });
+
+it('counts roles', function (): void {
+    $eloquentRoleRepository = roleRepo();
+    $eloquentRoleRepository->create(makeTestRole('550e8400-e29b-41d4-a716-446655440810', 'CountA'));
+    $eloquentRoleRepository->create(makeTestRole('550e8400-e29b-41d4-a716-446655440811', 'CountB'));
+
+    expect($eloquentRoleRepository->count())->toBe(2);
+});
+
+it('returns zero count when no roles exist', function (): void {
+    expect(roleRepo()->count())->toBe(0);
+});

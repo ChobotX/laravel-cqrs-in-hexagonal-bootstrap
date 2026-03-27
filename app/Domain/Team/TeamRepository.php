@@ -18,4 +18,6 @@ interface TeamRepository
     public function update(Team $team): void;
 
     public function delete(TeamId $teamId): void;
+
+    public function count(): int;
 }

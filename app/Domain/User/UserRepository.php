@@ -24,4 +24,6 @@ interface UserRepository
      * @return list<User>
      */
     public function search(string $term, array $excludeUserIds, int $limit): array;
+
+    public function count(): int;
 }

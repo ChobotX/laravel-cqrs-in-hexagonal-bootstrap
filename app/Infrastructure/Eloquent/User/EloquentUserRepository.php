@@ -73,6 +73,11 @@ final readonly class EloquentUserRepository implements UserRepository
         }
     }
 
+    public function count(): int
+    {
+        return UserModel::count();
+    }
+
     /** @return list<User> */
     public function search(string $term, array $excludeUserIds, int $limit): array
     {

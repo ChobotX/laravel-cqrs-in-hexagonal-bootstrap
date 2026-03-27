@@ -56,6 +56,11 @@ final class FakeTeamRepository implements TeamRepository
         $this->teams[$team->id->value] = $team;
     }
 
+    public function count(): int
+    {
+        return count($this->teams);
+    }
+
     public function delete(TeamId $teamId): void
     {
         $this->deleted[] = $teamId->value;

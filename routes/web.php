@@ -16,6 +16,7 @@ use App\Presentation\Http\Controller\Web\Authorization\StartImpersonationControl
 use App\Presentation\Http\Controller\Web\Authorization\StopImpersonationController as WebStopImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as WebUpdateRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\UserPermissionsController;
+use App\Presentation\Http\Controller\Web\Dashboard\DashboardController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
 use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
@@ -41,6 +42,7 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::middleware('auth')->group(function (): void {
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::post('/logout', LogoutController::class)->name('logout');
 
     Route::get('/users', ListUsersController::class)->name('users.index');

@@ -12,6 +12,13 @@ return [
         'logout' => 'Odhlásit se',
     ],
 
+    'dashboard' => [
+        'welcome' => 'Vítejte zpět, :name!',
+        'users' => 'Uživatelé',
+        'roles' => 'Role',
+        'teams' => 'Týmy',
+    ],
+
     'auth' => [
         'login' => 'Přihlášení',
         'sign_in_title' => 'Přihlaste se ke svému účtu',

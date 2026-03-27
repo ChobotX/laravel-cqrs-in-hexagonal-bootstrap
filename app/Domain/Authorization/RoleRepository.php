@@ -21,4 +21,6 @@ interface RoleRepository
     public function update(Role $role): void;
 
     public function delete(RoleId $roleId): void;
+
+    public function count(): int;
 }

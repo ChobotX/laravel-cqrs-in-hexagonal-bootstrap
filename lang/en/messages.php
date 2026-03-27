@@ -12,6 +12,13 @@ return [
         'logout' => 'Log out',
     ],
 
+    'dashboard' => [
+        'welcome' => 'Welcome back, :name!',
+        'users' => 'Users',
+        'roles' => 'Roles',
+        'teams' => 'Teams',
+    ],
+
     'auth' => [
         'login' => 'Login',
         'sign_in_title' => 'Sign in to your account',
