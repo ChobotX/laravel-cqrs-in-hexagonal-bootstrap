@@ -73,12 +73,6 @@
                             <td class="px-6 py-4 text-base text-gray-500 sm:text-sm">{{ $user->email }}</td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-1">
-                                    <x-action-button permission="users.roles.read"
-                                                     :href="route('users.permissions', $user->id)"
-                                                     icon="heroicon-o-shield-check"
-                                                     :label="__('messages.users.permissions_action') .
-                                                         ' ' .
-                                                         $user->name" />
                                     @if ($isSuperAdmin && $user->id->value !== $currentUserId)
                                         <x-action-button skip-permission
                                                          :action="route('impersonation.start', $user->id)"

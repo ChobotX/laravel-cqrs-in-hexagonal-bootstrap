@@ -15,7 +15,6 @@ use App\Presentation\Http\Controller\Web\Authorization\ShowRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\StartImpersonationController as WebStartImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\StopImpersonationController as WebStopImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as WebUpdateRoleController;
-use App\Presentation\Http\Controller\Web\Authorization\UserPermissionsController;
 use App\Presentation\Http\Controller\Web\Dashboard\DashboardController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
@@ -31,6 +30,8 @@ use App\Presentation\Http\Controller\Web\User\DeleteUserController;
 use App\Presentation\Http\Controller\Web\User\ListUsersController;
 use App\Presentation\Http\Controller\Web\User\ShowCreateUserController;
 use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
+use App\Presentation\Http\Controller\Web\User\ShowProfileController;
+use App\Presentation\Http\Controller\Web\User\UpdateProfileController;
 use App\Presentation\Http\Controller\Web\User\UpdateUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,8 @@ Route::middleware('guest')->group(function (): void {
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/profile', ShowProfileController::class)->name('profile');
+    Route::put('/profile', UpdateProfileController::class)->name('profile.update');
     Route::post('/logout', LogoutController::class)->name('logout');
 
     Route::get('/users', ListUsersController::class)->name('users.index');
@@ -51,7 +54,6 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/users/{userId}/edit', ShowEditUserController::class)->name('users.edit');
     Route::put('/users/{userId}', UpdateUserController::class)->name('users.update');
     Route::delete('/users/{userId}', DeleteUserController::class)->name('users.destroy');
-    Route::get('/users/{userId}/permissions', UserPermissionsController::class)->name('users.permissions');
     Route::post('/users/{userId}/permissions', ManageUserPermissionsController::class)->name('users.permissions.manage');
 
     Route::get('/roles', WebListRolesController::class)->name('roles.index');

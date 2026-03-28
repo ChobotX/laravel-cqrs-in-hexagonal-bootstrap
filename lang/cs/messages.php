@@ -19,6 +19,12 @@ return [
         'teams' => 'Týmy',
     ],
 
+    'profile' => [
+        'title' => 'Můj profil',
+        'subtitle' => 'Aktualizujte své údaje',
+        'updated' => 'Profil aktualizován.',
+    ],
+
     'auth' => [
         'login' => 'Přihlášení',
         'sign_in_title' => 'Přihlaste se ke svému účtu',

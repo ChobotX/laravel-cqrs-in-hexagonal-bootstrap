@@ -78,11 +78,13 @@ it('deletes a role via web', function (): void {
     $this->actingAs($userModel)->delete('/roles/550e8400-e29b-41d4-a716-446655440953')->assertRedirect('/roles');
 });
 
-it('shows user permissions page', function (): void {
+it('shows user edit page with permissions section', function (): void {
     $userModel = webUser();
     $target = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440954', 'name' => 'Target', 'email' => 'tperm@test.com']);
 
-    $this->actingAs($userModel)->get(sprintf('/users/%s/permissions', $target->id))->assertOk();
+    $this->actingAs($userModel)->get(sprintf('/users/%s/edit', $target->id))
+        ->assertOk()
+        ->assertSee(__('messages.permissions.effective_permissions'));
 });
 
 it('starts impersonation via web', function (): void {
@@ -137,9 +139,9 @@ it('returns 403 when no permissions on web role list', function (): void {
     $this->actingAs($userModel)->get('/roles')->assertForbidden();
 });
 
-it('returns 403 when no permissions on web user perms', function (): void {
+it('returns 403 when no permissions on web user edit', function (): void {
     $userModel = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440959', 'name' => 'No Perms', 'email' => 'noperms-web2@test.com', 'password' => Hash::make('password')]);
     $target = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440957', 'name' => 'T', 'email' => 'timpn@test.com']);
 
-    $this->actingAs($userModel)->get(sprintf('/users/%s/permissions', $target->id))->assertForbidden();
+    $this->actingAs($userModel)->get(sprintf('/users/%s/edit', $target->id))->assertForbidden();
 });

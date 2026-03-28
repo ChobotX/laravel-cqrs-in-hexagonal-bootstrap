@@ -52,6 +52,6 @@ final readonly class ManageUserPermissionsController
             ));
         }
 
-        return redirect()->route('users.permissions', $userId)->with('success', __('messages.permissions.updated'));
+        return redirect()->back()->with('success', __('messages.permissions.updated'));
     }
 }

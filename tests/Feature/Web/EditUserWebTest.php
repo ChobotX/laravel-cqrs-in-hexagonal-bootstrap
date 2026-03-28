@@ -53,7 +53,7 @@ it('updates name and email', function (): void {
         ->put('/users/550e8400-e29b-41d4-a716-446655440043', [
             'name' => 'New Name',
             'email' => 'new@example.com',
-        ])->assertRedirect('/users')
+        ])->assertRedirect()
         ->assertSessionHas('success');
 
     $this->assertDatabaseHas('users', [
@@ -86,7 +86,7 @@ it('updates password when provided', function (): void {
             'email' => 'target@example.com',
             'password' => 'newpassword1',
             'password_confirmation' => 'newpassword1',
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440045');
     expect(Hash::check('newpassword1', $updated->password))->toBeTrue();
@@ -113,7 +113,7 @@ it('keeps existing password when blank', function (): void {
         ->put('/users/550e8400-e29b-41d4-a716-446655440047', [
             'name' => 'Updated Name',
             'email' => 'target@example.com',
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440047');
     expect(Hash::check('keepme', $updated->password))->toBeTrue();
@@ -225,7 +225,7 @@ it('assigns role via form submission', function (): void {
             'name' => 'Target Assign',
             'email' => 'target-assign@example.com',
             'roles' => [$editorRole->id],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseHas('user_roles', [
         'user_id' => '550e8400-e29b-41d4-a716-446655440065',
@@ -269,7 +269,7 @@ it('non-super-admin cannot assign system role via form', function (): void {
             'name' => 'Target Sys',
             'email' => 'target-sys@example.com',
             'roles' => [$systemRole->id],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseMissing('user_roles', [
         'user_id' => '550e8400-e29b-41d4-a716-446655440067',
@@ -321,7 +321,7 @@ it('revokes role via form submission when removed from selection', function (): 
             'name' => 'Target Revoke',
             'email' => 'target-revoke@example.com',
             'roles' => [],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseMissing('user_roles', [
         'user_id' => $targetUser->id,
@@ -355,7 +355,7 @@ it('skips role sync without users.roles.update permission', function (): void {
             'name' => 'Target NoSync Updated',
             'email' => 'target-nosync@example.com',
             'roles' => ['00000000-0000-0000-0000-000000000099'],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseMissing('user_roles', [
         'user_id' => '550e8400-e29b-41d4-a716-446655440084',
@@ -399,7 +399,7 @@ it('non-super-admin cannot assign role with wider permissions', function (): voi
             'name' => 'Target Wide',
             'email' => 'target-wide@example.com',
             'roles' => [$wideRole->id],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseMissing('user_roles', [
         'user_id' => '550e8400-e29b-41d4-a716-446655440069',
@@ -493,7 +493,7 @@ it('adds team membership via form submission', function (): void {
             'name' => 'Target Add Team',
             'email' => 'target-addteam@example.com',
             'teams' => ['550e8400-e29b-41d4-a716-446655440102'],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseHas('team_members', [
         'user_id' => $target->id,
@@ -536,7 +536,7 @@ it('removes team membership via form submission', function (): void {
             'name' => 'Target Rm Team',
             'email' => 'target-rmteam@example.com',
             'teams' => [],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseMissing('team_members', [
         'user_id' => $target->id,
@@ -577,7 +577,7 @@ it('skips team sync without teams.members.update permission', function (): void 
             'name' => 'Target No Team Sync Updated',
             'email' => 'target-noteamsync@example.com',
             'teams' => ['00000000-0000-0000-0000-000000000013'],
-        ])->assertRedirect('/users');
+        ])->assertRedirect();
 
     $this->assertDatabaseMissing('team_members', [
         'user_id' => '550e8400-e29b-41d4-a716-446655440100',

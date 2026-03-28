@@ -12,6 +12,7 @@ use App\Domain\Authorization\Command\SeedDefaultRoles\SeedDefaultRolesHandler;
 use App\Domain\Authorization\PermissionResolver;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesHandler;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsHandler;
+use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsHandler;
 use App\Domain\Authorization\RecordShareRepository;
 use App\Domain\Authorization\UserPermissionRepository;
 use App\Infrastructure\Auth\RequestAuthenticatedUser;
@@ -20,6 +21,8 @@ use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use App\Infrastructure\Authorization\SessionImpersonationManager;
 use App\Infrastructure\Team\EloquentTeamMembershipChecker;
 use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
+use App\Presentation\Http\Controller\Web\User\ShowProfileController;
+use App\Presentation\Http\Controller\Web\User\UpdateProfileController;
 use App\Presentation\Http\Controller\Web\User\UpdateUserController;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Blade;
@@ -62,7 +65,7 @@ final class AuthorizationServiceProvider extends ServiceProvider
 
         $this->app->bind(TeamMembershipChecker::class, EloquentTeamMembershipChecker::class);
 
-        $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, ShowEditUserController::class, UpdateUserController::class])
+        $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, GetOwnEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, ShowEditUserController::class, UpdateUserController::class, ShowProfileController::class, UpdateProfileController::class])
             ->needs('$availableModules')
             ->give(static function (): array {
                 /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */

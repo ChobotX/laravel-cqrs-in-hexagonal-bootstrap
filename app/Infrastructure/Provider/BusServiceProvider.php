@@ -46,6 +46,10 @@ use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesHandle
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsHandler;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
+use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsHandler;
+use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsQuery;
+use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesHandler;
+use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesQuery;
 use App\Domain\Authorization\Query\GetRecordShares\GetRecordSharesHandler;
 use App\Domain\Authorization\Query\GetRecordShares\GetRecordSharesQuery;
 use App\Domain\Authorization\Query\GetRoleById\GetRoleByIdHandler;
@@ -88,10 +92,14 @@ use App\Domain\User\Command\DeleteUser\DeleteUserCommand;
 use App\Domain\User\Command\DeleteUser\DeleteUserHandler;
 use App\Domain\User\Command\SetPassword\SetPasswordCommand;
 use App\Domain\User\Command\SetPassword\SetPasswordHandler;
+use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
+use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
 use App\Domain\User\Query\CountUsers\CountUsersHandler;
 use App\Domain\User\Query\CountUsers\CountUsersQuery;
+use App\Domain\User\Query\GetOwnProfile\GetOwnProfileHandler;
+use App\Domain\User\Query\GetOwnProfile\GetOwnProfileQuery;
 use App\Domain\User\Query\GetUserByEmail\GetUserByEmailHandler;
 use App\Domain\User\Query\GetUserByEmail\GetUserByEmailQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdHandler;
@@ -140,6 +148,7 @@ final class BusServiceProvider extends ServiceProvider
             handlers: [
                 CreateUserCommand::class => CreateUserHandler::class,
                 UpdateUserCommand::class => UpdateUserHandler::class,
+                UpdateProfileCommand::class => UpdateProfileHandler::class,
                 DeleteUserCommand::class => DeleteUserHandler::class,
                 SetPasswordCommand::class => SetPasswordHandler::class,
                 CreateRoleCommand::class => CreateRoleHandler::class,
@@ -173,6 +182,7 @@ final class BusServiceProvider extends ServiceProvider
             container: $this->app,
             handlers: [
                 GetUserByIdQuery::class => GetUserByIdHandler::class,
+                GetOwnProfileQuery::class => GetOwnProfileHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
                 CountUsersQuery::class => CountUsersHandler::class,
@@ -182,7 +192,9 @@ final class BusServiceProvider extends ServiceProvider
                 GetRoleByIdQuery::class => GetRoleByIdHandler::class,
                 GetUserRolesQuery::class => GetUserRolesHandler::class,
                 GetUserOverridesQuery::class => GetUserOverridesHandler::class,
+                GetOwnOverridesQuery::class => GetOwnOverridesHandler::class,
                 GetEffectivePermissionsQuery::class => GetEffectivePermissionsHandler::class,
+                GetOwnEffectivePermissionsQuery::class => GetOwnEffectivePermissionsHandler::class,
                 GetRecordSharesQuery::class => GetRecordSharesHandler::class,
                 GetAvailableModulesQuery::class => GetAvailableModulesHandler::class,
                 GetActiveImpersonationQuery::class => GetActiveImpersonationHandler::class,

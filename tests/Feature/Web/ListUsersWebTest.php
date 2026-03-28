@@ -237,8 +237,7 @@ it('user with full permissions sees all action buttons', function (): void {
     $content = $response->getContent();
     expect($content)
         ->toContain('aria-label="'.__('messages.users.edit_action').' Target Full"')
-        ->toContain('aria-label="'.__('messages.users.delete_action').' Target Full"')
-        ->toContain('aria-label="'.__('messages.users.permissions_action').' Target Full"');
+        ->toContain('aria-label="'.__('messages.users.delete_action').' Target Full"');
 });
 
 it('team-scoped user only sees teammates', function (): void {

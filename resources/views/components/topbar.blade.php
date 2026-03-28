@@ -23,7 +23,9 @@
                  class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}{{ strtoupper(substr(auth()->user()->name, strpos(auth()->user()->name, ' ') + 1, 1)) }}
             </div>
-            <span class="hidden text-base text-gray-600 sm:inline sm:text-sm">{{ auth()->user()->email }}</span>
+            <a class="hidden text-base text-gray-600 transition-colors hover:text-indigo-600 sm:inline sm:text-sm"
+               href="{{ route('profile') }}"
+               title="{{ __('messages.profile.title') }}">{{ auth()->user()->email }}</a>
         </div>
         @include('components.locale-dropdown')
         <x-topbar-button skip-permission

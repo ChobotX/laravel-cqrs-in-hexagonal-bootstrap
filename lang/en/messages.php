@@ -19,6 +19,12 @@ return [
         'teams' => 'Teams',
     ],
 
+    'profile' => [
+        'title' => 'My Profile',
+        'subtitle' => 'Update your account information',
+        'updated' => 'Profile updated.',
+    ],
+
     'auth' => [
         'login' => 'Login',
         'sign_in_title' => 'Sign in to your account',
