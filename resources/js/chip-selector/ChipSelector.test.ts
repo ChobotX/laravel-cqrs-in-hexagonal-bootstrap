@@ -57,7 +57,7 @@ describe('ChipSelector', () => {
         await dropdownOptions[0].trigger('mousedown');
 
         expect(wrapper.emitted('update:modelValue')).toBeTruthy();
-        expect(wrapper.emitted('update:modelValue')![0]).toEqual([['opt-1']]);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['opt-1']]);
     });
 
     it('renders hidden inputs for modelValue ids', () => {
@@ -72,7 +72,7 @@ describe('ChipSelector', () => {
         const removeButton = wrapper.find('button[aria-label="Remove Admin"]');
         await removeButton.trigger('click');
 
-        expect(wrapper.emitted('update:modelValue')![0]).toEqual([[]]);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[]]);
     });
 
     it('options with badge show badge text', () => {
@@ -112,7 +112,7 @@ describe('ChipSelector', () => {
         expect(activeOptions[0].text()).toContain('Admin');
 
         await input.trigger('keydown', { key: 'Enter' });
-        expect(wrapper.emitted('update:modelValue')![0]).toEqual([['opt-1']]);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['opt-1']]);
     });
 
     it('escape closes dropdown', async () => {
@@ -131,7 +131,7 @@ describe('ChipSelector', () => {
         const input = wrapper.find('input[role="combobox"]');
 
         await input.trigger('keydown', { key: 'Backspace' });
-        expect(wrapper.emitted('update:modelValue')![0]).toEqual([['opt-1']]);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([['opt-1']]);
     });
 
     it('arrow keys are ignored when dropdown is closed', async () => {
@@ -186,7 +186,7 @@ describe('ChipSelector', () => {
         await input.trigger('input');
 
         expect(wrapper.emitted('search')).toBeTruthy();
-        expect(wrapper.emitted('search')![0]).toEqual(['test']);
+        expect(wrapper.emitted('search')?.[0]).toEqual(['test']);
     });
 
     it('shows noResultsText when filter matches nothing', async () => {
