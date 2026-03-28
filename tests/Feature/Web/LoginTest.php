@@ -57,6 +57,22 @@ it('redirects authenticated user away from login', function (): void {
         ->assertRedirect();
 });
 
+it('redirects to intended URL after login', function (): void {
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440004',
+        'name' => 'Jane Doe',
+        'email' => 'jane@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+
+    $this->get('/roles')->assertRedirect('/login');
+
+    $this->post('/login', [
+        'email' => 'jane@example.com',
+        'password' => 'password123',
+    ])->assertRedirect('/roles');
+});
+
 it('validates login input', function (): void {
     $this->post('/login', [
         'email' => '',

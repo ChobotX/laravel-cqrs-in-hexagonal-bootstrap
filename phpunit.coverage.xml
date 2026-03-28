@@ -24,6 +24,7 @@
             <directory>app/Presentation/Http/Middleware</directory>
             <directory>app/Presentation/Http/Request</directory>
             <directory>app/Presentation/Http/Resource</directory>
+            <directory>app/Presentation/Http/Security</directory>
         </include>
         <exclude>
             <directory suffix="Model.php">app/Infrastructure/Eloquent</directory>

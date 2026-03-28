@@ -10,16 +10,20 @@ use App\Presentation\Http\Middleware\ResolveTenantMiddleware;
 use App\Presentation\Http\Middleware\SetAuthContextMiddleware;
 use App\Presentation\Http\Middleware\SetLocaleMiddleware;
 use App\Presentation\Http\Middleware\SetTraceIdMiddleware;
+use App\Presentation\Http\Security\SafeRedirectValidator;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Route;
 use Sentry\Laravel\Integration;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -61,6 +65,31 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         Integration::handles($exceptions);
+
+        $exceptions->renderable(function (HttpException $e, Request $request): JsonResponse|RedirectResponse|null {
+            if ($e->getStatusCode() !== 419) {
+                return null;
+            }
+
+            if (Auth::check()) {
+                return redirect()->back()->with('error', __('messages.auth.csrf_expired'));
+            }
+
+            if ($request->expectsJson()) {
+                return new JsonResponse(
+                    ['message' => __('messages.auth.session_expired'), 'redirect' => '/login'],
+                    419,
+                );
+            }
+
+            $referer = $request->headers->get('referer');
+
+            if ($referer !== null && SafeRedirectValidator::isSafe($referer, $request->getHost())) {
+                $request->session()->put('url.intended', $referer);
+            }
+
+            return redirect('/login')->with('error', __('messages.auth.session_expired'));
+        });
 
         $exceptions->renderable(function (Throwable $e, Request $request): JsonResponse|Response|null {
             if (! $e instanceof DomainException) {

@@ -1,3 +1,4 @@
+import './session-guard';
 import './sentry';
 import './dropdown';
 import './mobile-sidebar';

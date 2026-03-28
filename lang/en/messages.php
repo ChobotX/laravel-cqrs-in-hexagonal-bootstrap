@@ -33,6 +33,8 @@ return [
         'password' => 'Password',
         'sign_in' => 'Sign in',
         'invalid_credentials' => 'Invalid credentials.',
+        'session_expired' => 'Your session has expired. Please log in again.',
+        'csrf_expired' => 'Your request could not be verified. Please try again.',
     ],
 
     'users' => [
