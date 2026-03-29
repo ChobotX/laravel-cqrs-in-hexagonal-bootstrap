@@ -216,11 +216,11 @@ Permission-gated topbar form action button (icon-only). Fail-safe: renders nothi
 
 ## Session expiry handling
 
-When a user's session expires, the app redirects them to login and returns them to where they were after re-authenticating. Three mechanisms work together:
+When a user's session expires, the app redirects them to login and returns them to where they were after re-authenticating. The intended URL is passed via `?redirect=` query parameter (not session) because the cookie session driver cannot persist session changes when an exception interrupts the middleware pipeline. Three mechanisms work together:
 
-1. **GET requests** — Laravel's `Authenticate` middleware stores the intended URL in session and redirects to `/login`. After login, `redirect()->intended()` in `LoginController` returns the user to the original page.
-2. **POST/PUT/DELETE requests** — CSRF validation fails before auth middleware runs. The `HttpException(419)` handler in `bootstrap/app.php` stores the `Referer` header as the intended URL (validated by `SafeRedirectValidator`) and redirects to `/login`. Authenticated users with a CSRF mismatch (e.g. two-tab scenario) get a redirect back with a "try again" flash message instead.
-3. **AJAX requests** — `session-guard.ts` wraps `window.fetch` to detect 401/419 responses from same-origin requests and redirects the browser to `/login?redirect=<currentPath>`. `ShowLoginController` reads the `redirect` query parameter and stores it as `url.intended` in the session.
+1. **GET requests** — `Authenticate` middleware redirects to `/login?redirect=<requestUri>` (configured via callable in `bootstrap/app.php`). `ShowLoginController` reads `?redirect=`, validates it with `SafeRedirectValidator`, and stores it as `url.intended` in session. After login, `redirect()->intended()` in `LoginController` returns the user to the original page.
+2. **POST/PUT/DELETE requests** — CSRF validation fails before auth middleware runs. The `HttpException(419)` handler in `bootstrap/app.php` redirects to `/login?redirect=<referer>` (validated by `SafeRedirectValidator`). Authenticated users with a CSRF mismatch (e.g. two-tab scenario) get a redirect back instead.
+3. **AJAX requests** — `session-guard.ts` wraps `window.fetch` to detect 401/419 responses from same-origin requests and redirects the browser to `/login?redirect=<currentPath>`.
 
 `SafeRedirectValidator` (`App\Presentation\Http\Security`) prevents open redirect attacks by only allowing relative paths (not protocol-relative `//`) or same-host absolute URLs.
 

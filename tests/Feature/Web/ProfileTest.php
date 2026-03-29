@@ -26,7 +26,7 @@ it('shows profile page for authenticated user', function (): void {
 
 it('redirects unauthenticated user to login', function (): void {
     $this->get('/profile')
-        ->assertRedirect('/login');
+        ->assertRedirect('/login?'.http_build_query(['redirect' => '/profile']));
 });
 
 it('updates name and password without special permissions', function (): void {

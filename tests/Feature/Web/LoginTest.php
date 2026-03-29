@@ -65,7 +65,10 @@ it('redirects to intended URL after login', function (): void {
         'password' => Hash::make('password123'),
     ]);
 
-    $this->get('/roles')->assertRedirect('/login');
+    $redirectUrl = $this->get('/roles')->headers->get('Location');
+    expect($redirectUrl)->toContain('/login?redirect=');
+
+    $this->get($redirectUrl);
 
     $this->post('/login', [
         'email' => 'jane@example.com',

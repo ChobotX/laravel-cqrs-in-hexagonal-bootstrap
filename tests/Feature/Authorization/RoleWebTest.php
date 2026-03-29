@@ -101,7 +101,7 @@ it('stops impersonation via web', function (): void {
 });
 
 it('redirects unauthenticated to login', function (): void {
-    $this->get('/roles')->assertRedirect('/login');
+    $this->get('/roles')->assertRedirect('/login?'.http_build_query(['redirect' => '/roles']));
 });
 
 it('creates a role with permissions via web', function (): void {

@@ -136,7 +136,7 @@ it('returns 404 for missing user', function (): void {
 
 it('redirects unauthenticated user', function (): void {
     $this->get('/users/550e8400-e29b-41d4-a716-446655440041/edit')
-        ->assertRedirect('/login');
+        ->assertRedirect('/login?'.http_build_query(['redirect' => '/users/550e8400-e29b-41d4-a716-446655440041/edit']));
 });
 
 it('shows role selector with users.roles.read permission', function (): void {

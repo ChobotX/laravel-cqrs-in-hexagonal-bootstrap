@@ -50,7 +50,16 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(SetTraceIdMiddleware::class);
         $middleware->trustProxies(at: env('TRUSTED_PROXIES', ''));
-        $middleware->redirectTo(guests: '/login', users: '/dashboard');
+        $middleware->redirectTo(
+            guests: function (Request $request): string {
+                if (! $request->isMethod('GET')) {
+                    return '/login';
+                }
+
+                return '/login?'.http_build_query(['redirect' => $request->getRequestUri()]);
+            },
+            users: '/dashboard',
+        );
         $middleware->web(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);
         $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([
@@ -72,7 +81,7 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if (Auth::check()) {
-                return redirect()->back()->with('error', __('messages.auth.csrf_expired'));
+                return redirect()->back();
             }
 
             if ($request->expectsJson()) {
@@ -83,12 +92,13 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             $referer = $request->headers->get('referer');
+            $loginUrl = '/login';
 
             if ($referer !== null && SafeRedirectValidator::isSafe($referer, $request->getHost())) {
-                $request->session()->put('url.intended', $referer);
+                $loginUrl = '/login?'.http_build_query(['redirect' => $referer]);
             }
 
-            return redirect('/login')->with('error', __('messages.auth.session_expired'));
+            return redirect($loginUrl);
         });
 
         $exceptions->renderable(function (Throwable $e, Request $request): JsonResponse|Response|null {

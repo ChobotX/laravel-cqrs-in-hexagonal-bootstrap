@@ -24,7 +24,7 @@ it('shows dashboard with welcome message for authenticated user', function (): v
 
 it('redirects unauthenticated user to login', function (): void {
     $this->get('/dashboard')
-        ->assertRedirect('/login');
+        ->assertRedirect('/login?'.http_build_query(['redirect' => '/dashboard']));
 });
 
 it('shows user count widget with users.list.read permission', function (): void {

@@ -15,28 +15,24 @@ beforeEach(function (): void {
 
 it('redirects unauthenticated user to login on CSRF token mismatch', function (): void {
     $this->post('/test-csrf-expired')
-        ->assertRedirect('/login')
-        ->assertSessionHas('error');
+        ->assertRedirect('/login');
 });
 
-it('stores referer as intended URL on CSRF token mismatch', function (): void {
+it('passes referer as redirect query parameter on CSRF token mismatch', function (): void {
     $referer = url('/users/create');
 
     $this->post('/test-csrf-expired', [], ['HTTP_REFERER' => $referer])
-        ->assertRedirect('/login')
-        ->assertSessionHas('url.intended', $referer);
+        ->assertRedirect('/login?'.http_build_query(['redirect' => $referer]));
 });
 
-it('does not store external referer as intended URL', function (): void {
+it('does not include external referer in redirect', function (): void {
     $this->post('/test-csrf-expired', [], ['HTTP_REFERER' => 'https://evil.com/phish'])
-        ->assertRedirect('/login')
-        ->assertSessionMissing('url.intended');
+        ->assertRedirect('/login');
 });
 
 it('handles missing referer on CSRF token mismatch', function (): void {
     $this->post('/test-csrf-expired')
-        ->assertRedirect('/login')
-        ->assertSessionMissing('url.intended');
+        ->assertRedirect('/login');
 });
 
 it('returns JSON 419 for AJAX requests with expired CSRF token', function (): void {
@@ -56,6 +52,5 @@ it('redirects authenticated user back on CSRF token mismatch', function (): void
     $this->actingAs($user)
         ->from('/users/create')
         ->post('/test-csrf-expired')
-        ->assertRedirect('/users/create')
-        ->assertSessionHas('error');
+        ->assertRedirect('/users/create');
 });

@@ -17,7 +17,7 @@ it('logs out an authenticated user', function (): void {
         ->post('/logout')
         ->assertRedirect('/login');
 
-    $this->get('/users')->assertRedirect('/login');
+    $this->get('/users')->assertRedirect('/login?'.http_build_query(['redirect' => '/users']));
 });
 
 it('redirects unauthenticated user from logout', function (): void {

@@ -32,7 +32,7 @@ it('shows users table for authenticated user', function (): void {
 
 it('redirects unauthenticated user to login', function (): void {
     $this->get('/users')
-        ->assertRedirect('/login');
+        ->assertRedirect('/login?'.http_build_query(['redirect' => '/users']));
 });
 
 it('shows create user button', function (): void {

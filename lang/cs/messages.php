@@ -34,7 +34,6 @@ return [
         'sign_in' => 'Přihlásit se',
         'invalid_credentials' => 'Neplatné přihlašovací údaje.',
         'session_expired' => 'Vaše relace vypršela. Přihlaste se prosím znovu.',
-        'csrf_expired' => 'Váš požadavek nemohl být ověřen. Zkuste to prosím znovu.',
     ],
 
     'users' => [

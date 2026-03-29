@@ -207,5 +207,5 @@ it('removes a team member via web', function (): void {
 });
 
 it('redirects unauthenticated to login', function (): void {
-    $this->get('/teams')->assertRedirect('/login');
+    $this->get('/teams')->assertRedirect('/login?'.http_build_query(['redirect' => '/teams']));
 });
