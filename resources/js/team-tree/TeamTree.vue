@@ -78,7 +78,7 @@ function renderNodeContent(node: { data: TeamNode }): string {
         .join('');
 
     const toggleButton = hasMore
-        ? `<button type="button" data-testid="toggle-members-${team.id}" class="org-toggle-btn" data-action="toggle-members" data-team-id="${team.id}" onclick="event.stopPropagation()">
+        ? `<button type="button" data-testid="toggle-members-${team.id}" class="org-toggle-btn" data-action="toggle-members" data-team-id="${team.id}">
             ${isExpanded ? `Show less` : `Show all ${team.memberCount} members`}
         </button>`
         : '';
@@ -147,9 +147,9 @@ function toggleTeamMembers(teamId: string): void {
 }
 
 function handleClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
+    const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action="toggle-members"]');
 
-    if (target.dataset.action === 'toggle-members' && target.dataset.teamId) {
+    if (target?.dataset.teamId) {
         toggleTeamMembers(target.dataset.teamId);
     }
 }
