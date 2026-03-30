@@ -25,10 +25,10 @@ final readonly class EloquentUserRepository implements UserRepository
     /** @return list<User> */
     public function all(?array $onlyIds = null, array $sortings = []): array
     {
-        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
 
         return array_values(
-            $query->get()
+            $builder->get()
                 ->map(fn (UserModel $userModel): User => $this->userMapper->toDomain($userModel))
                 ->all(),
         );
@@ -37,9 +37,9 @@ final readonly class EloquentUserRepository implements UserRepository
     /** @return PaginatedResult<User> */
     public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
     {
-        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
 
-        [$models, $total] = $this->paginateBuilder($query, $pagination);
+        [$models, $total] = $this->paginateBuilder($builder, $pagination);
 
         return new PaginatedResult(
             array_map($this->userMapper->toDomain(...), $models),

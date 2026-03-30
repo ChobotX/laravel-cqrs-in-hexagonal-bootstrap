@@ -103,11 +103,11 @@ final class FakeRoleRepository implements RoleRepository
     private function sortValueExtractor(string $column): callable
     {
         return match ($column) {
-            'name' => fn (Role $r): string => $r->name->value,
-            'permission_score' => fn (Role $r): int => $r->isSystem
+            'name' => fn (Role $role): string => $role->name->value,
+            'permission_score' => fn (Role $role): int => $role->isSystem
                 ? 999999
-                : array_sum(array_map(fn (RolePermission $rp): int => $rp->scope->order(), $r->permissions)),
-            default => fn (Role $r): int => 0,
+                : array_sum(array_map(fn (RolePermission $rolePermission): int => $rolePermission->scope->order(), $role->permissions)),
+            default => fn (Role $role): int => 0,
         };
     }
 }

@@ -19,10 +19,12 @@
                 <caption class="sr-only">{{ __('messages.users.title') }}</caption>
                 <thead class="bg-gray-50/50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.users.user') }}</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">{{ __('messages.users.email') }}</th>
+                        <x-sortable-header column="name"
+                                           :label="__('messages.users.user')"
+                                           :sorting="$sorting" />
+                        <x-sortable-header column="email"
+                                           :label="__('messages.users.email')"
+                                           :sorting="$sorting" />
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
                             scope="col">{{ __('messages.users.actions') }}</th>
                     </tr>

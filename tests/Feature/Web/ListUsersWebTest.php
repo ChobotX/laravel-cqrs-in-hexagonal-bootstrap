@@ -321,6 +321,102 @@ it('own-scoped user only sees themselves', function (): void {
         ->assertDontSee('Other Own User');
 });
 
+it('sorts users by name ascending via query params', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c000',
+        'name' => 'Admin Sort',
+        'email' => 'admin-sort@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c001',
+        'name' => 'Zeta User',
+        'email' => 'zeta@example.com',
+    ]);
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c002',
+        'name' => 'Alpha User',
+        'email' => 'alpha@example.com',
+    ]);
+
+    $this->actingAs($admin)
+        ->get('/users?sort=name&direction=asc')
+        ->assertOk()
+        ->assertSeeInOrder(['Admin Sort', 'Alpha User', 'Zeta User']);
+});
+
+it('sorts users by name descending via query params', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c010',
+        'name' => 'Admin Sort Desc',
+        'email' => 'admin-sort-desc@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c011',
+        'name' => 'Zeta Desc',
+        'email' => 'zeta-desc@example.com',
+    ]);
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c012',
+        'name' => 'Alpha Desc',
+        'email' => 'alpha-desc@example.com',
+    ]);
+
+    $this->actingAs($admin)
+        ->get('/users?sort=name&direction=desc')
+        ->assertOk()
+        ->assertSeeInOrder(['Zeta Desc', 'Alpha Desc', 'Admin Sort Desc']);
+});
+
+it('sorts users by email via query params', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c020',
+        'name' => 'Admin Email Sort',
+        'email' => 'a-admin@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c021',
+        'name' => 'Email B',
+        'email' => 'b-email@example.com',
+    ]);
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c022',
+        'name' => 'Email Z',
+        'email' => 'z-email@example.com',
+    ]);
+
+    $this->actingAs($admin)
+        ->get('/users?sort=email&direction=asc')
+        ->assertOk()
+        ->assertSeeInOrder(['a-admin@example.com', 'b-email@example.com', 'z-email@example.com']);
+});
+
+it('ignores invalid sort column and uses default', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544c030',
+        'name' => 'Admin Invalid Sort',
+        'email' => 'admin-invalid-sort@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $this->actingAs($admin)
+        ->get('/users?sort=invalid_column&direction=asc')
+        ->assertOk();
+});
+
 it('paginates to page 2 without redirect', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([

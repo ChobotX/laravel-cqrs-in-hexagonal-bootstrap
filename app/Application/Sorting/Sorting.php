@@ -12,6 +12,6 @@ final readonly class Sorting
         string $column,
         public SortDirection $direction = SortDirection::Asc,
     ) {
-        $this->column = $column !== '' ? $column : 'id';
+        $this->column = $column !== '' && preg_match('/^[a-z_]+$/', $column) === 1 ? $column : 'id';
     }
 }

@@ -111,9 +111,9 @@ final class FakeUserRepository implements UserRepository
     private function sortValueExtractor(string $column): callable
     {
         return match ($column) {
-            'name' => fn (User $u): string => $u->name,
-            'email' => fn (User $u): string => $u->email->value,
-            default => fn (User $u): int => 0,
+            'name' => fn (User $user): string => $user->name,
+            'email' => fn (User $user): string => $user->email->value,
+            default => fn (User $user): int => 0,
         };
     }
 

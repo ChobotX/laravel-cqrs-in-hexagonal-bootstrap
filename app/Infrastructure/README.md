@@ -39,7 +39,7 @@ Repositories implement contract interfaces and use Eloquent models internally. D
 
 The `PaginatesQuery` trait (`app/Infrastructure/Eloquent/PaginatesQuery.php`) provides a `paginateBuilder()` helper that Eloquent repositories use for paginated list methods. It executes a `COUNT(*)` + offset/limit query and returns `[list<Model>, int $total]` for the caller to map and wrap in `PaginatedResult`.
 
-The `SortsQuery` trait (`app/Infrastructure/Eloquent/SortsQuery.php`) provides a `sortBuilder()` helper that applies `ORDER BY` to an Eloquent builder. Repositories apply sorting before pagination. For computed columns like `permission_score`, repositories add `selectRaw` with the SQL expression before calling `sortBuilder()`.
+The `SortsQuery` trait (`app/Infrastructure/Eloquent/SortsQuery.php`) provides a `sortBuilder()` helper that applies case-insensitive `ORDER BY` to an Eloquent builder via `LOWER(column)`. Repositories apply sorting before pagination. For computed columns like `permission_score`, repositories add `selectRaw` with the SQL expression before calling `sortBuilder()`.
 
 ## Tenant Schema Management
 

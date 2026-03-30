@@ -92,12 +92,12 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
     /** @return list<TeamMember> */
     public function listMembers(string $teamId, array $sortings = []): array
     {
-        $query = TeamMemberModel::with('user')
+        $builder = TeamMemberModel::with('user')
             ->where('team_id', $teamId);
 
         foreach ($sortings as $sorting) {
             if ($sorting->column === 'permission_score') {
-                $query->selectRaw(<<<'SQL'
+                $builder->selectRaw(<<<'SQL'
                     team_members.*,
                     CASE WHEN EXISTS(
                         SELECT 1 FROM user_roles ur
@@ -123,15 +123,12 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
                         ), 0)
                     ) END AS permission_score
                     SQL);
-
-                break;
+                $builder->orderBy('permission_score', $sorting->direction->value);
             }
         }
 
-        $query = $this->sortBuilder($query, $sortings);
-
         return array_values(
-            $query->get()->map(fn (TeamMemberModel $teamMemberModel): TeamMember => $this->teamMemberMapper->toDomain($teamMemberModel))->all(),
+            $builder->get()->map(fn (TeamMemberModel $teamMemberModel): TeamMember => $this->teamMemberMapper->toDomain($teamMemberModel))->all(),
         );
     }
 

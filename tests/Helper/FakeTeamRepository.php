@@ -105,8 +105,9 @@ final class FakeTeamRepository implements TeamRepository
     private function sortValueExtractor(string $column): callable
     {
         return match ($column) {
-            'name' => fn (Team $t): string => $t->name->value,
-            default => fn (Team $t): int => 0,
+            'name' => fn (Team $team): string => $team->name->value,
+            'slug' => fn (Team $team): string => $team->slug->value,
+            default => fn (Team $team): int => 0,
         };
     }
 }

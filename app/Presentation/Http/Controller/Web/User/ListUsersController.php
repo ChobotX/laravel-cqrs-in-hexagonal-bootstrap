@@ -6,6 +6,8 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
@@ -20,6 +22,8 @@ use Illuminate\View\View;
 #[RequiresPermission('users.list.read')]
 final readonly class ListUsersController
 {
+    private const array SORTABLE_COLUMNS = ['name', 'email'];
+
     public function __construct(
         private QueryBus $queryBus,
         private AuthenticatedUser $authenticatedUser,
@@ -30,7 +34,15 @@ final readonly class ListUsersController
     {
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
-        $paginatedResult = $this->queryBus->dispatch(new ListUsersQuery($paginationRequest->pagination()));
+        $defaultSorting = new Sorting('name', SortDirection::Asc);
+        $requestSorting = $paginationRequest->sorting();
+        $sorting = $requestSorting instanceof Sorting && in_array($requestSorting->column, self::SORTABLE_COLUMNS, true)
+            ? $requestSorting
+            : $defaultSorting;
+
+        $paginatedResult = $this->queryBus->dispatch(
+            new ListUsersQuery($paginationRequest->pagination())->withSorting([$sorting]),
+        );
 
         $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
 
@@ -47,6 +59,7 @@ final readonly class ListUsersController
 
         return view('users.index', [
             'result' => $paginatedResult,
+            'sorting' => $sorting,
             'userRoles' => $userRoles,
             'canReadRoles' => $canReadRoles,
             'canReadTeams' => $canReadTeams,

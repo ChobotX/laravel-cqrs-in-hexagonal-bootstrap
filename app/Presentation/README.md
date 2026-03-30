@@ -220,7 +220,42 @@ Generates URLs preserving existing query params. Shows "Showing X to Y of Z resu
 <x-pagination :result="$result" />
 ```
 
-**Shared `PaginationRequest`** (`App\Presentation\Http\Request\Web\PaginationRequest` / `App\Presentation\Http\Request\PaginationRequest`) validates `page` and `per_page` query params and provides a `pagination(): Pagination` helper. Used by all list controllers (web and API).
+**Shared `PaginationRequest`** (`App\Presentation\Http\Request\Web\PaginationRequest` / `App\Presentation\Http\Request\PaginationRequest`) validates `page`, `per_page`, `sort`, and `direction` query params and provides `pagination(): Pagination` and `sorting(): ?Sorting` helpers. Used by all list controllers (web and API). The `sorting()` method returns `null` when no `sort` param is present.
+
+## `<x-sortable-header>` component
+
+Clickable table column header with sort direction indicator. Used in grid list views to enable column sorting.
+
+**Props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `column` | `string` | Column identifier (matches the database column or sort key) |
+| `label` | `string` | Visible header text and link title |
+| `sorting` | `Sorting` | The currently active sorting (column + direction) |
+
+Generates URLs preserving existing query params, resetting `page` to 1. Active column shows directional chevron (indigo); inactive columns show a neutral up-down chevron (gray).
+
+**Usage:**
+```blade
+<tr>
+    <x-sortable-header column="name" :label="__('messages.users.user')" :sorting="$sorting" />
+    <x-sortable-header column="email" :label="__('messages.users.email')" :sorting="$sorting" />
+    <th scope="col">{{ __('messages.users.actions') }}</th>
+</tr>
+```
+
+Controllers must pass the effective `Sorting` VO to the view as `$sorting`. Each controller defines its own `SORTABLE_COLUMNS` constant and validates the request sort column against it:
+
+```php
+private const array SORTABLE_COLUMNS = ['name', 'email'];
+
+$defaultSorting = new Sorting('name', SortDirection::Asc);
+$requestSorting = $paginationRequest->sorting();
+$sorting = $requestSorting !== null && in_array($requestSorting->column, self::SORTABLE_COLUMNS, true)
+    ? $requestSorting
+    : $defaultSorting;
+```
 
 ## `<x-topbar-button>` component
 

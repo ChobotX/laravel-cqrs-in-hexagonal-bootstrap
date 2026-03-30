@@ -251,10 +251,10 @@ it('applies default sorting by name ascending', function (): void {
         listTeamsMembershipChecker(),
     );
 
-    $result = $handler->handle(new ListTeamsQuery('user-1'));
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
 
-    expect($result->items[0]->name->value)->toBe('Alpha')
-        ->and($result->items[1]->name->value)->toBe('Zebra');
+    expect($paginatedResult->items[0]->name->value)->toBe('Alpha')
+        ->and($paginatedResult->items[1]->name->value)->toBe('Zebra');
 });
 
 it('supports withPagination immutable copy', function (): void {
@@ -270,11 +270,11 @@ it('supports withPagination immutable copy', function (): void {
 
 it('supports withSorting immutable copy', function (): void {
     $query = new ListTeamsQuery('user-1');
-    $sorted = $query->withSorting([new Sorting('name', SortDirection::Desc)]);
+    $listTeamsQuery = $query->withSorting([new Sorting('name', SortDirection::Desc)]);
 
     expect($query->sorting())->toBe([])
-        ->and($sorted->sorting())->toHaveCount(1)
-        ->and($sorted->sorting()[0]->column)->toBe('name')
-        ->and($sorted->sorting()[0]->direction)->toBe(SortDirection::Desc)
-        ->and($sorted->userId)->toBe('user-1');
+        ->and($listTeamsQuery->sorting())->toHaveCount(1)
+        ->and($listTeamsQuery->sorting()[0]->column)->toBe('name')
+        ->and($listTeamsQuery->sorting()[0]->direction)->toBe(SortDirection::Desc)
+        ->and($listTeamsQuery->userId)->toBe('user-1');
 });

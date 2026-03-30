@@ -27,18 +27,18 @@ final readonly class EloquentRoleRepository implements RoleRepository
     /** @return list<Role> */
     public function findAll(array $sortings = []): array
     {
-        $query = $this->applySortings(RoleModel::with('permissions'), $sortings);
+        $builder = $this->applySortings(RoleModel::with('permissions'), $sortings);
 
         return array_values(
-            $query->get()->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))->all(),
+            $builder->get()->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))->all(),
         );
     }
 
     /** @return PaginatedResult<Role> */
     public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult
     {
-        $query = $this->applySortings(RoleModel::with('permissions'), $sortings);
-        [$models, $total] = $this->paginateBuilder($query, $pagination);
+        $builder = $this->applySortings(RoleModel::with('permissions'), $sortings);
+        [$models, $total] = $this->paginateBuilder($builder, $pagination);
 
         return new PaginatedResult(
             array_map($this->roleMapper->toDomain(...), $models),
@@ -167,6 +167,8 @@ final readonly class EloquentRoleRepository implements RoleRepository
      */
     private function applySortings(Builder $builder, array $sortings): Builder
     {
+        $textSortings = [];
+
         foreach ($sortings as $sorting) {
             if ($sorting->column === 'permission_score') {
                 $builder->selectRaw(<<<'SQL'
@@ -179,11 +181,12 @@ final readonly class EloquentRoleRepository implements RoleRepository
                         FROM role_permissions rp WHERE rp.role_id = roles.id
                     ), 0) END AS permission_score
                     SQL);
-
-                break;
+                $builder->orderBy('permission_score', $sorting->direction->value);
+            } else {
+                $textSortings[] = $sorting;
             }
         }
 
-        return $this->sortBuilder($builder, $sortings);
+        return $this->sortBuilder($builder, $textSortings);
     }
 }

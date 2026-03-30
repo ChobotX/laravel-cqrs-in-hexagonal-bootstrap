@@ -20,7 +20,7 @@ trait SortsQuery
     private function sortBuilder(Builder $builder, array $sortings): Builder
     {
         foreach ($sortings as $sorting) {
-            $builder->orderBy($sorting->column, $sorting->direction->value);
+            $builder->orderByRaw(sprintf('LOWER(%s) %s', $sorting->column, $sorting->direction->value));
         }
 
         return $builder;

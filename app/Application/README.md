@@ -29,7 +29,7 @@ $result = $this->queryBus->dispatch(new SomeQuery($id));
 
 ## Sorting
 
-- `App\Application\Sorting\SortDirection` — enum with `Asc` and `Desc` string-backed values.
+- `App\Application\Sorting\SortDirection` — enum with `Asc` and `Desc` string-backed values. `toggle()` returns the opposite direction.
 - `App\Application\Sorting\Sorting` — value object carrying `column` and `direction`. Constructor validates non-empty column.
 - `App\Application\Sorting\SortableQuery` — interface for queries that carry sorting parameters. Follows the same `withX()/x()` pattern as `PaginableQuery` and `ScopeAwareQuery`.
 

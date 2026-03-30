@@ -14,7 +14,7 @@ trait SortsArray
      *
      * @param  callable(T): (string|int|float)  $extractor
      */
-    private static function compareValues(callable $extractor, mixed $a, mixed $b, SortDirection $direction): int
+    private static function compareValues(callable $extractor, mixed $a, mixed $b, SortDirection $sortDirection): int
     {
         $valueA = $extractor($a);
         $valueB = $extractor($b);
@@ -22,7 +22,7 @@ trait SortsArray
             ? strnatcasecmp($valueA, $valueB)
             : $valueA <=> $valueB;
 
-        return $direction === SortDirection::Desc ? -$cmp : $cmp;
+        return $sortDirection === SortDirection::Desc ? -$cmp : $cmp;
     }
 
     /**

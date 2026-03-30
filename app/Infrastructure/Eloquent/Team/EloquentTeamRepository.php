@@ -28,10 +28,10 @@ final readonly class EloquentTeamRepository implements TeamRepository
     /** @return list<Team> */
     public function findAll(?array $onlyIds = null, array $sortings = []): array
     {
-        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
 
         return array_values(
-            $query->get()
+            $builder->get()
                 ->map(fn (TeamModel $teamModel): Team => $this->teamMapper->toDomain($teamModel))
                 ->all(),
         );
@@ -40,9 +40,9 @@ final readonly class EloquentTeamRepository implements TeamRepository
     /** @return PaginatedResult<Team> */
     public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
     {
-        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
 
-        [$models, $total] = $this->paginateBuilder($query, $pagination);
+        [$models, $total] = $this->paginateBuilder($builder, $pagination);
 
         return new PaginatedResult(
             array_map($this->teamMapper->toDomain(...), $models),

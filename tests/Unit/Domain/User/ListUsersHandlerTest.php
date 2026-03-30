@@ -72,11 +72,11 @@ it('applies default sorting by name ascending', function (): void {
 
     $handler = new ListUsersHandler(new FakeUserRepository($users));
 
-    $result = $handler->handle(new ListUsersQuery);
+    $paginatedResult = $handler->handle(new ListUsersQuery);
 
-    expect($result->items[0]->name)->toBe('Alice')
-        ->and($result->items[1]->name)->toBe('Bob')
-        ->and($result->items[2]->name)->toBe('Charlie');
+    expect($paginatedResult->items[0]->name)->toBe('Alice')
+        ->and($paginatedResult->items[1]->name)->toBe('Bob')
+        ->and($paginatedResult->items[2]->name)->toBe('Charlie');
 });
 
 it('applies explicit sorting', function (): void {
@@ -87,10 +87,10 @@ it('applies explicit sorting', function (): void {
 
     $handler = new ListUsersHandler(new FakeUserRepository($users));
 
-    $result = $handler->handle(new ListUsersQuery(sortings: [new Sorting('email', SortDirection::Asc)]));
+    $paginatedResult = $handler->handle(new ListUsersQuery(sortings: [new Sorting('email', SortDirection::Asc)]));
 
-    expect($result->items[0]->email->value)->toBe('alice@example.com')
-        ->and($result->items[1]->email->value)->toBe('charlie@example.com');
+    expect($paginatedResult->items[0]->email->value)->toBe('alice@example.com')
+        ->and($paginatedResult->items[1]->email->value)->toBe('charlie@example.com');
 });
 
 it('supports withPagination immutable copy', function (): void {
@@ -105,10 +105,10 @@ it('supports withPagination immutable copy', function (): void {
 
 it('supports withSorting immutable copy', function (): void {
     $query = new ListUsersQuery;
-    $sorted = $query->withSorting([new Sorting('email', SortDirection::Desc)]);
+    $listUsersQuery = $query->withSorting([new Sorting('email', SortDirection::Desc)]);
 
     expect($query->sorting())->toBe([])
-        ->and($sorted->sorting())->toHaveCount(1)
-        ->and($sorted->sorting()[0]->column)->toBe('email')
-        ->and($sorted->sorting()[0]->direction)->toBe(SortDirection::Desc);
+        ->and($listUsersQuery->sorting())->toHaveCount(1)
+        ->and($listUsersQuery->sorting()[0]->column)->toBe('email')
+        ->and($listUsersQuery->sorting()[0]->direction)->toBe(SortDirection::Desc);
 });

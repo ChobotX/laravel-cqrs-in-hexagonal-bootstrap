@@ -40,10 +40,12 @@
                     <caption class="sr-only">{{ __('messages.teams.title') }}</caption>
                     <thead class="bg-gray-50/50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                scope="col">{{ __('messages.teams.name') }}</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                                scope="col">{{ __('messages.teams.slug') }}</th>
+                            <x-sortable-header column="name"
+                                               :label="__('messages.teams.name')"
+                                               :sorting="$sorting" />
+                            <x-sortable-header column="slug"
+                                               :label="__('messages.teams.slug')"
+                                               :sorting="$sorting" />
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                                 scope="col">{{ __('messages.teams.parent') }}</th>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"

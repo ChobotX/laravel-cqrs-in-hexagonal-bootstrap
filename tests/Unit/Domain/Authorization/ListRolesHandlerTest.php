@@ -94,10 +94,10 @@ it('sorts roles by permission score descending by default', function (): void {
 
     $handler = new ListRolesHandler($roleRepo);
 
-    $result = $handler->handle(new ListRolesQuery);
+    $paginatedResult = $handler->handle(new ListRolesQuery);
 
-    expect($result->items[0]->name->value)->toBe('Admin')
-        ->and($result->items[1]->name->value)->toBe('Viewer');
+    expect($paginatedResult->items[0]->name->value)->toBe('Admin')
+        ->and($paginatedResult->items[1]->name->value)->toBe('Viewer');
 });
 
 it('sorts system roles to the top', function (): void {
@@ -127,10 +127,10 @@ it('sorts system roles to the top', function (): void {
 
     $handler = new ListRolesHandler($roleRepo);
 
-    $result = $handler->handle(new ListRolesQuery);
+    $paginatedResult = $handler->handle(new ListRolesQuery);
 
-    expect($result->items[0]->name->value)->toBe('Super Admin')
-        ->and($result->items[1]->name->value)->toBe('Editor');
+    expect($paginatedResult->items[0]->name->value)->toBe('Super Admin')
+        ->and($paginatedResult->items[1]->name->value)->toBe('Editor');
 });
 
 it('supports withPagination immutable copy', function (): void {
@@ -145,10 +145,10 @@ it('supports withPagination immutable copy', function (): void {
 
 it('supports withSorting immutable copy', function (): void {
     $query = new ListRolesQuery;
-    $sorted = $query->withSorting([new Sorting('name', SortDirection::Asc)]);
+    $listRolesQuery = $query->withSorting([new Sorting('name', SortDirection::Asc)]);
 
     expect($query->sorting())->toBe([])
-        ->and($sorted->sorting())->toHaveCount(1)
-        ->and($sorted->sorting()[0]->column)->toBe('name')
-        ->and($sorted->sorting()[0]->direction)->toBe(SortDirection::Asc);
+        ->and($listRolesQuery->sorting())->toHaveCount(1)
+        ->and($listRolesQuery->sorting()[0]->column)->toBe('name')
+        ->and($listRolesQuery->sorting()[0]->direction)->toBe(SortDirection::Asc);
 });
