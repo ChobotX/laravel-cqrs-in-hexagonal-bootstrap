@@ -45,7 +45,7 @@ final class LandlordSeeder extends Seeder
         TenantDomainModel::create([
             'id' => Str::uuid()->toString(),
             'tenant_id' => $alpha->id,
-            'domain' => 'tenant-a',
+            'domain' => 'alpha',
             'is_primary' => true,
         ]);
 
@@ -66,7 +66,7 @@ final class LandlordSeeder extends Seeder
         TenantDomainModel::create([
             'id' => Str::uuid()->toString(),
             'tenant_id' => $bravo->id,
-            'domain' => 'tenant-b',
+            'domain' => 'bravo',
             'is_primary' => true,
         ]);
     }

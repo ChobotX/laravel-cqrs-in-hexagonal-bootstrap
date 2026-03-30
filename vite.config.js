@@ -60,6 +60,9 @@ export default defineConfig({
                 'resources/js/toast/toast-app.ts',
                 'resources/js/chip-selector/chip-selector-app.ts',
                 'resources/js/autocomplete/autocomplete-app.ts',
+                'resources/js/team-tree/team-tree-app.ts',
+                'resources/js/team-tree/TeamTree.vue',
+                'resources/js/team-tree-toggle.ts',
             ],
             thresholds: {
                 autoUpdate: true,

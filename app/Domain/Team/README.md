@@ -6,7 +6,8 @@ Hierarchical team structure with membership management and scope filtering.
 
 - `Team` — aggregate with `TeamId`, `TeamName`, `TeamSlug`, optional `parentTeamId` (tree hierarchy), and description
 - `TeamMember` — read model for team membership (userId, teamId, userName, userEmail, joinedAt)
-- `TeamRepository` — `findAll()`, `findById()`, `findBySlug()`, `create()`, `update()`, `delete()`
+- `TeamRepository` — `findAll(?onlyIds)`, `findById()`, `findBySlug()`, `create()`, `update()`, `delete()`
+- `TeamTreeNode` — read model for tree view (team + members)
 - `TeamMemberRepository` — `add()`, `remove()`, `isMember()`, `memberTeamIds()`, `directMemberTeamIds()`, `listMembers()`, `removeAllByUser()`
 
 ## Team Hierarchy
@@ -32,6 +33,7 @@ Teams form a tree via `parentTeamId`. A team with no parent is a root team.
 | Query | Permission | Description |
 |---|---|---|
 | `ListTeamsQuery` | `teams.list.read` | Lists all teams |
+| `GetTeamTreeQuery` | `teams.management.read` | Gets team tree with members, scope-filtered |
 | `GetTeamByIdQuery` | `teams.list.read` | Gets a single team with members |
 | `GetUserTeamsQuery` | `teams.list.read` | Gets teams for a specific user |
 | `SearchTeamsQuery` | `teams.list.read` | Searches teams by name/slug |

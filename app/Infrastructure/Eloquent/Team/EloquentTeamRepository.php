@@ -18,12 +18,16 @@ final readonly class EloquentTeamRepository implements TeamRepository
     ) {}
 
     /** @return list<Team> */
-    public function findAll(): array
+    public function findAll(?array $onlyIds = null): array
     {
-        $models = TeamModel::all();
+        $query = TeamModel::query();
+
+        if ($onlyIds !== null) {
+            $query->whereIn('id', $onlyIds);
+        }
 
         return array_values(
-            $models->map(fn (TeamModel $teamModel): Team => $this->teamMapper->toDomain($teamModel))->all(),
+            $query->get()->map(fn (TeamModel $teamModel): Team => $this->teamMapper->toDomain($teamModel))->all(),
         );
     }
 

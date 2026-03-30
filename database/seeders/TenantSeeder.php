@@ -22,6 +22,10 @@ final class TenantSeeder extends Seeder
 
     private const string TEAM_DESIGN_ID = '00000000-0000-0000-0000-000000000012';
 
+    private const string TEAM_UX_ID = '00000000-0000-0000-0000-000000000013';
+
+    private const string TEAM_BRAND_ID = '00000000-0000-0000-0000-000000000014';
+
     public function run(): void
     {
         $this->seedTeams();
@@ -29,25 +33,23 @@ final class TenantSeeder extends Seeder
         $superAdminRole = $this->seedSuperAdminRole();
         $roles = $this->seedDefaultRoles();
 
+        $managerRole = $roles['Manager'];
+        $teamLeaderRole = $roles['Team Leader'];
+        $teamMemberRole = $roles['Team Member'];
+        $externistRole = $roles['Externist'];
+
         $admin = UserModel::factory()->create([
             'name' => 'admin',
             'email' => 'admin@test.com',
             'password' => Hash::make('admin'),
         ]);
-
         $this->assignRole($admin->id, $superAdminRole->id);
-        $this->addTeamMember($admin->id, self::TEAM_MANAGERS_ID);
 
-        $teamIds = [self::TEAM_MANAGERS_ID, self::TEAM_ENGINEERING_ID, self::TEAM_DESIGN_ID];
-
-        UserModel::factory()
-            ->count(19)
-            ->create()
-            ->each(function (UserModel $user) use ($roles, $teamIds): void {
-                $role = $roles[array_rand($roles)];
-                $this->assignRole($user->id, $role->id);
-                $this->addTeamMember($user->id, $teamIds[array_rand($teamIds)]);
-            });
+        $this->seedManagersTeam($managerRole->id);
+        $this->seedEngineeringTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
+        $this->seedDesignTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
+        $this->seedUxTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
+        $this->seedBrandTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
     }
 
     private function seedTeams(): void
@@ -74,6 +76,81 @@ final class TenantSeeder extends Seeder
             'slug' => 'design',
             'description' => 'Design sub-team',
         ]);
+
+        TeamModel::create([
+            'id' => self::TEAM_UX_ID,
+            'parent_team_id' => self::TEAM_DESIGN_ID,
+            'name' => 'UX Research',
+            'slug' => 'ux-research',
+            'description' => 'User experience research',
+        ]);
+
+        TeamModel::create([
+            'id' => self::TEAM_BRAND_ID,
+            'parent_team_id' => self::TEAM_DESIGN_ID,
+            'name' => 'Brand & Identity',
+            'slug' => 'brand-identity',
+            'description' => 'Brand guidelines and visual identity',
+        ]);
+    }
+
+    private function seedManagersTeam(string $managerRoleId): void
+    {
+        $this->createMember('Eva Collins', 'eva.collins@test.com', self::TEAM_MANAGERS_ID, $managerRoleId);
+        $this->createMember('Frank Davis', 'frank.davis@test.com', self::TEAM_MANAGERS_ID, $managerRoleId);
+        $this->createMember('Grace Miller', 'grace.miller@test.com', self::TEAM_MANAGERS_ID, $managerRoleId);
+    }
+
+    private function seedEngineeringTeam(string $teamLeaderRoleId, string $teamMemberRoleId, string $externistRoleId): void
+    {
+        $this->createMember('Henry Park', 'henry.park@test.com', self::TEAM_ENGINEERING_ID, $teamLeaderRoleId);
+        $this->createMember('Irene Walsh', 'irene.walsh@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Jack Turner', 'jack.turner@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Karen Lopez', 'karen.lopez@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Liam Chen', 'liam.chen@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Mia Rivera', 'mia.rivera@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Noah Kim', 'noah.kim@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Olivia Scott', 'olivia.scott@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Peter Yang', 'peter.yang@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('Raj Patel', 'raj.patel@test.com', self::TEAM_ENGINEERING_ID, $externistRoleId);
+    }
+
+    private function seedDesignTeam(string $teamLeaderRoleId, string $teamMemberRoleId, string $externistRoleId): void
+    {
+        $this->createMember('Sarah Blake', 'sarah.blake@test.com', self::TEAM_DESIGN_ID, $teamLeaderRoleId);
+        $this->createMember('Tom Nguyen', 'tom.nguyen@test.com', self::TEAM_DESIGN_ID, $teamMemberRoleId);
+        $this->createMember('Uma Frost', 'uma.frost@test.com', self::TEAM_DESIGN_ID, $teamMemberRoleId);
+        $this->createMember('Victor Hall', 'victor.hall@test.com', self::TEAM_DESIGN_ID, $teamMemberRoleId);
+        $this->createMember('Wendy Cruz', 'wendy.cruz@test.com', self::TEAM_DESIGN_ID, $externistRoleId);
+    }
+
+    private function seedUxTeam(string $teamLeaderRoleId, string $teamMemberRoleId, string $externistRoleId): void
+    {
+        $this->createMember('Xander Moore', 'xander.moore@test.com', self::TEAM_UX_ID, $teamLeaderRoleId);
+        $this->createMember('Yuki Tanaka', 'yuki.tanaka@test.com', self::TEAM_UX_ID, $teamMemberRoleId);
+        $this->createMember('Zoe Adams', 'zoe.adams@test.com', self::TEAM_UX_ID, $teamMemberRoleId);
+        $this->createMember('Alex Reid', 'alex.reid@test.com', self::TEAM_UX_ID, $externistRoleId);
+    }
+
+    private function seedBrandTeam(string $teamLeaderRoleId, string $teamMemberRoleId, string $externistRoleId): void
+    {
+        $this->createMember('Beth Morgan', 'beth.morgan@test.com', self::TEAM_BRAND_ID, $teamLeaderRoleId);
+        $this->createMember('Carlos Diaz', 'carlos.diaz@test.com', self::TEAM_BRAND_ID, $teamMemberRoleId);
+        $this->createMember('Diana Webb', 'diana.webb@test.com', self::TEAM_BRAND_ID, $teamMemberRoleId);
+        $this->createMember('Ethan Brooks', 'ethan.brooks@test.com', self::TEAM_BRAND_ID, $teamMemberRoleId);
+        $this->createMember('Fiona Grant', 'fiona.grant@test.com', self::TEAM_BRAND_ID, $externistRoleId);
+    }
+
+    private function createMember(string $name, string $email, string $teamId, string $roleId): void
+    {
+        $user = UserModel::factory()->create([
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make('password'),
+        ]);
+
+        $this->assignRole($user->id, $roleId);
+        $this->addTeamMember($user->id, $teamId);
     }
 
     private function addTeamMember(string $userId, string $teamId): void
@@ -97,7 +174,7 @@ final class TenantSeeder extends Seeder
     }
 
     /**
-     * @return list<RoleModel>
+     * @return array<string, RoleModel>
      */
     private function seedDefaultRoles(): array
     {
@@ -148,7 +225,7 @@ final class TenantSeeder extends Seeder
                 }
             }
 
-            $roles[] = $role;
+            $roles[$definition['name']] = $role;
         }
 
         return $roles;

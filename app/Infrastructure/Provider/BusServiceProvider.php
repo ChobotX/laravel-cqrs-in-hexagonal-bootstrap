@@ -78,6 +78,8 @@ use App\Domain\Team\Query\CountTeams\CountTeamsHandler;
 use App\Domain\Team\Query\CountTeams\CountTeamsQuery;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
+use App\Domain\Team\Query\GetTeamTree\GetTeamTreeHandler;
+use App\Domain\Team\Query\GetTeamTree\GetTeamTreeQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsHandler;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersHandler;
@@ -208,6 +210,7 @@ final class BusServiceProvider extends ServiceProvider
                 ListTeamsQuery::class => ListTeamsHandler::class,
                 CountTeamsQuery::class => CountTeamsHandler::class,
                 GetTeamByIdQuery::class => GetTeamByIdHandler::class,
+                GetTeamTreeQuery::class => GetTeamTreeHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,
                 GetUserTeamsQuery::class => GetUserTeamsHandler::class,
                 SearchTeamsQuery::class => SearchTeamsHandler::class,

@@ -6,8 +6,11 @@ namespace App\Domain\Team;
 
 interface TeamRepository
 {
-    /** @return list<Team> */
-    public function findAll(): array;
+    /**
+     * @param  list<string>|null  $onlyIds  null = all records (no scope filter)
+     * @return list<Team>
+     */
+    public function findAll(?array $onlyIds = null): array;
 
     public function findById(TeamId $teamId): ?Team;
 

@@ -23,9 +23,18 @@ final class FakeTeamRepository implements TeamRepository
     ) {}
 
     /** @return list<Team> */
-    public function findAll(): array
+    public function findAll(?array $onlyIds = null): array
     {
-        return array_values($this->teams);
+        $teams = array_values($this->teams);
+
+        if ($onlyIds !== null) {
+            return array_values(array_filter(
+                $teams,
+                fn (Team $team): bool => in_array($team->id->value, $onlyIds, true),
+            ));
+        }
+
+        return $teams;
     }
 
     public function findById(TeamId $teamId): ?Team

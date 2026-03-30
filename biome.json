@@ -6,7 +6,7 @@
         "useIgnoreFile": true
     },
     "files": {
-        "includes": ["resources/js/**/*.ts", "resources/js/**/*.vue"]
+        "includes": ["resources/js/**/*.ts", "resources/js/**/*.vue", "!resources/js/types/*.d.ts"]
     },
     "formatter": {
         "enabled": true,

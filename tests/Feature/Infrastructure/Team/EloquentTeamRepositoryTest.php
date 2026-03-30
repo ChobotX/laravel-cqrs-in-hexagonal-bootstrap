@@ -128,3 +128,33 @@ it('counts teams', function (): void {
 it('returns zero count when no teams exist', function (): void {
     expect(teamRepo()->count())->toBe(0);
 });
+
+it('filters findAll by onlyIds', function (): void {
+    $eloquentTeamRepository = teamRepo();
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b30', 'Visible', 'visible'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b31', 'Hidden', 'hidden'));
+
+    $result = $eloquentTeamRepository->findAll(['550e8400-e29b-41d4-a716-446655440b30']);
+
+    expect($result)->toHaveCount(1)
+        ->and($result[0]->name->value)->toBe('Visible');
+});
+
+it('returns all teams when onlyIds is null', function (): void {
+    $eloquentTeamRepository = teamRepo();
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b32', 'One', 'one'));
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b33', 'Two', 'two'));
+
+    $result = $eloquentTeamRepository->findAll();
+
+    expect($result)->toHaveCount(2);
+});
+
+it('returns empty when onlyIds is empty array', function (): void {
+    $eloquentTeamRepository = teamRepo();
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b34', 'Exists', 'exists'));
+
+    $result = $eloquentTeamRepository->findAll([]);
+
+    expect($result)->toBe([]);
+});

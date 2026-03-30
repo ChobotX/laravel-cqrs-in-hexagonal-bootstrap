@@ -188,6 +188,8 @@ return [
         'no_members' => 'No members yet.',
         'search_member' => 'Search users...',
         'no_results' => 'No results found.',
+        'view_list' => 'List view',
+        'view_tree' => 'Tree view',
     ],
 
     'exceptions' => [

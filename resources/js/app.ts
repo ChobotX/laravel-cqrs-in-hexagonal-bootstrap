@@ -10,3 +10,5 @@ import './permission-matrix';
 import './chip-selector/chip-selector-app';
 import './auto-submit';
 import './autocomplete/autocomplete-app';
+import './team-tree/team-tree-app';
+import './team-tree-toggle';
