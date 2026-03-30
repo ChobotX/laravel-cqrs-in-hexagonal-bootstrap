@@ -104,6 +104,26 @@ final readonly class EloquentRoleRepository implements RoleRepository
         });
     }
 
+    /** @return list<Role> */
+    public function search(string $term, array $excludeRoleIds): array
+    {
+        $builder = RoleModel::with('permissions');
+
+        if ($term !== '') {
+            $builder->whereRaw('LOWER(name) LIKE ?', [sprintf('%%%s%%', mb_strtolower($term))]);
+        }
+
+        if ($excludeRoleIds !== []) {
+            $builder->whereNotIn('id', $excludeRoleIds);
+        }
+
+        return array_values(
+            $builder->get()
+                ->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))
+                ->all(),
+        );
+    }
+
     public function count(): int
     {
         return RoleModel::count();

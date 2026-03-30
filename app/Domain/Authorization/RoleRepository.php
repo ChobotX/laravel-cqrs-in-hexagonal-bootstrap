@@ -22,5 +22,11 @@ interface RoleRepository
 
     public function delete(RoleId $roleId): void;
 
+    /**
+     * @param  list<string>  $excludeRoleIds
+     * @return list<Role>
+     */
+    public function search(string $term, array $excludeRoleIds): array;
+
     public function count(): int;
 }

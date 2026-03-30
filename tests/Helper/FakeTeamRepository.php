@@ -56,6 +56,20 @@ final class FakeTeamRepository implements TeamRepository
         $this->teams[$team->id->value] = $team;
     }
 
+    /** @return list<Team> */
+    public function search(string $term, array $excludeTeamIds, int $limit): array
+    {
+        $normalizedTerm = mb_strtolower($term);
+
+        $results = array_filter(
+            $this->teams,
+            fn (Team $team): bool => ! in_array($team->id->value, $excludeTeamIds, true)
+                && ($normalizedTerm === '' || str_contains(mb_strtolower($team->name->value), $normalizedTerm)),
+        );
+
+        return array_values(array_slice($results, 0, $limit));
+    }
+
     public function count(): int
     {
         return count($this->teams);

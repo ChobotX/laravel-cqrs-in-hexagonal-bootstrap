@@ -99,6 +99,10 @@ services:
         class: Tests\Architecture\PHPStan\NoGenericExceptionsRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoScopeResolutionInPresentationRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

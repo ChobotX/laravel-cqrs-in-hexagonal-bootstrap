@@ -98,6 +98,44 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 3. Register in `BusServiceProvider` under `QueryBus`. Dispatch via `App\Application\Bus\QueryBus::dispatch()`.
    PHPStan infers the return type from `Query<ReturnType>` — no `assert()` or `@var` needed at call sites.
 
+## Access Context & Scope-Aware Queries
+
+Queries returning lists of domain-scoped resources can implement `ScopeAwareQuery` to receive automatic scope filtering via the `ResolveScopeFilter` bus middleware. The middleware resolves the actor's `AccessScope` (All/Team/Own) and pre-resolves visible IDs, then creates a scoped copy of the query via `withAccessContext()`.
+
+The `AccessContext` value object carries:
+- `scope` — the resolved `AccessScope` enum
+- `visibleIds` — `null` for unrestricted (All), or a concrete `list<string>` of visible IDs
+
+Handlers read the access context and pass `visibleIds` to the repository:
+
+```php
+/** @implements ScopeAwareQuery<list<User>> */
+#[RequiresPermission('users.list.read')]
+final readonly class ListUsersQuery implements ScopeAwareQuery
+{
+    public function __construct(private ?AccessContext $accessContext = null) {}
+
+    public function withAccessContext(AccessContext $accessContext): static
+    {
+        return new self($accessContext);
+    }
+
+    public function accessContext(): ?AccessContext { return $this->accessContext; }
+}
+```
+
+```php
+final readonly class ListUsersHandler implements QueryHandler
+{
+    public function handle(Query $query): array
+    {
+        return $this->userRepository->all($query->accessContext()?->visibleIds);
+    }
+}
+```
+
+Not all queries need scope filtering — only queries returning lists of scoped resources implement `ScopeAwareQuery`. Single-entity queries (`GetUserByIdQuery`), counts, and internal lookups use plain `Query`.
+
 ## Cross-domain communication
 
 Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule.

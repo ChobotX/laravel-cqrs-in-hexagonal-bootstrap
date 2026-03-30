@@ -25,6 +25,7 @@ final readonly class SearchUsersHandler implements QueryHandler
             $query->term,
             $query->excludeUserIds,
             $query->limit,
+            $query->accessContext()?->visibleIds,
         );
     }
 }

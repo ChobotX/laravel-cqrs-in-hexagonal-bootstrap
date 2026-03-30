@@ -88,6 +88,18 @@ it('matches diacritics term against diacritics name', function (): void {
         ->and($results[0]->name)->toBe('Jiří Šťastný');
 });
 
+it('filters search results by onlyIds scope', function (): void {
+    createSearchTestUser('550e8400-e29b-41d4-a716-446655440f00', 'Scoped Alpha', 'alpha@test.com');
+    createSearchTestUser('550e8400-e29b-41d4-a716-446655440f01', 'Scoped Beta', 'beta@test.com');
+    createSearchTestUser('550e8400-e29b-41d4-a716-446655440f02', 'Scoped Gamma', 'gamma@test.com');
+
+    $results = searchRepo()->search('Scoped', [], 10, ['550e8400-e29b-41d4-a716-446655440f00', '550e8400-e29b-41d4-a716-446655440f02']);
+
+    expect($results)->toHaveCount(2)
+        ->and($results[0]->name)->toBe('Scoped Alpha')
+        ->and($results[1]->name)->toBe('Scoped Gamma');
+});
+
 it('returns empty when no matches', function (): void {
     createSearchTestUser('550e8400-e29b-41d4-a716-446655440100', 'Nobody Match', 'nobody@test.com');
 

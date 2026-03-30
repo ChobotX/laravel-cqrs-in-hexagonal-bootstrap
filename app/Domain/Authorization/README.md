@@ -94,23 +94,27 @@ The `reason` parameter is required — forces a conscious decision.
 
 ## Record-Level Access (Scope Filtering)
 
-Query handlers call `canWithScope()` to get the access scope, then filter:
+Scope filtering is handled transparently by the `ResolveScopeFilter` bus middleware. Controllers never resolve scope — they dispatch a `ScopeAwareQuery` and the middleware enriches it with an `AccessContext` before the handler runs.
 
-```php
-$decision = $checker->canWithScope($userId, 'crm.contacts.read');
+**Flow:**
 
-if (!$decision->granted()) {
-    throw new PermissionDeniedException('crm.contacts.read');
-}
+1. Controller dispatches `ListUsersQuery` (no scope info)
+2. `AuthorizeAction` middleware checks binary access (can/deny)
+3. `ResolveScopeFilter` middleware reads `#[RequiresPermission]`, calls `canWithScope()`, resolves visible IDs via `TeamMembershipChecker`, creates a new query with `AccessContext`
+4. Handler reads `accessContext()?->visibleIds` and passes to repository
+5. Repository applies `WHERE IN (...)` at the SQL level
 
-match ($decision->scope()) {
-    'all' => $query,                           // no filter
-    'team' => $query->whereTeam($teamIds),     // filter by team (uses TeamMembershipChecker::memberTeamIds)
-    'own' => $query->whereOwner($userId),      // filter by owner (includes shared)
-};
-```
+**`AccessContext` semantics:**
+- `visibleIds = null` — unrestricted (All scope, no SQL filter)
+- `visibleIds = ['id1', 'id2']` — restrict to these IDs (Team or Own scope)
+- `visibleIds = []` — no visible records
 
-The `team` scope uses `TeamMembershipChecker::memberTeamIds()` which returns the user's direct team IDs **plus all descendant team IDs** via recursive CTE. This means a member of "Engineering" also sees data from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Team module](../Team/README.md).
+The `team` scope uses `TeamMembershipChecker::visibleUserIds()` which returns user IDs from the user's direct teams **plus all descendant teams** via recursive CTE. This means a member of "Engineering" also sees users from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Team module](../Team/README.md).
+
+**Enforcement:** Controllers are blocked from doing scope resolution by three architecture rules:
+- `NoScopeResolutionInPresentationRule` — blocks `canWithScope()` calls in Presentation
+- `testPresentationDoesNotDependOnTeamMembershipChecker` — blocks importing the service
+- `testPresentationDoesNotDependOnAccessContext` — blocks importing scope types
 
 ## Role Assignment (Superset Enforcement)
 

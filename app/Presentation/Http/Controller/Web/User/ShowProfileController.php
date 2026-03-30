@@ -8,14 +8,12 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
-use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
 use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsQuery;
 use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
-use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleAssignmentPolicy;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\User\Query\GetOwnProfile\GetOwnProfileQuery;
 use Illuminate\View\View;
@@ -23,12 +21,10 @@ use Illuminate\View\View;
 #[SkipPermissionCheck(reason: 'Profile page is accessible to all authenticated users')]
 final readonly class ShowProfileController
 {
-    /** @param array<string, array{features: array<string, array{actions: list<string>}>}> $availableModules */
     public function __construct(
         private QueryBus $queryBus,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
-        private array $availableModules,
     ) {}
 
     public function __invoke(): View
@@ -47,14 +43,8 @@ final readonly class ShowProfileController
         $userRoleIds = [];
 
         if ($canManageRoles) {
-            $allRoles = $this->queryBus->dispatch(new ListRolesQuery);
+            $assignableRoles = $this->queryBus->dispatch(new GetAssignableRolesQuery($userId));
             $userRoles = $this->queryBus->dispatch(new GetUserRolesQuery($userId));
-            $assignerPermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($userId));
-
-            $isSuperAdmin = array_any($assignerPermissions, fn ($p): bool => $p->source === 'system:super-admin');
-
-            $roleAssignmentPolicy = new RoleAssignmentPolicy;
-            $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules, $isSuperAdmin);
             $userRoleIds = array_map(fn (Role $role): string => $role->id->value, $userRoles);
         }
 

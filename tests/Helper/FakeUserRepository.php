@@ -22,9 +22,18 @@ final class FakeUserRepository implements UserRepository
     ) {}
 
     /** @return list<User> */
-    public function all(): array
+    public function all(?array $onlyIds = null): array
     {
-        return array_values($this->users);
+        $users = array_values($this->users);
+
+        if ($onlyIds !== null) {
+            return array_values(array_filter(
+                $users,
+                fn (User $user): bool => in_array($user->id->value, $onlyIds, true),
+            ));
+        }
+
+        return $users;
     }
 
     public function findById(UserId $userId): ?User
@@ -64,13 +73,17 @@ final class FakeUserRepository implements UserRepository
     }
 
     /** @return list<User> */
-    public function search(string $term, array $excludeUserIds, int $limit): array
+    public function search(string $term, array $excludeUserIds, int $limit, ?array $onlyIds = null): array
     {
         $normalizedTerm = $this->stripDiacritics(mb_strtolower($term));
 
         $results = array_filter(
             $this->users,
-            function (User $user) use ($normalizedTerm, $excludeUserIds): bool {
+            function (User $user) use ($normalizedTerm, $excludeUserIds, $onlyIds): bool {
+                if ($onlyIds !== null && ! in_array($user->id->value, $onlyIds, true)) {
+                    return false;
+                }
+
                 if (in_array($user->id->value, $excludeUserIds, true)) {
                     return false;
                 }

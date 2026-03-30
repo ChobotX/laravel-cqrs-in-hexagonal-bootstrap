@@ -21,6 +21,6 @@ final readonly class ListUsersHandler implements QueryHandler
      */
     public function handle(Query $query): array
     {
-        return $this->userRepository->all();
+        return $this->userRepository->all($query->accessContext()?->visibleIds);
     }
 }

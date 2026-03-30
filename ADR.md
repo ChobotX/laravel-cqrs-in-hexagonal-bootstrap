@@ -98,6 +98,12 @@ Every command in `App\Presentation\Console\` must have `#[TenantAwareCommand]` o
 **Why:** Forces a conscious decision about whether each CLI command operates within a tenant schema or is tenant-agnostic (e.g. migration commands).
 **Enforced by:** PHPStan rule `ConsoleCommandRequiresTenantAttributeRule`. See [tests/README.md](tests/README.md).
 
+### Scope filtering happens in bus middleware, not controllers
+
+Scope-based data filtering (All/Team/Own) is domain logic that must not leak into the Presentation layer. The `ResolveScopeFilter` bus middleware resolves the actor's scope transparently before the handler runs. Controllers dispatch queries and receive already-filtered results.
+**Why:** Scope filtering was originally done in controllers — fetching all records and filtering in PHP. This violated hexagonal architecture (domain logic in presentation), harmed performance (full table loads), and duplicated logic across controllers.
+**Enforced by:** PHPStan rule `NoScopeResolutionInPresentationRule` (blocks `canWithScope()` in Presentation), PHPat rules `testPresentationDoesNotDependOnTeamMembershipChecker` and `testPresentationDoesNotDependOnAccessContext` (block scope-related imports). See [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md).
+
 ### Centralized transactional test isolation
 
 All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.

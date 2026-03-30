@@ -4,18 +4,35 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Query\SearchUsers;
 
+use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
+use App\Application\Authorization\ScopeAwareQuery;
 use App\Contract\Query\Query;
 use App\Domain\User\User;
 
-/** @implements Query<list<User>> */
+/**
+ * @implements Query<list<User>>
+ */
 #[RequiresPermission('users.list.read')]
-final readonly class SearchUsersQuery implements Query
+final readonly class SearchUsersQuery implements Query, ScopeAwareQuery
 {
-    /** @param  list<string>  $excludeUserIds */
+    /**
+     * @param  list<string>  $excludeUserIds
+     */
     public function __construct(
         public string $term,
         public array $excludeUserIds,
         public int $limit = 10,
+        private ?AccessContext $accessContext = null,
     ) {}
+
+    public function withAccessContext(AccessContext $accessContext): static
+    {
+        return new self($this->term, $this->excludeUserIds, $this->limit, $accessContext);
+    }
+
+    public function accessContext(): ?AccessContext
+    {
+        return $this->accessContext;
+    }
 }

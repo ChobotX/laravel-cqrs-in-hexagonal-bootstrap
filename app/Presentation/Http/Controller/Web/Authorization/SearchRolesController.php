@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
+use App\Domain\Authorization\Query\SearchRoles\SearchRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Presentation\Http\Request\Web\Authorization\SearchRolesRequest;
 use Illuminate\Http\JsonResponse;
@@ -20,23 +20,17 @@ final readonly class SearchRolesController
 
     public function __invoke(SearchRolesRequest $searchRolesRequest): JsonResponse
     {
-        $term = mb_strtolower($searchRolesRequest->searchTerm());
-        $excludeIds = $searchRolesRequest->excludeRoleIds();
-
         /** @var list<Role> $roles */
-        $roles = $this->queryBus->dispatch(new ListRolesQuery);
-
-        $filtered = array_values(array_filter(
-            $roles,
-            fn (Role $role): bool => ! in_array($role->id->value, $excludeIds, true)
-                && ($term === '' || str_contains(mb_strtolower($role->name->value), $term)),
+        $roles = $this->queryBus->dispatch(new SearchRolesQuery(
+            term: $searchRolesRequest->searchTerm(),
+            excludeRoleIds: $searchRolesRequest->excludeRoleIds(),
         ));
 
         $data = array_map(fn (Role $role): array => [
             'id' => $role->id->value,
             'name' => $role->name->value,
             'description' => $role->description,
-        ], $filtered);
+        ], $roles);
 
         return new JsonResponse(['data' => $data]);
     }

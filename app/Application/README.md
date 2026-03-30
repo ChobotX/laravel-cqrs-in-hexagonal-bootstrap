@@ -15,4 +15,10 @@ $this->commandBus->dispatch(new SomeCommand($data));
 $result = $this->queryBus->dispatch(new SomeQuery($id));
 ```
 
+## Authorization attributes and interfaces
+
+- `App\Application\Authorization\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.
+- `App\Application\Authorization\SkipPermissionCheck` — attribute for commands/queries that intentionally skip authorization.
+- `App\Application\Authorization\ScopeAwareQuery` — interface for queries that receive automatic scope resolution via bus middleware. Extends `Query`. See [Domain README](../Domain/README.md) for usage.
+
 The Application layer may depend on Domain and Contract. It must not depend on Infrastructure or Presentation.

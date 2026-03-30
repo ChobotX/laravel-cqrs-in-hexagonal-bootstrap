@@ -11,11 +11,9 @@ use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
-use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
+use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
-use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleAssignmentPolicy;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
@@ -27,13 +25,11 @@ use Illuminate\Http\RedirectResponse;
 #[RequiresPermission('users.list.update')]
 final readonly class UpdateUserController
 {
-    /** @param array<string, array{features: array<string, array{actions: list<string>}>}> $availableModules */
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
-        private array $availableModules,
     ) {}
 
     public function __invoke(UpdateUserRequest $updateUserRequest): RedirectResponse
@@ -65,12 +61,7 @@ final readonly class UpdateUserController
         /** @var list<string> $submittedRoleIds */
         $submittedRoleIds = $updateUserRequest->input('roles', []);
 
-        $assignerPermissions = $this->queryBus->dispatch(new GetEffectivePermissionsQuery($currentUserId));
-        $isSuperAdmin = array_any($assignerPermissions, fn ($p): bool => $p->source === 'system:super-admin');
-
-        $allRoles = $this->queryBus->dispatch(new ListRolesQuery);
-        $roleAssignmentPolicy = new RoleAssignmentPolicy;
-        $assignableRoles = $roleAssignmentPolicy->assignableRoles($assignerPermissions, $allRoles, $this->availableModules, $isSuperAdmin);
+        $assignableRoles = $this->queryBus->dispatch(new GetAssignableRolesQuery($currentUserId));
         $assignableRoleIds = array_map(fn (Role $role): string => $role->id->value, $assignableRoles);
 
         $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($targetUserId));

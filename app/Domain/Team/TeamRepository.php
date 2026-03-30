@@ -19,5 +19,11 @@ interface TeamRepository
 
     public function delete(TeamId $teamId): void;
 
+    /**
+     * @param  list<string>  $excludeTeamIds
+     * @return list<Team>
+     */
+    public function search(string $term, array $excludeTeamIds, int $limit): array;
+
     public function count(): int;
 }

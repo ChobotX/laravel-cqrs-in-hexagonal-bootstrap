@@ -15,10 +15,16 @@ final readonly class EloquentUserRepository implements UserRepository
     ) {}
 
     /** @return list<User> */
-    public function all(): array
+    public function all(?array $onlyIds = null): array
     {
+        $query = UserModel::query();
+
+        if ($onlyIds !== null) {
+            $query->whereIn('id', $onlyIds);
+        }
+
         return array_values(
-            UserModel::all()
+            $query->get()
                 ->map(fn (UserModel $userModel): User => $this->userMapper->toDomain($userModel))
                 ->all(),
         );
@@ -79,13 +85,17 @@ final readonly class EloquentUserRepository implements UserRepository
     }
 
     /** @return list<User> */
-    public function search(string $term, array $excludeUserIds, int $limit): array
+    public function search(string $term, array $excludeUserIds, int $limit, ?array $onlyIds = null): array
     {
         $builder = UserModel::query()
             ->where(function ($q) use ($term): void {
                 $q->whereRaw('unaccent(name) ILIKE unaccent(?)', [sprintf('%%%s%%', $term)])
                     ->orWhereRaw('unaccent(email) ILIKE unaccent(?)', [sprintf('%%%s%%', $term)]);
             });
+
+        if ($onlyIds !== null) {
+            $builder->whereIn('id', $onlyIds);
+        }
 
         if ($excludeUserIds !== []) {
             $builder->whereNotIn('id', $excludeUserIds);

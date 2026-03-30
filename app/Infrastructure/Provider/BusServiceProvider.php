@@ -42,6 +42,8 @@ use App\Domain\Authorization\Query\CountRoles\CountRolesHandler;
 use App\Domain\Authorization\Query\CountRoles\CountRolesQuery;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationHandler;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationQuery;
+use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesHandler;
+use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesHandler;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsHandler;
@@ -60,6 +62,8 @@ use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesHandler;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Query\ListRoles\ListRolesHandler;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
+use App\Domain\Authorization\Query\SearchRoles\SearchRolesHandler;
+use App\Domain\Authorization\Query\SearchRoles\SearchRolesQuery;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
 use App\Domain\Team\Command\CreateTeam\CreateTeamCommand;
@@ -80,6 +84,8 @@ use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersHandler;
 use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersQuery;
 use App\Domain\Team\Query\ListTeams\ListTeamsHandler;
 use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Team\Query\SearchTeams\SearchTeamsHandler;
+use App\Domain\Team\Query\SearchTeams\SearchTeamsQuery;
 use App\Domain\Tenancy\Command\CreateTenant\CreateTenantCommand;
 use App\Domain\Tenancy\Command\CreateTenant\CreateTenantHandler;
 use App\Domain\Tenancy\Command\MigrateAllTenants\MigrateAllTenantsCommand;
@@ -119,6 +125,7 @@ use App\Infrastructure\Bus\LaravelCommandBus;
 use App\Infrastructure\Bus\LaravelQueryBus;
 use App\Infrastructure\Bus\Middleware\AuthorizeAction;
 use App\Infrastructure\Bus\Middleware\DispatchCollectedEvents;
+use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
 use App\Infrastructure\Bus\QueuedEventBus;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\ServiceProvider;
@@ -203,9 +210,13 @@ final class BusServiceProvider extends ServiceProvider
                 GetTeamByIdQuery::class => GetTeamByIdHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,
                 GetUserTeamsQuery::class => GetUserTeamsHandler::class,
+                SearchTeamsQuery::class => SearchTeamsHandler::class,
+                SearchRolesQuery::class => SearchRolesHandler::class,
+                GetAssignableRolesQuery::class => GetAssignableRolesHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),
+                $this->app->make(ResolveScopeFilter::class),
             ],
         ));
     }

@@ -82,6 +82,27 @@ final readonly class EloquentTeamRepository implements TeamRepository
         });
     }
 
+    /** @return list<Team> */
+    public function search(string $term, array $excludeTeamIds, int $limit): array
+    {
+        $builder = TeamModel::query();
+
+        if ($term !== '') {
+            $builder->whereRaw('LOWER(name) LIKE ?', [sprintf('%%%s%%', mb_strtolower($term))]);
+        }
+
+        if ($excludeTeamIds !== []) {
+            $builder->whereNotIn('id', $excludeTeamIds);
+        }
+
+        return array_values(
+            $builder->limit($limit)
+                ->get()
+                ->map(fn (TeamModel $teamModel): Team => $this->teamMapper->toDomain($teamModel))
+                ->all(),
+        );
+    }
+
     public function count(): int
     {
         return TeamModel::count();

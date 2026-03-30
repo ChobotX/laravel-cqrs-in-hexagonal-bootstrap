@@ -33,6 +33,17 @@ All Artisan commands must `use StrictArguments` (`App\Presentation\Console\Trait
 
 Enforced by `UseStrictArgumentsInConsoleRule` PHPStan rule.
 
+## Scope filtering is forbidden in controllers
+
+Controllers must **never** resolve access scope or filter data by scope. Scope-based filtering is domain logic handled by the `ResolveScopeFilter` bus middleware. Controllers dispatch `ScopeAwareQuery` objects and receive already-filtered results.
+
+Controllers may use `AuthorizationChecker::can()` for binary UI visibility checks (e.g., "should I render the Roles tab?"), but must never call `canWithScope()` or import scope-related types.
+
+**Enforced by:**
+- `NoScopeResolutionInPresentationRule` — blocks `canWithScope()` calls
+- `testPresentationDoesNotDependOnTeamMembershipChecker` — blocks service import
+- `testPresentationDoesNotDependOnAccessContext` — blocks `AccessContext`/`AccessScope` imports
+
 ## View rules
 
 - **Dumb templates** — Blade views must contain zero business logic. All computation, formatting, and decision-making happens in controllers or dedicated view models before data reaches the template.

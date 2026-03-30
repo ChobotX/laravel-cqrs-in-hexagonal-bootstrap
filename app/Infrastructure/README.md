@@ -19,6 +19,20 @@ All command, query, and event handler mappings are registered in `app/Infrastruc
 
 Every new command, query, or event handler must be registered here. See [Domain README](../Domain/README.md) for full CQRS walkthrough.
 
+## Scope Resolution Middleware
+
+`ResolveScopeFilter` is a query bus middleware that transparently enriches `ScopeAwareQuery` objects with the actor's access scope. It runs after `AuthorizeAction` in the middleware pipeline.
+
+**Pipeline order:** `AuthorizeAction` → `ResolveScopeFilter` → Handler
+
+For queries implementing `ScopeAwareQuery`, the middleware:
+1. Reads `#[RequiresPermission]` attribute via reflection
+2. Calls `AuthorizationChecker::canWithScope()` to get the scope
+3. For `Team` scope: resolves visible IDs via `TeamMembershipChecker::visibleUserIds()`
+4. Creates a new query instance via `withAccessContext()` (immutable copy pattern — query objects are `final readonly`)
+
+Non-`ScopeAwareQuery` queries pass through unchanged.
+
 ## Repository + Mapper pattern
 
 Repositories implement contract interfaces and use Eloquent models internally. Domain objects are never Eloquent models — mappers translate between Eloquent models and domain objects.

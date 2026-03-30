@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Team;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Team\Query\SearchTeams\SearchTeamsQuery;
 use App\Domain\Team\Team;
 use App\Presentation\Http\Request\Web\Team\SearchTeamsRequest;
 use Illuminate\Http\JsonResponse;
@@ -20,22 +20,16 @@ final readonly class SearchTeamsController
 
     public function __invoke(SearchTeamsRequest $searchTeamsRequest): JsonResponse
     {
-        $term = mb_strtolower($searchTeamsRequest->searchTerm());
-        $excludeIds = $searchTeamsRequest->excludeTeamIds();
-
         /** @var list<Team> $teams */
-        $teams = $this->queryBus->dispatch(new ListTeamsQuery);
-
-        $filtered = array_values(array_filter(
-            $teams,
-            fn (Team $team): bool => ! in_array($team->id->value, $excludeIds, true)
-                && ($term === '' || str_contains(mb_strtolower($team->name->value), $term)),
+        $teams = $this->queryBus->dispatch(new SearchTeamsQuery(
+            term: $searchTeamsRequest->searchTerm(),
+            excludeTeamIds: $searchTeamsRequest->excludeTeamIds(),
         ));
 
         $data = array_map(fn (Team $team): array => [
             'id' => $team->id->value,
             'name' => $team->name->value,
-        ], array_slice($filtered, 0, 50));
+        ], $teams);
 
         return new JsonResponse(['data' => $data]);
     }

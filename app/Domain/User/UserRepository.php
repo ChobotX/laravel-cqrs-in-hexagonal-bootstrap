@@ -6,8 +6,11 @@ namespace App\Domain\User;
 
 interface UserRepository
 {
-    /** @return list<User> */
-    public function all(): array;
+    /**
+     * @param  list<string>|null  $onlyIds  null = all records (no scope filter)
+     * @return list<User>
+     */
+    public function all(?array $onlyIds = null): array;
 
     public function findById(UserId $userId): ?User;
 
@@ -21,9 +24,10 @@ interface UserRepository
 
     /**
      * @param  list<string>  $excludeUserIds  Users to exclude from results
+     * @param  list<string>|null  $onlyIds  null = no scope filter
      * @return list<User>
      */
-    public function search(string $term, array $excludeUserIds, int $limit): array;
+    public function search(string $term, array $excludeUserIds, int $limit, ?array $onlyIds = null): array;
 
     public function count(): int;
 }

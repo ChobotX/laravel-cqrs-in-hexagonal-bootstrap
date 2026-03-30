@@ -10,6 +10,7 @@ use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Team\TeamMembershipChecker;
 use App\Domain\Authorization\Command\SeedDefaultRoles\SeedDefaultRolesHandler;
 use App\Domain\Authorization\PermissionResolver;
+use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesHandler;
 use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesHandler;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsHandler;
 use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsHandler;
@@ -20,10 +21,6 @@ use App\Infrastructure\Authorization\CachedAuthorizationChecker;
 use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use App\Infrastructure\Authorization\SessionImpersonationManager;
 use App\Infrastructure\Team\EloquentTeamMembershipChecker;
-use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
-use App\Presentation\Http\Controller\Web\User\ShowProfileController;
-use App\Presentation\Http\Controller\Web\User\UpdateProfileController;
-use App\Presentation\Http\Controller\Web\User\UpdateUserController;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -65,7 +62,7 @@ final class AuthorizationServiceProvider extends ServiceProvider
 
         $this->app->bind(TeamMembershipChecker::class, EloquentTeamMembershipChecker::class);
 
-        $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, GetOwnEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, ShowEditUserController::class, UpdateUserController::class, ShowProfileController::class, UpdateProfileController::class])
+        $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, GetOwnEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, GetAssignableRolesHandler::class])
             ->needs('$availableModules')
             ->give(static function (): array {
                 /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */

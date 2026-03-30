@@ -36,6 +36,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `NoDatabaseTraitsInTestsRule` | No direct DB trait imports in tests; `RefreshDatabase` / `TenantAwareRefreshDatabase` only in `Pest.php` |
 | `ControllerMustUseFormRequestRule` | Controllers must not type-hint `Illuminate\Http\Request` directly — use a custom `FormRequest` subclass |
 | `ConsoleCommandRequiresTenantAttributeRule` | Every console command must have `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]` |
+| `NoScopeResolutionInPresentationRule` | Blocks `canWithScope()` calls in Presentation — scope resolution belongs in bus middleware |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

@@ -147,6 +147,32 @@ final class ArchitectureTest
             ->shouldBeInvokable();
     }
 
+    // ── Scope filtering boundary ──────────────────────────────────
+
+    public function testPresentationDoesNotDependOnTeamMembershipChecker(): Rule
+    {
+        // Scope resolution via team membership is a bus middleware concern.
+        // Controllers must not know about team membership trees.
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Presentation'))
+            ->shouldNotDependOn()
+            ->classes(Selector::classname(\App\Contract\Team\TeamMembershipChecker::class));
+    }
+
+    public function testPresentationDoesNotDependOnAccessContext(): Rule
+    {
+        // AccessContext and AccessScope are scope-resolution types used by
+        // ResolveScopeFilter middleware. If controllers can't reference these
+        // types, they can't do scope filtering manually.
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Presentation'))
+            ->shouldNotDependOn()
+            ->classes(
+                Selector::classname(\App\Application\Authorization\AccessContext::class),
+                Selector::classname(\App\Domain\Authorization\AccessScope::class),
+            );
+    }
+
     // ── Safety nets ─────────────────────────────────────────────
 
     public function testNoCustomInheritance(): Rule

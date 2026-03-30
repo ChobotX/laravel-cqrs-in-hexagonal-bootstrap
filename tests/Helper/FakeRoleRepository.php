@@ -64,6 +64,18 @@ final class FakeRoleRepository implements RoleRepository
         $this->roles[$role->id->value] = $role;
     }
 
+    /** @return list<Role> */
+    public function search(string $term, array $excludeRoleIds): array
+    {
+        $normalizedTerm = mb_strtolower($term);
+
+        return array_values(array_filter(
+            $this->roles,
+            fn (Role $role): bool => ! in_array($role->id->value, $excludeRoleIds, true)
+                && ($normalizedTerm === '' || str_contains(mb_strtolower($role->name->value), $normalizedTerm)),
+        ));
+    }
+
     public function count(): int
     {
         return count($this->roles);
