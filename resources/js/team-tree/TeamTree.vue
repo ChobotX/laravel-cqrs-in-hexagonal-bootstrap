@@ -174,8 +174,15 @@ async function fetchData(): Promise<void> {
     }
 }
 
+let visible = false;
+
 function onTreeShown(): void {
-    if (!chart && treeData.value.length > 0) {
+    visible = true;
+    tryInitChart();
+}
+
+function tryInitChart(): void {
+    if (!chart && visible && treeData.value.length > 0) {
         void nextTick(() => {
             requestAnimationFrame(() => initChart());
         });
@@ -183,12 +190,13 @@ function onTreeShown(): void {
 }
 
 onMounted(async () => {
-    await fetchData();
-
     containerRef.value?.addEventListener('click', handleClick);
 
     parentEl = containerRef.value?.closest<HTMLElement>('[data-team-tree]') ?? null;
     parentEl?.addEventListener('tree-view:shown', onTreeShown);
+
+    await fetchData();
+    tryInitChart();
 });
 
 onUnmounted(() => {
