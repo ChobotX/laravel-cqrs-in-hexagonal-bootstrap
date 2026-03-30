@@ -106,12 +106,23 @@ final class TenantSeeder extends Seeder
 
         $allPermissions = $this->allPermissionKeys($modules);
         $readPermissions = $this->filterByActions($modules, ['read']);
+        $createUpdatePermissions = $this->filterByActions($modules, ['create', 'update']);
         $readCreateUpdatePermissions = $this->filterByActions($modules, ['read', 'create', 'update']);
 
         $roleDefinitions = [
-            ['name' => 'Admin', 'description' => 'Full access within tenant', 'permissions' => $allPermissions, 'scope' => 'all'],
-            ['name' => 'Editor', 'description' => 'Can read, create and update', 'permissions' => $readCreateUpdatePermissions, 'scope' => 'all'],
-            ['name' => 'Viewer', 'description' => 'Read-only access', 'permissions' => $readPermissions, 'scope' => 'all'],
+            ['name' => 'Manager', 'description' => 'Full access within tenant', 'groups' => [
+                ['permissions' => $allPermissions, 'scope' => 'all'],
+            ]],
+            ['name' => 'Team Leader', 'description' => 'Full access scoped to own team hierarchy', 'groups' => [
+                ['permissions' => $allPermissions, 'scope' => 'team'],
+            ]],
+            ['name' => 'Team Member', 'description' => 'Can view all, create and update own resources', 'groups' => [
+                ['permissions' => $readPermissions, 'scope' => 'all'],
+                ['permissions' => $createUpdatePermissions, 'scope' => 'own'],
+            ]],
+            ['name' => 'Externist', 'description' => 'External collaborator with own resource access', 'groups' => [
+                ['permissions' => $readCreateUpdatePermissions, 'scope' => 'own'],
+            ]],
         ];
 
         $roles = [];
@@ -124,15 +135,17 @@ final class TenantSeeder extends Seeder
                 'is_system' => false,
             ]);
 
-            foreach ($definition['permissions'] as [$module, $feature, $action]) {
-                RolePermissionModel::create([
-                    'id' => Str::uuid()->toString(),
-                    'role_id' => $role->id,
-                    'module' => $module,
-                    'feature' => $feature,
-                    'action' => $action,
-                    'scope' => $definition['scope'],
-                ]);
+            foreach ($definition['groups'] as $group) {
+                foreach ($group['permissions'] as [$module, $feature, $action]) {
+                    RolePermissionModel::create([
+                        'id' => Str::uuid()->toString(),
+                        'role_id' => $role->id,
+                        'module' => $module,
+                        'feature' => $feature,
+                        'action' => $action,
+                        'scope' => $group['scope'],
+                    ]);
+                }
             }
 
             $roles[] = $role;

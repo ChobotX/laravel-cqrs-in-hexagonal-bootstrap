@@ -38,13 +38,23 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
     {
         $allPermissions = $this->buildAllPermissions();
         $readPermissions = $this->buildActionPermissions(Action::Read);
+        $createUpdatePermissions = $this->buildActionPermissions(Action::Create, Action::Update);
         $readCreateUpdatePermissions = $this->buildActionPermissions(Action::Read, Action::Create, Action::Update);
 
         $roles = [
-            $this->createRole('Admin', 'Full access within tenant', $allPermissions, AccessScope::All),
-            $this->createRole('Editor', 'Can read, create and update', $readCreateUpdatePermissions, AccessScope::All),
-            $this->createRole('Member', 'Team-scoped read, create and update', $readCreateUpdatePermissions, AccessScope::Team),
-            $this->createRole('Viewer', 'Read-only access', $readPermissions, AccessScope::All),
+            $this->createRole('Manager', 'Full access within tenant', [
+                [$allPermissions, AccessScope::All],
+            ]),
+            $this->createRole('Team Leader', 'Full access scoped to own team hierarchy', [
+                [$allPermissions, AccessScope::Team],
+            ]),
+            $this->createRole('Team Member', 'Can view all, create and update own resources', [
+                [$readPermissions, AccessScope::All],
+                [$createUpdatePermissions, AccessScope::Own],
+            ]),
+            $this->createRole('Externist', 'External collaborator with own resource access', [
+                [$readCreateUpdatePermissions, AccessScope::Own],
+            ]),
         ];
 
         $roleIds = [];
@@ -105,18 +115,19 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
     }
 
     /**
-     * @param  list<PermissionKey>  $permissionKeys
+     * @param  list<array{0: list<PermissionKey>, 1: AccessScope}>  $permissionGroups
      */
     private function createRole(
         string $name,
         string $description,
-        array $permissionKeys,
-        AccessScope $accessScope,
+        array $permissionGroups,
     ): Role {
         $permissions = [];
 
-        foreach ($permissionKeys as $permissionKey) {
-            $permissions[] = new RolePermission($permissionKey, $accessScope);
+        foreach ($permissionGroups as [$permissionKeys, $accessScope]) {
+            foreach ($permissionKeys as $permissionKey) {
+                $permissions[] = new RolePermission($permissionKey, $accessScope);
+            }
         }
 
         return new Role(

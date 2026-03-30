@@ -189,10 +189,11 @@ php artisan cache:forget "auth:perms:{userId}"
 
 When a new tenant is set up, these roles are seeded:
 
-| Role | Permissions | Scope |
-|------|------------|-------|
-| Admin | All modules (including `users.roles`) | All |
-| Editor | Read, Create, Update (including `users.roles.read`, `users.roles.update`) | All |
-| Viewer | Read only (including `users.roles.read`) | All |
+| Role | Read | Create | Update | Delete |
+|------|------|--------|--------|--------|
+| Manager | All | All | All | All |
+| Team Leader | Team | Team | Team | Team |
+| Team Member | All | Own | Own | — |
+| Externist | Own | Own | Own | — |
 
-The Super Admin role is a system role that bypasses all permission checks.
+Each permission can have its own scope (`All` > `Team` > `Own`), enabling granular access like "view everyone but only edit own records." The Super Admin role is a system role that bypasses all permission checks.

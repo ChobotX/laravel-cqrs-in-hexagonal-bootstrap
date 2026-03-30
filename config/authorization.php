@@ -33,5 +33,5 @@ return [
             ],
         ],
     ],
-    'default_roles' => ['admin', 'editor', 'viewer'],
+    'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];
