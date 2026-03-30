@@ -76,7 +76,7 @@
                                     @if ($isSuperAdmin && $user->id->value !== $currentUserId)
                                         <x-action-button skip-permission
                                                          :action="route('impersonation.start', $user->id)"
-                                                         icon="heroicon-o-eye"
+                                                         icon="heroicon-o-finger-print"
                                                          :label="__('messages.impersonation.start') .
                                                              ' ' .
                                                              $user->name" />

@@ -72,7 +72,7 @@ it('renders unconditionally with skip-permission', function (): void {
     $this->actingAs($user);
 
     $rendered = Blade::render(
-        '<x-action-button skip-permission href="/impersonate" icon="heroicon-o-eye" label="Impersonate" />',
+        '<x-action-button skip-permission href="/impersonate" icon="heroicon-o-finger-print" label="Impersonate" />',
     );
 
     expect($rendered)
@@ -113,7 +113,7 @@ it('renders form with skip-permission', function (): void {
     $this->actingAs($user);
 
     $rendered = Blade::render(
-        '<x-action-button skip-permission action="/impersonate/1" icon="heroicon-o-eye" label="Impersonate" />',
+        '<x-action-button skip-permission action="/impersonate/1" icon="heroicon-o-finger-print" label="Impersonate" />',
     );
 
     expect($rendered)

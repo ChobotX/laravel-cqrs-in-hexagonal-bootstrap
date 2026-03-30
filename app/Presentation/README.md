@@ -85,7 +85,7 @@ Permission-gated action button for table rows. Every action button **must** spec
 
 {{-- Explicitly ungated --}}
 <x-action-button skip-permission :action="route('impersonation.start', $user->id)"
-    icon="heroicon-o-eye" :label="__('messages.impersonation.start') . ' ' . $user->name" />
+    icon="heroicon-o-finger-print" :label="__('messages.impersonation.start') . ' ' . $user->name" />
 ```
 
 ## Tenant middleware
