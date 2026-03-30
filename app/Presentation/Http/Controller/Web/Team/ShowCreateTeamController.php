@@ -20,12 +20,12 @@ final readonly class ShowCreateTeamController
 
     public function __invoke(): View
     {
-        $teams = $this->queryBus->dispatch(new ListTeamsQuery(
+        $paginatedResult = $this->queryBus->dispatch(new ListTeamsQuery(
             $this->authenticatedUser->id() ?? '',
         ));
 
         return view('teams.create', [
-            'teams' => $teams,
+            'teams' => $paginatedResult->items,
         ]);
     }
 }

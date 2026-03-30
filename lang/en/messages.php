@@ -215,4 +215,12 @@ return [
         'team_member_not_found' => 'This user is not a member of this team.',
         'team_cycle_detected' => 'This parent would create a circular hierarchy.',
     ],
+
+    'pagination' => [
+        'navigation' => 'Pagination',
+        'showing' => 'Showing :from to :to of :total results',
+        'previous' => 'Previous',
+        'next' => 'Next',
+        'page' => 'Page :page',
+    ],
 ];

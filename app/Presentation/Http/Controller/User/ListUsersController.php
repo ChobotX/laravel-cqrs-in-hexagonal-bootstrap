@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controller\User;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
+use App\Presentation\Http\Request\PaginationRequest;
 use App\Presentation\Http\Resource\UserResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
@@ -17,10 +18,17 @@ final readonly class ListUsersController
         private QueryBus $queryBus,
     ) {}
 
-    public function __invoke(): AnonymousResourceCollection
+    public function __invoke(PaginationRequest $paginationRequest): AnonymousResourceCollection
     {
-        $users = $this->queryBus->dispatch(new ListUsersQuery);
+        $paginatedResult = $this->queryBus->dispatch(new ListUsersQuery($paginationRequest->pagination()));
 
-        return UserResource::collection($users);
+        return UserResource::collection($paginatedResult->items)->additional([
+            'meta' => [
+                'current_page' => $paginatedResult->pagination->page,
+                'per_page' => $paginatedResult->pagination->perPage,
+                'total' => $paginatedResult->total,
+                'total_pages' => $paginatedResult->totalPages(),
+            ],
+        ]);
     }
 }

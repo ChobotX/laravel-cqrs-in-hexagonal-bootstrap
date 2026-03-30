@@ -7,7 +7,7 @@
         <div class="flex items-center gap-3">
             <span
                   class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-700/10">
-                {{ count($teams) }} {{ trans_choice('messages.teams.count', count($teams)) }}
+                {{ $result->total }} {{ trans_choice('messages.teams.count', $result->total) }}
             </span>
             <div class="flex rounded-lg border border-gray-200 bg-white p-0.5"
                  role="group"
@@ -53,11 +53,11 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @foreach ($teams as $team)
+                        @foreach ($result->items as $team)
                             @php
                                 $parentName = null;
                                 if ($team->parentTeamId !== null) {
-                                    foreach ($teams as $candidate) {
+                                    foreach ($result->items as $candidate) {
                                         if ($candidate->id->value === $team->parentTeamId->value) {
                                             $parentName = $candidate->name->value;
                                             break;
@@ -111,6 +111,8 @@
             </div>
         </div>
     </div>
+
+    <x-pagination :result="$result" />
 
     <div class="hidden"
          id="teams-tree-view"

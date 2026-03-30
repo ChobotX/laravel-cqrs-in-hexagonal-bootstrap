@@ -19,9 +19,9 @@ final class ListUsersConsoleCommand extends Command
 
     public function handle(QueryBus $queryBus): void
     {
-        $users = $queryBus->dispatch(new ListUsersQuery);
+        $paginatedResult = $queryBus->dispatch(new ListUsersQuery);
 
-        if ($users === []) {
+        if ($paginatedResult->items === []) {
             $this->info('No users found.');
 
             return;
@@ -31,7 +31,7 @@ final class ListUsersConsoleCommand extends Command
             ['ID', 'Name', 'Email'],
             array_map(
                 static fn (User $user): array => [$user->id->value, $user->name, $user->email->value],
-                $users,
+                $paginatedResult->items,
             ),
         );
     }

@@ -320,3 +320,37 @@ it('own-scoped user only sees themselves', function (): void {
         ->assertSee('Own Viewer')
         ->assertDontSee('Other Own User');
 });
+
+it('paginates to page 2 without redirect', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440a00',
+        'name' => 'Paginator Admin',
+        'email' => 'paginator-admin@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    for ($i = 1; $i <= 20; $i++) {
+        UserModel::create([
+            'id' => sprintf('550e8400-e29b-41d4-a716-4466554b%04d', $i),
+            'name' => 'PaginatedUser '.$i,
+            'email' => 'paginated-'.$i.'@example.com',
+        ]);
+    }
+
+    // Page 1 should work
+    $this->actingAs($admin)
+        ->get('/users')
+        ->assertStatus(200);
+
+    // Page 2 with query params should also work (not redirect)
+    $this->actingAs($admin)
+        ->get('/users?page=2&per_page=15')
+        ->assertStatus(200);
+
+    // Page 1 with explicit params should work
+    $this->actingAs($admin)
+        ->get('/users?page=1&per_page=15')
+        ->assertStatus(200);
+});

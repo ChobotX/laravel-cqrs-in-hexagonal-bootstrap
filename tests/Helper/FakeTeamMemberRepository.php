@@ -66,7 +66,7 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
     }
 
     /** @return list<TeamMember> */
-    public function listMembers(string $teamId): array
+    public function listMembers(string $teamId, array $sortings = []): array
     {
         $members = [];
 

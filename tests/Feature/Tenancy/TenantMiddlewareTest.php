@@ -38,6 +38,6 @@ it('skips tenant resolution for www subdomain', function (): void {
 });
 
 it('resolves tenant and serves login page', function (): void {
-    $this->get('http://test.laravel-bootstrap.local/login')
+    $this->get('http://'.testTenantDomain().'.laravel-bootstrap.local/login')
         ->assertOk();
 });

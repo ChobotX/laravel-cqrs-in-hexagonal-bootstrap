@@ -4,10 +4,23 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
+use App\Application\Sorting\Sorting;
+
 interface RoleRepository
 {
-    /** @return list<Role> */
-    public function findAll(): array;
+    /**
+     * @param  list<Sorting>  $sortings
+     * @return list<Role>
+     */
+    public function findAll(array $sortings = []): array;
+
+    /**
+     * @param  list<Sorting>  $sortings
+     * @return PaginatedResult<Role>
+     */
+    public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult;
 
     public function findById(RoleId $roleId): ?Role;
 

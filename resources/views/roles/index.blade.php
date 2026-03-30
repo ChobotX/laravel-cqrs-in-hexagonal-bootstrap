@@ -6,7 +6,7 @@
     <div class="mb-6 flex items-center justify-between">
         <span
               class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-700/10">
-            {{ count($roles) }} {{ trans_choice('messages.roles.count', count($roles)) }}
+            {{ $result->total }} {{ trans_choice('messages.roles.count', $result->total) }}
         </span>
         <x-primary-button permission="users.roles.update"
                           :href="route('roles.create')"
@@ -28,7 +28,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach ($roles as $role)
+                    @foreach ($result->items as $role)
                         <tr class="transition-colors hover:bg-gray-50/50">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
@@ -75,4 +75,6 @@
             </table>
         </div>
     </div>
+
+    <x-pagination :result="$result" />
 @endsection

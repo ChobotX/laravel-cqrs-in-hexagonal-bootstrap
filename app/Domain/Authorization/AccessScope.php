@@ -15,7 +15,7 @@ enum AccessScope: string
         return $this->order() > $other->order();
     }
 
-    private function order(): int
+    public function order(): int
     {
         return match ($this) {
             self::All => 3,

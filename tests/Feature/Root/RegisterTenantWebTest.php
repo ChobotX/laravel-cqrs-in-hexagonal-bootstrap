@@ -44,7 +44,7 @@ it('validates slug uniqueness', function (): void {
 
     $this->post('http://laravel-bootstrap.local/register', [
         'name' => 'Duplicate',
-        'slug' => 'test',
+        'slug' => testTenantSlug(),
         'domain' => 'unique-domain',
     ])->assertSessionHasErrors(['slug']);
 });
@@ -55,6 +55,6 @@ it('validates domain uniqueness', function (): void {
     $this->post('http://laravel-bootstrap.local/register', [
         'name' => 'Duplicate Domain',
         'slug' => 'unique-slug',
-        'domain' => 'test',
+        'domain' => testTenantDomain(),
     ])->assertSessionHasErrors(['domain']);
 });

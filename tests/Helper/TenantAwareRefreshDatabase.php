@@ -24,7 +24,7 @@ trait TenantAwareRefreshDatabase
         // Without this, root-domain tests would see stale tenant context from previous tests.
         app()->forgetScopedInstances();
 
-        $this->switchToTenantSchema('tenant_test');
+        $this->switchToTenantSchema($this->tenantSchema());
         $this->setTenantContext();
         $this->beginDatabaseTransactions();
     }
@@ -37,49 +37,56 @@ trait TenantAwareRefreshDatabase
 
     private function runOnceSetup(): void
     {
-        DB::connection('landlord')->statement('CREATE SCHEMA IF NOT EXISTS landlord');
+        $connection = DB::connection('landlord');
 
-        $this->artisan('migrate', [
-            '--database' => 'landlord',
-            '--path' => 'database/migrations/landlord',
-            '--force' => true,
-        ]);
+        // Serialize schema setup across parallel workers to prevent deadlocks
+        $connection->statement('SELECT pg_advisory_lock(42)');
 
-        $this->seedTestTenants();
+        try {
+            $connection->statement('CREATE SCHEMA IF NOT EXISTS landlord');
 
-        DB::connection('landlord')->statement('CREATE SCHEMA IF NOT EXISTS "tenant_test"');
-        $this->switchToTenantSchema('tenant_test');
+            $this->artisan('migrate', [
+                '--database' => 'landlord',
+                '--path' => 'database/migrations/landlord',
+                '--force' => true,
+            ]);
 
-        $this->artisan('migrate', [
-            '--database' => 'tenant',
-            '--path' => 'database/migrations/tenant',
-            '--force' => true,
-        ]);
+            $this->seedTestTenants();
 
-        DB::connection('landlord')->statement('CREATE SCHEMA IF NOT EXISTS "tenant_test_b"');
-        $this->switchToTenantSchema('tenant_test_b');
-        $this->artisan('migrate', [
-            '--database' => 'tenant',
-            '--path' => 'database/migrations/tenant',
-            '--force' => true,
-        ]);
+            $connection->statement(sprintf('CREATE SCHEMA IF NOT EXISTS "%s"', $this->tenantSchema()));
+            $this->switchToTenantSchema($this->tenantSchema());
 
-        $this->switchToTenantSchema('tenant_test');
+            $this->artisan('migrate', [
+                '--database' => 'tenant',
+                '--path' => 'database/migrations/tenant',
+                '--force' => true,
+            ]);
+
+            $connection->statement(sprintf('CREATE SCHEMA IF NOT EXISTS "%s"', $this->secondaryTenantSchema()));
+            $this->switchToTenantSchema($this->secondaryTenantSchema());
+            $this->artisan('migrate', [
+                '--database' => 'tenant',
+                '--path' => 'database/migrations/tenant',
+                '--force' => true,
+            ]);
+
+            $this->switchToTenantSchema($this->tenantSchema());
+        } finally {
+            $connection->statement('SELECT pg_advisory_unlock(42)');
+        }
     }
 
     private function seedTestTenants(): void
     {
-        if (TenantModel::where('slug', 'test')->exists()) {
-            return;
-        }
-
+        $tenantId = $this->tenantId();
+        $secondaryTenantId = $this->secondaryTenantId();
         $password = (string) config('database.connections.tenant.password');
+        $token = $this->workerToken();
 
-        TenantModel::create([
-            'id' => '00000000-0000-0000-0000-000000000001',
+        TenantModel::updateOrCreate(['id' => $tenantId], [
             'name' => 'Test Tenant',
-            'slug' => 'test',
-            'schema_name' => 'tenant_test',
+            'slug' => 'test-'.$token,
+            'schema_name' => $this->tenantSchema(),
             'database_host' => (string) config('database.connections.tenant.host'),
             'database_port' => (int) config('database.connections.tenant.port'),
             'database_name' => (string) config('database.connections.tenant.database'),
@@ -89,17 +96,15 @@ trait TenantAwareRefreshDatabase
             'config' => [],
         ]);
 
-        TenantDomainModel::create([
-            'tenant_id' => '00000000-0000-0000-0000-000000000001',
-            'domain' => 'test',
+        TenantDomainModel::updateOrCreate(['tenant_id' => $tenantId], [
+            'domain' => 'test-'.$token,
             'is_primary' => true,
         ]);
 
-        TenantModel::create([
-            'id' => '00000000-0000-0000-0000-000000000002',
+        TenantModel::updateOrCreate(['id' => $secondaryTenantId], [
             'name' => 'Test Tenant B',
-            'slug' => 'test-b',
-            'schema_name' => 'tenant_test_b',
+            'slug' => 'test-b-'.$token,
+            'schema_name' => $this->secondaryTenantSchema(),
             'database_host' => (string) config('database.connections.tenant.host'),
             'database_port' => (int) config('database.connections.tenant.port'),
             'database_name' => (string) config('database.connections.tenant.database'),
@@ -109,9 +114,8 @@ trait TenantAwareRefreshDatabase
             'config' => [],
         ]);
 
-        TenantDomainModel::create([
-            'tenant_id' => '00000000-0000-0000-0000-000000000002',
-            'domain' => 'test-b',
+        TenantDomainModel::updateOrCreate(['tenant_id' => $secondaryTenantId], [
+            'domain' => 'test-b-'.$token,
             'is_primary' => true,
         ]);
     }
@@ -125,12 +129,47 @@ trait TenantAwareRefreshDatabase
     private function setTenantContext(): void
     {
         $resolvedTenantContext = app(ResolvedTenantContext::class);
-        $resolvedTenantContext->set('00000000-0000-0000-0000-000000000001', 'test');
+        $resolvedTenantContext->set($this->tenantId(), 'test-'.$this->workerToken());
     }
 
     private function beginDatabaseTransactions(): void
     {
         DB::connection('landlord')->beginTransaction();
         DB::connection('tenant')->beginTransaction();
+    }
+
+    /**
+     * Per-worker token for parallel test isolation.
+     * ParaTest sets TEST_TOKEN per worker; falls back to '1' for sequential runs.
+     */
+    private function workerToken(): string
+    {
+        $token = getenv('TEST_TOKEN');
+
+        return $token !== false ? $token : '1';
+    }
+
+    private function tenantSchema(): string
+    {
+        return 'tenant_test_'.$this->workerToken();
+    }
+
+    private function secondaryTenantSchema(): string
+    {
+        return 'tenant_test_b_'.$this->workerToken();
+    }
+
+    private function tenantId(): string
+    {
+        $token = $this->workerToken();
+
+        return sprintf('00000000-0000-0000-0000-%012d', (int) $token * 2 - 1);
+    }
+
+    private function secondaryTenantId(): string
+    {
+        $token = $this->workerToken();
+
+        return sprintf('00000000-0000-0000-0000-%012d', (int) $token * 2);
     }
 }

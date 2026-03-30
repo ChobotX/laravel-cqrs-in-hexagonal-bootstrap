@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Query\ListTeams;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
@@ -11,7 +15,7 @@ use App\Contract\Team\TeamMembershipChecker;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamRepository;
 
-/** @implements QueryHandler<ListTeamsQuery, list<Team>> */
+/** @implements QueryHandler<ListTeamsQuery, PaginatedResult<Team>> */
 final readonly class ListTeamsHandler implements QueryHandler
 {
     public function __construct(
@@ -20,17 +24,34 @@ final readonly class ListTeamsHandler implements QueryHandler
         private TeamMembershipChecker $teamMembershipChecker,
     ) {}
 
-    /** @return list<Team> */
-    public function handle(Query $query): array
+    /** @return PaginatedResult<Team> */
+    public function handle(Query $query): PaginatedResult
     {
+        $pagination = $query->pagination();
+        $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting('name', SortDirection::Asc)];
         $scope = $this->authorizationChecker->canWithScope($query->userId, 'teams.management.read')->scope();
 
-        return match ($scope) {
-            'all' => $this->teamRepository->findAll(),
+        if ($pagination !== null) {
+            return match ($scope) {
+                'all' => $this->teamRepository->findAllPaginated($pagination, null, $sortings),
+                'team' => $this->teamRepository->findAllPaginated(
+                    $pagination,
+                    $this->teamMembershipChecker->memberTeamIds($query->userId),
+                    $sortings,
+                ),
+                default => new PaginatedResult([], 0, $pagination),
+            };
+        }
+
+        $items = match ($scope) {
+            'all' => $this->teamRepository->findAll(null, $sortings),
             'team' => $this->teamRepository->findAll(
                 $this->teamMembershipChecker->memberTeamIds($query->userId),
+                $sortings,
             ),
             default => [],
         };
+
+        return new PaginatedResult($items, count($items), new Pagination(1, max(count($items), 1)));
     }
 }

@@ -4,29 +4,47 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\User;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRepository;
+use App\Infrastructure\Eloquent\PaginatesQuery;
+use App\Infrastructure\Eloquent\SortsQuery;
+use Illuminate\Database\Eloquent\Builder;
 
 final readonly class EloquentUserRepository implements UserRepository
 {
+    use PaginatesQuery;
+    use SortsQuery;
+
     public function __construct(
         private UserMapper $userMapper,
     ) {}
 
     /** @return list<User> */
-    public function all(?array $onlyIds = null): array
+    public function all(?array $onlyIds = null, array $sortings = []): array
     {
-        $query = UserModel::query();
-
-        if ($onlyIds !== null) {
-            $query->whereIn('id', $onlyIds);
-        }
+        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
 
         return array_values(
             $query->get()
                 ->map(fn (UserModel $userModel): User => $this->userMapper->toDomain($userModel))
                 ->all(),
+        );
+    }
+
+    /** @return PaginatedResult<User> */
+    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    {
+        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+
+        [$models, $total] = $this->paginateBuilder($query, $pagination);
+
+        return new PaginatedResult(
+            array_map($this->userMapper->toDomain(...), $models),
+            $total,
+            $pagination,
         );
     }
 
@@ -107,5 +125,20 @@ final readonly class EloquentUserRepository implements UserRepository
                 ->map(fn (UserModel $userModel): User => $this->userMapper->toDomain($userModel))
                 ->all(),
         );
+    }
+
+    /**
+     * @param  list<string>|null  $onlyIds
+     * @return Builder<UserModel>
+     */
+    private function baseQuery(?array $onlyIds): Builder
+    {
+        $query = UserModel::query();
+
+        if ($onlyIds !== null) {
+            $query->whereIn('id', $onlyIds);
+        }
+
+        return $query;
     }
 }

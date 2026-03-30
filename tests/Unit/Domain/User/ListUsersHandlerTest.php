@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Domain\User\Email;
 use App\Domain\User\Query\ListUsers\ListUsersHandler;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
@@ -9,7 +13,7 @@ use App\Domain\User\User;
 use App\Domain\User\UserId;
 use Tests\Helper\FakeUserRepository;
 
-it('returns all users from the repository', function (): void {
+it('returns all users from the repository sorted by name', function (): void {
     $users = [
         '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), 'John Doe', new Email('john@example.com')),
         '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), 'Jane Doe', new Email('jane@example.com')),
@@ -19,19 +23,92 @@ it('returns all users from the repository', function (): void {
 
     $handler = new ListUsersHandler($repository);
 
-    $result = $handler->handle(new ListUsersQuery);
+    $paginatedResult = $handler->handle(new ListUsersQuery);
 
-    expect($result)->toHaveCount(2)
-        ->and($result[0]->name)->toBe('John Doe')
-        ->and($result[1]->name)->toBe('Jane Doe');
+    expect($paginatedResult)->toBeInstanceOf(PaginatedResult::class)
+        ->and($paginatedResult->items)->toHaveCount(2)
+        ->and($paginatedResult->items[0]->name)->toBe('Jane Doe')
+        ->and($paginatedResult->items[1]->name)->toBe('John Doe')
+        ->and($paginatedResult->total)->toBe(2);
 });
 
-it('returns an empty list when no users exist', function (): void {
+it('returns an empty paginated result when no users exist', function (): void {
     $repository = new FakeUserRepository;
 
     $handler = new ListUsersHandler($repository);
 
+    $paginatedResult = $handler->handle(new ListUsersQuery);
+
+    expect($paginatedResult->items)->toBeEmpty()
+        ->and($paginatedResult->total)->toBe(0);
+});
+
+it('paginates results when pagination is provided', function (): void {
+    $users = [];
+    for ($i = 1; $i <= 5; $i++) {
+        $id = sprintf('550e8400-e29b-41d4-a716-44665544%04d', $i);
+        $users[$id] = new User(new UserId($id), 'User '.$i, new Email(sprintf('user%d@example.com', $i)));
+    }
+
+    $repository = new FakeUserRepository($users);
+    $handler = new ListUsersHandler($repository);
+
+    $paginatedResult = $handler->handle(new ListUsersQuery(new Pagination(2, 2)));
+
+    expect($paginatedResult->items)->toHaveCount(2)
+        ->and($paginatedResult->total)->toBe(5)
+        ->and($paginatedResult->pagination->page)->toBe(2)
+        ->and($paginatedResult->pagination->perPage)->toBe(2)
+        ->and($paginatedResult->items[0]->name)->toBe('User 3')
+        ->and($paginatedResult->items[1]->name)->toBe('User 4');
+});
+
+it('applies default sorting by name ascending', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), 'Charlie', new Email('charlie@example.com')),
+        '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), 'Alice', new Email('alice@example.com')),
+        '770e8400-e29b-41d4-a716-446655440000' => new User(new UserId('770e8400-e29b-41d4-a716-446655440000'), 'Bob', new Email('bob@example.com')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
     $result = $handler->handle(new ListUsersQuery);
 
-    expect($result)->toBeEmpty();
+    expect($result->items[0]->name)->toBe('Alice')
+        ->and($result->items[1]->name)->toBe('Bob')
+        ->and($result->items[2]->name)->toBe('Charlie');
+});
+
+it('applies explicit sorting', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), 'Alice', new Email('charlie@example.com')),
+        '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), 'Bob', new Email('alice@example.com')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $result = $handler->handle(new ListUsersQuery(sortings: [new Sorting('email', SortDirection::Asc)]));
+
+    expect($result->items[0]->email->value)->toBe('alice@example.com')
+        ->and($result->items[1]->email->value)->toBe('charlie@example.com');
+});
+
+it('supports withPagination immutable copy', function (): void {
+    $query = new ListUsersQuery;
+    $listUsersQuery = $query->withPagination(new Pagination(2, 10));
+
+    expect($query->pagination())->toBeNull()
+        ->and($listUsersQuery->pagination())->toBeInstanceOf(Pagination::class)
+        ->and($listUsersQuery->pagination())->not->toBeNull()
+        ->and($listUsersQuery->pagination()?->page)->toBe(2);
+});
+
+it('supports withSorting immutable copy', function (): void {
+    $query = new ListUsersQuery;
+    $sorted = $query->withSorting([new Sorting('email', SortDirection::Desc)]);
+
+    expect($query->sorting())->toBe([])
+        ->and($sorted->sorting())->toHaveCount(1)
+        ->and($sorted->sorting()[0]->column)->toBe('email')
+        ->and($sorted->sorting()[0]->direction)->toBe(SortDirection::Desc);
 });

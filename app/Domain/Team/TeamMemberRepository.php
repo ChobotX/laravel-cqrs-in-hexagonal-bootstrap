@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Team;
 
+use App\Application\Sorting\Sorting;
+
 interface TeamMemberRepository
 {
     public function add(string $userId, string $teamId): void;
@@ -18,8 +20,11 @@ interface TeamMemberRepository
     /** @return list<string> Only directly assigned team IDs (for membership management) */
     public function directMemberTeamIds(string $userId): array;
 
-    /** @return list<TeamMember> */
-    public function listMembers(string $teamId): array;
+    /**
+     * @param  list<Sorting>  $sortings
+     * @return list<TeamMember>
+     */
+    public function listMembers(string $teamId, array $sortings = []): array;
 
     public function removeAllByUser(string $userId): void;
 }

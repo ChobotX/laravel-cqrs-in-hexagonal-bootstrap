@@ -21,8 +21,10 @@ final class ArchitectureTest
             ->excluding(
                 Selector::inNamespace('App\Domain'),
                 Selector::inNamespace('App\Contract'),
-                // Application-layer attributes are metadata annotations on Domain commands
+                // Application-layer attributes and interfaces used by Domain commands/queries
                 Selector::inNamespace('App\Application\Authorization'),
+                Selector::inNamespace('App\Application\Pagination'),
+                Selector::inNamespace('App\Application\Sorting'),
                 Selector::inNamespace('App\Application\Tenancy'),
             );
     }

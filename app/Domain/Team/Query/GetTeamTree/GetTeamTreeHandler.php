@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Query\GetTeamTree;
 
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
@@ -26,11 +28,12 @@ final readonly class GetTeamTreeHandler implements QueryHandler
     public function handle(Query $query): array
     {
         $teams = $this->resolveAccessibleTeams($query->userId);
+        $memberSortings = [new Sorting('permission_score', SortDirection::Desc)];
 
         return array_map(
             fn (Team $team): TeamTreeNode => new TeamTreeNode(
                 team: $team,
-                members: $this->teamMemberRepository->listMembers($team->id->value),
+                members: $this->teamMemberRepository->listMembers($team->id->value, $memberSortings),
             ),
             $teams,
         );

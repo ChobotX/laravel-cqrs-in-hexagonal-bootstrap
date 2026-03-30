@@ -21,4 +21,16 @@ $result = $this->queryBus->dispatch(new SomeQuery($id));
 - `App\Application\Authorization\SkipPermissionCheck` — attribute for commands/queries that intentionally skip authorization.
 - `App\Application\Authorization\ScopeAwareQuery` — interface for queries that receive automatic scope resolution via bus middleware. Extends `Query`. See [Domain README](../Domain/README.md) for usage.
 
+## Pagination
+
+- `App\Application\Pagination\Pagination` — value object carrying `page` and `perPage` with clamping validation. Constants: `DEFAULT_PER_PAGE = 15`, `MAX_PER_PAGE = 100`.
+- `App\Application\Pagination\PaginatedResult` — generic `@template T` container with `items`, `total`, `pagination`. Computed: `totalPages()`, `hasNextPage()`, `hasPreviousPage()`.
+- `App\Application\Pagination\PaginableQuery` — interface for queries that carry pagination parameters. Follows the same `withX()/x()` pattern as `ScopeAwareQuery`.
+
+## Sorting
+
+- `App\Application\Sorting\SortDirection` — enum with `Asc` and `Desc` string-backed values.
+- `App\Application\Sorting\Sorting` — value object carrying `column` and `direction`. Constructor validates non-empty column.
+- `App\Application\Sorting\SortableQuery` — interface for queries that carry sorting parameters. Follows the same `withX()/x()` pattern as `PaginableQuery` and `ScopeAwareQuery`.
+
 The Application layer may depend on Domain and Contract. It must not depend on Infrastructure or Presentation.

@@ -136,6 +136,16 @@ final readonly class ListUsersHandler implements QueryHandler
 
 Not all queries need scope filtering — only queries returning lists of scoped resources implement `ScopeAwareQuery`. Single-entity queries (`GetUserByIdQuery`), counts, and internal lookups use plain `Query`.
 
+## Paginated Queries
+
+List queries that support pagination implement `PaginableQuery` alongside `Query<PaginatedResult<T>>`. When `pagination()` is `null` (no pagination requested), the handler returns all results wrapped in `PaginatedResult`. When a `Pagination` is provided, the handler delegates to the repository's `*Paginated()` method.
+
+Repository interfaces expose separate paginated methods (`allPaginated()`, `findAllPaginated()`) alongside the original unpaginated methods, keeping backward compatibility for non-paginated consumers (tree views, dropdowns, console commands).
+
+## Sorted Queries
+
+List queries that support sorting implement `SortableQuery` alongside `Query`. When `sorting()` is `null` (no sorting requested), the handler applies a domain-appropriate default (e.g., users by name, roles by permission score). The `Sorting` value object carries a column name (a domain concept like `'name'` or `'permission_score'`) and a `SortDirection`. Infrastructure repositories translate these to SQL ORDER BY clauses, computing values for virtual columns like `permission_score` via SQL subqueries.
+
 ## Cross-domain communication
 
 Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule.

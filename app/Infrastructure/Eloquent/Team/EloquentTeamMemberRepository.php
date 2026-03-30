@@ -6,11 +6,14 @@ namespace App\Infrastructure\Eloquent\Team;
 
 use App\Domain\Team\TeamMember;
 use App\Domain\Team\TeamMemberRepository;
+use App\Infrastructure\Eloquent\SortsQuery;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentTeamMemberRepository implements TeamMemberRepository
 {
+    use SortsQuery;
+
     public function __construct(
         private TeamMemberMapper $teamMemberMapper,
     ) {}
@@ -87,14 +90,48 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
     }
 
     /** @return list<TeamMember> */
-    public function listMembers(string $teamId): array
+    public function listMembers(string $teamId, array $sortings = []): array
     {
-        $models = TeamMemberModel::with('user')
-            ->where('team_id', $teamId)
-            ->get();
+        $query = TeamMemberModel::with('user')
+            ->where('team_id', $teamId);
+
+        foreach ($sortings as $sorting) {
+            if ($sorting->column === 'permission_score') {
+                $query->selectRaw(<<<'SQL'
+                    team_members.*,
+                    CASE WHEN EXISTS(
+                        SELECT 1 FROM user_roles ur
+                        JOIN roles r ON ur.role_id = r.id
+                        WHERE ur.user_id = team_members.user_id AND r.is_system = true AND r.deleted_at IS NULL
+                    ) THEN 999999
+                    ELSE (
+                        COALESCE((
+                            SELECT SUM(CASE rp.scope WHEN 'all' THEN 3 WHEN 'team' THEN 2 WHEN 'own' THEN 1 ELSE 0 END)
+                            FROM user_roles ur
+                            JOIN roles r ON ur.role_id = r.id AND r.deleted_at IS NULL
+                            JOIN role_permissions rp ON r.id = rp.role_id
+                            WHERE ur.user_id = team_members.user_id
+                        ), 0)
+                        +
+                        COALESCE((
+                            SELECT SUM(
+                                CASE upo.type WHEN 'grant' THEN 1 WHEN 'deny' THEN -1 ELSE 0 END
+                                * CASE upo.scope WHEN 'all' THEN 3 WHEN 'team' THEN 2 WHEN 'own' THEN 1 ELSE 0 END
+                            )
+                            FROM user_permission_overrides upo
+                            WHERE upo.user_id = team_members.user_id
+                        ), 0)
+                    ) END AS permission_score
+                    SQL);
+
+                break;
+            }
+        }
+
+        $query = $this->sortBuilder($query, $sortings);
 
         return array_values(
-            $models->map(fn (TeamMemberModel $teamMemberModel): TeamMember => $this->teamMemberMapper->toDomain($teamMemberModel))->all(),
+            $query->get()->map(fn (TeamMemberModel $teamMemberModel): TeamMember => $this->teamMemberMapper->toDomain($teamMemberModel))->all(),
         );
     }
 

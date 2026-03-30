@@ -22,13 +22,13 @@ final readonly class ShowEditTeamController
     public function __invoke(string $teamId): View
     {
         $team = $this->queryBus->dispatch(new GetTeamByIdQuery($teamId));
-        $teams = $this->queryBus->dispatch(new ListTeamsQuery(
+        $paginatedResult = $this->queryBus->dispatch(new ListTeamsQuery(
             $this->authenticatedUser->id() ?? '',
         ));
 
         return view('teams.edit', [
             'team' => $team,
-            'teams' => $teams,
+            'teams' => $paginatedResult->items,
         ]);
     }
 }

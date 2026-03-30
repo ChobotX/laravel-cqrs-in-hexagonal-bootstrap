@@ -203,6 +203,25 @@ Permission-gated sidebar navigation link. Fail-safe: renders nothing without `pe
     :active="request()->routeIs('users.*')" />
 ```
 
+## `<x-pagination>` component
+
+Renders pagination controls for `PaginatedResult` objects. Hidden when `totalPages() <= 1`.
+
+**Props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `result` | `PaginatedResult` | The paginated result to render controls for |
+
+Generates URLs preserving existing query params. Shows "Showing X to Y of Z results", prev/next arrows, and a sliding window of page numbers with ellipsis.
+
+**Usage:**
+```blade
+<x-pagination :result="$result" />
+```
+
+**Shared `PaginationRequest`** (`App\Presentation\Http\Request\Web\PaginationRequest` / `App\Presentation\Http\Request\PaginationRequest`) validates `page` and `per_page` query params and provides a `pagination(): Pagination` helper. Used by all list controllers (web and API).
+
 ## `<x-topbar-button>` component
 
 Permission-gated topbar form action button (icon-only). Fail-safe: renders nothing without `permission` or `skip-permission`.
@@ -224,6 +243,25 @@ Permission-gated topbar form action button (icon-only). Fail-safe: renders nothi
     icon="heroicon-o-arrow-uturn-left" :label="__('messages.impersonation.stop')"
     variant="amber" />
 ```
+
+## URL generation — never use `request()->url()`
+
+**Banned:** `request()->url()`, `request()->fullUrl()`, `request()->getUri()` — in both PHP and Blade.
+
+These return the raw HTTP scheme from the underlying request. When a reverse proxy terminates SSL and forwards HTTP to PHP, they return `http://` URLs. With `SESSION_SECURE_COOKIE=true`, the browser only sends session cookies over HTTPS — so any link using a raw `http://` URL silently drops the session, causing a 302 redirect to login.
+
+**Use instead:**
+
+| Banned | Safe alternative | Notes |
+|---|---|---|
+| `request()->url()` | `url()->current()` | Current URL without query string, correct scheme |
+| `request()->fullUrl()` | `url()->full()` | Current URL with query string, correct scheme |
+| `request()->getUri()` | `url()->full()` | Same as above |
+| — | `route('name')` | Named route, always correct |
+
+**Enforced by:**
+- `NoRawRequestUrlRule` PHPStan rule — blocks `$request->url()` / `fullUrl()` / `getUri()` in `App\Presentation`
+- `lint:blade:url` (`bin/lint-blade-url.sh`) — blocks the same patterns in Blade templates
 
 ## Session expiry handling
 

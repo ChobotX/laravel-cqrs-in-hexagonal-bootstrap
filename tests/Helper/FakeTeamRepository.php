@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamRepository;
@@ -11,6 +13,9 @@ use App\Domain\Team\TeamSlug;
 
 final class FakeTeamRepository implements TeamRepository
 {
+    use PaginatesArray;
+    use SortsArray;
+
     /** @var list<Team> */
     public array $saved = [];
 
@@ -23,18 +28,18 @@ final class FakeTeamRepository implements TeamRepository
     ) {}
 
     /** @return list<Team> */
-    public function findAll(?array $onlyIds = null): array
+    public function findAll(?array $onlyIds = null, array $sortings = []): array
     {
         $teams = array_values($this->teams);
 
         if ($onlyIds !== null) {
-            return array_values(array_filter(
+            $teams = array_values(array_filter(
                 $teams,
                 fn (Team $team): bool => in_array($team->id->value, $onlyIds, true),
             ));
         }
 
-        return $teams;
+        return $this->sortArray($teams, $sortings, $this->sortValueExtractor(...));
     }
 
     public function findById(TeamId $teamId): ?Team
@@ -79,6 +84,12 @@ final class FakeTeamRepository implements TeamRepository
         return array_values(array_slice($results, 0, $limit));
     }
 
+    /** @return PaginatedResult<Team> */
+    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    {
+        return $this->paginateArray($this->findAll($onlyIds, $sortings), $pagination);
+    }
+
     public function count(): int
     {
         return count($this->teams);
@@ -88,5 +99,14 @@ final class FakeTeamRepository implements TeamRepository
     {
         $this->deleted[] = $teamId->value;
         unset($this->teams[$teamId->value]);
+    }
+
+    /** @return callable(Team): (string|int) */
+    private function sortValueExtractor(string $column): callable
+    {
+        return match ($column) {
+            'name' => fn (Team $t): string => $t->name->value,
+            default => fn (Team $t): int => 0,
+        };
     }
 }

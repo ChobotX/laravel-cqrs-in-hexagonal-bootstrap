@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Team\TeamMembershipChecker;
@@ -89,19 +93,21 @@ it('lists all teams for All scope', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => $team]);
     $handler = new ListTeamsHandler($teamRepo, listTeamsAuthChecker('all'), listTeamsMembershipChecker());
 
-    $result = $handler->handle(new ListTeamsQuery('user-1'));
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
 
-    expect($result)->toHaveCount(1)
-        ->and($result[0]->name->value)->toBe('Engineering');
+    expect($paginatedResult)->toBeInstanceOf(PaginatedResult::class)
+        ->and($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('Engineering');
 });
 
 it('returns empty when no teams', function (): void {
     $teamRepo = new FakeTeamRepository;
     $handler = new ListTeamsHandler($teamRepo, listTeamsAuthChecker('all'), listTeamsMembershipChecker());
 
-    $result = $handler->handle(new ListTeamsQuery('user-1'));
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
 
-    expect($result)->toBe([]);
+    expect($paginatedResult->items)->toBeEmpty()
+        ->and($paginatedResult->total)->toBe(0);
 });
 
 it('filters teams by membership for Team scope', function (): void {
@@ -132,10 +138,10 @@ it('filters teams by membership for Team scope', function (): void {
         listTeamsMembershipChecker(['550e8400-e29b-41d4-a716-446655440001']),
     );
 
-    $result = $handler->handle(new ListTeamsQuery('user-1'));
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
 
-    expect($result)->toHaveCount(1)
-        ->and($result[0]->name->value)->toBe('My Team');
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('My Team');
 });
 
 it('returns empty for Own scope', function (): void {
@@ -150,7 +156,125 @@ it('returns empty for Own scope', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => $team]);
     $handler = new ListTeamsHandler($teamRepo, listTeamsAuthChecker('own'), listTeamsMembershipChecker());
 
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
+
+    expect($paginatedResult->items)->toBeEmpty()
+        ->and($paginatedResult->total)->toBe(0);
+});
+
+it('paginates teams when pagination is provided', function (): void {
+    $teams = [];
+    for ($i = 1; $i <= 3; $i++) {
+        $id = sprintf('550e8400-e29b-41d4-a716-44665544%04d', $i);
+        $teams[$id] = new Team(new TeamId($id), new TeamName('Team '.$i), new TeamSlug('team-'.$i), 'Desc', null);
+    }
+
+    $handler = new ListTeamsHandler(
+        new FakeTeamRepository($teams),
+        listTeamsAuthChecker('all'),
+        listTeamsMembershipChecker(),
+    );
+
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1', new Pagination(1, 2)));
+
+    expect($paginatedResult->items)->toHaveCount(2)
+        ->and($paginatedResult->total)->toBe(3)
+        ->and($paginatedResult->pagination->page)->toBe(1);
+});
+
+it('paginates filtered teams for Team scope', function (): void {
+    $visible = new Team(
+        new TeamId('550e8400-e29b-41d4-a716-446655440001'),
+        new TeamName('My Team'),
+        new TeamSlug('my-team'),
+        'Visible',
+        null,
+    );
+
+    $hidden = new Team(
+        new TeamId('550e8400-e29b-41d4-a716-446655440002'),
+        new TeamName('Other Team'),
+        new TeamSlug('other-team'),
+        'Hidden',
+        null,
+    );
+
+    $handler = new ListTeamsHandler(
+        new FakeTeamRepository([
+            '550e8400-e29b-41d4-a716-446655440001' => $visible,
+            '550e8400-e29b-41d4-a716-446655440002' => $hidden,
+        ]),
+        listTeamsAuthChecker('team'),
+        listTeamsMembershipChecker(['550e8400-e29b-41d4-a716-446655440001']),
+    );
+
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1', new Pagination(1, 10)));
+
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->total)->toBe(1);
+});
+
+it('returns empty paginated result for Own scope with pagination', function (): void {
+    $handler = new ListTeamsHandler(
+        new FakeTeamRepository,
+        listTeamsAuthChecker('own'),
+        listTeamsMembershipChecker(),
+    );
+
+    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1', new Pagination(1, 10)));
+
+    expect($paginatedResult->items)->toBeEmpty()
+        ->and($paginatedResult->total)->toBe(0);
+});
+
+it('applies default sorting by name ascending', function (): void {
+    $teams = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440001'),
+            new TeamName('Zebra'),
+            new TeamSlug('zebra'),
+            'Desc',
+            null,
+        ),
+        '550e8400-e29b-41d4-a716-446655440002' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440002'),
+            new TeamName('Alpha'),
+            new TeamSlug('alpha'),
+            'Desc',
+            null,
+        ),
+    ];
+
+    $handler = new ListTeamsHandler(
+        new FakeTeamRepository($teams),
+        listTeamsAuthChecker('all'),
+        listTeamsMembershipChecker(),
+    );
+
     $result = $handler->handle(new ListTeamsQuery('user-1'));
 
-    expect($result)->toBe([]);
+    expect($result->items[0]->name->value)->toBe('Alpha')
+        ->and($result->items[1]->name->value)->toBe('Zebra');
+});
+
+it('supports withPagination immutable copy', function (): void {
+    $query = new ListTeamsQuery('user-1');
+    $listTeamsQuery = $query->withPagination(new Pagination(3, 5));
+
+    expect($query->pagination())->toBeNull()
+        ->and($listTeamsQuery->pagination())->toBeInstanceOf(Pagination::class)
+        ->and($listTeamsQuery->pagination())->not->toBeNull()
+        ->and($listTeamsQuery->pagination()?->page)->toBe(3)
+        ->and($listTeamsQuery->userId)->toBe('user-1');
+});
+
+it('supports withSorting immutable copy', function (): void {
+    $query = new ListTeamsQuery('user-1');
+    $sorted = $query->withSorting([new Sorting('name', SortDirection::Desc)]);
+
+    expect($query->sorting())->toBe([])
+        ->and($sorted->sorting())->toHaveCount(1)
+        ->and($sorted->sorting()[0]->column)->toBe('name')
+        ->and($sorted->sorting()[0]->direction)->toBe(SortDirection::Desc)
+        ->and($sorted->userId)->toBe('user-1');
 });

@@ -213,4 +213,12 @@ return [
         'team_member_not_found' => 'Tento uživatel není členem tohoto týmu.',
         'team_cycle_detected' => 'Tento nadřazený tým by vytvořil kruhovou hierarchii.',
     ],
+
+    'pagination' => [
+        'navigation' => 'Stránkování',
+        'showing' => 'Zobrazeno :from až :to z :total výsledků',
+        'previous' => 'Předchozí',
+        'next' => 'Další',
+        'page' => 'Stránka :page',
+    ],
 ];

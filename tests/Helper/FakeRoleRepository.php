@@ -4,12 +4,18 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleId;
+use App\Domain\Authorization\RolePermission;
 use App\Domain\Authorization\RoleRepository;
 
 final class FakeRoleRepository implements RoleRepository
 {
+    use PaginatesArray;
+    use SortsArray;
+
     /** @var list<Role> */
     public array $saved = [];
 
@@ -22,9 +28,9 @@ final class FakeRoleRepository implements RoleRepository
     ) {}
 
     /** @return list<Role> */
-    public function findAll(): array
+    public function findAll(array $sortings = []): array
     {
-        return array_values($this->roles);
+        return $this->sortArray(array_values($this->roles), $sortings, $this->sortValueExtractor(...));
     }
 
     public function findById(RoleId $roleId): ?Role
@@ -76,6 +82,12 @@ final class FakeRoleRepository implements RoleRepository
         ));
     }
 
+    /** @return PaginatedResult<Role> */
+    public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult
+    {
+        return $this->paginateArray($this->findAll($sortings), $pagination);
+    }
+
     public function count(): int
     {
         return count($this->roles);
@@ -85,5 +97,17 @@ final class FakeRoleRepository implements RoleRepository
     {
         $this->deleted[] = $roleId->value;
         unset($this->roles[$roleId->value]);
+    }
+
+    /** @return callable(Role): (string|int) */
+    private function sortValueExtractor(string $column): callable
+    {
+        return match ($column) {
+            'name' => fn (Role $r): string => $r->name->value,
+            'permission_score' => fn (Role $r): int => $r->isSystem
+                ? 999999
+                : array_sum(array_map(fn (RolePermission $rp): int => $rp->scope->order(), $r->permissions)),
+            default => fn (Role $r): int => 0,
+        };
     }
 }

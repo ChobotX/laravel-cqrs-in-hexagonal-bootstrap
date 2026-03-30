@@ -4,24 +4,46 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Authorization;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
+use App\Application\Sorting\Sorting;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleRepository;
+use App\Infrastructure\Eloquent\PaginatesQuery;
+use App\Infrastructure\Eloquent\SortsQuery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentRoleRepository implements RoleRepository
 {
+    use PaginatesQuery;
+    use SortsQuery;
+
     public function __construct(
         private RoleMapper $roleMapper,
     ) {}
 
     /** @return list<Role> */
-    public function findAll(): array
+    public function findAll(array $sortings = []): array
     {
-        $models = RoleModel::with('permissions')->get();
+        $query = $this->applySortings(RoleModel::with('permissions'), $sortings);
 
         return array_values(
-            $models->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))->all(),
+            $query->get()->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))->all(),
+        );
+    }
+
+    /** @return PaginatedResult<Role> */
+    public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult
+    {
+        $query = $this->applySortings(RoleModel::with('permissions'), $sortings);
+        [$models, $total] = $this->paginateBuilder($query, $pagination);
+
+        return new PaginatedResult(
+            array_map($this->roleMapper->toDomain(...), $models),
+            $total,
+            $pagination,
         );
     }
 
@@ -136,5 +158,32 @@ final readonly class EloquentRoleRepository implements RoleRepository
         if ($model instanceof RoleModel) {
             $model->delete();
         }
+    }
+
+    /**
+     * @param  Builder<RoleModel>  $builder
+     * @param  list<Sorting>  $sortings
+     * @return Builder<RoleModel>
+     */
+    private function applySortings(Builder $builder, array $sortings): Builder
+    {
+        foreach ($sortings as $sorting) {
+            if ($sorting->column === 'permission_score') {
+                $builder->selectRaw(<<<'SQL'
+                    roles.*,
+                    CASE WHEN roles.is_system THEN 999999
+                    ELSE COALESCE((
+                        SELECT SUM(CASE rp.scope
+                            WHEN 'all' THEN 3 WHEN 'team' THEN 2 WHEN 'own' THEN 1 ELSE 0
+                        END)
+                        FROM role_permissions rp WHERE rp.role_id = roles.id
+                    ), 0) END AS permission_score
+                    SQL);
+
+                break;
+            }
+        }
+
+        return $this->sortBuilder($builder, $sortings);
     }
 }

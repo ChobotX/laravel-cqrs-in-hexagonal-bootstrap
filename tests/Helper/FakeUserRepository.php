@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRepository;
 
 final class FakeUserRepository implements UserRepository
 {
+    use PaginatesArray;
+    use SortsArray;
+
     /** @var list<User> */
     public array $saved = [];
 
@@ -22,18 +27,18 @@ final class FakeUserRepository implements UserRepository
     ) {}
 
     /** @return list<User> */
-    public function all(?array $onlyIds = null): array
+    public function all(?array $onlyIds = null, array $sortings = []): array
     {
         $users = array_values($this->users);
 
         if ($onlyIds !== null) {
-            return array_values(array_filter(
+            $users = array_values(array_filter(
                 $users,
                 fn (User $user): bool => in_array($user->id->value, $onlyIds, true),
             ));
         }
 
-        return $users;
+        return $this->sortArray($users, $sortings, $this->sortValueExtractor(...));
     }
 
     public function findById(UserId $userId): ?User
@@ -67,6 +72,12 @@ final class FakeUserRepository implements UserRepository
         $this->deleted[] = $userId->value;
     }
 
+    /** @return PaginatedResult<User> */
+    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    {
+        return $this->paginateArray($this->all($onlyIds, $sortings), $pagination);
+    }
+
     public function count(): int
     {
         return count($this->users);
@@ -94,6 +105,16 @@ final class FakeUserRepository implements UserRepository
         );
 
         return array_values(array_slice($results, 0, $limit));
+    }
+
+    /** @return callable(User): (string|int) */
+    private function sortValueExtractor(string $column): callable
+    {
+        return match ($column) {
+            'name' => fn (User $u): string => $u->name,
+            'email' => fn (User $u): string => $u->email->value,
+            default => fn (User $u): int => 0,
+        };
     }
 
     private function stripDiacritics(string $value): string

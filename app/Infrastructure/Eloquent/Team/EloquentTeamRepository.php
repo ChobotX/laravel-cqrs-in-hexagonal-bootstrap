@@ -4,30 +4,50 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Team;
 
+use App\Application\Pagination\PaginatedResult;
+use App\Application\Pagination\Pagination;
 use App\Domain\Team\Exception\TeamCycleDetectedException;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamRepository;
 use App\Domain\Team\TeamSlug;
+use App\Infrastructure\Eloquent\PaginatesQuery;
+use App\Infrastructure\Eloquent\SortsQuery;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentTeamRepository implements TeamRepository
 {
+    use PaginatesQuery;
+    use SortsQuery;
+
     public function __construct(
         private TeamMapper $teamMapper,
     ) {}
 
     /** @return list<Team> */
-    public function findAll(?array $onlyIds = null): array
+    public function findAll(?array $onlyIds = null, array $sortings = []): array
     {
-        $query = TeamModel::query();
-
-        if ($onlyIds !== null) {
-            $query->whereIn('id', $onlyIds);
-        }
+        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
 
         return array_values(
-            $query->get()->map(fn (TeamModel $teamModel): Team => $this->teamMapper->toDomain($teamModel))->all(),
+            $query->get()
+                ->map(fn (TeamModel $teamModel): Team => $this->teamMapper->toDomain($teamModel))
+                ->all(),
+        );
+    }
+
+    /** @return PaginatedResult<Team> */
+    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    {
+        $query = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+
+        [$models, $total] = $this->paginateBuilder($query, $pagination);
+
+        return new PaginatedResult(
+            array_map($this->teamMapper->toDomain(...), $models),
+            $total,
+            $pagination,
         );
     }
 
@@ -124,6 +144,21 @@ final readonly class EloquentTeamRepository implements TeamRepository
                 $model->delete();
             });
         }
+    }
+
+    /**
+     * @param  list<string>|null  $onlyIds
+     * @return Builder<TeamModel>
+     */
+    private function baseQuery(?array $onlyIds): Builder
+    {
+        $query = TeamModel::query();
+
+        if ($onlyIds !== null) {
+            $query->whereIn('id', $onlyIds);
+        }
+
+        return $query;
     }
 
     private function guardAgainstCycle(string $teamId, string $parentTeamId): void

@@ -7,7 +7,7 @@ use App\Contract\Tenancy\TenantContext;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 
 it('resolves tenant from subdomain', function (): void {
-    $this->get('http://test.laravel-bootstrap.local/login')
+    $this->get('http://'.testTenantDomain().'.laravel-bootstrap.local/login')
         ->assertOk();
 });
 
@@ -17,9 +17,9 @@ it('returns 404 for unknown subdomain', function (): void {
 });
 
 it('returns 404 for inactive tenant', function (): void {
-    TenantModel::where('slug', 'test')->update(['is_active' => false]);
+    TenantModel::where('slug', testTenantSlug())->update(['is_active' => false]);
 
-    $this->get('http://test.laravel-bootstrap.local/login')
+    $this->get('http://'.testTenantDomain().'.laravel-bootstrap.local/login')
         ->assertNotFound();
 });
 
@@ -30,13 +30,12 @@ it('serves root domain routes without tenant', function (): void {
 
 it('resolves tenant via CLI bootstrapper', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
-    $tenantBootstrapper->bootstrapBySlug('test');
+    $tenantBootstrapper->bootstrapBySlug(testTenantSlug());
 
     $tenantContext = app(TenantContext::class);
 
     expect($tenantContext->isResolved())->toBeTrue()
-        ->and($tenantContext->currentTenantSlug())->toBe('test')
-        ->and($tenantContext->currentTenantId())->toBe('00000000-0000-0000-0000-000000000001');
+        ->and($tenantContext->currentTenantSlug())->toBe(testTenantSlug());
 });
 
 it('throws for unknown slug via CLI', function (): void {
@@ -46,7 +45,7 @@ it('throws for unknown slug via CLI', function (): void {
 
 it('resets tenant context via bootstrapper', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
-    $tenantBootstrapper->bootstrapBySlug('test');
+    $tenantBootstrapper->bootstrapBySlug(testTenantSlug());
     $tenantBootstrapper->reset();
 
     expect(config('database.connections.tenant.search_path'))->toBe('public');
@@ -54,12 +53,12 @@ it('resets tenant context via bootstrapper', function (): void {
 
 it('resolves tenant by domain via bootstrapper', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
-    $tenantBootstrapper->bootstrapByDomain('test');
+    $tenantBootstrapper->bootstrapByDomain(testTenantDomain());
 
     $tenantContext = app(TenantContext::class);
 
     expect($tenantContext->isResolved())->toBeTrue()
-        ->and($tenantContext->currentTenantSlug())->toBe('test');
+        ->and($tenantContext->currentTenantSlug())->toBe(testTenantSlug());
 });
 
 it('throws for unknown domain via bootstrapper', function (): void {
@@ -68,15 +67,15 @@ it('throws for unknown domain via bootstrapper', function (): void {
 })->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
 
 it('throws for inactive tenant domain', function (): void {
-    TenantModel::where('slug', 'test')->update(['is_active' => false]);
+    TenantModel::where('slug', testTenantSlug())->update(['is_active' => false]);
 
     $tenantBootstrapper = app(TenantBootstrapper::class);
-    $tenantBootstrapper->bootstrapByDomain('test');
+    $tenantBootstrapper->bootstrapByDomain(testTenantDomain());
 })->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
 
 it('throws for inactive tenant slug', function (): void {
-    TenantModel::where('slug', 'test')->update(['is_active' => false]);
+    TenantModel::where('slug', testTenantSlug())->update(['is_active' => false]);
 
     $tenantBootstrapper = app(TenantBootstrapper::class);
-    $tenantBootstrapper->bootstrapBySlug('test');
+    $tenantBootstrapper->bootstrapBySlug(testTenantSlug());
 })->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);

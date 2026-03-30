@@ -150,7 +150,7 @@ it('redirects tenant root to dashboard for authenticated user', function (): voi
     $this->assignSuperAdmin($user->id);
 
     $this->actingAs($user)
-        ->get('http://test.laravel-bootstrap.local/')
+        ->get('http://'.testTenantDomain().'.laravel-bootstrap.local/')
         ->assertRedirect('/dashboard');
 });
 

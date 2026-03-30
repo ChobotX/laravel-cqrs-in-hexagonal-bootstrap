@@ -14,6 +14,7 @@ use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\Team\Team;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
+use App\Presentation\Http\Request\Web\PaginationRequest;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.list.read')]
@@ -25,15 +26,15 @@ final readonly class ListUsersController
         private AuthorizationChecker $authorizationChecker,
     ) {}
 
-    public function __invoke(): View
+    public function __invoke(PaginationRequest $paginationRequest): View
     {
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
-        $users = $this->queryBus->dispatch(new ListUsersQuery);
+        $paginatedResult = $this->queryBus->dispatch(new ListUsersQuery($paginationRequest->pagination()));
 
         $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
 
-        $userRoles = $canReadRoles ? $this->buildUserRolesMap($users) : [];
+        $userRoles = $canReadRoles ? $this->buildUserRolesMap($paginatedResult->items) : [];
         $isSuperAdmin = false;
 
         if ($canReadRoles) {
@@ -42,10 +43,10 @@ final readonly class ListUsersController
         }
 
         $canReadTeams = $this->authorizationChecker->can($currentUserId, 'teams.members.read');
-        $userTeams = $canReadTeams ? $this->buildUserTeamsMap($users) : [];
+        $userTeams = $canReadTeams ? $this->buildUserTeamsMap($paginatedResult->items) : [];
 
         return view('users.index', [
-            'users' => $users,
+            'result' => $paginatedResult,
             'userRoles' => $userRoles,
             'canReadRoles' => $canReadRoles,
             'canReadTeams' => $canReadTeams,
