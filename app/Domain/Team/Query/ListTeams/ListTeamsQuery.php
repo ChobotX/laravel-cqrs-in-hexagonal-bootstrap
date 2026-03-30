@@ -10,4 +10,9 @@ use App\Domain\Team\Team;
 
 /** @implements Query<list<Team>> */
 #[RequiresPermission('teams.management.read')]
-final readonly class ListTeamsQuery implements Query {}
+final readonly class ListTeamsQuery implements Query
+{
+    public function __construct(
+        public string $userId,
+    ) {}
+}

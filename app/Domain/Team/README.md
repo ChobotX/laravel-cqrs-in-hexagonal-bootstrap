@@ -32,7 +32,7 @@ Teams form a tree via `parentTeamId`. A team with no parent is a root team.
 
 | Query | Permission | Description |
 |---|---|---|
-| `ListTeamsQuery` | `teams.list.read` | Lists all teams |
+| `ListTeamsQuery` | `teams.management.read` | Lists teams, scope-filtered by user access |
 | `GetTeamTreeQuery` | `teams.management.read` | Gets team tree with members, scope-filtered |
 | `GetTeamByIdQuery` | `teams.list.read` | Gets a single team with members |
 | `GetUserTeamsQuery` | `teams.list.read` | Gets teams for a specific user |
