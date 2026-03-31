@@ -32,22 +32,22 @@ afterEach(() => {
 });
 
 describe('fetchNotifications', () => {
-    it('fetches notifications with correct params', async () => {
-        const mockResponse = {
+    it('fetches and maps snake_case to camelCase', async () => {
+        const serverResponse = {
             data: [
                 {
                     id: '1',
                     level: 'info',
                     title: 'Test',
                     body: 'Body',
-                    linkUrl: null,
-                    readAt: null,
-                    createdAt: '2026-01-15T10:00:00Z',
+                    link_url: null,
+                    read_at: null,
+                    created_at: '2026-01-15T10:00:00Z',
                 },
             ],
             meta: { current_page: 1, per_page: 15, total: 1, total_pages: 1 },
         };
-        mockFetch(mockResponse);
+        mockFetch(serverResponse);
 
         const result = await fetchNotifications('all', 1, 15);
 
@@ -55,7 +55,16 @@ describe('fetchNotifications', () => {
             expect.stringContaining('/internal-api/notifications?'),
             expect.objectContaining({ headers: { Accept: 'application/json' } }),
         );
-        expect(result).toEqual(mockResponse);
+        expect(result.data[0]).toEqual({
+            id: '1',
+            level: 'info',
+            title: 'Test',
+            body: 'Body',
+            linkUrl: null,
+            readAt: null,
+            createdAt: '2026-01-15T10:00:00Z',
+        });
+        expect(result.meta).toEqual(serverResponse.meta);
     });
 
     it('passes filter, page, and per_page params', async () => {
@@ -67,6 +76,28 @@ describe('fetchNotifications', () => {
         expect(callUrl).toContain('filter=unread');
         expect(callUrl).toContain('page=2');
         expect(callUrl).toContain('per_page=5');
+    });
+
+    it('maps link_url and read_at correctly', async () => {
+        mockFetch({
+            data: [
+                {
+                    id: '2',
+                    level: 'warning',
+                    title: 'T',
+                    body: 'B',
+                    link_url: '/dashboard',
+                    read_at: '2026-01-15T12:00:00Z',
+                    created_at: '2026-01-15T10:00:00Z',
+                },
+            ],
+            meta: { current_page: 1, per_page: 15, total: 1, total_pages: 1 },
+        });
+
+        const result = await fetchNotifications('all', 1, 15);
+
+        expect(result.data[0].linkUrl).toBe('/dashboard');
+        expect(result.data[0].readAt).toBe('2026-01-15T12:00:00Z');
     });
 });
 

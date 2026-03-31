@@ -276,6 +276,9 @@ return [
         'preferences_level' => 'Level',
         'preferences_in_app' => 'In-App',
         'preferences_email' => 'Email',
+        'mark_read' => 'Mark as read',
+        'show_more' => 'Show more',
+        'show_less' => 'Show less',
         'error_loading' => 'Failed to load notifications.',
         'error_action' => 'Notification action failed.',
         'levels' => [

@@ -45,13 +45,15 @@ describe('NotificationItem', () => {
         const root = wrapper.find('[data-testid="notification-notif-1"]');
 
         expect(root.classes()).toContain('bg-indigo-50/50');
+        expect(root.classes()).not.toContain('opacity-60');
     });
 
-    it('does not apply unread highlight for read notification', () => {
+    it('applies lower opacity for read notification', () => {
         const wrapper = mountItem(createEntry({ readAt: '2026-01-15T10:00:00Z' }));
         const root = wrapper.find('[data-testid="notification-notif-1"]');
 
         expect(root.classes()).toContain('bg-white');
+        expect(root.classes()).toContain('opacity-60');
     });
 
     it('renders info icon for info level', () => {
@@ -78,22 +80,30 @@ describe('NotificationItem', () => {
         expect(wrapper.find('.text-red-500').exists()).toBe(true);
     });
 
-    it('emits mark-read on click when unread', async () => {
+    it('shows mark-read button when unread', () => {
         const wrapper = mountItem(createEntry({ id: 'abc', readAt: null }));
-        const root = wrapper.find('[data-testid="notification-abc"]');
 
-        await root.trigger('click');
+        expect(wrapper.find('[data-testid="mark-read-abc"]').exists()).toBe(true);
+    });
+
+    it('hides mark-read button when read', () => {
+        const wrapper = mountItem(createEntry({ id: 'abc', readAt: '2026-01-15T10:00:00Z' }));
+
+        expect(wrapper.find('[data-testid="mark-read-abc"]').exists()).toBe(false);
+    });
+
+    it('emits mark-read on mark-read button click', async () => {
+        const wrapper = mountItem(createEntry({ id: 'abc', readAt: null }));
+
+        await wrapper.find('[data-testid="mark-read-abc"]').trigger('click');
 
         expect(wrapper.emitted('mark-read')).toEqual([['abc']]);
     });
 
-    it('does not emit mark-read on click when already read', async () => {
-        const wrapper = mountItem(createEntry({ id: 'abc', readAt: '2026-01-15T10:00:00Z' }));
-        const root = wrapper.find('[data-testid="notification-abc"]');
+    it('shows mark-read button in compact mode too', () => {
+        const wrapper = mountItem(createEntry({ id: 'abc', readAt: null }), true);
 
-        await root.trigger('click');
-
-        expect(wrapper.emitted('mark-read')).toBeUndefined();
+        expect(wrapper.find('[data-testid="mark-read-abc"]').exists()).toBe(true);
     });
 
     it('navigates to linkUrl on click', async () => {
@@ -118,11 +128,40 @@ describe('NotificationItem', () => {
         expect(hrefSetter).toHaveBeenCalledWith('/some/page');
     });
 
+    it('does not navigate when no linkUrl', async () => {
+        const originalHref = window.location.href;
+        const hrefSetter = vi.fn();
+        Object.defineProperty(window, 'location', {
+            value: {
+                ...window.location,
+                get href() {
+                    return originalHref;
+                },
+                set href(v: string) {
+                    hrefSetter(v);
+                },
+            },
+            writable: true,
+        });
+
+        const wrapper = mountItem(createEntry({ linkUrl: null }));
+        await wrapper.find('[data-testid="notification-notif-1"]').trigger('click');
+
+        expect(hrefSetter).not.toHaveBeenCalled();
+    });
+
     it('adds cursor-pointer class when linkUrl is present', () => {
         const wrapper = mountItem(createEntry({ linkUrl: '/link' }));
         const root = wrapper.find('[data-testid="notification-notif-1"]');
 
         expect(root.classes()).toContain('cursor-pointer');
+    });
+
+    it('does not add cursor-pointer when no linkUrl', () => {
+        const wrapper = mountItem(createEntry({ linkUrl: null }));
+        const root = wrapper.find('[data-testid="notification-notif-1"]');
+
+        expect(root.classes()).not.toContain('cursor-pointer');
     });
 
     it('hides delete button in compact mode', () => {
@@ -170,5 +209,42 @@ describe('NotificationItem', () => {
         const wrapper = mountItem(createEntry({ createdAt: twoDaysAgo }));
 
         expect(wrapper.text()).toContain('messages.notifications.days_ago:2');
+    });
+
+    it('truncates long body and shows "show more" button', () => {
+        const longBody = 'A'.repeat(100);
+        const wrapper = mountItem(createEntry({ body: longBody }));
+
+        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(true);
+        expect(wrapper.text()).toContain('…');
+        expect(wrapper.text()).not.toContain(longBody);
+    });
+
+    it('does not show "show more" for short body', () => {
+        const wrapper = mountItem(createEntry({ body: 'Short text' }));
+
+        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(false);
+    });
+
+    it('expands body on "show more" click and shows "show less"', async () => {
+        const longBody = 'A'.repeat(100);
+        const wrapper = mountItem(createEntry({ body: longBody }));
+
+        await wrapper.find('[data-testid="show-more"]').trigger('click');
+
+        expect(wrapper.text()).toContain(longBody);
+        expect(wrapper.find('[data-testid="show-less"]').exists()).toBe(true);
+        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(false);
+    });
+
+    it('collapses body on "show less" click', async () => {
+        const longBody = 'A'.repeat(100);
+        const wrapper = mountItem(createEntry({ body: longBody }));
+
+        await wrapper.find('[data-testid="show-more"]').trigger('click');
+        await wrapper.find('[data-testid="show-less"]').trigger('click');
+
+        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(true);
+        expect(wrapper.text()).toContain('…');
     });
 });

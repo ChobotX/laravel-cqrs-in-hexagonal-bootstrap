@@ -1,4 +1,36 @@
-import type { NotificationListResponse } from './notification-store';
+import type { NotificationEntry, NotificationListResponse } from './notification-store';
+
+interface RawNotification {
+    id: string;
+    level: string;
+    title: string;
+    body: string;
+    link_url: string | null;
+    read_at: string | null;
+    created_at: string;
+}
+
+interface RawListResponse {
+    data: RawNotification[];
+    meta: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        total_pages: number;
+    };
+}
+
+function mapNotification(raw: RawNotification): NotificationEntry {
+    return {
+        id: raw.id,
+        level: raw.level as NotificationEntry['level'],
+        title: raw.title,
+        body: raw.body,
+        linkUrl: raw.link_url,
+        readAt: raw.read_at,
+        createdAt: raw.created_at,
+    };
+}
 
 export async function fetchNotifications(
     filter: string,
@@ -19,7 +51,12 @@ export async function fetchNotifications(
         throw new Error(`Failed to fetch notifications: ${response.status}`);
     }
 
-    return (await response.json()) as NotificationListResponse;
+    const raw = (await response.json()) as RawListResponse;
+
+    return {
+        data: raw.data.map(mapNotification),
+        meta: raw.meta,
+    };
 }
 
 export async function fetchUnreadCount(): Promise<number> {

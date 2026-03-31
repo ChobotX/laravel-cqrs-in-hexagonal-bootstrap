@@ -268,6 +268,9 @@ return [
         'preferences_level' => 'Úroveň',
         'preferences_in_app' => 'V aplikaci',
         'preferences_email' => 'E-mail',
+        'mark_read' => 'Označit jako přečtené',
+        'show_more' => 'Zobrazit více',
+        'show_less' => 'Zobrazit méně',
         'error_loading' => 'Nepodařilo se načíst oznámení.',
         'error_action' => 'Akce s oznámením se nezdařila.',
         'levels' => [
