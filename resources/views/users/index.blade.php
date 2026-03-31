@@ -39,15 +39,20 @@
                                         {{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr($user->name, strpos($user->name, ' ') + 1, 1)) }}
                                     </div>
                                     <div>
-                                        <span
-                                              class="text-base font-medium text-gray-900 sm:text-sm">{{ $user->name }}</span>
+                                        <div class="flex items-center gap-1.5">
+                                            <span
+                                                  class="text-base font-medium text-gray-900 sm:text-sm">{{ $user->name }}</span>
+                                            @if ($canReadLabels)
+                                                <x-badge-list :labels="$userLabels[$user->id->value] ?? []" />
+                                            @endif
+                                        </div>
                                         @if ($canReadRoles || $canReadTeams)
                                             <p class="mt-0.5 text-xs text-gray-400">
                                                 @if ($canReadRoles)
                                                     @forelse ($userRoles[$user->id->value] ?? [] as $role)
                                                         <a class="transition-colors hover:text-indigo-600"
-                                                           href="{{ route('roles.show', $role->id->value) }}"
-                                                           title="{{ $role->name->value }}">{{ $role->name->value }}</a>
+                                                           data-tooltip="{{ $role->name->value }}"
+                                                           href="{{ route('roles.show', $role->id->value) }}">{{ $role->name->value }}</a>
                                                         @if (!$loop->last)
                                                             ,
                                                         @endif
@@ -60,22 +65,14 @@
                                                     <span class="text-gray-300">{{ __('messages.users.in_team') }}</span>
                                                     @foreach ($userTeams[$user->id->value] as $team)
                                                         <a class="transition-colors hover:text-indigo-600"
-                                                           href="{{ route('teams.show', $team->id) }}"
-                                                           title="{{ $team->name }}">{{ $team->name }}</a>
+                                                           data-tooltip="{{ $team->name }}"
+                                                           href="{{ route('teams.show', $team->id) }}">{{ $team->name }}</a>
                                                         @if (!$loop->last)
                                                             ,
                                                         @endif
                                                     @endforeach
                                                 @endif
                                             </p>
-                                        @endif
-                                        @if ($canReadLabels && !empty($userLabels[$user->id->value] ?? []))
-                                            <div class="mt-1 flex flex-wrap gap-1">
-                                                @foreach ($userLabels[$user->id->value] as $label)
-                                                    <span
-                                                          class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 ring-1 ring-gray-500/10">{{ $label->name->value }}</span>
-                                                @endforeach
-                                            </div>
                                         @endif
                                     </div>
                                 </div>

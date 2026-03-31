@@ -1,6 +1,7 @@
 import './session-guard';
 import './sentry';
 import './dropdown';
+import './tooltip/tooltip';
 import './mobile-sidebar';
 import './dialog/dialog-app';
 import './toast/toast-app';

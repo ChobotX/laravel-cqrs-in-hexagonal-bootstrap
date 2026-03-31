@@ -43,8 +43,8 @@ while IFS= read -r file; do
     check_attr "img" "alt" "alt" "$file"
     check_attr "svg" "aria-hidden" "aria-hidden" "$file"
     check_attr "th" "scope" "scope" "$file"
-    check_attr "button" "title" "title" "$file"
-    check_attr "a" "title" "title" "$file"
+    check_attr "button" "(?:title|data-tooltip)" "title or data-tooltip" "$file"
+    check_attr "a" "(?:title|data-tooltip)" "title or data-tooltip" "$file"
 done < <(find "$VIEWS_DIR" -name '*.blade.php' -type f)
 
 if [ "$EXIT_CODE" -eq 0 ]; then

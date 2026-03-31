@@ -65,7 +65,7 @@ Permission-gated action button for table rows. Every action button **must** spec
 | `action` | `?string` | `null` | Renders as `<form>` + `<button>` |
 | `method` | `string` | `'POST'` | HTTP method for form variant |
 | `icon` | `string` | required | Heroicon component name (e.g. `heroicon-o-pencil-square`) |
-| `label` | `string` | required | Aria-label for accessibility |
+| `label` | `string` | required | Tooltip text (`data-tooltip`) and `aria-label` for accessibility |
 | `variant` | `string` | `'default'` | `'default'` (indigo hover) or `'danger'` (red hover) |
 | `confirm` | `bool` | `false` | Shows confirmation dialog before submit |
 | `confirm-title` | `?string` | `null` | Confirmation dialog title |
@@ -86,6 +86,62 @@ Permission-gated action button for table rows. Every action button **must** spec
 {{-- Explicitly ungated --}}
 <x-action-button skip-permission :action="route('impersonation.start', $user->id)"
     icon="heroicon-o-finger-print" :label="__('messages.impersonation.start') . ' ' . $user->name" />
+```
+
+## `<x-tooltip>` component
+
+Tooltip wrapper for any element. Uses the tooltip bridge (`resources/js/tooltip/tooltip.ts`) for positioning and display.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `text` | `?string` | `null` | Plain-text tooltip content |
+| `position` | `string` | `'top'` | Preferred position: `top`, `bottom`, `left`, `right` |
+
+**Slots:**
+
+| Slot | Description |
+|------|-------------|
+| default | The trigger element |
+| `content` | HTML tooltip content (takes priority over `text` prop) |
+
+**Examples:**
+```blade
+{{-- Plain text --}}
+<x-tooltip text="Edit user">
+    <button aria-label="Edit user">...</button>
+</x-tooltip>
+
+{{-- HTML content --}}
+<x-tooltip>
+    <span>+3</span>
+    <x-slot:content>
+        <span class="flex flex-wrap gap-1">
+            <span class="badge">Label A</span>
+            <span class="badge">Label B</span>
+        </span>
+    </x-slot:content>
+</x-tooltip>
+```
+
+Tooltips appear on hover and focus. The Blade bridge (`resources/js/tooltip/tooltip.ts`) also supports Escape key and scroll to dismiss. A Vue component (`resources/js/tooltip/Tooltip.vue`) is available for use inside Vue component trees with the same positioning logic — it dismisses on mouseleave and focusout.
+
+## `<x-badge-list>` component
+
+Renders a list of label badges with overflow. Shows up to `max` labels inline, with a "+N" tooltip for the rest.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `labels` | `array` | required | Array of label objects with `->name->value` |
+| `max` | `int` | `2` | Maximum visible badges before collapsing |
+
+**Example:**
+```blade
+<x-badge-list :labels="$userLabels[$user->id->value] ?? []" />
+<x-badge-list :labels="$teamLabels[$team->id->value]" :max="3" />
 ```
 
 ## Tenant middleware

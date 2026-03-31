@@ -18,7 +18,7 @@ it('renders link with permission when user has permission', function (): void {
     expect($rendered)
         ->toContain('href="/users"')
         ->toContain('aria-label="Edit users"')
-        ->toContain('title="Edit users"')
+        ->toContain('data-tooltip="Edit users"')
         ->toContain('cursor-pointer');
 });
 
@@ -50,7 +50,7 @@ it('renders form with confirm attributes', function (): void {
         ->toContain('action="/users/1"')
         ->toContain('hover:bg-red-50')
         ->toContain('aria-label="Delete user"')
-        ->toContain('title="Delete user"')
+        ->toContain('data-tooltip="Delete user"')
         ->toContain('cursor-pointer');
 });
 
@@ -78,7 +78,7 @@ it('renders unconditionally with skip-permission', function (): void {
     expect($rendered)
         ->toContain('href="/impersonate"')
         ->toContain('aria-label="Impersonate"')
-        ->toContain('title="Impersonate"')
+        ->toContain('data-tooltip="Impersonate"')
         ->toContain('cursor-pointer');
 });
 
@@ -119,6 +119,6 @@ it('renders form with skip-permission', function (): void {
     expect($rendered)
         ->toContain('action="/impersonate/1"')
         ->toContain('aria-label="Impersonate"')
-        ->toContain('title="Impersonate"')
+        ->toContain('data-tooltip="Impersonate"')
         ->toContain('cursor-pointer');
 });

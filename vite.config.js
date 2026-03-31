@@ -62,6 +62,7 @@ export default defineConfig({
                 'resources/js/autocomplete/autocomplete-app.ts',
                 'resources/js/team-tree/team-tree-app.ts',
                 'resources/js/team-tree/TeamTree.vue',
+                'resources/js/tooltip/Tooltip.vue',
                 'resources/js/team-tree-toggle.ts',
             ],
             thresholds: {

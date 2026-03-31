@@ -73,11 +73,8 @@
                                         <span
                                               class="text-base font-medium text-gray-900 sm:text-sm">{{ $team->name }}</span>
                                         @if ($canReadLabels && !empty($teamLabels[$team->id->value] ?? []))
-                                            <div class="mt-1 flex flex-wrap gap-1">
-                                                @foreach ($teamLabels[$team->id->value] as $label)
-                                                    <span
-                                                          class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 ring-1 ring-gray-500/10">{{ $label->name->value }}</span>
-                                                @endforeach
+                                            <div class="mt-1 flex flex-wrap items-center gap-1">
+                                                <x-badge-list :labels="$teamLabels[$team->id->value]" />
                                             </div>
                                         @endif
                                     </div>
