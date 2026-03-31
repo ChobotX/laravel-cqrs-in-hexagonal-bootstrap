@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { trans } from 'laravel-vue-i18n';
 import { computed, ref } from 'vue';
+import { error as showErrorToast } from '../toast/toast-queue';
 import type { ChipOption } from './ChipSelector.vue';
 import ChipSelector from './ChipSelector.vue';
 
@@ -67,7 +69,12 @@ function fetchResults(term: string): void {
 
     const separator = props.searchUrl.includes('?') ? '&' : '?';
     fetch(`${props.searchUrl}${separator}${params.toString()}`, { headers })
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Search failed: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((json) => {
             fetchedOptions.value = (json.data ?? []).map(
                 (item: { id: string; name: string; email?: string; description?: string }): ChipOption => ({
@@ -82,6 +89,7 @@ function fetchResults(term: string): void {
         .catch(() => {
             fetchedOptions.value = [];
             isLoading.value = false;
+            showErrorToast(trans('messages.labels.search_failed'));
         });
 }
 
@@ -132,7 +140,12 @@ function onCreate(name: string): void {
         headers,
         body: JSON.stringify({ namespace: props.createNamespace, name }),
     })
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(`Create failed: ${response.status}`);
+            }
+            return response.json();
+        })
         .then((json) => {
             const created: ChipOption = { id: json.data.id, name: json.data.name };
             allKnownItems.value.set(created.id, created);
@@ -142,7 +155,7 @@ function onCreate(name: string): void {
         })
         .catch(() => {
             isCreating.value = false;
-            fetchResults('');
+            showErrorToast(trans('messages.labels.create_failed'));
         });
 }
 </script>

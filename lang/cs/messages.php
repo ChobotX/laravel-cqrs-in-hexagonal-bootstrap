@@ -193,6 +193,16 @@ return [
         'no_results' => 'Nebyly nalezeny žádné výsledky.',
     ],
 
+    'labels' => [
+        'title' => 'Štítky',
+        'subtitle' => 'Spravujte štítky pro tento záznam',
+        'search' => 'Hledat štítky...',
+        'no_results' => 'Žádné štítky nenalezeny.',
+        'create' => 'Vytvořit "%s"',
+        'create_failed' => 'Nepodařilo se vytvořit štítek.',
+        'search_failed' => 'Nepodařilo se načíst štítky.',
+    ],
+
     'exceptions' => [
         'user_not_found' => 'Uživatel s id [:id] nebyl nalezen.',
         'invalid_user_id' => 'Hodnota [:value] není platné UUID.',

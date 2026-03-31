@@ -201,6 +201,8 @@ return [
         'search' => 'Search labels...',
         'no_results' => 'No labels found.',
         'create' => 'Create "%s"',
+        'create_failed' => 'Failed to create label.',
+        'search_failed' => 'Failed to load labels.',
     ],
 
     'exceptions' => [

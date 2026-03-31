@@ -2,6 +2,14 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import LazyChipSelector from './LazyChipSelector.vue';
 
+vi.mock('laravel-vue-i18n', () => ({
+    trans: (key: string): string => key,
+}));
+
+vi.mock('../toast/toast-queue', () => ({
+    error: vi.fn(),
+}));
+
 beforeAll(() => {
     Element.prototype.scrollIntoView = (): void => undefined;
 });
@@ -23,6 +31,7 @@ const emptyResults: SearchResponse = { data: [] };
 
 function createFetchMock(response: unknown = mockResults): void {
     global.fetch = vi.fn().mockResolvedValue({
+        ok: true,
         json: () => Promise.resolve(response),
     });
 }
@@ -92,7 +101,7 @@ describe('LazyChipSelector', () => {
 
         expect(wrapper.find('[aria-live="polite"]').exists()).toBe(true);
 
-        resolvePromise?.({ json: () => Promise.resolve(mockResults) });
+        resolvePromise?.({ ok: true, json: () => Promise.resolve(mockResults) });
         await flushPromises();
 
         expect(wrapper.find('[aria-live="polite"]').exists()).toBe(false);
@@ -289,7 +298,8 @@ describe('LazyChipSelector', () => {
         expect(options[0].text()).not.toContain('(');
     });
 
-    it('handles fetch error gracefully', async () => {
+    it('shows error toast on fetch failure', async () => {
+        const { error: errorToast } = await import('../toast/toast-queue');
         global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
         const wrapper = mountLazy();
@@ -300,6 +310,21 @@ describe('LazyChipSelector', () => {
 
         expect(wrapper.findAll('[role="option"]')).toHaveLength(0);
         expect(wrapper.find('[aria-live="polite"]').exists()).toBe(false);
+        expect(errorToast).toHaveBeenCalledWith('messages.labels.search_failed');
+    });
+
+    it('shows error toast on non-ok search response', async () => {
+        const { error: errorToast } = await import('../toast/toast-queue');
+        global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 403 });
+
+        const wrapper = mountLazy();
+        const input = wrapper.find('input[role="combobox"]');
+
+        await input.trigger('focus');
+        await flushPromises();
+
+        expect(wrapper.findAll('[role="option"]')).toHaveLength(0);
+        expect(errorToast).toHaveBeenCalledWith('messages.labels.search_failed');
     });
 
     it('calls createUrl when create event is received', async () => {
@@ -313,9 +338,9 @@ describe('LazyChipSelector', () => {
         const createResponse = { data: { id: 'new-1', name: 'newlabel' } };
         const fetchMock = vi
             .fn()
-            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
-            .mockResolvedValueOnce({ json: () => Promise.resolve(createResponse) })
-            .mockResolvedValue({ json: () => Promise.resolve(emptyResults) });
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(createResponse) })
+            .mockResolvedValue({ ok: true, json: () => Promise.resolve(emptyResults) });
         global.fetch = fetchMock;
 
         const wrapper = mountLazy({
@@ -354,10 +379,10 @@ describe('LazyChipSelector', () => {
         const createResponse = { data: { id: 'new-1', name: 'newlabel' } };
         const fetchMock = vi
             .fn()
-            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
-            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
-            .mockResolvedValueOnce({ json: () => Promise.resolve(createResponse) })
-            .mockResolvedValue({ json: () => Promise.resolve(emptyResults) });
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(createResponse) })
+            .mockResolvedValue({ ok: true, json: () => Promise.resolve(emptyResults) });
         global.fetch = fetchMock;
 
         const wrapper = mountLazy({
@@ -383,13 +408,13 @@ describe('LazyChipSelector', () => {
         expect(wrapper.text()).toContain('newlabel');
     });
 
-    it('handles create error gracefully', async () => {
+    it('shows error toast on create failure', async () => {
+        const { error: errorToast } = await import('../toast/toast-queue');
         const fetchMock = vi
             .fn()
-            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
-            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
-            .mockRejectedValueOnce(new Error('Create failed'))
-            .mockResolvedValue({ json: () => Promise.resolve(emptyResults) });
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockRejectedValueOnce(new Error('Create failed'));
         global.fetch = fetchMock;
 
         const wrapper = mountLazy({
@@ -412,6 +437,39 @@ describe('LazyChipSelector', () => {
         await flushPromises();
 
         expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(false);
+        expect(errorToast).toHaveBeenCalledWith('messages.labels.create_failed');
+    });
+
+    it('shows error toast on non-ok create response', async () => {
+        const { error: errorToast } = await import('../toast/toast-queue');
+        const fetchMock = vi
+            .fn()
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ ok: false, status: 422 });
+        global.fetch = fetchMock;
+
+        const wrapper = mountLazy({
+            allowCreate: true,
+            createUrl: '/internal-api/labels',
+            createNamespace: 'users',
+        });
+
+        const input = wrapper.find('input[role="combobox"]');
+        await input.trigger('focus');
+        await flushPromises();
+
+        await input.setValue('bad');
+        await input.trigger('input');
+        await vi.advanceTimersByTimeAsync(0);
+        await flushPromises();
+
+        const createOption = wrapper.findAll('[role="option"]').find((o) => o.text().includes('Create'));
+        await createOption?.trigger('mousedown');
+        await flushPromises();
+
+        expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(false);
+        expect(errorToast).toHaveBeenCalledWith('messages.labels.create_failed');
     });
 
     it('appends params with & when searchUrl already contains query string', async () => {
