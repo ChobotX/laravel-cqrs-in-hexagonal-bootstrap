@@ -33,6 +33,7 @@ final readonly class CreateLabelController
         try {
             $this->commandBus->dispatch(new CreateLabelCommand($id, $namespace, $name));
         } catch (LabelAlreadyExistsException) {
+            // @silent: intentional recovery — returns existing label instead of failing
             /** @var list<Label> $existing */
             $existing = $this->queryBus->dispatch(new SearchLabelsQuery(
                 namespace: $namespace,

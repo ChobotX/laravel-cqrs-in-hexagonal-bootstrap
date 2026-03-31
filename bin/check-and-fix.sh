@@ -35,6 +35,7 @@ wave "Wave 3 · Check"
 frontend_check() {
     run_step "blade-no-js" bash bin/lint-blade-no-js.sh
     run_step "blade-a11y" bash bin/lint-blade-a11y.sh
+    run_step "catch-blocks" bash bin/lint-catch-blocks.sh
     run_step "vitest" npx vitest run --coverage
     run_step "vite-build" npx vite build
 }

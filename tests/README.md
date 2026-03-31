@@ -37,6 +37,8 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `ControllerMustUseFormRequestRule` | Controllers must not type-hint `Illuminate\Http\Request` directly — use a custom `FormRequest` subclass |
 | `ConsoleCommandRequiresTenantAttributeRule` | Every console command must have `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]` |
 | `NoScopeResolutionInPresentationRule` | Blocks `canWithScope()` calls in Presentation — scope resolution belongs in bus middleware |
+| `NoSilentCatchRule` | Catch blocks in `app/` must rethrow, log, or carry a `// @silent: <reason>` comment |
+| `NoDirectLoggingRule` | Bans `Log::`, `logger()`, `report()` in `app/` — use `Logger` interface instead |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

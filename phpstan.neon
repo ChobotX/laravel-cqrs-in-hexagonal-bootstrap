@@ -107,6 +107,14 @@ services:
         class: Tests\Architecture\PHPStan\NoRawRequestUrlRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoSilentCatchRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoDirectLoggingRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

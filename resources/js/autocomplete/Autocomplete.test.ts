@@ -2,6 +2,18 @@ import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import Autocomplete from './Autocomplete.vue';
 
+vi.mock('laravel-vue-i18n', () => ({
+    trans: (key: string): string => key,
+}));
+
+vi.mock('../toast/toast-queue', () => ({
+    error: vi.fn(),
+}));
+
+vi.mock('../logger/logger', () => ({
+    error: vi.fn(),
+}));
+
 beforeAll(() => {
     Element.prototype.scrollIntoView = (): void => undefined;
 });
@@ -242,6 +254,8 @@ describe('Autocomplete', () => {
     });
 
     it('handles fetch error gracefully', async () => {
+        const { error: logError } = await import('../logger/logger');
+        const { error: errorToast } = await import('../toast/toast-queue');
         global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
         const wrapper = mountAutocomplete();
@@ -249,6 +263,8 @@ describe('Autocomplete', () => {
         await typeAndFetch(wrapper, 'test');
 
         expect(wrapper.findAll('[role="option"]')).toHaveLength(0);
+        expect(logError).toHaveBeenCalledWith('Autocomplete search failed');
+        expect(errorToast).toHaveBeenCalledWith('messages.autocomplete.search_failed');
     });
 
     it('sends csrf token when meta tag exists', async () => {

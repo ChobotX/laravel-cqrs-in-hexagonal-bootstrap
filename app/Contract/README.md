@@ -11,6 +11,7 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 - `Bus/` — `Middleware` interface for bus middleware pipeline
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces
+- `Logging/` — `Logger` interface for framework-agnostic structured logging
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
 - `Translation/` — `Translator` interface for framework-agnostic translations
 - `Team/` — `TeamMembershipChecker`

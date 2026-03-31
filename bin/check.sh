@@ -11,6 +11,7 @@ frontend_lint() {
     run_step "blade-a11y" bash bin/lint-blade-a11y.sh
     run_step "blade-url" bash bin/lint-blade-url.sh
     run_step "biome" npx biome check resources/js/
+    run_step "catch-blocks" bash bin/lint-catch-blocks.sh
     run_step "vitest" npx vitest run --coverage
     run_step "vite-build" npx vite build
 }

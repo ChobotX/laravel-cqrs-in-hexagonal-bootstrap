@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
+use App\Contract\Logging\Logger;
 use App\Contract\Translation\Translator;
+use App\Infrastructure\Logging\LaravelLogger;
 use App\Infrastructure\Translation\LaravelTranslator;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -19,6 +21,7 @@ final class AppServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
+        $this->app->bind(Logger::class, LaravelLogger::class);
         $this->app->bind(Translator::class, LaravelTranslator::class);
     }
 

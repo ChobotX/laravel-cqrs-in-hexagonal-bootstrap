@@ -110,6 +110,12 @@ Public API routes use URL-based versioning: `/api/v1/`. API controllers live und
 **Why:** URL-based versioning is the simplest, most explicit approach. It makes the version visible in every request. Controller namespacing mirrors the URL structure and keeps v1 controllers frozen when v2 is introduced.
 **Enforced by:** Route prefix in `routes/api.php`. Controller namespace convention.
 
+### Single logging interface, no direct facade or helper usage
+
+All logging must go through `App\Contract\Logging\Logger` (backend) or the `logger` module in `resources/js/logger/logger.ts` (frontend). Direct `Log::`, `logger()`, `report()` calls are banned in PHP. Direct `console.*` calls are banned in JS/TS. Catch blocks must either rethrow, log via the interface, or carry a `// @silent: <reason>` comment.
+**Why:** Prevents silent error swallowing and ensures a single, injectable logging seam. One sanctioned path makes it easy to swap implementations (e.g. structured logging, Sentry breadcrumbs) without shotgun surgery.
+**Enforced by:** PHPStan rules `NoSilentCatchRule` and `NoDirectLoggingRule`. Biome `noConsole` rule (frontend). Shell lint `bin/lint-catch-blocks.sh` (frontend catch blocks).
+
 ### Centralized transactional test isolation
 
 All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.

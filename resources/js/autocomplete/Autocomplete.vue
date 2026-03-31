@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { trans } from 'laravel-vue-i18n';
 import { nextTick, ref, watch } from 'vue';
+import { error as logError } from '../logger/logger';
+import { error as showErrorToast } from '../toast/toast-queue';
 
 interface SearchResult {
     id: string;
@@ -75,6 +78,8 @@ function fetchResults(term: string): void {
         .catch(() => {
             results.value = [];
             isLoading.value = false;
+            logError('Autocomplete search failed');
+            showErrorToast(trans('messages.autocomplete.search_failed'));
         });
 }
 

@@ -33,6 +33,10 @@ For queries implementing `ScopeAwareQuery`, the middleware:
 
 Non-`ScopeAwareQuery` queries pass through unchanged.
 
+## Logging
+
+`App\Infrastructure\Logging\LaravelLogger` implements `App\Contract\Logging\Logger`, wrapping Laravel's `Log` facade. This is the only place in the application where `Log::` is called directly — all other code must inject the `Logger` interface. Enforced by PHPStan rule `NoDirectLoggingRule`.
+
 ## Repository + Mapper pattern
 
 Repositories implement contract interfaces and use Eloquent models internally. Domain objects are never Eloquent models — mappers translate between Eloquent models and domain objects.
