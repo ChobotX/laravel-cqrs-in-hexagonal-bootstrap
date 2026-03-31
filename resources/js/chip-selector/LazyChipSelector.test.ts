@@ -414,6 +414,21 @@ describe('LazyChipSelector', () => {
         expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(false);
     });
 
+    it('appends params with & when searchUrl already contains query string', async () => {
+        const wrapper = mountLazy({
+            searchUrl: '/internal-api/labels/search?namespace=users',
+            selectedItems: [{ id: 'lbl-1', name: 'Label A' }],
+        });
+        const input = wrapper.find('input[role="combobox"]');
+
+        await input.trigger('focus');
+        await flushPromises();
+
+        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        expect(fetchUrl).toContain('/internal-api/labels/search?namespace=users&');
+        expect(fetchUrl).not.toContain('?exclude');
+    });
+
     it('does not call createUrl when createUrl is not set', async () => {
         createFetchMock(emptyResults);
 

@@ -65,7 +65,8 @@ function fetchResults(term: string): void {
         headers['X-CSRF-TOKEN'] = csrfMeta.content;
     }
 
-    fetch(`${props.searchUrl}?${params.toString()}`, { headers })
+    const separator = props.searchUrl.includes('?') ? '&' : '?';
+    fetch(`${props.searchUrl}${separator}${params.toString()}`, { headers })
         .then((response) => response.json())
         .then((json) => {
             fetchedOptions.value = (json.data ?? []).map(
