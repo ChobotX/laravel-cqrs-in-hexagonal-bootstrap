@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\User;
+namespace App\Presentation\Http\Controller\Api\V1\User;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;

@@ -21,7 +21,7 @@ it('updates a user and returns 204', function (): void {
         'email' => 'john@example.com',
     ]);
 
-    $response = $this->putJson('/api/users/550e8400-e29b-41d4-a716-446655440000', [
+    $response = $this->putJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);
@@ -45,7 +45,7 @@ it('returns 404 when user not found', function (): void {
     $this->assignSuperAdmin($authUser->id);
     Sanctum::actingAs($authUser);
 
-    $response = $this->putJson('/api/users/550e8400-e29b-41d4-a716-446655440000', [
+    $response = $this->putJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ]);
@@ -69,7 +69,7 @@ it('returns 422 for invalid data', function (): void {
         'email' => 'john@example.com',
     ]);
 
-    $response = $this->putJson('/api/users/550e8400-e29b-41d4-a716-446655440000', [
+    $response = $this->putJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', [
         'name' => '',
         'email' => 'not-an-email',
     ]);
@@ -94,7 +94,7 @@ it('allows keeping the same email', function (): void {
         'email' => 'john@example.com',
     ]);
 
-    $response = $this->putJson('/api/users/550e8400-e29b-41d4-a716-446655440000', [
+    $response = $this->putJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', [
         'name' => 'John Updated',
         'email' => 'john@example.com',
     ]);
@@ -124,7 +124,7 @@ it('rejects a duplicate email from another user', function (): void {
         'email' => 'jane@example.com',
     ]);
 
-    $response = $this->putJson('/api/users/660e8400-e29b-41d4-a716-446655440000', [
+    $response = $this->putJson('/api/v1/users/660e8400-e29b-41d4-a716-446655440000', [
         'name' => 'Jane Doe',
         'email' => 'john@example.com',
     ]);
@@ -134,7 +134,7 @@ it('rejects a duplicate email from another user', function (): void {
 });
 
 it('returns 401 when unauthenticated', function (): void {
-    $this->putJson('/api/users/550e8400-e29b-41d4-a716-446655440000', [
+    $this->putJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000', [
         'name' => 'Jane Doe',
         'email' => 'jane@example.com',
     ])->assertUnauthorized();

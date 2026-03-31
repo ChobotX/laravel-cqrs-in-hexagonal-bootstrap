@@ -21,7 +21,7 @@ it('soft deletes a user and returns 204', function (): void {
         'email' => 'john@example.com',
     ]);
 
-    $response = $this->deleteJson('/api/users/550e8400-e29b-41d4-a716-446655440000');
+    $response = $this->deleteJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000');
 
     $response->assertStatus(204);
 
@@ -40,7 +40,7 @@ it('returns 404 when user not found', function (): void {
     $this->assignSuperAdmin($authUser->id);
     Sanctum::actingAs($authUser);
 
-    $response = $this->deleteJson('/api/users/550e8400-e29b-41d4-a716-446655440000');
+    $response = $this->deleteJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000');
 
     $response->assertStatus(404);
 });
@@ -61,14 +61,14 @@ it('returns 404 on GET after delete', function (): void {
         'email' => 'john@example.com',
     ]);
 
-    $this->deleteJson('/api/users/550e8400-e29b-41d4-a716-446655440000')
+    $this->deleteJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000')
         ->assertStatus(204);
 
-    $this->getJson('/api/users/550e8400-e29b-41d4-a716-446655440000')
+    $this->getJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000')
         ->assertStatus(404);
 });
 
 it('returns 401 when unauthenticated', function (): void {
-    $this->deleteJson('/api/users/550e8400-e29b-41d4-a716-446655440000')
+    $this->deleteJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000')
         ->assertUnauthorized();
 });

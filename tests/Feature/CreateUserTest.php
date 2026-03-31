@@ -15,7 +15,7 @@ it('creates a user and returns 201 with id', function (): void {
     $this->assignSuperAdmin($user->id);
     Sanctum::actingAs($user);
 
-    $response = $this->postJson('/api/users', [
+    $response = $this->postJson('/api/v1/users', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
     ]);
@@ -39,7 +39,7 @@ it('returns 422 for invalid data', function (): void {
     $this->assignSuperAdmin($user->id);
     Sanctum::actingAs($user);
 
-    $response = $this->postJson('/api/users', [
+    $response = $this->postJson('/api/v1/users', [
         'name' => '',
         'email' => 'not-an-email',
     ]);
@@ -49,7 +49,7 @@ it('returns 422 for invalid data', function (): void {
 });
 
 it('returns 401 when unauthenticated', function (): void {
-    $this->postJson('/api/users', [
+    $this->postJson('/api/v1/users', [
         'name' => 'John Doe',
         'email' => 'john@example.com',
     ])->assertUnauthorized();

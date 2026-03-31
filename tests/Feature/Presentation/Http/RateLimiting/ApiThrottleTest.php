@@ -18,7 +18,7 @@ it('includes rate limit headers on API response', function (): void {
     $this->assignSuperAdmin($user->id);
     Sanctum::actingAs($user);
 
-    $this->getJson('/api/users/'.$user->id)
+    $this->getJson('/api/v1/users/'.$user->id)
         ->assertHeader('X-RateLimit-Limit', '60');
 });
 
@@ -35,8 +35,8 @@ it('returns 429 when API limit exceeded', function (): void {
     Sanctum::actingAs($user);
 
     for ($i = 0; $i < 3; $i++) {
-        $this->getJson('/api/users/'.$user->id)->assertOk();
+        $this->getJson('/api/v1/users/'.$user->id)->assertOk();
     }
 
-    $this->getJson('/api/users/'.$user->id)->assertStatus(429);
+    $this->getJson('/api/v1/users/'.$user->id)->assertStatus(429);
 });

@@ -36,7 +36,7 @@ it('denies API access for soft-deleted user with token', function (): void {
 
     $user->delete();
 
-    $this->getJson('/api/users/'.$user->id, [
+    $this->getJson('/api/v1/users/'.$user->id, [
         'Authorization' => 'Bearer '.$token,
     ])->assertUnauthorized();
 });

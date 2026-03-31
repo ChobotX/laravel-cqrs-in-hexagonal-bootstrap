@@ -18,7 +18,7 @@ it('generates a trace id when no header is present', function (): void {
     $this->assignSuperAdmin($user->id);
     Sanctum::actingAs($user);
 
-    $response = $this->getJson('/api/users');
+    $response = $this->getJson('/api/v1/users');
 
     $response->assertHeader('X-Trace-Id');
 
@@ -38,7 +38,7 @@ it('inherits trace id from X-Trace-Id request header', function (): void {
 
     $traceId = '550e8400-e29b-41d4-a716-446655440399';
 
-    $response = $this->getJson('/api/users', ['X-Trace-Id' => $traceId]);
+    $response = $this->getJson('/api/v1/users', ['X-Trace-Id' => $traceId]);
 
     $response->assertHeader('X-Trace-Id', $traceId);
 });
@@ -56,7 +56,7 @@ it('extracts trace id from traceparent header', function (): void {
     $traceId = '0af7651916cd43dd8448eb211c80319c';
     $traceparent = sprintf('00-%s-b7ad6b7169203331-01', $traceId);
 
-    $response = $this->getJson('/api/users', ['traceparent' => $traceparent]);
+    $response = $this->getJson('/api/v1/users', ['traceparent' => $traceparent]);
 
     $response->assertHeader('X-Trace-Id', $traceId);
 });
@@ -74,7 +74,7 @@ it('prefers X-Trace-Id over traceparent', function (): void {
     $xTraceId = 'my-custom-trace-id';
     $traceparent = '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01';
 
-    $response = $this->getJson('/api/users', [
+    $response = $this->getJson('/api/v1/users', [
         'X-Trace-Id' => $xTraceId,
         'traceparent' => $traceparent,
     ]);
@@ -92,7 +92,7 @@ it('falls back to generated uuid for malformed traceparent', function (): void {
     $this->assignSuperAdmin($user->id);
     Sanctum::actingAs($user);
 
-    $response = $this->getJson('/api/users', ['traceparent' => 'not-a-valid-traceparent']);
+    $response = $this->getJson('/api/v1/users', ['traceparent' => 'not-a-valid-traceparent']);
 
     $response->assertHeader('X-Trace-Id');
 
@@ -112,7 +112,7 @@ it('includes trace_id in domain exception json responses', function (): void {
 
     $traceId = 'error-trace-id-123';
 
-    $response = $this->getJson('/api/users/550e8400-e29b-41d4-a716-446655440999', [
+    $response = $this->getJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440999', [
         'X-Trace-Id' => $traceId,
     ]);
 
@@ -136,7 +136,7 @@ it('uses otel trace id when active span exists', function (): void {
     $scope = Context::getCurrent()->withContextValue($span)->activate();
 
     try {
-        $response = $this->getJson('/api/users');
+        $response = $this->getJson('/api/v1/users');
 
         $response->assertHeader('X-Trace-Id', $otelTraceId);
     } finally {
@@ -160,7 +160,7 @@ it('prefers otel trace id over request headers', function (): void {
     $scope = Context::getCurrent()->withContextValue($span)->activate();
 
     try {
-        $response = $this->getJson('/api/users', [
+        $response = $this->getJson('/api/v1/users', [
             'X-Trace-Id' => 'should-be-ignored',
             'traceparent' => '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01',
         ]);

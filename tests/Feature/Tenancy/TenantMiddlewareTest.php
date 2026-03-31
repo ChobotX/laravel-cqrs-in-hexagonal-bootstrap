@@ -12,7 +12,7 @@ it('returns 404 for tenant-scoped web routes on root domain', function (): void 
 it('returns 404 for tenant-scoped API routes on root domain', function (): void {
     app()->forgetScopedInstances();
 
-    $this->getJson('http://laravel-bootstrap.local/api/users')
+    $this->getJson('http://laravel-bootstrap.local/api/v1/users')
         ->assertNotFound();
 });
 

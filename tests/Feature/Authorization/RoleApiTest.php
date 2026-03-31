@@ -20,13 +20,13 @@ it('lists roles via API', function (): void {
     apiUser();
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440901', 'name' => 'Editor', 'description' => 'Ed', 'is_system' => false]);
 
-    $this->getJson('/api/roles')->assertOk()->assertJsonCount(2, 'data');
+    $this->getJson('/api/v1/roles')->assertOk()->assertJsonCount(2, 'data');
 });
 
 it('creates a role via API', function (): void {
     apiUser();
 
-    $this->postJson('/api/roles', [
+    $this->postJson('/api/v1/roles', [
         'name' => 'New Role',
         'description' => 'A new role',
         'permissions' => [['permission' => 'users.list.read', 'scope' => 'all']],
@@ -39,7 +39,7 @@ it('gets a role by id via API', function (): void {
     apiUser();
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440902', 'name' => 'Viewer', 'description' => 'V', 'is_system' => false]);
 
-    $this->getJson('/api/roles/550e8400-e29b-41d4-a716-446655440902')
+    $this->getJson('/api/v1/roles/550e8400-e29b-41d4-a716-446655440902')
         ->assertOk()
         ->assertJsonFragment(['name' => 'Viewer']);
 });
@@ -48,7 +48,7 @@ it('updates a role via API', function (): void {
     apiUser();
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440903', 'name' => 'Old', 'description' => 'Old', 'is_system' => false]);
 
-    $this->putJson('/api/roles/550e8400-e29b-41d4-a716-446655440903', [
+    $this->putJson('/api/v1/roles/550e8400-e29b-41d4-a716-446655440903', [
         'name' => 'Updated',
         'description' => 'Updated desc',
         'permissions' => [['permission' => 'users.list.read', 'scope' => 'all']],
@@ -61,22 +61,22 @@ it('deletes a role via API', function (): void {
     apiUser();
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440904', 'name' => 'ToDelete', 'description' => 'D', 'is_system' => false]);
 
-    $this->deleteJson('/api/roles/550e8400-e29b-41d4-a716-446655440904')->assertNoContent();
+    $this->deleteJson('/api/v1/roles/550e8400-e29b-41d4-a716-446655440904')->assertNoContent();
 });
 
 it('validates create role request', function (): void {
     apiUser();
 
-    $this->postJson('/api/roles', [])->assertUnprocessable()->assertJsonValidationErrors(['name', 'description', 'permissions']);
+    $this->postJson('/api/v1/roles', [])->assertUnprocessable()->assertJsonValidationErrors(['name', 'description', 'permissions']);
 });
 
 it('returns 401 when unauthenticated', function (): void {
-    $this->getJson('/api/roles')->assertUnauthorized();
+    $this->getJson('/api/v1/roles')->assertUnauthorized();
 });
 
 it('returns 403 when user has no permissions', function (): void {
     $user = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440905', 'name' => 'No Perms', 'email' => 'noperms@test.com']);
     Sanctum::actingAs($user);
 
-    $this->getJson('/api/roles')->assertForbidden();
+    $this->getJson('/api/v1/roles')->assertForbidden();
 });

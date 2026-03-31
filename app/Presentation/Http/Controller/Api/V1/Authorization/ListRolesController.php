@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Controller\User;
+namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Domain\User\Query\ListUsers\ListUsersQuery;
+use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Presentation\Http\Request\PaginationRequest;
-use App\Presentation\Http\Resource\UserResource;
+use App\Presentation\Http\Resource\RoleResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 #[SkipPermissionCheck('Permission enforced by command/query bus')]
-final readonly class ListUsersController
+final readonly class ListRolesController
 {
     public function __construct(
         private QueryBus $queryBus,
@@ -20,9 +20,9 @@ final readonly class ListUsersController
 
     public function __invoke(PaginationRequest $paginationRequest): AnonymousResourceCollection
     {
-        $paginatedResult = $this->queryBus->dispatch(new ListUsersQuery($paginationRequest->pagination()));
+        $paginatedResult = $this->queryBus->dispatch(new ListRolesQuery($paginationRequest->pagination()));
 
-        return UserResource::collection($paginatedResult->items)->additional([
+        return RoleResource::collection($paginatedResult->items)->additional([
             'meta' => [
                 'current_page' => $paginatedResult->pagination->page,
                 'per_page' => $paginatedResult->pagination->perPage,

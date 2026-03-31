@@ -22,7 +22,7 @@ it('returns list of users as JSON', function (): void {
 
     Sanctum::actingAs($user);
 
-    $this->getJson('/api/users')
+    $this->getJson('/api/v1/users')
         ->assertOk()
         ->assertJsonCount(2, 'data')
         ->assertJsonFragment(['name' => 'API User'])
@@ -30,6 +30,6 @@ it('returns list of users as JSON', function (): void {
 });
 
 it('requires authentication', function (): void {
-    $this->getJson('/api/users')
+    $this->getJson('/api/v1/users')
         ->assertUnauthorized();
 });

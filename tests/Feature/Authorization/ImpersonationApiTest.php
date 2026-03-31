@@ -13,7 +13,7 @@ it('starts impersonation via API', function (): void {
 
     $target = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440941', 'name' => 'Target', 'email' => 'impb@test.com']);
 
-    $this->postJson('/api/impersonate/'.$target->id)->assertOk();
+    $this->postJson('/api/v1/impersonate/'.$target->id)->assertOk();
 
     $this->assertDatabaseHas('impersonation_sessions', [
         'impersonator_user_id' => $admin->id,
@@ -27,13 +27,13 @@ it('stops impersonation via API', function (): void {
     $this->assignSuperAdmin($admin->id);
     Sanctum::actingAs($admin);
 
-    $this->postJson('/api/stop-impersonation')->assertOk();
+    $this->postJson('/api/v1/stop-impersonation')->assertOk();
 });
 
 it('returns 401 on start impersonation unauthenticated', function (): void {
-    $this->postJson('/api/impersonate/550e8400-e29b-41d4-a716-446655440944')->assertUnauthorized();
+    $this->postJson('/api/v1/impersonate/550e8400-e29b-41d4-a716-446655440944')->assertUnauthorized();
 });
 
 it('returns 401 on stop impersonation unauthenticated', function (): void {
-    $this->postJson('/api/stop-impersonation')->assertUnauthorized();
+    $this->postJson('/api/v1/stop-impersonation')->assertUnauthorized();
 });

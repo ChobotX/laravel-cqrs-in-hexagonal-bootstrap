@@ -50,6 +50,7 @@ When you change **one** of these, check **all** listed files:
 | Add/change code style rule | `app/README.md`, `pint.json` or `rector.php` (whichever enforces it) |
 | Add/change class structural rule | `app/README.md` (class rules table), `ADR.md` if it's a new decision |
 | Add/change presentation pattern | `app/Presentation/README.md` |
+| Add/change API versioning pattern | `ADR.md`, `app/Presentation/README.md`, `routes/api.php`, `QUICKSTART.md` |
 | Add/change infrastructure pattern | `app/Infrastructure/README.md` |
 | Add/change contract interface | `app/Contract/README.md` (contents list + generic type docs if applicable) |
 | Add/change coverage config | `tests/README.md`, `AGENTS.md` (coverage config row) |

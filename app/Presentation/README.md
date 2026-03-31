@@ -6,6 +6,13 @@ HTTP controllers, console commands, views, and frontend. All classes must be `fi
 
 Controllers in `App\Presentation\Http\Controller` must have a single `__invoke()` method. One route = one controller.
 
+## Controller organization
+
+- **Public API:** `App\Presentation\Http\Controller\Api\V1\{Context}\` — versioned REST endpoints at `/api/v1/`
+- **Web:** `App\Presentation\Http\Controller\Web\{Context}\` — Blade page controllers
+
+When adding a new API version, create `Controller\Api\V2\{Context}\` and add a `Route::prefix('v2')` group in `routes/api.php`. V1 controllers stay frozen.
+
 ## Form requests
 
 Form requests extend `App\Presentation\Http\Request\FormRequest` (not Laravel's base).

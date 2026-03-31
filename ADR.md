@@ -104,6 +104,12 @@ Scope-based data filtering (All/Team/Own) is domain logic that must not leak int
 **Why:** Scope filtering was originally done in controllers — fetching all records and filtering in PHP. This violated hexagonal architecture (domain logic in presentation), harmed performance (full table loads), and duplicated logic across controllers.
 **Enforced by:** PHPStan rule `NoScopeResolutionInPresentationRule` (blocks `canWithScope()` in Presentation), PHPat rules `testPresentationDoesNotDependOnTeamMembershipChecker` and `testPresentationDoesNotDependOnAccessContext` (block scope-related imports). See [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md).
 
+### URL-based API versioning
+
+Public API routes use URL-based versioning: `/api/v1/`. API controllers live under `App\Presentation\Http\Controller\Api\V1\{Context}\`. Internal API (`/internal-api/`) and web routes are unversioned. Resources and form requests remain unversioned until a breaking change requires a v2 variant.
+**Why:** URL-based versioning is the simplest, most explicit approach. It makes the version visible in every request. Controller namespacing mirrors the URL structure and keeps v1 controllers frozen when v2 is introduced.
+**Enforced by:** Route prefix in `routes/api.php`. Controller namespace convention.
+
 ### Centralized transactional test isolation
 
 All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.

@@ -21,7 +21,7 @@ it('returns a user by id', function (): void {
         'email' => 'john@example.com',
     ]);
 
-    $response = $this->getJson('/api/users/'.$user->id);
+    $response = $this->getJson('/api/v1/users/'.$user->id);
 
     $response->assertStatus(200)
         ->assertJson([
@@ -43,7 +43,7 @@ it('returns 404 when user not found', function (): void {
     $this->assignSuperAdmin($authUser->id);
     Sanctum::actingAs($authUser);
 
-    $response = $this->getJson('/api/users/550e8400-e29b-41d4-a716-446655440000');
+    $response = $this->getJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000');
 
     $response->assertStatus(404)
         ->assertJson([
@@ -52,6 +52,6 @@ it('returns 404 when user not found', function (): void {
 });
 
 it('returns 401 when unauthenticated', function (): void {
-    $this->getJson('/api/users/550e8400-e29b-41d4-a716-446655440000')
+    $this->getJson('/api/v1/users/550e8400-e29b-41d4-a716-446655440000')
         ->assertUnauthorized();
 });

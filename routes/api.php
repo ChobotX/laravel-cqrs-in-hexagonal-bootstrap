@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-use App\Presentation\Http\Controller\Authorization\AssignUserRoleController;
-use App\Presentation\Http\Controller\Authorization\CreateRoleController;
-use App\Presentation\Http\Controller\Authorization\DeleteRoleController;
-use App\Presentation\Http\Controller\Authorization\GetEffectivePermissionsController;
-use App\Presentation\Http\Controller\Authorization\GetRoleController;
-use App\Presentation\Http\Controller\Authorization\GetUserPermissionsController;
-use App\Presentation\Http\Controller\Authorization\ListRolesController;
-use App\Presentation\Http\Controller\Authorization\ListUserRolesController;
-use App\Presentation\Http\Controller\Authorization\RemoveUserPermissionOverrideController;
-use App\Presentation\Http\Controller\Authorization\RevokeUserRoleController;
-use App\Presentation\Http\Controller\Authorization\SetUserPermissionOverrideController;
-use App\Presentation\Http\Controller\Authorization\StartImpersonationController;
-use App\Presentation\Http\Controller\Authorization\StopImpersonationController;
-use App\Presentation\Http\Controller\Authorization\UpdateRoleController;
-use App\Presentation\Http\Controller\User\CreateUserController;
-use App\Presentation\Http\Controller\User\DeleteUserController;
-use App\Presentation\Http\Controller\User\GetUserController;
-use App\Presentation\Http\Controller\User\ListUsersController;
-use App\Presentation\Http\Controller\User\UpdateUserController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\AssignUserRoleController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\CreateRoleController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\DeleteRoleController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\GetEffectivePermissionsController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\GetRoleController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\GetUserPermissionsController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\ListRolesController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\ListUserRolesController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\RemoveUserPermissionOverrideController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\RevokeUserRoleController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\SetUserPermissionOverrideController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\StartImpersonationController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\StopImpersonationController;
+use App\Presentation\Http\Controller\Api\V1\Authorization\UpdateRoleController;
+use App\Presentation\Http\Controller\Api\V1\User\CreateUserController;
+use App\Presentation\Http\Controller\Api\V1\User\DeleteUserController;
+use App\Presentation\Http\Controller\Api\V1\User\GetUserController;
+use App\Presentation\Http\Controller\Api\V1\User\ListUsersController;
+use App\Presentation\Http\Controller\Api\V1\User\UpdateUserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth:sanctum')->group(function (): void {
+Route::middleware('auth:sanctum')->prefix('v1')->group(function (): void {
     Route::get('/users', ListUsersController::class);
     Route::post('/users', CreateUserController::class);
     Route::get('/users/{userId}', GetUserController::class);

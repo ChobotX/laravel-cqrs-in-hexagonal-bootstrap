@@ -11,7 +11,7 @@ it('gets user permissions via API', function (): void {
     $this->assignSuperAdmin($admin->id);
     Sanctum::actingAs($admin);
 
-    $this->getJson(sprintf('/api/users/%s/permissions', $admin->id))->assertOk();
+    $this->getJson(sprintf('/api/v1/users/%s/permissions', $admin->id))->assertOk();
 });
 
 it('sets a permission override via API', function (): void {
@@ -22,7 +22,7 @@ it('sets a permission override via API', function (): void {
 
     $target = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440932', 'name' => 'Target', 'email' => 'permc@test.com']);
 
-    $this->putJson(sprintf('/api/users/%s/permissions', $target->id), [
+    $this->putJson(sprintf('/api/v1/users/%s/permissions', $target->id), [
         'permission' => 'users.list.read',
         'type' => 'deny',
         'scope' => 'all',
@@ -45,13 +45,13 @@ it('removes a permission override via API', function (): void {
 
     $target = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440934', 'name' => 'Target', 'email' => 'perme@test.com']);
 
-    $this->putJson(sprintf('/api/users/%s/permissions', $target->id), [
+    $this->putJson(sprintf('/api/v1/users/%s/permissions', $target->id), [
         'permission' => 'users.list.read',
         'type' => 'grant',
         'scope' => 'all',
     ]);
 
-    $this->deleteJson(sprintf('/api/users/%s/permissions/users.list.read', $target->id))->assertNoContent();
+    $this->deleteJson(sprintf('/api/v1/users/%s/permissions/users.list.read', $target->id))->assertNoContent();
 });
 
 it('gets effective permissions via API', function (): void {
@@ -60,28 +60,28 @@ it('gets effective permissions via API', function (): void {
     $this->assignSuperAdmin($admin->id);
     Sanctum::actingAs($admin);
 
-    $this->getJson(sprintf('/api/users/%s/effective-permissions', $admin->id))->assertOk()->assertJsonStructure(['data']);
+    $this->getJson(sprintf('/api/v1/users/%s/effective-permissions', $admin->id))->assertOk()->assertJsonStructure(['data']);
 });
 
 it('returns 403 on get permissions without permissions', function (): void {
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440936', 'name' => 'A', 'email' => 'permno@test.com']);
     Sanctum::actingAs($admin);
 
-    $this->getJson(sprintf('/api/users/%s/permissions', $admin->id))->assertForbidden();
+    $this->getJson(sprintf('/api/v1/users/%s/permissions', $admin->id))->assertForbidden();
 });
 
 it('returns 403 on effective permissions without permissions', function (): void {
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440937', 'name' => 'A', 'email' => 'effno@test.com']);
     Sanctum::actingAs($admin);
 
-    $this->getJson(sprintf('/api/users/%s/effective-permissions', $admin->id))->assertForbidden();
+    $this->getJson(sprintf('/api/v1/users/%s/effective-permissions', $admin->id))->assertForbidden();
 });
 
 it('returns 403 on set override without permissions', function (): void {
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440938', 'name' => 'A', 'email' => 'setno@test.com']);
     Sanctum::actingAs($admin);
 
-    $this->putJson(sprintf('/api/users/%s/permissions', $admin->id), [
+    $this->putJson(sprintf('/api/v1/users/%s/permissions', $admin->id), [
         'permission' => 'users.list.read', 'type' => 'deny', 'scope' => 'all',
     ])->assertForbidden();
 });
@@ -90,5 +90,5 @@ it('returns 403 on remove override without permissions', function (): void {
     $admin = UserModel::create(['id' => '550e8400-e29b-41d4-a716-446655440939', 'name' => 'A', 'email' => 'rmno@test.com']);
     Sanctum::actingAs($admin);
 
-    $this->deleteJson(sprintf('/api/users/%s/permissions/users.list.read', $admin->id))->assertForbidden();
+    $this->deleteJson(sprintf('/api/v1/users/%s/permissions/users.list.read', $admin->id))->assertForbidden();
 });
