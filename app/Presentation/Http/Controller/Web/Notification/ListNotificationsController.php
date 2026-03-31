@@ -11,6 +11,7 @@ use App\Contract\Auth\AuthenticatedUser;
 use App\Domain\Notification\Notification;
 use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsQuery;
 use App\Presentation\Http\Request\Web\Notification\ListNotificationsRequest;
+use App\Presentation\Http\Request\Web\Notification\NotificationFilter;
 use Illuminate\Http\JsonResponse;
 
 #[SkipPermissionCheck(reason: 'Notifications are accessible to all authenticated users')]
@@ -26,8 +27,8 @@ final readonly class ListNotificationsController
         $userId = $this->authenticatedUser->id() ?? '';
         $filter = $listNotificationsRequest->filter();
         $isRead = match ($filter) {
-            'unread' => false,
-            'read' => true,
+            NotificationFilter::Unread->value => false,
+            NotificationFilter::Read->value => true,
             default => null,
         };
 

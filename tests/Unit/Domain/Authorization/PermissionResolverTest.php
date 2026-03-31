@@ -116,7 +116,7 @@ it('grants all permissions with all scope for super admin role', function (): vo
     foreach ($result as $permission) {
         expect($permission->granted)->toBeTrue()
             ->and($permission->scope)->toBe(AccessScope::All)
-            ->and($permission->source)->toBe('system:super-admin');
+            ->and($permission->source)->toBe(PermissionResolver::SUPER_ADMIN_SOURCE);
     }
 });
 

@@ -11,6 +11,7 @@ use App\Domain\Authorization\Command\RemovePermissionOverride\RemovePermissionOv
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Presentation\Http\Request\Web\Authorization\ManageUserPermissionsRequest;
+use App\Presentation\Http\Request\Web\Authorization\UserPermissionAction;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('users.roles.update')]
@@ -22,28 +23,28 @@ final readonly class ManageUserPermissionsController
 
     public function __invoke(ManageUserPermissionsRequest $manageUserPermissionsRequest, string $userId): RedirectResponse
     {
-        if ($manageUserPermissionsRequest->action() === 'assign_role') {
+        if ($manageUserPermissionsRequest->action() === UserPermissionAction::AssignRole) {
             $this->commandBus->dispatch(new AssignRoleToUserCommand(
                 userId: $userId,
                 roleId: $manageUserPermissionsRequest->string('role_id')->toString(),
             ));
         }
 
-        if ($manageUserPermissionsRequest->action() === 'revoke_role') {
+        if ($manageUserPermissionsRequest->action() === UserPermissionAction::RevokeRole) {
             $this->commandBus->dispatch(new RevokeRoleFromUserCommand(
                 userId: $userId,
                 roleId: $manageUserPermissionsRequest->string('role_id')->toString(),
             ));
         }
 
-        if ($manageUserPermissionsRequest->action() === 'remove_override') {
+        if ($manageUserPermissionsRequest->action() === UserPermissionAction::RemoveOverride) {
             $this->commandBus->dispatch(new RemovePermissionOverrideCommand(
                 userId: $userId,
                 permission: $manageUserPermissionsRequest->string('permission')->toString(),
             ));
         }
 
-        if ($manageUserPermissionsRequest->action() === 'set_override') {
+        if ($manageUserPermissionsRequest->action() === UserPermissionAction::SetOverride) {
             $this->commandBus->dispatch(new SetPermissionOverrideCommand(
                 userId: $userId,
                 permission: $manageUserPermissionsRequest->string('permission')->toString(),

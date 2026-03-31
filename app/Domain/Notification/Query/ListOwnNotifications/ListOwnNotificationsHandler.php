@@ -23,7 +23,7 @@ final readonly class ListOwnNotificationsHandler implements QueryHandler
     /** @return PaginatedResult<Notification> */
     public function handle(Query $query): PaginatedResult
     {
-        $pagination = $query->pagination() ?? new Pagination(1, 15);
+        $pagination = $query->pagination() ?? new Pagination(1, Pagination::DEFAULT_PER_PAGE);
         $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting('created_at', SortDirection::Desc)];
 
         return $this->notificationRepository->findByRecipient(

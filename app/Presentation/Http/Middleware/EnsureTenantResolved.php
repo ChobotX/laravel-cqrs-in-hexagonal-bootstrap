@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Middleware;
 
+use App\Contract\Http\HttpStatus;
 use App\Contract\Tenancy\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
@@ -21,7 +22,7 @@ final readonly class EnsureTenantResolved
     public function handle(Request $request, Closure $next): Response
     {
         if (! $this->tenantContext->isResolved()) {
-            abort(404);
+            abort(HttpStatus::NOT_FOUND);
         }
 
         return $next($request);

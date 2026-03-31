@@ -13,6 +13,8 @@ use App\Contract\Query\Query;
 #[RequiresPermission('labels.management.read')]
 final readonly class SearchLabelsQuery implements Query
 {
+    public const int DEFAULT_LIMIT = 50;
+
     /**
      * @param  list<string>  $excludeIds
      */
@@ -20,6 +22,6 @@ final readonly class SearchLabelsQuery implements Query
         public string $namespace,
         public string $term,
         public array $excludeIds = [],
-        public int $limit = 50,
+        public int $limit = self::DEFAULT_LIMIT,
     ) {}
 }

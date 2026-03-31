@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Team\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -24,6 +25,6 @@ final class TeamCycleDetectedException extends RuntimeException implements Domai
 
     public function statusCode(): int
     {
-        return 422;
+        return HttpStatus::UNPROCESSABLE_ENTITY;
     }
 }

@@ -7,6 +7,7 @@ namespace App\Infrastructure\Notification\EventHandler;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\Notification\Event\NotificationCreated;
+use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationRepository;
 use App\Infrastructure\Notification\Broadcast\NewNotificationBroadcast;
 use App\Infrastructure\Notification\Broadcast\UnreadCountUpdatedBroadcast;
@@ -22,7 +23,7 @@ final readonly class BroadcastNotificationCreated implements DomainEventHandler
 
     public function handle(DomainEvent $domainEvent): void
     {
-        if ($domainEvent->channel !== 'in_app') {
+        if ($domainEvent->channel !== NotificationChannel::InApp->value) {
             return;
         }
 

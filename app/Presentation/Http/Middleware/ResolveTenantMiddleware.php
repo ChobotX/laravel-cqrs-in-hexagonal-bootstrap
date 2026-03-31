@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Middleware;
 
+use App\Contract\Http\HttpStatus;
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
 use Closure;
@@ -14,6 +15,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final readonly class ResolveTenantMiddleware
 {
+    private const string WWW_SUBDOMAIN = 'www';
+
     public function __construct(
         private TenantBootstrapper $tenantBootstrapper,
         private TenantContext $tenantContext,
@@ -37,14 +40,14 @@ final readonly class ResolveTenantMiddleware
 
         $subdomain = substr($host, 0, -strlen($suffix));
 
-        if ($subdomain === '' || $subdomain === 'www') {
+        if ($subdomain === '' || $subdomain === self::WWW_SUBDOMAIN) {
             return $next($request);
         }
 
         try {
             $this->tenantBootstrapper->bootstrapByDomain($subdomain);
         } catch (NotFoundHttpException) {
-            abort(404);
+            abort(HttpStatus::NOT_FOUND);
         }
 
         Context::add('tenant_id', $this->tenantContext->currentTenantId());

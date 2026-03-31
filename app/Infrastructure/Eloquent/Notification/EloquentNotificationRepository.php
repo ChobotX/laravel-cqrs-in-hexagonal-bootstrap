@@ -7,6 +7,7 @@ namespace App\Infrastructure\Eloquent\Notification;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Domain\Notification\Notification;
+use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationId;
 use App\Domain\Notification\NotificationRepository;
 use App\Infrastructure\Eloquent\PaginatesQuery;
@@ -108,7 +109,7 @@ final readonly class EloquentNotificationRepository implements NotificationRepos
     private function baseQuery(string $recipientId, ?bool $isRead): Builder
     {
         $query = NotificationModel::where('recipient_id', $recipientId)
-            ->where('channel', 'in_app');
+            ->where('channel', NotificationChannel::InApp->value);
 
         if ($isRead !== null) {
             $query->where('is_read', $isRead);

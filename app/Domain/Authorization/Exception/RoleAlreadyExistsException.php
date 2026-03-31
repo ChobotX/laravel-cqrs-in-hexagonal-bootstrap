@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -22,6 +23,6 @@ final class RoleAlreadyExistsException extends RuntimeException implements Domai
 
     public function statusCode(): int
     {
-        return 409;
+        return HttpStatus::CONFLICT;
     }
 }

@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
+use App\Contract\Http\HttpStatus;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Presentation\Http\Request\Authorization\AssignRoleRequest;
 use Illuminate\Http\Response;
@@ -24,6 +25,6 @@ final readonly class AssignUserRoleController
             roleId: $assignRoleRequest->string('role_id')->toString(),
         ));
 
-        return new Response(status: 201);
+        return new Response(status: HttpStatus::CREATED);
     }
 }

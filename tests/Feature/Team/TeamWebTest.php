@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use App\Presentation\Http\Request\Web\Team\TeamMemberAction;
 use Illuminate\Support\Facades\Hash;
 
 function teamWebUser(): UserModel
@@ -162,7 +163,7 @@ it('adds a team member via web', function (): void {
 
     $this->actingAs($userModel)
         ->post('/teams/550e8400-e29b-41d4-a716-446655440f60/members', [
-            '_action' => 'add_member',
+            '_action' => TeamMemberAction::AddMember->value,
             'user_id' => $member->id,
         ])->assertRedirect(route('teams.show', '550e8400-e29b-41d4-a716-446655440f60'));
 
@@ -196,7 +197,7 @@ it('removes a team member via web', function (): void {
 
     $this->actingAs($userModel)
         ->post('/teams/550e8400-e29b-41d4-a716-446655440f70/members', [
-            '_action' => 'remove_member',
+            '_action' => TeamMemberAction::RemoveMember->value,
             'user_id' => $member->id,
         ])->assertRedirect(route('teams.show', '550e8400-e29b-41d4-a716-446655440f70'));
 

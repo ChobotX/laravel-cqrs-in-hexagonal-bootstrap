@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controller\Web\Label;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
+use App\Contract\Http\HttpStatus;
 use App\Contract\IdGenerator;
 use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
 use App\Domain\Label\Exception\LabelAlreadyExistsException;
@@ -49,6 +50,6 @@ final readonly class CreateLabelController
             }
         }
 
-        return new JsonResponse(['data' => ['id' => $id, 'name' => $name]], 201);
+        return new JsonResponse(['data' => ['id' => $id, 'name' => $name]], HttpStatus::CREATED);
     }
 }

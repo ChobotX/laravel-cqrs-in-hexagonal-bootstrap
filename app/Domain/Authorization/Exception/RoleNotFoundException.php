@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -22,6 +23,6 @@ final class RoleNotFoundException extends RuntimeException implements DomainExce
 
     public function statusCode(): int
     {
-        return 404;
+        return HttpStatus::NOT_FOUND;
     }
 }

@@ -9,6 +9,7 @@ use App\Application\Bus\CommandBus;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Presentation\Http\Request\Web\Team\ManageTeamMembersRequest;
+use App\Presentation\Http\Request\Web\Team\TeamMemberAction;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('teams.members.update')]
@@ -20,14 +21,14 @@ final readonly class ManageTeamMembersController
 
     public function __invoke(ManageTeamMembersRequest $manageTeamMembersRequest, string $teamId): RedirectResponse
     {
-        if ($manageTeamMembersRequest->action() === 'add_member') {
+        if ($manageTeamMembersRequest->action() === TeamMemberAction::AddMember) {
             $this->commandBus->dispatch(new AddTeamMemberCommand(
                 userId: $manageTeamMembersRequest->userId(),
                 teamId: $teamId,
             ));
         }
 
-        if ($manageTeamMembersRequest->action() === 'remove_member') {
+        if ($manageTeamMembersRequest->action() === TeamMemberAction::RemoveMember) {
             $this->commandBus->dispatch(new RemoveTeamMemberCommand(
                 userId: $manageTeamMembersRequest->userId(),
                 teamId: $teamId,

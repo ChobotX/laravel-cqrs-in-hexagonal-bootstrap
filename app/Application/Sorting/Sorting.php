@@ -6,6 +6,8 @@ namespace App\Application\Sorting;
 
 final readonly class Sorting
 {
+    public const string PERMISSION_SCORE = 'permission_score';
+
     public string $column;
 
     public function __construct(

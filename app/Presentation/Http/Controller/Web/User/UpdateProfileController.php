@@ -15,6 +15,7 @@ use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
+use App\Domain\Notification\NotificationChannel;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
@@ -134,10 +135,10 @@ final readonly class UpdateProfileController
         $preferences = [];
 
         foreach ($submitted as $level => $channels) {
-            $channelList = ['in_app'];
+            $channelList = [NotificationChannel::InApp->value];
 
-            if (isset($channels['email']) && $channels['email'] === '1') {
-                $channelList[] = 'email';
+            if (isset($channels['email']) && (bool) $channels['email']) {
+                $channelList[] = NotificationChannel::Email->value;
             }
 
             $preferences[$level] = $channelList;

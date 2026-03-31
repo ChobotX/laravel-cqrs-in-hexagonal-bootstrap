@@ -33,6 +33,8 @@ Enforced by Pint (`pint.json`) and Rector (`rector.php`). Key rules:
 - Trailing commas in multiline
 - Blank line before `return` and `throw`
 - Void return types explicit
+- No magic strings — string literals in `===`/`!==` and `match()` arms must use enums or class constants (empty string `''` excluded)
+- No magic numbers — numeric literals (except `0`, `1`, `-1`) must use class constants; includes const definitions and enum case values as exceptions
 
 ## Blade style
 

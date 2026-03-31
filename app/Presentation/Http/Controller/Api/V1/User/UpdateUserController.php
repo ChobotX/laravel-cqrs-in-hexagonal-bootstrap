@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\User;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
+use App\Contract\Http\HttpStatus;
 use App\Presentation\Http\Request\User\UpdateUserRequest;
 use Illuminate\Http\Response;
 
@@ -20,6 +21,6 @@ final readonly class UpdateUserController
     {
         $this->commandBus->dispatch($updateUserRequest->toCommand());
 
-        return new Response(status: 204);
+        return new Response(status: HttpStatus::NO_CONTENT);
     }
 }

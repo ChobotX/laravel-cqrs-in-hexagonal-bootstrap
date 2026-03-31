@@ -24,7 +24,7 @@ final readonly class ListRolesHandler implements QueryHandler
     public function handle(Query $query): PaginatedResult
     {
         $pagination = $query->pagination();
-        $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting('permission_score', SortDirection::Desc)];
+        $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting(Sorting::PERMISSION_SCORE, SortDirection::Desc)];
 
         if ($pagination !== null) {
             return $this->roleRepository->findAllPaginated($pagination, $sortings);

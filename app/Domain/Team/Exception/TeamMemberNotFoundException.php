@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Team\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -24,6 +25,6 @@ final class TeamMemberNotFoundException extends RuntimeException implements Doma
 
     public function statusCode(): int
     {
-        return 404;
+        return HttpStatus::NOT_FOUND;
     }
 }

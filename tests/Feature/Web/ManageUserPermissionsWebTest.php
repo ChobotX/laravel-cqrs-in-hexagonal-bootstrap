@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use App\Presentation\Http\Request\Web\Authorization\UserPermissionAction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -34,7 +35,7 @@ it('sets a permission override via web form', function (): void {
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [
-            '_action' => 'set_override',
+            '_action' => UserPermissionAction::SetOverride->value,
             'permission' => 'teams.members.read',
             'type' => 'grant',
             'scope' => 'team',
@@ -55,7 +56,7 @@ it('sets a deny override via web form', function (): void {
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [
-            '_action' => 'set_override',
+            '_action' => UserPermissionAction::SetOverride->value,
             'permission' => 'teams.management.create',
             'type' => 'deny',
             'scope' => 'all',
@@ -91,7 +92,7 @@ it('assigns a role via web permissions form', function (): void {
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [
-            '_action' => 'assign_role',
+            '_action' => UserPermissionAction::AssignRole->value,
             'role_id' => $role->id,
         ])->assertRedirect();
 
@@ -115,7 +116,7 @@ it('revokes a role via web permissions form', function (): void {
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [
-            '_action' => 'revoke_role',
+            '_action' => UserPermissionAction::RevokeRole->value,
             'role_id' => $role->id,
         ])->assertRedirect();
 
@@ -130,7 +131,7 @@ it('removes a permission override via web form', function (): void {
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [
-            '_action' => 'set_override',
+            '_action' => UserPermissionAction::SetOverride->value,
             'permission' => 'teams.members.read',
             'type' => 'grant',
             'scope' => 'team',
@@ -145,7 +146,7 @@ it('removes a permission override via web form', function (): void {
 
     $this->actingAs($admin)
         ->post('/users/'.$target->id.'/permissions', [
-            '_action' => 'remove_override',
+            '_action' => UserPermissionAction::RemoveOverride->value,
             'permission' => 'teams.members.read',
         ])->assertRedirect();
 

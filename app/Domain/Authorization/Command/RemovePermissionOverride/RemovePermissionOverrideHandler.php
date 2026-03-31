@@ -26,13 +26,14 @@ final readonly class RemovePermissionOverrideHandler implements CommandHandler
     public function handle(Command $command): void
     {
         $parts = explode('.', $command->permission);
-        $module = new Module($parts[0]);
-        $feature = isset($parts[1]) ? new Feature($parts[1]) : null;
-        $action = isset($parts[2]) ? Action::from($parts[2]) : null;
 
         $this->userPermissionRepository->removeOverride(
             $command->userId,
-            new PermissionKey($module, $feature, $action),
+            new PermissionKey(
+                new Module($parts[PermissionKey::MODULE_INDEX]),
+                isset($parts[PermissionKey::FEATURE_INDEX]) ? new Feature($parts[PermissionKey::FEATURE_INDEX]) : null,
+                isset($parts[PermissionKey::ACTION_INDEX]) ? Action::from($parts[PermissionKey::ACTION_INDEX]) : null,
+            ),
         );
 
         $this->eventCollector->collect(new PermissionOverrideRemoved(

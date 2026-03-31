@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Notification;
 
+use App\Application\Pagination\Pagination;
 use App\Presentation\Http\Request\FormRequest;
 
 final class ListNotificationsRequest extends FormRequest
@@ -30,6 +31,6 @@ final class ListNotificationsRequest extends FormRequest
 
     public function perPage(): int
     {
-        return $this->integer('per_page', 15);
+        return $this->integer('per_page', Pagination::DEFAULT_PER_PAGE);
     }
 }

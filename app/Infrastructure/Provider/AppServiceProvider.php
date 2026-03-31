@@ -18,6 +18,12 @@ use Override;
 
 final class AppServiceProvider extends ServiceProvider
 {
+    private const int LOGIN_RATE_LIMIT = 5;
+
+    private const int API_RATE_LIMIT = 60;
+
+    private const int WEB_RATE_LIMIT = 120;
+
     #[Override]
     public function register(): void
     {
@@ -33,10 +39,10 @@ final class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
-        RateLimiter::for('login', static fn (Request $request): Limit => Limit::perMinute(5)->by(Str::lower((string) $request->string('email')).'|'.$request->ip()));
+        RateLimiter::for('login', static fn (Request $request): Limit => Limit::perMinute(self::LOGIN_RATE_LIMIT)->by(Str::lower((string) $request->string('email')).'|'.$request->ip()));
 
-        RateLimiter::for('api', static fn (Request $request): Limit => Limit::perMinute(60)->by($request->user()?->getAuthIdentifier() ?? $request->ip()));
+        RateLimiter::for('api', static fn (Request $request): Limit => Limit::perMinute(self::API_RATE_LIMIT)->by($request->user()?->getAuthIdentifier() ?? $request->ip()));
 
-        RateLimiter::for('web', static fn (Request $request): Limit => Limit::perMinute(120)->by($request->user()?->getAuthIdentifier() ?? $request->ip()));
+        RateLimiter::for('web', static fn (Request $request): Limit => Limit::perMinute(self::WEB_RATE_LIMIT)->by($request->user()?->getAuthIdentifier() ?? $request->ip()));
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Notification\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -22,6 +23,6 @@ final class InvalidNotificationTypeException extends RuntimeException implements
 
     public function statusCode(): int
     {
-        return 422;
+        return HttpStatus::UNPROCESSABLE_ENTITY;
     }
 }

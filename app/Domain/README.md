@@ -144,7 +144,7 @@ Repository interfaces expose separate paginated methods (`allPaginated()`, `find
 
 ## Sorted Queries
 
-List queries that support sorting implement `SortableQuery` alongside `Query`. When `sorting()` is `null` (no sorting requested), the handler applies a domain-appropriate default (e.g., users by name, roles by permission score). The `Sorting` value object carries a column name (a domain concept like `'name'` or `'permission_score'`) and a `SortDirection`. Infrastructure repositories translate these to SQL ORDER BY clauses, computing values for virtual columns like `permission_score` via SQL subqueries.
+List queries that support sorting implement `SortableQuery` alongside `Query`. When `sorting()` is `null` (no sorting requested), the handler applies a domain-appropriate default (e.g., users by name, roles by permission score). The `Sorting` value object carries a column name (a domain concept like `'name'` or `Sorting::PERMISSION_SCORE`) and a `SortDirection`. Infrastructure repositories translate these to SQL ORDER BY clauses, computing values for virtual columns like `permission_score` via SQL subqueries.
 
 ## Cross-domain communication
 

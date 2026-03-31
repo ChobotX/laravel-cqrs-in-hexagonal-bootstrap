@@ -14,6 +14,7 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 - `Logging/` — `Logger` interface for framework-agnostic structured logging
 - `Notification/` — `NotificationChannelSender`, `NotificationChannelSenderRegistry`, `RecipientResolver` interfaces for the notification system
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
+- `Http/` — `HttpStatus` interface with HTTP status code constants (`BAD_REQUEST`, `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `CREATED`, `NO_CONTENT`)
 - `Translation/` — `Translator` interface for framework-agnostic translations
 - `Team/` — `TeamMembershipChecker`
 - `Tenancy/` — `TenantContext` (current tenant ID/slug), `TenantBootstrapper` (resolve + switch schema)

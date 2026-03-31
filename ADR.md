@@ -121,3 +121,9 @@ All logging must go through `App\Contract\Logging\Logger` (backend) or the `logg
 All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.
 **Why:** Centralized config prevents accidental non-transactional traits that break parallel test execution and database isolation.
 **Enforced by:** PHPStan rule `NoDatabaseTraitsInTestsRule`. See [tests/README.md](tests/README.md).
+
+### No magic literals
+
+String literals in `===`/`!==` comparisons and `match()` arm conditions must use enums or class constants (empty string `''` excluded). Numeric literals other than `0`, `1`, `-1` must use class constants everywhere in `app/`. Constant definitions and enum case values are excluded.
+**Why:** Magic literals bypass IDE navigation, refactoring safety, and exhaustiveness checking. Named constants make intent explicit and prevent typo-driven bugs.
+**Enforced by:** PHPStan rules `NoMagicStringsRule` and `NoMagicNumbersRule`. See [tests/README.md](tests/README.md).

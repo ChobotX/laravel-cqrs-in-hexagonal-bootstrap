@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
+use App\Contract\Http\HttpStatus;
 use App\Domain\Authorization\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
 use Illuminate\Http\Response;
 
@@ -23,6 +24,6 @@ final readonly class RemoveUserPermissionOverrideController
             permission: $permission,
         ));
 
-        return new Response(status: 204);
+        return new Response(status: HttpStatus::NO_CONTENT);
     }
 }

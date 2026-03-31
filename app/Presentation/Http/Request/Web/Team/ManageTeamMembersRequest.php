@@ -6,20 +6,23 @@ namespace App\Presentation\Http\Request\Web\Team;
 
 use App\Presentation\Http\Request\FormRequest;
 
+use function array_column;
+use function implode;
+
 final class ManageTeamMembersRequest extends FormRequest
 {
     /** @return array<string, array<string>> */
     public function rules(): array
     {
         return [
-            '_action' => ['required', 'in:add_member,remove_member'],
+            '_action' => ['required', 'in:'.implode(',', array_column(TeamMemberAction::cases(), 'value'))],
             'user_id' => ['required', 'uuid'],
         ];
     }
 
-    public function action(): string
+    public function action(): TeamMemberAction
     {
-        return $this->string('_action')->toString();
+        return TeamMemberAction::from($this->string('_action')->toString());
     }
 
     public function userId(): string

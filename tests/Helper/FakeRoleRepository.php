@@ -6,6 +6,7 @@ namespace Tests\Helper;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Application\Sorting\Sorting;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RolePermission;
@@ -104,7 +105,7 @@ final class FakeRoleRepository implements RoleRepository
     {
         return match ($column) {
             'name' => fn (Role $role): string => $role->name->value,
-            'permission_score' => fn (Role $role): int => $role->isSystem
+            Sorting::PERMISSION_SCORE => fn (Role $role): int => $role->isSystem
                 ? 999999
                 : array_sum(array_map(fn (RolePermission $rolePermission): int => $rolePermission->scope->order(), $role->permissions)),
             default => fn (Role $role): int => 0,

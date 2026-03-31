@@ -18,6 +18,10 @@ use App\Domain\Team\TeamRepository;
 /** @implements QueryHandler<ListTeamsQuery, PaginatedResult<Team>> */
 final readonly class ListTeamsHandler implements QueryHandler
 {
+    private const string SCOPE_ALL = 'all';
+
+    private const string SCOPE_TEAM = 'team';
+
     public function __construct(
         private TeamRepository $teamRepository,
         private AuthorizationChecker $authorizationChecker,
@@ -33,8 +37,8 @@ final readonly class ListTeamsHandler implements QueryHandler
 
         if ($pagination !== null) {
             return match ($scope) {
-                'all' => $this->teamRepository->findAllPaginated($pagination, null, $sortings),
-                'team' => $this->teamRepository->findAllPaginated(
+                self::SCOPE_ALL => $this->teamRepository->findAllPaginated($pagination, null, $sortings),
+                self::SCOPE_TEAM => $this->teamRepository->findAllPaginated(
                     $pagination,
                     $this->teamMembershipChecker->memberTeamIds($query->userId),
                     $sortings,
@@ -44,8 +48,8 @@ final readonly class ListTeamsHandler implements QueryHandler
         }
 
         $items = match ($scope) {
-            'all' => $this->teamRepository->findAll(null, $sortings),
-            'team' => $this->teamRepository->findAll(
+            self::SCOPE_ALL => $this->teamRepository->findAll(null, $sortings),
+            self::SCOPE_TEAM => $this->teamRepository->findAll(
                 $this->teamMembershipChecker->memberTeamIds($query->userId),
                 $sortings,
             ),

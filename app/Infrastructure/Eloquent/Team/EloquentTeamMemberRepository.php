@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Team;
 
+use App\Application\Sorting\Sorting;
 use App\Domain\Team\TeamMember;
 use App\Domain\Team\TeamMemberRepository;
 use DateTimeImmutable;
@@ -11,6 +12,18 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentTeamMemberRepository implements TeamMemberRepository
 {
+    private const int SYSTEM_ROLE_SCORE = 999999;
+
+    private const int SCOPE_WEIGHT_ALL = 3;
+
+    private const int SCOPE_WEIGHT_TEAM = 2;
+
+    private const int SCOPE_WEIGHT_OWN = 1;
+
+    private const int GRANT_WEIGHT = 1;
+
+    private const int DENY_WEIGHT = -1;
+
     public function __construct(
         private TeamMemberMapper $teamMemberMapper,
     ) {}
@@ -93,17 +106,24 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
             ->where('team_id', $teamId);
 
         foreach ($sortings as $sorting) {
-            if ($sorting->column === 'permission_score') {
-                $builder->selectRaw(<<<'SQL'
+            if ($sorting->column === Sorting::PERMISSION_SCORE) {
+                $sys = self::SYSTEM_ROLE_SCORE;
+                $all = self::SCOPE_WEIGHT_ALL;
+                $team = self::SCOPE_WEIGHT_TEAM;
+                $own = self::SCOPE_WEIGHT_OWN;
+                $grant = self::GRANT_WEIGHT;
+                $deny = self::DENY_WEIGHT;
+
+                $builder->selectRaw(<<<SQL
                     team_members.*,
                     CASE WHEN EXISTS(
                         SELECT 1 FROM user_roles ur
                         JOIN roles r ON ur.role_id = r.id
                         WHERE ur.user_id = team_members.user_id AND r.is_system = true AND r.deleted_at IS NULL
-                    ) THEN 999999
+                    ) THEN {$sys}
                     ELSE (
                         COALESCE((
-                            SELECT SUM(CASE rp.scope WHEN 'all' THEN 3 WHEN 'team' THEN 2 WHEN 'own' THEN 1 ELSE 0 END)
+                            SELECT SUM(CASE rp.scope WHEN 'all' THEN {$all} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0 END)
                             FROM user_roles ur
                             JOIN roles r ON ur.role_id = r.id AND r.deleted_at IS NULL
                             JOIN role_permissions rp ON r.id = rp.role_id
@@ -112,15 +132,15 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
                         +
                         COALESCE((
                             SELECT SUM(
-                                CASE upo.type WHEN 'grant' THEN 1 WHEN 'deny' THEN -1 ELSE 0 END
-                                * CASE upo.scope WHEN 'all' THEN 3 WHEN 'team' THEN 2 WHEN 'own' THEN 1 ELSE 0 END
+                                CASE upo.type WHEN 'grant' THEN {$grant} WHEN 'deny' THEN {$deny} ELSE 0 END
+                                * CASE upo.scope WHEN 'all' THEN {$all} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0 END
                             )
                             FROM user_permission_overrides upo
                             WHERE upo.user_id = team_members.user_id
                         ), 0)
                     ) END AS permission_score
                     SQL);
-                $builder->orderBy('permission_score', $sorting->direction->value);
+                $builder->orderBy(Sorting::PERMISSION_SCORE, $sorting->direction->value);
             }
         }
 

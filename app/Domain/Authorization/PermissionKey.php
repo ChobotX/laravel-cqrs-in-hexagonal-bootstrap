@@ -9,6 +9,12 @@ use Stringable;
 
 final readonly class PermissionKey implements Stringable
 {
+    public const int MODULE_INDEX = 0;
+
+    public const int FEATURE_INDEX = 1;
+
+    public const int ACTION_INDEX = 2;
+
     public function __construct(
         public Module $module,
         public ?Feature $feature = null,

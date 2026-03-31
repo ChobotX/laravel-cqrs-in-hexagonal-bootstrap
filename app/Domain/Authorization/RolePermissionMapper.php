@@ -10,12 +10,13 @@ final readonly class RolePermissionMapper
     public function map(array $data): RolePermission
     {
         $parts = explode('.', $data['permission']);
-        $module = new Module($parts[0]);
-        $feature = isset($parts[1]) ? new Feature($parts[1]) : null;
-        $action = isset($parts[2]) ? Action::from($parts[2]) : null;
 
         return new RolePermission(
-            new PermissionKey($module, $feature, $action),
+            new PermissionKey(
+                new Module($parts[PermissionKey::MODULE_INDEX]),
+                isset($parts[PermissionKey::FEATURE_INDEX]) ? new Feature($parts[PermissionKey::FEATURE_INDEX]) : null,
+                isset($parts[PermissionKey::ACTION_INDEX]) ? Action::from($parts[PermissionKey::ACTION_INDEX]) : null,
+            ),
             AccessScope::from($data['scope']),
         );
     }

@@ -6,6 +6,8 @@ namespace App\Domain\Authorization;
 
 final readonly class PermissionResolver
 {
+    public const string SUPER_ADMIN_SOURCE = 'system:super-admin';
+
     private ModuleConfigExpander $moduleConfigExpander;
 
     public function __construct()
@@ -54,7 +56,7 @@ final readonly class PermissionResolver
                 ),
                 granted: true,
                 scope: AccessScope::All,
-                source: 'system:super-admin',
+                source: self::SUPER_ADMIN_SOURCE,
             );
         }
 

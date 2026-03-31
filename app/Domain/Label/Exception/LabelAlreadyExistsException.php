@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Label\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -24,6 +25,6 @@ final class LabelAlreadyExistsException extends RuntimeException implements Doma
 
     public function statusCode(): int
     {
-        return 409;
+        return HttpStatus::CONFLICT;
     }
 }

@@ -16,13 +16,15 @@ use App\Domain\User\User;
 #[RequiresPermission('users.list.read')]
 final readonly class SearchUsersQuery implements Query, ScopeAwareQuery
 {
+    public const int DEFAULT_LIMIT = 10;
+
     /**
      * @param  list<string>  $excludeUserIds
      */
     public function __construct(
         public string $term,
         public array $excludeUserIds,
-        public int $limit = 10,
+        public int $limit = self::DEFAULT_LIMIT,
         private ?AccessContext $accessContext = null,
     ) {}
 

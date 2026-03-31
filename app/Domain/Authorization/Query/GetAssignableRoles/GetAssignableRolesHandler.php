@@ -33,7 +33,7 @@ final readonly class GetAssignableRolesHandler implements QueryHandler
         $overrides = $this->userPermissionRepository->userOverrides($query->assignerUserId);
         $assignerPermissions = $this->permissionResolver->resolve($roles, $overrides, $this->availableModules);
 
-        $isSuperAdmin = array_any($assignerPermissions, fn ($p): bool => $p->source === 'system:super-admin');
+        $isSuperAdmin = array_any($assignerPermissions, fn ($p): bool => $p->source === PermissionResolver::SUPER_ADMIN_SOURCE);
 
         $allRoles = $this->roleRepository->findAll();
 

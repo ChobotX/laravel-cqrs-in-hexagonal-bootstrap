@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -26,6 +27,6 @@ final class PermissionDeniedException extends RuntimeException implements Domain
 
     public function statusCode(): int
     {
-        return 403;
+        return HttpStatus::FORBIDDEN;
     }
 }

@@ -10,6 +10,12 @@ enum AccessScope: string
     case Team = 'team';
     case Own = 'own';
 
+    private const int ORDER_ALL = 3;
+
+    private const int ORDER_TEAM = 2;
+
+    private const int ORDER_OWN = 1;
+
     public function isMorePermissiveThan(self $other): bool
     {
         return $this->order() > $other->order();
@@ -18,9 +24,9 @@ enum AccessScope: string
     public function order(): int
     {
         return match ($this) {
-            self::All => 3,
-            self::Team => 2,
-            self::Own => 1,
+            self::All => self::ORDER_ALL,
+            self::Team => self::ORDER_TEAM,
+            self::Own => self::ORDER_OWN,
         };
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Label\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -30,6 +31,6 @@ final class LabelNamespaceMismatchException extends RuntimeException implements 
 
     public function statusCode(): int
     {
-        return 400;
+        return HttpStatus::BAD_REQUEST;
     }
 }

@@ -20,6 +20,14 @@ final readonly class EloquentRoleRepository implements RoleRepository
     use PaginatesQuery;
     use SortsQuery;
 
+    private const int SYSTEM_ROLE_SCORE = 999999;
+
+    private const int SCOPE_WEIGHT_ALL = 3;
+
+    private const int SCOPE_WEIGHT_TEAM = 2;
+
+    private const int SCOPE_WEIGHT_OWN = 1;
+
     public function __construct(
         private RoleMapper $roleMapper,
     ) {}
@@ -176,18 +184,23 @@ final readonly class EloquentRoleRepository implements RoleRepository
         $textSortings = [];
 
         foreach ($sortings as $sorting) {
-            if ($sorting->column === 'permission_score') {
-                $builder->selectRaw(<<<'SQL'
+            if ($sorting->column === Sorting::PERMISSION_SCORE) {
+                $sys = self::SYSTEM_ROLE_SCORE;
+                $all = self::SCOPE_WEIGHT_ALL;
+                $team = self::SCOPE_WEIGHT_TEAM;
+                $own = self::SCOPE_WEIGHT_OWN;
+
+                $builder->selectRaw(<<<SQL
                     roles.*,
-                    CASE WHEN roles.is_system THEN 999999
+                    CASE WHEN roles.is_system THEN {$sys}
                     ELSE COALESCE((
                         SELECT SUM(CASE rp.scope
-                            WHEN 'all' THEN 3 WHEN 'team' THEN 2 WHEN 'own' THEN 1 ELSE 0
+                            WHEN 'all' THEN {$all} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0
                         END)
                         FROM role_permissions rp WHERE rp.role_id = roles.id
                     ), 0) END AS permission_score
                     SQL);
-                $builder->orderBy('permission_score', $sorting->direction->value);
+                $builder->orderBy(Sorting::PERMISSION_SCORE, $sorting->direction->value);
             } else {
                 $textSortings[] = $sorting;
             }

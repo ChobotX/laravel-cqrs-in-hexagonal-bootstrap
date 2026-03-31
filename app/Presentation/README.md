@@ -417,4 +417,14 @@ The notification system uses internal API routes (`routes/internal_api.php`) con
 
 **State management** (`notification-store.ts`): Reactive store (same pattern as `toast-queue.ts`) shared between bell and echo modules.
 
+## Form action enums
+
+Multi-action controllers that dispatch different commands based on a form `_action` field must use a backed string enum for the action discriminator. Enums live alongside their form request:
+
+- `TeamMemberAction` (`App\Presentation\Http\Request\Web\Team`) — `add_member`, `remove_member`
+- `UserPermissionAction` (`App\Presentation\Http\Request\Web\Authorization`) — `assign_role`, `revoke_role`, `set_override`, `remove_override`
+- `NotificationFilter` (`App\Presentation\Http\Request\Web\Notification`) — `unread`, `read`
+
+Form requests return the typed enum from `action()`. Controllers compare against enum cases directly.
+
 The Presentation layer may depend on Application, Domain, and Contract. It must not depend on Infrastructure.

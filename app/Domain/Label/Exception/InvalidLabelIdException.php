@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Label\Exception;
 
 use App\Contract\Exception\DomainException;
+use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
@@ -22,6 +23,6 @@ final class InvalidLabelIdException extends RuntimeException implements DomainEx
 
     public function statusCode(): int
     {
-        return 422;
+        return HttpStatus::UNPROCESSABLE_ENTITY;
     }
 }
