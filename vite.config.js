@@ -61,9 +61,11 @@ export default defineConfig({
                 'resources/js/chip-selector/chip-selector-app.ts',
                 'resources/js/autocomplete/autocomplete-app.ts',
                 'resources/js/team-tree/team-tree-app.ts',
-                'resources/js/team-tree/TeamTree.vue',
-                'resources/js/tooltip/Tooltip.vue',
+                'resources/js/**/*.vue',
                 'resources/js/team-tree-toggle.ts',
+                'resources/js/notification/notification-bell-app.ts',
+                'resources/js/notification/notification-list-app.ts',
+                'resources/js/notification/notification-preferences-app.ts',
             ],
             thresholds: {
                 autoUpdate: true,

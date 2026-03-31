@@ -12,6 +12,7 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces
 - `Logging/` — `Logger` interface for framework-agnostic structured logging
+- `Notification/` — `NotificationChannelSender`, `NotificationChannelSenderRegistry`, `RecipientResolver` interfaces for the notification system
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
 - `Translation/` — `Translator` interface for framework-agnostic translations
 - `Team/` — `TeamMembershipChecker`

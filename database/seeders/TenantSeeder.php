@@ -59,6 +59,7 @@ final class TenantSeeder extends Seeder
 
         $this->seedCrossTeamMembers();
         $this->seedLabels();
+        $this->call(NotificationSeeder::class);
     }
 
     private function seedTeams(): void

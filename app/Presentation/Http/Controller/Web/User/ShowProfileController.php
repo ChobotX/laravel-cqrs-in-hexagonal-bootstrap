@@ -14,6 +14,9 @@ use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePer
 use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\Notification\ChannelPreference;
+use App\Domain\Notification\NotificationChannel;
+use App\Domain\Notification\Query\GetNotificationPreferences\GetNotificationPreferencesQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\User\Query\GetOwnProfile\GetOwnProfileQuery;
 use Illuminate\View\View;
@@ -55,6 +58,16 @@ final readonly class ShowProfileController
 
         $canManageOverrides = $this->authorizationChecker->can($userId, 'users.roles.update');
 
+        $notificationPreferences = $this->queryBus->dispatch(new GetNotificationPreferencesQuery($userId));
+        $notificationPreferencesData = array_map(
+            static fn (ChannelPreference $channelPreference): array => [
+                'level' => $channelPreference->level->value,
+                'in_app' => true,
+                'email' => in_array(NotificationChannel::Email, $channelPreference->channels, true),
+            ],
+            $notificationPreferences->preferences,
+        );
+
         return view('profile.edit', [
             'user' => $user,
             'canEditEmail' => $canEditEmail,
@@ -67,6 +80,7 @@ final readonly class ShowProfileController
             'modules' => $modules,
             'userOverrides' => $userOverrides,
             'canManageOverrides' => $canManageOverrides,
+            'notificationPreferences' => $notificationPreferencesData,
         ]);
     }
 }

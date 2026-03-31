@@ -18,6 +18,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md) | Authorization module — permissions, RBAC, impersonation |
 | [app/Domain/Team/README.md](app/Domain/Team/README.md) | Team module — hierarchy, membership, scope filtering |
 | [app/Domain/Label/README.md](app/Domain/Label/README.md) | Label module — universal namespaced labels, polymorphic assignment, orphan cleanup |
+| [app/Domain/Notification/README.md](app/Domain/Notification/README.md) | Notification module — multi-channel delivery, preferences, real-time |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |

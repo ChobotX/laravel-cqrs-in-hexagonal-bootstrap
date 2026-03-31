@@ -127,6 +127,12 @@ final readonly class EloquentUserRepository implements UserRepository
         );
     }
 
+    /** @return list<string> */
+    private function textSortColumns(): array
+    {
+        return ['name', 'email'];
+    }
+
     /**
      * @param  list<string>|null  $onlyIds
      * @return Builder<UserModel>

@@ -5,6 +5,11 @@ declare(strict_types=1);
 use App\Presentation\Http\Controller\Web\Authorization\SearchRolesController;
 use App\Presentation\Http\Controller\Web\Label\CreateLabelController;
 use App\Presentation\Http\Controller\Web\Label\SearchLabelsController;
+use App\Presentation\Http\Controller\Web\Notification\CountUnreadNotificationsController;
+use App\Presentation\Http\Controller\Web\Notification\DeleteNotificationController;
+use App\Presentation\Http\Controller\Web\Notification\ListNotificationsController;
+use App\Presentation\Http\Controller\Web\Notification\MarkAllNotificationsAsReadController;
+use App\Presentation\Http\Controller\Web\Notification\MarkNotificationAsReadController;
 use App\Presentation\Http\Controller\Web\Team\GetTeamTreeController;
 use App\Presentation\Http\Controller\Web\Team\SearchTeamsController;
 use App\Presentation\Http\Controller\Web\User\SearchUsersController;
@@ -17,4 +22,10 @@ Route::middleware('auth')->prefix('internal-api')->group(function (): void {
     Route::get('/teams/tree', GetTeamTreeController::class)->name('internal-api.teams.tree');
     Route::get('/labels/search', SearchLabelsController::class)->name('internal-api.labels.search');
     Route::post('/labels', CreateLabelController::class)->name('internal-api.labels.create');
+
+    Route::get('/notifications', ListNotificationsController::class)->name('internal-api.notifications.index');
+    Route::get('/notifications/unread-count', CountUnreadNotificationsController::class)->name('internal-api.notifications.unread-count');
+    Route::post('/notifications/{notificationId}/mark-read', MarkNotificationAsReadController::class)->name('internal-api.notifications.mark-read');
+    Route::post('/notifications/mark-all-read', MarkAllNotificationsAsReadController::class)->name('internal-api.notifications.mark-all-read');
+    Route::delete('/notifications/{notificationId}', DeleteNotificationController::class)->name('internal-api.notifications.destroy');
 });

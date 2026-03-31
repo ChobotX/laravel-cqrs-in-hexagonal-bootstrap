@@ -115,6 +115,19 @@
             }
         },
         {
+            "includes": ["resources/js/**/*.test.ts"],
+            "linter": {
+                "rules": {
+                    "style": {
+                        "noMagicNumbers": "off"
+                    },
+                    "nursery": {
+                        "useExplicitType": "off"
+                    }
+                }
+            }
+        },
+        {
             "includes": ["resources/js/**/*.vue"],
             "linter": {
                 "rules": {

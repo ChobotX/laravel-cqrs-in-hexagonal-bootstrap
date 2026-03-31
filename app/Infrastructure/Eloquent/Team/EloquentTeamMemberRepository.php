@@ -6,14 +6,11 @@ namespace App\Infrastructure\Eloquent\Team;
 
 use App\Domain\Team\TeamMember;
 use App\Domain\Team\TeamMemberRepository;
-use App\Infrastructure\Eloquent\SortsQuery;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentTeamMemberRepository implements TeamMemberRepository
 {
-    use SortsQuery;
-
     public function __construct(
         private TeamMemberMapper $teamMemberMapper,
     ) {}

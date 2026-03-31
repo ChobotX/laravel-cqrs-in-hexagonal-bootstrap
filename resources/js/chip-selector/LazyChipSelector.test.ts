@@ -366,11 +366,11 @@ describe('LazyChipSelector', () => {
 
         const createCall = fetchMock.mock.calls.find((call) => call[1]?.method === 'POST');
         expect(createCall).toBeDefined();
-        expect(createCall![0]).toBe('/internal-api/labels');
-        const body = JSON.parse(createCall![1].body as string);
+        expect(createCall?.[0]).toBe('/internal-api/labels');
+        const body = JSON.parse(createCall?.[1].body as string);
         expect(body).toEqual({ namespace: 'users', name: 'newlabel' });
 
-        const createHeaders = createCall![1].headers;
+        const createHeaders = createCall?.[1].headers;
         expect(createHeaders['X-CSRF-TOKEN']).toBe('create-csrf-token');
 
         document.head.removeChild(meta);

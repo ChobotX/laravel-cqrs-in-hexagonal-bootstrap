@@ -109,6 +109,15 @@
                     </div>
                 @endif
 
+                <div class="border-t border-gray-200 pt-5">
+                    <label
+                           class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.notifications.preferences_title') }}</label>
+                    <p class="mb-2 text-xs text-gray-400">{{ __('messages.notifications.preferences_subtitle') }}</p>
+                    <div id="app-notification-preferences"
+                         data-preferences="{{ json_encode($notificationPreferences) }}">
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
                                       :label="__('messages.users.update_action')" />

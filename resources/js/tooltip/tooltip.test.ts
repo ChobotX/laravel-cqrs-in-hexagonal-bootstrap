@@ -44,7 +44,7 @@ function getTooltip(): HTMLElement | null {
 
 function isVisible(): boolean {
     const tooltip = getTooltip();
-    return tooltip !== null && tooltip.classList.contains('tooltip--visible');
+    return tooltip?.classList.contains('tooltip--visible') ?? false;
 }
 
 function mouseOver(el: Element): void {

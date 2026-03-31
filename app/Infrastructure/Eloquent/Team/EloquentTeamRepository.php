@@ -146,6 +146,12 @@ final readonly class EloquentTeamRepository implements TeamRepository
         }
     }
 
+    /** @return list<string> */
+    private function textSortColumns(): array
+    {
+        return ['name', 'slug'];
+    }
+
     /**
      * @param  list<string>|null  $onlyIds
      * @return Builder<TeamModel>

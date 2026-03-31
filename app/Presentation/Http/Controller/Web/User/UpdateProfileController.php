@@ -14,6 +14,7 @@ use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserComman
 use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
@@ -61,6 +62,7 @@ final readonly class UpdateProfileController
 
         $this->syncRoles($updateProfileRequest, $userId);
         $this->syncTeams($updateProfileRequest, $userId);
+        $this->syncNotificationPreferences($updateProfileRequest, $userId);
 
         return redirect()->route('profile')->with('success', __('messages.profile.updated'));
     }
@@ -118,5 +120,32 @@ final readonly class UpdateProfileController
         foreach ($toRemove as $teamId) {
             $this->commandBus->dispatch(new RemoveTeamMemberCommand($userId, $teamId));
         }
+    }
+
+    private function syncNotificationPreferences(UpdateProfileRequest $updateProfileRequest, string $userId): void
+    {
+        /** @var array<string, array<string, string>>|null $submitted */
+        $submitted = $updateProfileRequest->input('notification_preferences');
+
+        if ($submitted === null) {
+            return;
+        }
+
+        $preferences = [];
+
+        foreach ($submitted as $level => $channels) {
+            $channelList = ['in_app'];
+
+            if (isset($channels['email']) && $channels['email'] === '1') {
+                $channelList[] = 'email';
+            }
+
+            $preferences[$level] = $channelList;
+        }
+
+        $this->commandBus->dispatch(new UpdateNotificationPreferencesCommand(
+            userId: $userId,
+            preferences: $preferences,
+        ));
     }
 }

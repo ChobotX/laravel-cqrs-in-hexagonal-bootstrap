@@ -6,7 +6,7 @@
         $flashError = __('messages.auth.session_expired');
     }
 
-    if (! $flashError && $errors->any()) {
+    if (!$flashError && $errors->any()) {
         $flashError = $errors->first();
     }
 @endphp

@@ -27,6 +27,9 @@
                href="{{ route('profile') }}"
                title="{{ __('messages.profile.title') }}">{{ auth()->user()->email }}</a>
         </div>
+        <div id="app-notification-bell"
+             data-user-id="{{ auth()->user()->id }}">
+        </div>
         @include('components.locale-dropdown')
         <x-topbar-button skip-permission
                          :action="route('logout')"

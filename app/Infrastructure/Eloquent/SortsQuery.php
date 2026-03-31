@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 
 trait SortsQuery
 {
+    /** @return list<string> Columns where case-insensitive sorting via LOWER() applies */
+    abstract private function textSortColumns(): array;
+
     /**
      * @template TModel of Model
      *
@@ -20,7 +23,11 @@ trait SortsQuery
     private function sortBuilder(Builder $builder, array $sortings): Builder
     {
         foreach ($sortings as $sorting) {
-            $builder->orderByRaw(sprintf('LOWER(%s) %s', $sorting->column, $sorting->direction->value));
+            if (in_array($sorting->column, $this->textSortColumns(), true)) {
+                $builder->orderByRaw(sprintf('LOWER(%s) %s', $sorting->column, $sorting->direction->value));
+            } else {
+                $builder->orderBy($sorting->column, $sorting->direction->value);
+            }
         }
 
         return $builder;

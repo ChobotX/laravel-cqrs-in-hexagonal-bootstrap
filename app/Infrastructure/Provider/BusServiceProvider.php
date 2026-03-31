@@ -75,6 +75,27 @@ use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsHandler;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Label\Query\SearchLabels\SearchLabelsHandler;
 use App\Domain\Label\Query\SearchLabels\SearchLabelsQuery;
+use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationCommand;
+use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationHandler;
+use App\Domain\Notification\Command\MarkAllNotificationsAsRead\MarkAllNotificationsAsReadCommand;
+use App\Domain\Notification\Command\MarkAllNotificationsAsRead\MarkAllNotificationsAsReadHandler;
+use App\Domain\Notification\Command\MarkNotificationAsRead\MarkNotificationAsReadCommand;
+use App\Domain\Notification\Command\MarkNotificationAsRead\MarkNotificationAsReadHandler;
+use App\Domain\Notification\Command\SendNotification\SendNotificationCommand;
+use App\Domain\Notification\Command\SendNotification\SendNotificationHandler;
+use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
+use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesHandler;
+use App\Domain\Notification\Event\AllNotificationsRead;
+use App\Domain\Notification\Event\NotificationCreated;
+use App\Domain\Notification\Event\NotificationDeleted;
+use App\Domain\Notification\Event\NotificationRead;
+use App\Domain\Notification\EventHandler\CleanupNotificationsOnUserDeleted;
+use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsHandler;
+use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
+use App\Domain\Notification\Query\GetNotificationPreferences\GetNotificationPreferencesHandler;
+use App\Domain\Notification\Query\GetNotificationPreferences\GetNotificationPreferencesQuery;
+use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsHandler;
+use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsQuery;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
 use App\Domain\Team\Command\CreateTeam\CreateTeamCommand;
@@ -116,6 +137,7 @@ use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
 use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
+use App\Domain\User\Event\UserCreated;
 use App\Domain\User\Event\UserDeleted;
 use App\Domain\User\Query\CountUsers\CountUsersHandler;
 use App\Domain\User\Query\CountUsers\CountUsersQuery;
@@ -142,6 +164,9 @@ use App\Infrastructure\Bus\Middleware\AuthorizeAction;
 use App\Infrastructure\Bus\Middleware\DispatchCollectedEvents;
 use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
 use App\Infrastructure\Bus\QueuedEventBus;
+use App\Infrastructure\Notification\EventHandler\BroadcastNotificationCreated;
+use App\Infrastructure\Notification\EventHandler\BroadcastUnreadCountUpdated;
+use App\Infrastructure\Notification\EventHandler\SendWelcomeNotificationOnUserCreated;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -162,8 +187,13 @@ final class BusServiceProvider extends ServiceProvider
                 PermissionOverrideRemoved::class => [InvalidateCacheOnOverrideRemoved::class],
                 RoleUpdated::class => [InvalidateCacheOnRoleUpdated::class],
                 RoleDeleted::class => [InvalidateCacheOnRoleDeleted::class],
-                UserDeleted::class => [CleanupLabelsOnEntityDeleted::class],
+                UserCreated::class => [SendWelcomeNotificationOnUserCreated::class],
+                UserDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupNotificationsOnUserDeleted::class],
                 TeamDeleted::class => [CleanupLabelsOnEntityDeleted::class],
+                NotificationCreated::class => [BroadcastNotificationCreated::class],
+                NotificationRead::class => [BroadcastUnreadCountUpdated::class],
+                AllNotificationsRead::class => [BroadcastUnreadCountUpdated::class],
+                NotificationDeleted::class => [BroadcastUnreadCountUpdated::class],
             ],
         ));
 
@@ -195,6 +225,11 @@ final class BusServiceProvider extends ServiceProvider
                 CreateLabelCommand::class => CreateLabelHandler::class,
                 AssignLabelCommand::class => AssignLabelHandler::class,
                 RemoveLabelCommand::class => RemoveLabelHandler::class,
+                SendNotificationCommand::class => SendNotificationHandler::class,
+                MarkNotificationAsReadCommand::class => MarkNotificationAsReadHandler::class,
+                MarkAllNotificationsAsReadCommand::class => MarkAllNotificationsAsReadHandler::class,
+                DeleteNotificationCommand::class => DeleteNotificationHandler::class,
+                UpdateNotificationPreferencesCommand::class => UpdateNotificationPreferencesHandler::class,
                 CreateTenantCommand::class => CreateTenantHandler::class,
                 MigrateTenantCommand::class => MigrateTenantHandler::class,
                 MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
@@ -236,6 +271,9 @@ final class BusServiceProvider extends ServiceProvider
                 GetAssignableRolesQuery::class => GetAssignableRolesHandler::class,
                 SearchLabelsQuery::class => SearchLabelsHandler::class,
                 GetEntityLabelsQuery::class => GetEntityLabelsHandler::class,
+                ListOwnNotificationsQuery::class => ListOwnNotificationsHandler::class,
+                CountUnreadNotificationsQuery::class => CountUnreadNotificationsHandler::class,
+                GetNotificationPreferencesQuery::class => GetNotificationPreferencesHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

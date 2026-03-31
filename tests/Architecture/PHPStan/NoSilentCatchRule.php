@@ -85,6 +85,6 @@ final class NoSilentCatchRule implements Rule
 
     private function commentsContainSilent(Node $node): bool
     {
-        return array_any($node->getComments(), fn ($comment): bool => str_contains($comment->getText(), '@silent'));
+        return array_any($node->getComments(), fn (\PhpParser\Comment $comment): bool => str_contains($comment->getText(), '@silent'));
     }
 }

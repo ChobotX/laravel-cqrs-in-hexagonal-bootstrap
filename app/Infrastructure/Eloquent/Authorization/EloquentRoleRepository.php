@@ -160,6 +160,12 @@ final readonly class EloquentRoleRepository implements RoleRepository
         }
     }
 
+    /** @return list<string> */
+    private function textSortColumns(): array
+    {
+        return ['name', 'description'];
+    }
+
     /**
      * @param  Builder<RoleModel>  $builder
      * @param  list<Sorting>  $sortings

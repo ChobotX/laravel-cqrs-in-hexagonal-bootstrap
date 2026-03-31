@@ -2,3 +2,9 @@ services:
     laravel.test:
         labels:
             dev.orbstack.domains: "*.laravel-bootstrap.local,laravel-bootstrap.local"
+    reverb:
+        labels:
+            dev.orbstack.domains: "reverb.laravel-bootstrap.local"
+    mailpit:
+        labels:
+            dev.orbstack.domains: "mailpit.laravel-bootstrap.local"

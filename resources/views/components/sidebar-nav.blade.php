@@ -6,6 +6,12 @@
                 :label="__('messages.nav.dashboard')"
                 :active="request()->routeIs('dashboard')" />
 
+    <x-nav-link skip-permission
+                :href="route('notifications.index')"
+                icon="heroicon-o-bell"
+                :label="__('messages.nav.notifications')"
+                :active="request()->routeIs('notifications.*')" />
+
     <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
         {{ __('messages.nav.management') }}
     </p>

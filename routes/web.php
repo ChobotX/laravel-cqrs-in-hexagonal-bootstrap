@@ -17,6 +17,7 @@ use App\Presentation\Http\Controller\Web\Authorization\StopImpersonationControll
 use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as WebUpdateRoleController;
 use App\Presentation\Http\Controller\Web\Dashboard\DashboardController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
+use App\Presentation\Http\Controller\Web\Notification\ShowNotificationsController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
 use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
 use App\Presentation\Http\Controller\Web\Team\ListTeamsController;
@@ -46,6 +47,7 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/profile', ShowProfileController::class)->name('profile');
     Route::put('/profile', UpdateProfileController::class)->name('profile.update');
+    Route::get('/notifications', ShowNotificationsController::class)->name('notifications.index');
     Route::post('/logout', LogoutController::class)->name('logout');
 
     Route::get('/users', ListUsersController::class)->name('users.index');

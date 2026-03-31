@@ -175,6 +175,11 @@ parameters:
             paths:
                 - tests/Unit/Infrastructure/Authorization/RequestAuthenticatedUserTest.php
                 - tests/Helper/FakeArtisanKernel.php
+        -
+            identifier: missingType.iterableValue
+            paths:
+                - tests/Helper/FakeEventsDispatcher.php
+                - tests/Helper/FakeMailer.php
         # Pest loads traits at runtime via uses(), invisible to PHPStan's static analysis.
         -
             identifier: trait.unused
