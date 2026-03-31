@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withCommands([
         __DIR__.'/../app/Presentation/Console/User',
         __DIR__.'/../app/Presentation/Console/Tenancy',
+        __DIR__.'/../app/Infrastructure/Console/Tenancy',
     ])
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

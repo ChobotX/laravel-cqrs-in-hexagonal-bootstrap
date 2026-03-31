@@ -7,10 +7,12 @@ namespace Database\Seeders;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
+use App\Infrastructure\Eloquent\Label\LabelModel;
 use App\Infrastructure\Eloquent\Team\TeamMemberModel;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -25,6 +27,9 @@ final class TenantSeeder extends Seeder
     private const string TEAM_UX_ID = '00000000-0000-0000-0000-000000000013';
 
     private const string TEAM_BRAND_ID = '00000000-0000-0000-0000-000000000014';
+
+    /** @var array<string, string> email => user_id */
+    private array $userIds = [];
 
     public function run(): void
     {
@@ -44,12 +49,16 @@ final class TenantSeeder extends Seeder
             'password' => Hash::make('admin'),
         ]);
         $this->assignRole($admin->id, $superAdminRole->id);
+        $this->userIds['admin@test.com'] = $admin->id;
 
         $this->seedManagersTeam($managerRole->id);
         $this->seedEngineeringTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
         $this->seedDesignTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
         $this->seedUxTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
         $this->seedBrandTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
+
+        $this->seedCrossTeamMembers();
+        $this->seedLabels();
     }
 
     private function seedTeams(): void
@@ -151,6 +160,7 @@ final class TenantSeeder extends Seeder
 
         $this->assignRole($user->id, $roleId);
         $this->addTeamMember($user->id, $teamId);
+        $this->userIds[$email] = $user->id;
     }
 
     private function addTeamMember(string $userId, string $teamId): void
@@ -279,5 +289,88 @@ final class TenantSeeder extends Seeder
         }
 
         return $keys;
+    }
+
+    private function seedCrossTeamMembers(): void
+    {
+        // Liam Chen (Engineering) also in Design — cross-functional contributor
+        $this->addTeamMember($this->userIds['liam.chen@test.com'], self::TEAM_DESIGN_ID);
+
+        // Tom Nguyen (Design) also in Engineering — full-stack designer
+        $this->addTeamMember($this->userIds['tom.nguyen@test.com'], self::TEAM_ENGINEERING_ID);
+
+        // Yuki Tanaka (UX Research) also in Brand & Identity — same hierarchy level
+        $this->addTeamMember($this->userIds['yuki.tanaka@test.com'], self::TEAM_BRAND_ID);
+    }
+
+    private function seedLabels(): void
+    {
+        $userLabels = ['senior', 'junior', 'part_time', 'remote', 'on_site', 'contractor', 'mentor'];
+        $teamLabels = ['product', 'platform', 'frontend', 'backend', 'cross_functional', 'client_facing'];
+
+        $labelIds = [];
+
+        foreach ($userLabels as $name) {
+            $id = Str::uuid()->toString();
+            LabelModel::create(['id' => $id, 'namespace' => 'users', 'name' => $name]);
+            $labelIds["users:$name"] = $id;
+        }
+
+        foreach ($teamLabels as $name) {
+            $id = Str::uuid()->toString();
+            LabelModel::create(['id' => $id, 'namespace' => 'teams', 'name' => $name]);
+            $labelIds["teams:$name"] = $id;
+        }
+
+        $userAssignments = [
+            'admin@test.com' => ['senior', 'on_site', 'mentor'],
+            'henry.park@test.com' => ['senior', 'on_site', 'mentor'],
+            'irene.walsh@test.com' => ['senior', 'remote'],
+            'jack.turner@test.com' => ['junior', 'on_site'],
+            'karen.lopez@test.com' => ['senior', 'remote'],
+            'liam.chen@test.com' => ['senior', 'on_site'],
+            'mia.rivera@test.com' => ['junior', 'on_site'],
+            'noah.kim@test.com' => ['junior', 'remote'],
+            'olivia.scott@test.com' => ['senior', 'part_time'],
+            'raj.patel@test.com' => ['contractor', 'remote'],
+            'sarah.blake@test.com' => ['senior', 'on_site', 'mentor'],
+            'tom.nguyen@test.com' => ['senior', 'on_site'],
+            'uma.frost@test.com' => ['junior', 'remote'],
+            'wendy.cruz@test.com' => ['contractor', 'remote'],
+            'xander.moore@test.com' => ['senior', 'on_site'],
+            'yuki.tanaka@test.com' => ['junior', 'on_site'],
+            'beth.morgan@test.com' => ['senior', 'on_site'],
+            'carlos.diaz@test.com' => ['junior', 'remote'],
+            'ethan.brooks@test.com' => ['senior', 'part_time'],
+            'fiona.grant@test.com' => ['contractor', 'remote'],
+        ];
+
+        foreach ($userAssignments as $email => $labels) {
+            $userId = $this->userIds[$email];
+
+            foreach ($labels as $label) {
+                DB::table('label_assignments')->insert([
+                    'label_id' => $labelIds["users:$label"],
+                    'labelable_id' => $userId,
+                ]);
+            }
+        }
+
+        $teamAssignments = [
+            self::TEAM_MANAGERS_ID => ['cross_functional'],
+            self::TEAM_ENGINEERING_ID => ['platform', 'backend'],
+            self::TEAM_DESIGN_ID => ['product', 'frontend', 'client_facing'],
+            self::TEAM_UX_ID => ['product', 'client_facing'],
+            self::TEAM_BRAND_ID => ['product', 'frontend'],
+        ];
+
+        foreach ($teamAssignments as $teamId => $labels) {
+            foreach ($labels as $label) {
+                DB::table('label_assignments')->insert([
+                    'label_id' => $labelIds["teams:$label"],
+                    'labelable_id' => $teamId,
+                ]);
+            }
+        }
     }
 }

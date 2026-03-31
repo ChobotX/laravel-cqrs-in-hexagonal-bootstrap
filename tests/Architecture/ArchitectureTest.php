@@ -94,6 +94,16 @@ final class ArchitectureTest
             ->classes(Selector::inNamespace('App\Contract\Tenancy'));
     }
 
+    public function testPresentationDoesNotDependOnDatabase(): Rule
+    {
+        // Presentation must never talk to the database directly.
+        // All data access goes through CommandBus/QueryBus → Domain → Infrastructure.
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Presentation'))
+            ->shouldNotDependOn()
+            ->classes(Selector::inNamespace('Illuminate\Database'));
+    }
+
     // ── Structural rules ────────────────────────────────────────
 
     public function testContractClassesAreInterfaces(): Rule

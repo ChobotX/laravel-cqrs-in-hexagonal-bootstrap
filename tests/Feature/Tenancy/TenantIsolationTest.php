@@ -7,6 +7,13 @@ use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
+function secondarySchema(): string
+{
+    $token = getenv('TEST_TOKEN');
+
+    return 'tenant_test_b_'.($token !== false ? $token : '1');
+}
+
 it('isolates users between tenant schemas', function (): void {
     UserModel::create([
         'id' => '22222222-2222-2222-2222-222222222201',
@@ -19,7 +26,7 @@ it('isolates users between tenant schemas', function (): void {
 
     /** @var object{cnt: int} $row */
     $row = DB::connection('tenant')
-        ->selectOne('SELECT count(*) as cnt FROM tenant_test_b.users');
+        ->selectOne(sprintf('SELECT count(*) as cnt FROM %s.users', secondarySchema()));
 
     expect($countA)->toBe(1)
         ->and($row->cnt)->toBe(0);
@@ -34,7 +41,7 @@ it('allows same-named roles in different schemas', function (): void {
     ]);
 
     DB::connection('tenant')->statement(
-        "INSERT INTO tenant_test_b.roles (id, name, description, is_system, created_at, updated_at) VALUES (?, 'Editor', 'Tenant B editor', false, NOW(), NOW())",
+        sprintf("INSERT INTO %s.roles (id, name, description, is_system, created_at, updated_at) VALUES (?, 'Editor', 'Tenant B editor', false, NOW(), NOW())", secondarySchema()),
         ['33333333-3333-3333-3333-333333333302'],
     );
 
@@ -42,7 +49,7 @@ it('allows same-named roles in different schemas', function (): void {
 
     /** @var object{cnt: int} $row */
     $row = DB::connection('tenant')
-        ->selectOne("SELECT count(*) as cnt FROM tenant_test_b.roles WHERE name = 'Editor'");
+        ->selectOne(sprintf("SELECT count(*) as cnt FROM %s.roles WHERE name = 'Editor'", secondarySchema()));
 
     expect($countA)->toBe(1)
         ->and($row->cnt)->toBe(1);
@@ -58,7 +65,7 @@ it('does not leak user data across schemas', function (): void {
 
     /** @var object{cnt: int} $row */
     $row = DB::connection('tenant')
-        ->selectOne("SELECT count(*) as cnt FROM tenant_test_b.users WHERE email = 'secret@test.com'");
+        ->selectOne(sprintf("SELECT count(*) as cnt FROM %s.users WHERE email = 'secret@test.com'", secondarySchema()));
 
     expect($row->cnt)->toBe(0);
 });
