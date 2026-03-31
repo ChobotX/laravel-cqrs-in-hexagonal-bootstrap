@@ -12,6 +12,8 @@ use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\Label\Label;
+use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\Team\Team;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
@@ -57,6 +59,9 @@ final readonly class ListUsersController
         $canReadTeams = $this->authorizationChecker->can($currentUserId, 'teams.members.read');
         $userTeams = $canReadTeams ? $this->buildUserTeamsMap($paginatedResult->items) : [];
 
+        $canReadLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
+        $userLabels = $canReadLabels ? $this->buildUserLabelsMap($paginatedResult->items) : [];
+
         return view('users.index', [
             'result' => $paginatedResult,
             'sorting' => $sorting,
@@ -64,6 +69,8 @@ final readonly class ListUsersController
             'canReadRoles' => $canReadRoles,
             'canReadTeams' => $canReadTeams,
             'userTeams' => $userTeams,
+            'canReadLabels' => $canReadLabels,
+            'userLabels' => $userLabels,
             'isSuperAdmin' => $isSuperAdmin,
             'currentUserId' => $currentUserId,
         ]);
@@ -97,6 +104,23 @@ final readonly class ListUsersController
         foreach ($users as $user) {
             $map[$user->id->value] = $this->queryBus->dispatch(
                 new GetUserTeamsQuery($user->id->value),
+            );
+        }
+
+        return $map;
+    }
+
+    /**
+     * @param  list<User>  $users
+     * @return array<string, list<Label>>
+     */
+    private function buildUserLabelsMap(array $users): array
+    {
+        $map = [];
+
+        foreach ($users as $user) {
+            $map[$user->id->value] = $this->queryBus->dispatch(
+                new GetEntityLabelsQuery($user->id->value),
             );
         }
 

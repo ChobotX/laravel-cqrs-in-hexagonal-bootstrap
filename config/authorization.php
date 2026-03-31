@@ -32,6 +32,15 @@ return [
                 ],
             ],
         ],
+        'labels' => [
+            'label' => 'Labels',
+            'features' => [
+                'management' => [
+                    'label' => 'Label Management',
+                    'actions' => ['read', 'create'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

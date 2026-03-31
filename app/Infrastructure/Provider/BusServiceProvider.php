@@ -64,6 +64,17 @@ use App\Domain\Authorization\Query\ListRoles\ListRolesHandler;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesHandler;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesQuery;
+use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
+use App\Domain\Label\Command\AssignLabel\AssignLabelHandler;
+use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
+use App\Domain\Label\Command\CreateLabel\CreateLabelHandler;
+use App\Domain\Label\Command\RemoveLabel\RemoveLabelCommand;
+use App\Domain\Label\Command\RemoveLabel\RemoveLabelHandler;
+use App\Domain\Label\EventHandler\CleanupLabelsOnEntityDeleted;
+use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsHandler;
+use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
+use App\Domain\Label\Query\SearchLabels\SearchLabelsHandler;
+use App\Domain\Label\Query\SearchLabels\SearchLabelsQuery;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
 use App\Domain\Team\Command\CreateTeam\CreateTeamCommand;
@@ -74,6 +85,7 @@ use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberHandler;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamHandler;
+use App\Domain\Team\Event\TeamDeleted;
 use App\Domain\Team\Query\CountTeams\CountTeamsHandler;
 use App\Domain\Team\Query\CountTeams\CountTeamsQuery;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
@@ -104,6 +116,7 @@ use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
 use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
+use App\Domain\User\Event\UserDeleted;
 use App\Domain\User\Query\CountUsers\CountUsersHandler;
 use App\Domain\User\Query\CountUsers\CountUsersQuery;
 use App\Domain\User\Query\GetOwnProfile\GetOwnProfileHandler;
@@ -149,6 +162,8 @@ final class BusServiceProvider extends ServiceProvider
                 PermissionOverrideRemoved::class => [InvalidateCacheOnOverrideRemoved::class],
                 RoleUpdated::class => [InvalidateCacheOnRoleUpdated::class],
                 RoleDeleted::class => [InvalidateCacheOnRoleDeleted::class],
+                UserDeleted::class => [CleanupLabelsOnEntityDeleted::class],
+                TeamDeleted::class => [CleanupLabelsOnEntityDeleted::class],
             ],
         ));
 
@@ -177,6 +192,9 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteTeamCommand::class => DeleteTeamHandler::class,
                 AddTeamMemberCommand::class => AddTeamMemberHandler::class,
                 RemoveTeamMemberCommand::class => RemoveTeamMemberHandler::class,
+                CreateLabelCommand::class => CreateLabelHandler::class,
+                AssignLabelCommand::class => AssignLabelHandler::class,
+                RemoveLabelCommand::class => RemoveLabelHandler::class,
                 CreateTenantCommand::class => CreateTenantHandler::class,
                 MigrateTenantCommand::class => MigrateTenantHandler::class,
                 MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
@@ -216,6 +234,8 @@ final class BusServiceProvider extends ServiceProvider
                 SearchTeamsQuery::class => SearchTeamsHandler::class,
                 SearchRolesQuery::class => SearchRolesHandler::class,
                 GetAssignableRolesQuery::class => GetAssignableRolesHandler::class,
+                SearchLabelsQuery::class => SearchLabelsHandler::class,
+                GetEntityLabelsQuery::class => GetEntityLabelsHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

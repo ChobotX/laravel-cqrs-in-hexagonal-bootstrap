@@ -11,12 +11,20 @@ const props = withDefaults(
         placeholder?: string;
         noResultsText?: string;
         debounceMs?: number;
+        allowCreate?: boolean;
+        createUrl?: string;
+        createNamespace?: string;
+        createText?: string;
     }>(),
     {
         inputName: 'items[]',
         placeholder: undefined,
         noResultsText: undefined,
         debounceMs: 300,
+        allowCreate: false,
+        createUrl: undefined,
+        createNamespace: undefined,
+        createText: undefined,
     },
 );
 
@@ -98,6 +106,44 @@ function onSearch(term: string): void {
         fetchResults(term);
     }, props.debounceMs);
 }
+
+const isCreating = ref(false);
+
+function onCreate(name: string): void {
+    if (!props.createUrl || !props.createNamespace || isCreating.value) {
+        return;
+    }
+
+    isCreating.value = true;
+
+    const csrfMeta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]');
+    const headers: Record<string, string> = {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+    };
+    if (csrfMeta) {
+        headers['X-CSRF-TOKEN'] = csrfMeta.content;
+    }
+
+    fetch(props.createUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ namespace: props.createNamespace, name }),
+    })
+        .then((response) => response.json())
+        .then((json) => {
+            const created: ChipOption = { id: json.data.id, name: json.data.name };
+            allKnownItems.value.set(created.id, created);
+            selectedIds.value = [...selectedIds.value, created.id];
+            isCreating.value = false;
+            fetchResults('');
+        })
+        .catch(() => {
+            isCreating.value = false;
+            fetchResults('');
+        });
+}
 </script>
 
 <template>
@@ -108,9 +154,12 @@ function onSearch(term: string): void {
             :input-name="inputName"
             :placeholder="placeholder"
             :no-results-text="noResultsText"
+            :allow-create="allowCreate"
+            :create-text="createText"
             @update:model-value="onSelectionChange"
             @focus="onFocus"
             @search="onSearch"
+            @create="onCreate"
         />
         <span
             v-if="isLoading"

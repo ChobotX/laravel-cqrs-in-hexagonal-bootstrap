@@ -583,3 +583,79 @@ it('skips team sync without teams.members.update permission', function (): void 
         'user_id' => '550e8400-e29b-41d4-a716-446655440100',
     ]);
 });
+
+it('assigns labels via form submission', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440200',
+        'name' => 'Admin Labels',
+        'email' => 'admin-labels@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440201',
+        'name' => 'Target Labels',
+        'email' => 'target-labels@example.com',
+    ]);
+
+    App\Infrastructure\Eloquent\Label\LabelModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440210',
+        'namespace' => 'users',
+        'name' => 'important',
+    ]);
+
+    $this->actingAs($admin)
+        ->put('/users/550e8400-e29b-41d4-a716-446655440201', [
+            'name' => 'Target Labels',
+            'email' => 'target-labels@example.com',
+            'labels' => ['550e8400-e29b-41d4-a716-446655440210'],
+        ])->assertRedirect();
+
+    $this->assertDatabaseHas('label_assignments', [
+        'label_id' => '550e8400-e29b-41d4-a716-446655440210',
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440201',
+    ]);
+});
+
+it('removes labels via form submission when deselected', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440202',
+        'name' => 'Admin Remove Labels',
+        'email' => 'admin-rmlabels@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440203',
+        'name' => 'Target Remove Labels',
+        'email' => 'target-rmlabels@example.com',
+    ]);
+
+    App\Infrastructure\Eloquent\Label\LabelModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440211',
+        'namespace' => 'users',
+        'name' => 'removeme',
+    ]);
+
+    Illuminate\Support\Facades\DB::table('label_assignments')->insert([
+        'label_id' => '550e8400-e29b-41d4-a716-446655440211',
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440203',
+        'created_at' => now(),
+    ]);
+
+    $this->actingAs($admin)
+        ->put('/users/550e8400-e29b-41d4-a716-446655440203', [
+            'name' => 'Target Remove Labels',
+            'email' => 'target-rmlabels@example.com',
+            'labels' => [],
+        ])->assertRedirect();
+
+    $this->assertDatabaseMissing('label_assignments', [
+        'label_id' => '550e8400-e29b-41d4-a716-446655440211',
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440203',
+    ]);
+});

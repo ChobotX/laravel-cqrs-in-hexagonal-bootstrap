@@ -14,6 +14,8 @@ use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissio
 use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\Label\Label;
+use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use Illuminate\View\View;
@@ -52,6 +54,20 @@ final readonly class ShowEditUserController
             $userTeams = $this->queryBus->dispatch(new GetUserTeamsQuery($userId));
         }
 
+        $canManageLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
+        $canCreateLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.create');
+
+        $userLabels = [];
+
+        if ($canManageLabels) {
+            /** @var list<Label> $labels */
+            $labels = $this->queryBus->dispatch(new GetEntityLabelsQuery($userId));
+            $userLabels = array_map(fn (Label $label): array => [
+                'id' => $label->id->value,
+                'name' => $label->name->value,
+            ], $labels);
+        }
+
         $canViewPermissions = $canManageRoles;
         $effectivePermissions = [];
         $modules = [];
@@ -77,6 +93,9 @@ final readonly class ShowEditUserController
             'modules' => $modules,
             'userOverrides' => $userOverrides,
             'canManageOverrides' => $canManageOverrides,
+            'canManageLabels' => $canManageLabels,
+            'canCreateLabels' => $canCreateLabels,
+            'userLabels' => $userLabels,
         ]);
     }
 }

@@ -301,4 +301,141 @@ describe('LazyChipSelector', () => {
         expect(wrapper.findAll('[role="option"]')).toHaveLength(0);
         expect(wrapper.find('[aria-live="polite"]').exists()).toBe(false);
     });
+
+    it('calls createUrl when create event is received', async () => {
+        const meta = document.createElement('meta');
+        meta.name = 'csrf-token';
+        meta.content = 'create-csrf-token';
+        document.head.appendChild(meta);
+
+        createFetchMock(emptyResults);
+
+        const createResponse = { data: { id: 'new-1', name: 'newlabel' } };
+        const fetchMock = vi
+            .fn()
+            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ json: () => Promise.resolve(createResponse) })
+            .mockResolvedValue({ json: () => Promise.resolve(emptyResults) });
+        global.fetch = fetchMock;
+
+        const wrapper = mountLazy({
+            allowCreate: true,
+            createUrl: '/internal-api/labels',
+            createNamespace: 'users',
+        });
+
+        const input = wrapper.find('input[role="combobox"]');
+        await input.trigger('focus');
+        await flushPromises();
+
+        await input.setValue('newlabel');
+        await input.trigger('input');
+        await vi.advanceTimersByTimeAsync(0);
+        await flushPromises();
+
+        const createOption = wrapper.findAll('[role="option"]').find((o) => o.text().includes('Create'));
+        expect(createOption).toBeDefined();
+        await createOption?.trigger('mousedown');
+        await flushPromises();
+
+        const createCall = fetchMock.mock.calls.find((call) => call[1]?.method === 'POST');
+        expect(createCall).toBeDefined();
+        expect(createCall![0]).toBe('/internal-api/labels');
+        const body = JSON.parse(createCall![1].body as string);
+        expect(body).toEqual({ namespace: 'users', name: 'newlabel' });
+
+        const createHeaders = createCall![1].headers;
+        expect(createHeaders['X-CSRF-TOKEN']).toBe('create-csrf-token');
+
+        document.head.removeChild(meta);
+    });
+
+    it('adds created label to selection after create success', async () => {
+        const createResponse = { data: { id: 'new-1', name: 'newlabel' } };
+        const fetchMock = vi
+            .fn()
+            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ json: () => Promise.resolve(createResponse) })
+            .mockResolvedValue({ json: () => Promise.resolve(emptyResults) });
+        global.fetch = fetchMock;
+
+        const wrapper = mountLazy({
+            allowCreate: true,
+            createUrl: '/internal-api/labels',
+            createNamespace: 'users',
+        });
+
+        const input = wrapper.find('input[role="combobox"]');
+        await input.trigger('focus');
+        await flushPromises();
+
+        await input.setValue('newlabel');
+        await input.trigger('input');
+        await vi.advanceTimersByTimeAsync(0);
+        await flushPromises();
+
+        const createOption = wrapper.findAll('[role="option"]').find((o) => o.text().includes('Create'));
+        await createOption?.trigger('mousedown');
+        await flushPromises();
+
+        expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(true);
+        expect(wrapper.text()).toContain('newlabel');
+    });
+
+    it('handles create error gracefully', async () => {
+        const fetchMock = vi
+            .fn()
+            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
+            .mockResolvedValueOnce({ json: () => Promise.resolve(emptyResults) })
+            .mockRejectedValueOnce(new Error('Create failed'))
+            .mockResolvedValue({ json: () => Promise.resolve(emptyResults) });
+        global.fetch = fetchMock;
+
+        const wrapper = mountLazy({
+            allowCreate: true,
+            createUrl: '/internal-api/labels',
+            createNamespace: 'users',
+        });
+
+        const input = wrapper.find('input[role="combobox"]');
+        await input.trigger('focus');
+        await flushPromises();
+
+        await input.setValue('fail');
+        await input.trigger('input');
+        await vi.advanceTimersByTimeAsync(0);
+        await flushPromises();
+
+        const createOption = wrapper.findAll('[role="option"]').find((o) => o.text().includes('Create'));
+        await createOption?.trigger('mousedown');
+        await flushPromises();
+
+        expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(false);
+    });
+
+    it('does not call createUrl when createUrl is not set', async () => {
+        createFetchMock(emptyResults);
+
+        const wrapper = mountLazy({ allowCreate: true });
+
+        const input = wrapper.find('input[role="combobox"]');
+        await input.trigger('focus');
+        await flushPromises();
+
+        await input.setValue('test');
+        await input.trigger('input');
+        await vi.advanceTimersByTimeAsync(0);
+        await flushPromises();
+
+        const callCount = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.length;
+
+        const createOption = wrapper.findAll('[role="option"]').find((o) => o.text().includes('Create'));
+        if (createOption) {
+            await createOption.trigger('mousedown');
+            await flushPromises();
+        }
+
+        expect((global.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBe(callCount);
+    });
 });

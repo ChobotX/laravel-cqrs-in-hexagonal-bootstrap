@@ -14,11 +14,15 @@ const props = withDefaults(
         inputName?: string;
         placeholder?: string;
         noResultsText?: string;
+        allowCreate?: boolean;
+        createText?: string;
     }>(),
     {
         inputName: 'items[]',
         placeholder: undefined,
         noResultsText: undefined,
+        allowCreate: false,
+        createText: 'Create "%s"',
     },
 );
 
@@ -26,7 +30,14 @@ const emit = defineEmits<{
     'update:modelValue': [ids: string[]];
     focus: [];
     search: [term: string];
+    create: [name: string];
 }>();
+
+const canShowCreate = computed(
+    () => props.allowCreate && search.value.trim() !== '' && filteredOptions.value.length === 0,
+);
+
+const createOptionLabel = computed(() => props.createText.replace('%s', search.value.trim()));
 
 const search = ref('');
 const isOpen = ref(false);
@@ -87,18 +98,29 @@ function handleEscapeOrBackspace(event: KeyboardEvent): boolean {
     return false;
 }
 
+function emitCreate(): void {
+    emit('create', search.value.trim());
+    search.value = '';
+}
+
+function confirmSelection(event: KeyboardEvent): void {
+    event.preventDefault();
+    canShowCreate.value ? emitCreate() : selectOption(filteredOptions.value[activeIndex.value].id);
+}
+
 function handleArrowNavigation(event: KeyboardEvent): void {
+    const maxIndex = canShowCreate.value ? 0 : filteredOptions.value.length - 1;
+
     if (event.key === 'ArrowDown') {
         event.preventDefault();
-        activeIndex.value = Math.min(activeIndex.value + 1, filteredOptions.value.length - 1);
+        activeIndex.value = Math.min(activeIndex.value + 1, maxIndex);
         void scrollToActive();
     } else if (event.key === 'ArrowUp') {
         event.preventDefault();
         activeIndex.value = Math.max(activeIndex.value - 1, 0);
         void scrollToActive();
     } else if (event.key === 'Enter' && activeIndex.value >= 0) {
-        event.preventDefault();
-        selectOption(filteredOptions.value[activeIndex.value].id);
+        confirmSelection(event);
     }
 }
 
@@ -107,7 +129,7 @@ function onKeydown(event: KeyboardEvent): void {
         return;
     }
 
-    if (isOpen.value && filteredOptions.value.length > 0) {
+    if (isOpen.value && (filteredOptions.value.length > 0 || canShowCreate.value)) {
         handleArrowNavigation(event);
     }
 }
@@ -183,8 +205,26 @@ async function scrollToActive(): Promise<void> {
             </li>
         </ul>
 
+        <ul
+            v-if="isOpen && canShowCreate"
+            ref="listRef"
+            role="listbox"
+            class="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+        >
+            <li
+                role="option"
+                :aria-selected="activeIndex === 0"
+                :data-active="activeIndex === 0"
+                class="cursor-pointer px-3 py-2 text-sm transition-colors"
+                :class="activeIndex === 0 ? 'bg-indigo-50 text-indigo-700' : 'text-gray-700 hover:bg-gray-50'"
+                @mousedown.prevent="emitCreate"
+            >
+                {{ createOptionLabel }}
+            </li>
+        </ul>
+
         <p
-            v-if="isOpen && filteredOptions.length === 0 && search !== '' && noResultsText"
+            v-if="isOpen && filteredOptions.length === 0 && !canShowCreate && search !== '' && noResultsText"
             class="absolute z-10 mt-1 w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-500 shadow-lg"
         >
             {{ noResultsText }}

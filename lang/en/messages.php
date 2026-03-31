@@ -192,6 +192,14 @@ return [
         'view_tree' => 'Tree view',
     ],
 
+    'labels' => [
+        'title' => 'Labels',
+        'subtitle' => 'Manage labels for this record',
+        'search' => 'Search labels...',
+        'no_results' => 'No labels found.',
+        'create' => 'Create "%s"',
+    ],
+
     'exceptions' => [
         'user_not_found' => 'User with id [:id] not found.',
         'invalid_user_id' => 'Value [:value] is not a valid UUID.',
@@ -214,6 +222,12 @@ return [
         'team_member_already_exists' => 'This user is already a member of this team.',
         'team_member_not_found' => 'This user is not a member of this team.',
         'team_cycle_detected' => 'This parent would create a circular hierarchy.',
+        'invalid_label_id' => 'Value [:value] is not a valid label UUID.',
+        'invalid_label_name' => 'Label name [:value] is not valid.',
+        'invalid_label_namespace' => 'Label namespace [:value] is not valid.',
+        'label_already_exists' => 'A label [:name] already exists.',
+        'label_not_found' => 'Label not found.',
+        'label_namespace_mismatch' => 'This label does not belong to this entity type.',
     ],
 
     'pagination' => [

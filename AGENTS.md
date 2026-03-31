@@ -17,6 +17,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Presentation/README.md](app/Presentation/README.md) | Presentation — controllers, form requests, console, views, Vue |
 | [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md) | Authorization module — permissions, RBAC, impersonation |
 | [app/Domain/Team/README.md](app/Domain/Team/README.md) | Team module — hierarchy, membership, scope filtering |
+| [app/Domain/Label/README.md](app/Domain/Label/README.md) | Label module — universal namespaced labels, polymorphic assignment, orphan cleanup |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |
@@ -45,6 +46,7 @@ When you change **one** of these, check **all** listed files:
 | Add/change layer dependency rule | `README.md` (architecture table), `ADR.md`, affected layer READMEs |
 | Add/change CQRS pattern | `app/Domain/README.md`, `app/Infrastructure/README.md` (registration), `QUICKSTART.md` (adding a context) |
 | Add/change authorization module/feature | `app/Domain/Authorization/README.md`, `config/authorization.php`, `QUICKSTART.md` |
+| Add/change label module/feature | `app/Domain/Label/README.md`, `config/authorization.php` |
 | Add/change code style rule | `app/README.md`, `pint.json` or `rector.php` (whichever enforces it) |
 | Add/change class structural rule | `app/README.md` (class rules table), `ADR.md` if it's a new decision |
 | Add/change presentation pattern | `app/Presentation/README.md` |

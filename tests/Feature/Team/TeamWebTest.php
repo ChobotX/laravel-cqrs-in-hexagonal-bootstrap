@@ -241,3 +241,104 @@ it('ignores invalid sort column for teams', function (): void {
 it('redirects unauthenticated to login', function (): void {
     $this->get('/teams')->assertRedirect('/login?'.http_build_query(['redirect' => '/teams']));
 });
+
+it('skips label sync when user lacks labels.management.read', function (): void {
+    $role = test()->seedRoleWithPermissions(
+        'Team Only Editor',
+        'Can edit teams but not labels',
+        ['teams.management.read' => 'all', 'teams.management.update' => 'all'],
+    );
+
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440fc0',
+        'name' => 'No Labels Perm',
+        'email' => 'nolabels-perm@test.com',
+        'password' => Hash::make('password'),
+    ]);
+    test()->assignRole($user->id, $role->id);
+
+    TeamModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440fc1',
+        'name' => 'Skip Labels Team',
+        'slug' => 'skip-labels-team',
+        'description' => 'Test',
+    ]);
+
+    $this->actingAs($user)
+        ->put('/teams/550e8400-e29b-41d4-a716-446655440fc1', [
+            'name' => 'Skip Labels Team',
+            'slug' => 'skip-labels-team',
+            'description' => 'Test',
+            'labels' => ['550e8400-e29b-41d4-a716-446655440fb0'],
+        ])->assertRedirect(route('teams.index'));
+
+    $this->assertDatabaseMissing('label_assignments', [
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440fc1',
+    ]);
+});
+
+it('assigns labels to a team via form submission', function (): void {
+    $userModel = teamWebUser();
+
+    TeamModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440fa0',
+        'name' => 'Label Team',
+        'slug' => 'label-team',
+        'description' => 'Team with labels',
+    ]);
+
+    App\Infrastructure\Eloquent\Label\LabelModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440fb0',
+        'namespace' => 'teams',
+        'name' => 'priority',
+    ]);
+
+    $this->actingAs($userModel)
+        ->put('/teams/550e8400-e29b-41d4-a716-446655440fa0', [
+            'name' => 'Label Team',
+            'slug' => 'label-team',
+            'description' => 'Team with labels',
+            'labels' => ['550e8400-e29b-41d4-a716-446655440fb0'],
+        ])->assertRedirect(route('teams.index'));
+
+    $this->assertDatabaseHas('label_assignments', [
+        'label_id' => '550e8400-e29b-41d4-a716-446655440fb0',
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440fa0',
+    ]);
+});
+
+it('removes labels from a team via form submission', function (): void {
+    $userModel = teamWebUser();
+
+    TeamModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440fa1',
+        'name' => 'Unlabel Team',
+        'slug' => 'unlabel-team',
+        'description' => 'Team without labels',
+    ]);
+
+    App\Infrastructure\Eloquent\Label\LabelModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440fb1',
+        'namespace' => 'teams',
+        'name' => 'removeme',
+    ]);
+
+    Illuminate\Support\Facades\DB::table('label_assignments')->insert([
+        'label_id' => '550e8400-e29b-41d4-a716-446655440fb1',
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440fa1',
+        'created_at' => now(),
+    ]);
+
+    $this->actingAs($userModel)
+        ->put('/teams/550e8400-e29b-41d4-a716-446655440fa1', [
+            'name' => 'Unlabel Team',
+            'slug' => 'unlabel-team',
+            'description' => 'Team without labels',
+            'labels' => [],
+        ])->assertRedirect(route('teams.index'));
+
+    $this->assertDatabaseMissing('label_assignments', [
+        'label_id' => '550e8400-e29b-41d4-a716-446655440fb1',
+        'labelable_id' => '550e8400-e29b-41d4-a716-446655440fa1',
+    ]);
+});

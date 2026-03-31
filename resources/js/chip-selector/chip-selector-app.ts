@@ -44,6 +44,10 @@ for (const el of document.querySelectorAll<HTMLElement>('[data-chip-selector]'))
             inputName: el.dataset.inputName ?? 'items[]',
             placeholder: el.dataset.placeholder,
             noResultsText: el.dataset.noResultsText,
+            allowCreate: el.dataset.allowCreate === 'true',
+            createUrl: el.dataset.createUrl,
+            createNamespace: el.dataset.createNamespace,
+            createText: el.dataset.createText,
         };
     } else {
         component = createStaticWrapper(

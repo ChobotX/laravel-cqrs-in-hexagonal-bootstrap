@@ -14,6 +14,10 @@ use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserComman
 use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
+use App\Domain\Label\Command\RemoveLabel\RemoveLabelCommand;
+use App\Domain\Label\Label;
+use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
@@ -46,6 +50,7 @@ final readonly class UpdateUserController
 
         $this->syncRoles($updateUserRequest, $updateUserCommand->id);
         $this->syncTeams($updateUserRequest, $updateUserCommand->id);
+        $this->syncLabels($updateUserRequest, $updateUserCommand->id);
 
         return redirect()->route('users.edit', $updateUserCommand->id)->with('success', __('messages.users.updated'));
     }
@@ -106,6 +111,33 @@ final readonly class UpdateUserController
 
         foreach ($toRemove as $teamId) {
             $this->commandBus->dispatch(new RemoveTeamMemberCommand($targetUserId, $teamId));
+        }
+    }
+
+    private function syncLabels(UpdateUserRequest $updateUserRequest, string $targetUserId): void
+    {
+        $currentUserId = $this->authenticatedUser->id() ?? '';
+
+        if (! $this->authorizationChecker->can($currentUserId, 'labels.management.read')) {
+            return;
+        }
+
+        /** @var list<string> $submittedLabelIds */
+        $submittedLabelIds = $updateUserRequest->input('labels', []);
+
+        /** @var list<Label> $currentLabels */
+        $currentLabels = $this->queryBus->dispatch(new GetEntityLabelsQuery($targetUserId));
+        $currentLabelIds = array_map(fn (Label $label): string => $label->id->value, $currentLabels);
+
+        $toAdd = array_diff($submittedLabelIds, $currentLabelIds);
+        $toRemove = array_diff($currentLabelIds, $submittedLabelIds);
+
+        foreach ($toAdd as $labelId) {
+            $this->commandBus->dispatch(new AssignLabelCommand($labelId, $targetUserId, 'users'));
+        }
+
+        foreach ($toRemove as $labelId) {
+            $this->commandBus->dispatch(new RemoveLabelCommand($labelId, $targetUserId));
         }
     }
 }

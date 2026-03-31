@@ -105,6 +105,25 @@
                     </div>
                 @endif
 
+                @if ($canManageLabels)
+                    <div class="border-t border-gray-200 pt-5">
+                        <label
+                               class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.labels.title') }}</label>
+                        <p class="mb-2 text-xs text-gray-400">{{ __('messages.labels.subtitle') }}</p>
+                        <div data-chip-selector
+                             data-search-url="{{ route('internal-api.labels.search') }}?namespace=users"
+                             data-selected-items="{{ json_encode($userLabels) }}"
+                             data-input-name="labels[]"
+                             data-placeholder="{{ __('messages.labels.search') }}"
+                             data-no-results-text="{{ __('messages.labels.no_results') }}"
+                             @if ($canCreateLabels) data-allow-create="true"
+                                 data-create-url="{{ route('internal-api.labels.create') }}"
+                                 data-create-namespace="users"
+                                 data-create-text="{{ __('messages.labels.create') }}" @endif>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
                                       :label="__('messages.users.update_action')" />

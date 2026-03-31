@@ -18,6 +18,8 @@ final class UpdateTeamRequest extends FormRequest
             'slug' => ['required', 'string', 'max:'.TeamSlug::MAX_LENGTH, 'regex:'.TeamSlug::SLUG_PATTERN, 'min:'.TeamSlug::MIN_LENGTH],
             'description' => ['nullable', 'string'],
             'parent_team_id' => ['nullable', 'uuid'],
+            'labels' => ['sometimes', 'array'],
+            'labels.*' => ['string', 'uuid'],
         ];
     }
 

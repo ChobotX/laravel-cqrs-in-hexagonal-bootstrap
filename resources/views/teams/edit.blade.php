@@ -85,6 +85,26 @@
                     @enderror
                 </div>
 
+                @if ($canManageLabels)
+                    <div class="border-t border-gray-200 pt-5">
+                        <label
+                               class="mb-1 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.labels.title') }}</label>
+                        <p class="mb-2 text-xs text-gray-400">{{ __('messages.labels.subtitle') }}</p>
+                        <div class="max-w-md"
+                             data-chip-selector
+                             data-search-url="{{ route('internal-api.labels.search') }}?namespace=teams"
+                             data-selected-items="{{ json_encode($teamLabels) }}"
+                             data-input-name="labels[]"
+                             data-placeholder="{{ __('messages.labels.search') }}"
+                             data-no-results-text="{{ __('messages.labels.no_results') }}"
+                             @if ($canCreateLabels) data-allow-create="true"
+                                 data-create-url="{{ route('internal-api.labels.create') }}"
+                                 data-create-namespace="teams"
+                                 data-create-text="{{ __('messages.labels.create') }}" @endif>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
                                       :label="__('messages.teams.update_action')" />

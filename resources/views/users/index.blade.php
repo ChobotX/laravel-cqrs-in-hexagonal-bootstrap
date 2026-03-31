@@ -69,6 +69,14 @@
                                                 @endif
                                             </p>
                                         @endif
+                                        @if ($canReadLabels && !empty($userLabels[$user->id->value] ?? []))
+                                            <div class="mt-1 flex flex-wrap gap-1">
+                                                @foreach ($userLabels[$user->id->value] as $label)
+                                                    <span
+                                                          class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600 ring-1 ring-gray-500/10">{{ $label->name->value }}</span>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </td>
