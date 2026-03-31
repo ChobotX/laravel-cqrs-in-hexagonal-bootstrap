@@ -10,6 +10,7 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Presentation\Http\Request\Web\PaginationRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.roles.read')]
@@ -21,7 +22,7 @@ final readonly class ListRolesController
         private QueryBus $queryBus,
     ) {}
 
-    public function __invoke(PaginationRequest $paginationRequest): View
+    public function __invoke(PaginationRequest $paginationRequest): View|RedirectResponse
     {
         $defaultSorting = new Sorting('name', SortDirection::Asc);
         $requestSorting = $paginationRequest->sorting();
@@ -32,6 +33,10 @@ final readonly class ListRolesController
         $paginatedResult = $this->queryBus->dispatch(
             new ListRolesQuery($paginationRequest->pagination())->withSorting([$sorting]),
         );
+
+        if ($paginatedResult->isPageOutOfBounds()) {
+            return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
+        }
 
         return view('roles.index', [
             'result' => $paginatedResult,

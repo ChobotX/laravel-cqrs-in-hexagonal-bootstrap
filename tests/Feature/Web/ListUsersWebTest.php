@@ -450,3 +450,34 @@ it('paginates to page 2 without redirect', function (): void {
         ->get('/users?page=1&per_page=15')
         ->assertStatus(200);
 });
+
+it('redirects to page 1 when requested page exceeds total pages', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440a10',
+        'name' => 'Redirect Admin',
+        'email' => 'redirect-admin@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $this->actingAs($admin)
+        ->get('/users?page=5&per_page=15&sort=name&direction=asc')
+        ->assertRedirect('/users?page=1&per_page=15&sort=name&direction=asc');
+});
+
+it('does not redirect on page 1 even with few results', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440a20',
+        'name' => 'Single Admin',
+        'email' => 'single-admin@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $this->actingAs($admin)
+        ->get('/users?page=1&per_page=15')
+        ->assertOk()
+        ->assertSee('Single Admin');
+});

@@ -136,6 +136,14 @@ it('redirects unauthenticated to login', function (): void {
     $this->get('/roles')->assertRedirect('/login?'.http_build_query(['redirect' => '/roles']));
 });
 
+it('redirects to page 1 when requested page exceeds total pages', function (): void {
+    $userModel = webUser();
+
+    $this->actingAs($userModel)
+        ->get('/roles?page=5&per_page=15&sort=name&direction=asc')
+        ->assertRedirect('/roles?page=1&per_page=15&sort=name&direction=asc');
+});
+
 it('creates a role with permissions via web', function (): void {
     $userModel = webUser();
 

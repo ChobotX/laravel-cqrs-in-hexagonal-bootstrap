@@ -15,6 +15,7 @@ use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
 use App\Domain\Team\Team;
 use App\Presentation\Http\Request\Web\PaginationRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 #[RequiresPermission('teams.management.read')]
@@ -28,7 +29,7 @@ final readonly class ListTeamsController
         private AuthorizationChecker $authorizationChecker,
     ) {}
 
-    public function __invoke(PaginationRequest $paginationRequest): View
+    public function __invoke(PaginationRequest $paginationRequest): View|RedirectResponse
     {
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
@@ -44,6 +45,10 @@ final readonly class ListTeamsController
                 $paginationRequest->pagination(),
             )->withSorting([$sorting]),
         );
+
+        if ($paginatedResult->isPageOutOfBounds()) {
+            return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
+        }
 
         $canReadLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
         $teamLabels = $canReadLabels ? $this->buildTeamLabelsMap($paginatedResult->items) : [];

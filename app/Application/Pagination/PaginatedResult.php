@@ -32,4 +32,9 @@ final readonly class PaginatedResult
     {
         return $this->pagination->page > 1;
     }
+
+    public function isPageOutOfBounds(): bool
+    {
+        return $this->pagination->page > $this->totalPages();
+    }
 }

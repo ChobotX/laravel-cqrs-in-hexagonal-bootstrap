@@ -210,6 +210,28 @@ Permission-gated CTA button for create/submit/cancel actions. Renders as `<a>` (
     :label="__('messages.impersonation.stop')" />
 ```
 
+## `<x-table-empty-state>` component
+
+Empty state row for data tables. Renders a centered icon and message spanning all columns. Used inside `@forelse`/`@empty` blocks.
+
+**Props:**
+
+| Prop | Type | Description |
+|------|------|-------------|
+| `colspan` | `int` | Number of table columns to span |
+| `message` | `string` | Empty state message text |
+
+**Usage:**
+```blade
+<tbody>
+    @forelse ($result->items as $item)
+        <tr>...</tr>
+    @empty
+        <x-table-empty-state colspan="3" :message="__('messages.users.empty')" />
+    @endforelse
+</tbody>
+```
+
 ## `<x-icon-button>` component
 
 Permission-gated icon-only submit button for use inside existing forms (e.g. remove role tag). Fail-safe: renders nothing without `permission` or `skip-permission`.

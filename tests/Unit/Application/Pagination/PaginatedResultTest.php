@@ -50,3 +50,12 @@ it('handles exact boundary', function (): void {
         ->and($result->hasNextPage())->toBeFalse()
         ->and($result->hasPreviousPage())->toBeTrue();
 });
+
+it('detects page out of bounds', function (): void {
+    expect(new PaginatedResult([], 0, new Pagination(1, 15))->isPageOutOfBounds())->toBeFalse()
+        ->and(new PaginatedResult([], 30, new Pagination(2, 15))->isPageOutOfBounds())->toBeFalse()
+        ->and(new PaginatedResult([], 30, new Pagination(3, 15))->isPageOutOfBounds())->toBeTrue()
+        ->and(new PaginatedResult([], 0, new Pagination(5, 15))->isPageOutOfBounds())->toBeTrue()
+        ->and(new PaginatedResult([], 15, new Pagination(1, 15))->isPageOutOfBounds())->toBeFalse()
+        ->and(new PaginatedResult([], 16, new Pagination(2, 15))->isPageOutOfBounds())->toBeFalse();
+});

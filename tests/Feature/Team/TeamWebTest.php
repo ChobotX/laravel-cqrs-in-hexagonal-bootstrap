@@ -242,6 +242,14 @@ it('redirects unauthenticated to login', function (): void {
     $this->get('/teams')->assertRedirect('/login?'.http_build_query(['redirect' => '/teams']));
 });
 
+it('redirects to page 1 when requested page exceeds total pages', function (): void {
+    $userModel = teamWebUser();
+
+    $this->actingAs($userModel)
+        ->get('/teams?page=5&per_page=15&sort=name&direction=asc')
+        ->assertRedirect('/teams?page=1&per_page=15&sort=name&direction=asc');
+});
+
 it('skips label sync when user lacks labels.management.read', function (): void {
     $role = test()->seedRoleWithPermissions(
         'Team Only Editor',

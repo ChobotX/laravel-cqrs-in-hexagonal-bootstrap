@@ -55,7 +55,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100">
-                        @foreach ($result->items as $team)
+                        @forelse ($result->items as $team)
                             @php
                                 $parentName = null;
                                 if ($team->parentTeamId !== null) {
@@ -115,7 +115,10 @@
                                     </div>
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <x-table-empty-state colspan="5"
+                                                 :message="__('messages.teams.empty')" />
+                        @endforelse
                     </tbody>
                 </table>
             </div>

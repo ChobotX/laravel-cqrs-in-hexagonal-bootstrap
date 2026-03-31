@@ -30,7 +30,7 @@
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
-                    @foreach ($result->items as $user)
+                    @forelse ($result->items as $user)
                         <tr class="transition-colors hover:bg-gray-50/50">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
@@ -106,7 +106,10 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <x-table-empty-state colspan="3"
+                                             :message="__('messages.users.empty')" />
+                    @endforelse
                 </tbody>
             </table>
         </div>

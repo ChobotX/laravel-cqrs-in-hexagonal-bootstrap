@@ -19,6 +19,7 @@ use App\Domain\Team\Team;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
 use App\Presentation\Http\Request\Web\PaginationRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.list.read')]
@@ -32,7 +33,7 @@ final readonly class ListUsersController
         private AuthorizationChecker $authorizationChecker,
     ) {}
 
-    public function __invoke(PaginationRequest $paginationRequest): View
+    public function __invoke(PaginationRequest $paginationRequest): View|RedirectResponse
     {
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
@@ -45,6 +46,10 @@ final readonly class ListUsersController
         $paginatedResult = $this->queryBus->dispatch(
             new ListUsersQuery($paginationRequest->pagination())->withSorting([$sorting]),
         );
+
+        if ($paginatedResult->isPageOutOfBounds()) {
+            return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
+        }
 
         $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
 
