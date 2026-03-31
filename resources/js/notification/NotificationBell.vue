@@ -175,6 +175,7 @@ onUnmounted(() => {
                         v-for="notification in notifications"
                         :key="notification.id"
                         :notification="notification"
+                        :compact="true"
                         @mark-read="void handleMarkRead($event)"
                         @delete="void handleDelete($event)"
                     />

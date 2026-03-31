@@ -7,6 +7,7 @@ const TRUNCATE_LENGTH = 80;
 
 const props = defineProps<{
     notification: NotificationEntry;
+    compact?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -16,10 +17,10 @@ const emit = defineEmits<{
 
 const isUnread = computed(() => props.notification.readAt === null);
 const expanded = ref(false);
-const isTruncated = computed(() => props.notification.body.length > TRUNCATE_LENGTH);
+const isTruncated = computed(() => props.compact === true && props.notification.body.length > TRUNCATE_LENGTH);
 
 const displayBody = computed(() => {
-    if (expanded.value || !isTruncated.value) {
+    if (!props.compact || expanded.value || !isTruncated.value) {
         return props.notification.body;
     }
 
@@ -161,7 +162,7 @@ function handleClick(): void {
             </p>
             <p class="mt-1 text-xs text-gray-400">{{ timeAgo }}</p>
         </div>
-        <div class="flex shrink-0 items-start gap-1">
+        <div :class="['flex shrink-0 items-start', compact ? 'flex-row gap-1' : 'flex-col gap-0.5']">
             <button
                 v-if="isUnread"
                 class="cursor-pointer rounded p-1 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"

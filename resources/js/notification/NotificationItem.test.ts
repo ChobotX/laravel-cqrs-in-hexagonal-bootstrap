@@ -26,9 +26,9 @@ function createEntry(overrides: Partial<NotificationEntry> = {}): NotificationEn
     };
 }
 
-function mountItem(notification: NotificationEntry = createEntry()): ReturnType<typeof mount> {
+function mountItem(notification: NotificationEntry = createEntry(), compact = false): ReturnType<typeof mount> {
     return mount(NotificationItem, {
-        props: { notification },
+        props: { notification, compact },
     });
 }
 
@@ -100,6 +100,20 @@ describe('NotificationItem', () => {
         expect(wrapper.emitted('mark-read')).toEqual([['abc']]);
     });
 
+    it('shows delete button always', () => {
+        const wrapper = mountItem(createEntry({ id: 'x' }));
+
+        expect(wrapper.find('[data-testid="delete-notification-x"]').exists()).toBe(true);
+    });
+
+    it('emits delete on delete button click', async () => {
+        const wrapper = mountItem(createEntry({ id: 'del-1' }));
+
+        await wrapper.find('[data-testid="delete-notification-del-1"]').trigger('click');
+
+        expect(wrapper.emitted('delete')).toEqual([['del-1']]);
+    });
+
     it('navigates to linkUrl on click', async () => {
         const originalHref = window.location.href;
         const hrefSetter = vi.fn();
@@ -146,30 +160,14 @@ describe('NotificationItem', () => {
 
     it('adds cursor-pointer class when linkUrl is present', () => {
         const wrapper = mountItem(createEntry({ linkUrl: '/link' }));
-        const root = wrapper.find('[data-testid="notification-notif-1"]');
 
-        expect(root.classes()).toContain('cursor-pointer');
+        expect(wrapper.find('[data-testid="notification-notif-1"]').classes()).toContain('cursor-pointer');
     });
 
     it('does not add cursor-pointer when no linkUrl', () => {
         const wrapper = mountItem(createEntry({ linkUrl: null }));
-        const root = wrapper.find('[data-testid="notification-notif-1"]');
 
-        expect(root.classes()).not.toContain('cursor-pointer');
-    });
-
-    it('shows delete button', () => {
-        const wrapper = mountItem(createEntry({ id: 'x' }));
-
-        expect(wrapper.find('[data-testid="delete-notification-x"]').exists()).toBe(true);
-    });
-
-    it('emits delete on delete button click', async () => {
-        const wrapper = mountItem(createEntry({ id: 'del-1' }));
-
-        await wrapper.find('[data-testid="delete-notification-del-1"]').trigger('click');
-
-        expect(wrapper.emitted('delete')).toEqual([['del-1']]);
+        expect(wrapper.find('[data-testid="notification-notif-1"]').classes()).not.toContain('cursor-pointer');
     });
 
     it('renders time ago text', () => {
@@ -199,40 +197,63 @@ describe('NotificationItem', () => {
         expect(wrapper.text()).toContain('messages.notifications.days_ago:2');
     });
 
-    it('truncates long body and shows "show more" button', () => {
-        const longBody = 'A'.repeat(100);
-        const wrapper = mountItem(createEntry({ body: longBody }));
+    describe('compact mode', () => {
+        it('truncates long body and shows "show more"', () => {
+            const longBody = 'A'.repeat(100);
+            const wrapper = mountItem(createEntry({ body: longBody }), true);
 
-        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(true);
-        expect(wrapper.text()).toContain('…');
-        expect(wrapper.text()).not.toContain(longBody);
+            expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(true);
+            expect(wrapper.text()).toContain('…');
+        });
+
+        it('does not truncate short body', () => {
+            const wrapper = mountItem(createEntry({ body: 'Short' }), true);
+
+            expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(false);
+        });
+
+        it('expands on "show more" click', async () => {
+            const longBody = 'A'.repeat(100);
+            const wrapper = mountItem(createEntry({ body: longBody }), true);
+
+            await wrapper.find('[data-testid="show-more"]').trigger('click');
+
+            expect(wrapper.text()).toContain(longBody);
+            expect(wrapper.find('[data-testid="show-less"]').exists()).toBe(true);
+        });
+
+        it('collapses on "show less" click', async () => {
+            const longBody = 'A'.repeat(100);
+            const wrapper = mountItem(createEntry({ body: longBody }), true);
+
+            await wrapper.find('[data-testid="show-more"]').trigger('click');
+            await wrapper.find('[data-testid="show-less"]').trigger('click');
+
+            expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(true);
+        });
+
+        it('uses horizontal button layout', () => {
+            const wrapper = mountItem(createEntry({ readAt: null }), true);
+            const buttons = wrapper.find('.flex.shrink-0');
+
+            expect(buttons.classes()).toContain('flex-row');
+        });
     });
 
-    it('does not show "show more" for short body', () => {
-        const wrapper = mountItem(createEntry({ body: 'Short text' }));
+    describe('non-compact mode', () => {
+        it('shows full body without truncation', () => {
+            const longBody = 'A'.repeat(100);
+            const wrapper = mountItem(createEntry({ body: longBody }), false);
 
-        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(false);
-    });
+            expect(wrapper.text()).toContain(longBody);
+            expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(false);
+        });
 
-    it('expands body on "show more" click and shows "show less"', async () => {
-        const longBody = 'A'.repeat(100);
-        const wrapper = mountItem(createEntry({ body: longBody }));
+        it('uses vertical button layout', () => {
+            const wrapper = mountItem(createEntry({ readAt: null }), false);
+            const buttons = wrapper.find('.flex.shrink-0');
 
-        await wrapper.find('[data-testid="show-more"]').trigger('click');
-
-        expect(wrapper.text()).toContain(longBody);
-        expect(wrapper.find('[data-testid="show-less"]').exists()).toBe(true);
-        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(false);
-    });
-
-    it('collapses body on "show less" click', async () => {
-        const longBody = 'A'.repeat(100);
-        const wrapper = mountItem(createEntry({ body: longBody }));
-
-        await wrapper.find('[data-testid="show-more"]').trigger('click');
-        await wrapper.find('[data-testid="show-less"]').trigger('click');
-
-        expect(wrapper.find('[data-testid="show-more"]').exists()).toBe(true);
-        expect(wrapper.text()).toContain('…');
+            expect(buttons.classes()).toContain('flex-col');
+        });
     });
 });
