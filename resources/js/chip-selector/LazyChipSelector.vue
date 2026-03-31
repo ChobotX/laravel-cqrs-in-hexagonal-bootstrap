@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { computed, ref } from 'vue';
-import { error as showErrorToast } from '../toast/toast-queue';
+import { error as showErrorToast, success as showSuccessToast } from '../toast/toast-queue';
 import type { ChipOption } from './ChipSelector.vue';
 import ChipSelector from './ChipSelector.vue';
 
@@ -151,6 +151,7 @@ function onCreate(name: string): void {
             allKnownItems.value.set(created.id, created);
             selectedIds.value = [...selectedIds.value, created.id];
             isCreating.value = false;
+            showSuccessToast(trans('messages.labels.created'));
             fetchResults('');
         })
         .catch(() => {

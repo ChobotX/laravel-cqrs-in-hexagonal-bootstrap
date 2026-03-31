@@ -53,6 +53,7 @@
                            id="password"
                            name="password"
                            type="password"
+                           autocomplete="new-password"
                            required
                            @error('password') aria-describedby="password-error" aria-invalid="true" @enderror>
                     @error('password')
@@ -68,6 +69,7 @@
                            id="password_confirmation"
                            name="password_confirmation"
                            type="password"
+                           autocomplete="new-password"
                            required
                            @error('password_confirmation') aria-describedby="password_confirmation-error" aria-invalid="true" @enderror>
                     @error('password_confirmation')

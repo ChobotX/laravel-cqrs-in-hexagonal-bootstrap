@@ -57,6 +57,7 @@
                            id="password"
                            name="password"
                            type="password"
+                           autocomplete="new-password"
                            @error('password') aria-describedby="password-error" aria-invalid="true" @enderror>
                     @error('password')
                         <p class="mt-1 text-base text-red-600 sm:text-sm"
@@ -71,6 +72,7 @@
                            id="password_confirmation"
                            name="password_confirmation"
                            type="password"
+                           autocomplete="new-password"
                            @error('password_confirmation') aria-describedby="password_confirmation-error" aria-invalid="true" @enderror>
                     @error('password_confirmation')
                         <p class="mt-1 text-base text-red-600 sm:text-sm"

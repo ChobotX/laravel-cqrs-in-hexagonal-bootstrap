@@ -82,7 +82,10 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if (Auth::check()) {
-                return redirect()->back();
+                $back = url()->previous() ?: '/';
+                $separator = str_contains($back, '?') ? '&' : '?';
+
+                return redirect($back.$separator.'csrf_expired=1')->withInput();
             }
 
             if ($request->expectsJson()) {

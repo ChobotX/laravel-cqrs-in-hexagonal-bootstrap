@@ -193,12 +193,17 @@ return [
         'no_results' => 'Nebyly nalezeny žádné výsledky.',
     ],
 
+    'autocomplete' => [
+        'search_failed' => 'Vyhledávání selhalo. Zkuste to prosím znovu.',
+    ],
+
     'labels' => [
         'title' => 'Štítky',
         'subtitle' => 'Spravujte štítky pro tento záznam',
         'search' => 'Hledat štítky...',
         'no_results' => 'Žádné štítky nenalezeny.',
         'create' => 'Vytvořit "%s"',
+        'created' => 'Štítek vytvořen.',
         'create_failed' => 'Nepodařilo se vytvořit štítek.',
         'search_failed' => 'Nepodařilo se načíst štítky.',
     ],

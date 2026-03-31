@@ -41,7 +41,7 @@ it('returns JSON 419 for AJAX requests with expired CSRF token', function (): vo
         ->assertJson(['redirect' => '/login']);
 });
 
-it('redirects authenticated user back on CSRF token mismatch', function (): void {
+it('redirects authenticated user back with csrf_expired query param and input on CSRF token mismatch', function (): void {
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440020',
         'name' => 'Jane Doe',
@@ -51,6 +51,22 @@ it('redirects authenticated user back on CSRF token mismatch', function (): void
 
     $this->actingAs($user)
         ->from('/users/create')
-        ->post('/test-csrf-expired')
-        ->assertRedirect('/users/create');
+        ->post('/test-csrf-expired', ['name' => 'Test Input'])
+        ->assertRedirect('/users/create?csrf_expired=1')
+        ->assertSessionHasInput('name', 'Test Input');
+});
+
+it('renders error toast from csrf_expired query parameter', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440021',
+        'name' => 'Jane Doe',
+        'email' => 'jane2@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+
+    $this->actingAs($user)
+        ->get('/dashboard?csrf_expired=1')
+        ->assertOk()
+        ->assertSee('app-flash-data')
+        ->assertSee(__('messages.auth.session_expired'));
 });

@@ -61,6 +61,49 @@ it('updates name and email', function (): void {
         'name' => 'New Name',
         'email' => 'new@example.com',
     ]);
+
+    $this->get('/users/550e8400-e29b-41d4-a716-446655440043/edit')
+        ->assertOk()
+        ->assertSee('app-flash-data')
+        ->assertSee('data-success');
+});
+
+it('rejects update when browser autofills short password', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440050',
+        'name' => 'Admin',
+        'email' => 'admin-autofill@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440051',
+        'name' => 'Target User',
+        'email' => 'target@example.com',
+    ]);
+
+    $this->actingAs($admin)
+        ->from('/users/550e8400-e29b-41d4-a716-446655440051/edit')
+        ->put('/users/550e8400-e29b-41d4-a716-446655440051', [
+            'name' => 'Updated Name',
+            'email' => 'target@example.com',
+            'password' => 'short',
+            'password_confirmation' => '',
+        ])
+        ->assertRedirect('/users/550e8400-e29b-41d4-a716-446655440051/edit')
+        ->assertSessionHasErrors('password');
+
+    $this->assertDatabaseHas('users', [
+        'id' => '550e8400-e29b-41d4-a716-446655440051',
+        'name' => 'Target User',
+    ]);
+
+    $this->get('/users/550e8400-e29b-41d4-a716-446655440051/edit')
+        ->assertOk()
+        ->assertSee('app-flash-data')
+        ->assertSee('data-error');
 });
 
 it('updates password when provided', function (): void {

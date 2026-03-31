@@ -8,6 +8,7 @@ vi.mock('laravel-vue-i18n', () => ({
 
 vi.mock('../toast/toast-queue', () => ({
     error: vi.fn(),
+    success: vi.fn(),
 }));
 
 beforeAll(() => {
@@ -404,7 +405,9 @@ describe('LazyChipSelector', () => {
         await createOption?.trigger('mousedown');
         await flushPromises();
 
+        const { success: successToast } = await import('../toast/toast-queue');
         expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(true);
+        expect(successToast).toHaveBeenCalledWith('messages.labels.created');
         expect(wrapper.text()).toContain('newlabel');
     });
 

@@ -195,12 +195,17 @@ return [
         'view_tree' => 'Tree view',
     ],
 
+    'autocomplete' => [
+        'search_failed' => 'Search failed. Please try again.',
+    ],
+
     'labels' => [
         'title' => 'Labels',
         'subtitle' => 'Manage labels for this record',
         'search' => 'Search labels...',
         'no_results' => 'No labels found.',
         'create' => 'Create "%s"',
+        'created' => 'Label created.',
         'create_failed' => 'Failed to create label.',
         'search_failed' => 'Failed to load labels.',
     ],
