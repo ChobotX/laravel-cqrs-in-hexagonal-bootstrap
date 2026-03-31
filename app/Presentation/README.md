@@ -401,4 +401,20 @@ When a user's session expires, the app redirects them to login and returns them 
 - **Reusable components** — follow SRP and DRY. Extract shared UI patterns into small, focused components rather than duplicating templates.
 - **Composition over duplication** — when a component needs a variant with different data flow (e.g. static vs lazy-loaded), create a wrapper component that composes the base component rather than forking or adding mode flags. The wrapper owns the new concern (fetch, debounce, state sync) and feeds the base component via props and events. Example: `LazyChipSelector` wraps `ChipSelector` — it handles server-side search and feeds results as `options`, while `ChipSelector` stays a pure display/interaction component.
 
+## Notification components
+
+The notification system uses internal API routes (`routes/internal_api.php`) consumed by Vue components mounted to Blade templates via `data-*` attributes.
+
+**Controllers** (`Controller\Web\Notification\`): `ListNotificationsController`, `CountUnreadNotificationsController`, `MarkNotificationAsReadController`, `MarkAllNotificationsAsReadController`, `DeleteNotificationController`, `ShowNotificationsController`. All use `#[SkipPermissionCheck]` — ownership enforced in domain handlers.
+
+**Vue components** (`resources/js/notification/`):
+- `NotificationBell.vue` — topbar bell icon + dropdown, mounted to `#app-notification-bell`
+- `NotificationList.vue` — full page list with filters/pagination, mounted to `#app-notification-list`
+- `NotificationItem.vue` — single notification display (compact mode for bell, full for list)
+- `NotificationPreferences.vue` — preference grid for profile, outputs hidden inputs for form submission
+
+**Real-time** (`notification-echo.ts`): Laravel Echo + Reverb WebSocket subscription to `private-notifications.{userId}`. Initialized in `notification-bell-app.ts`. Listens for `NotificationReceived` and `UnreadCountUpdated` events.
+
+**State management** (`notification-store.ts`): Reactive store (same pattern as `toast-queue.ts`) shared between bell and echo modules.
+
 The Presentation layer may depend on Application, Domain, and Contract. It must not depend on Infrastructure.
