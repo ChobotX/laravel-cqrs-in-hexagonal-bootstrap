@@ -33,6 +33,7 @@ vi.mock('./notification-api', () => ({
     fetchUnreadCount: vi.fn().mockResolvedValue(3),
     markRead: vi.fn().mockResolvedValue(undefined),
     markAllRead: vi.fn().mockResolvedValue(undefined),
+    deleteNotification: vi.fn().mockResolvedValue(undefined),
 }));
 
 function mountBell(): ReturnType<typeof mount> {

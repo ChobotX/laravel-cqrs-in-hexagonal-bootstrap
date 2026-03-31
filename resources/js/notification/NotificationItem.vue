@@ -7,7 +7,6 @@ const TRUNCATE_LENGTH = 80;
 
 const props = defineProps<{
     notification: NotificationEntry;
-    compact?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -177,7 +176,6 @@ function handleClick(): void {
                 </svg>
             </button>
             <button
-                v-if="!compact"
                 class="cursor-pointer rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
                 type="button"
                 :title="trans('messages.notifications.delete')"

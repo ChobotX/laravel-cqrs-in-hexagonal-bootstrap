@@ -4,9 +4,10 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { error as logError } from '../logger/logger';
 import { error as toastError } from '../toast/toast-queue';
 import NotificationItem from './NotificationItem.vue';
-import { fetchNotifications, fetchUnreadCount, markAllRead, markRead } from './notification-api';
+import { deleteNotification, fetchNotifications, fetchUnreadCount, markAllRead, markRead } from './notification-api';
 import {
     notifications,
+    removeNotification,
     setNotifications,
     setUnreadCount,
     markAllAsRead as storeMarkAllAsRead,
@@ -65,6 +66,17 @@ async function handleMarkAllRead(): Promise<void> {
         await markAllRead();
     } catch (err) {
         logError('Failed to mark all notifications as read', err);
+        toastError(trans('messages.notifications.error_action'));
+    }
+}
+
+async function handleDelete(id: string): Promise<void> {
+    removeNotification(id);
+
+    try {
+        await deleteNotification(id);
+    } catch (err) {
+        logError('Failed to delete notification', err);
         toastError(trans('messages.notifications.error_action'));
     }
 }
@@ -163,8 +175,8 @@ onUnmounted(() => {
                         v-for="notification in notifications"
                         :key="notification.id"
                         :notification="notification"
-                        :compact="true"
                         @mark-read="void handleMarkRead($event)"
+                        @delete="void handleDelete($event)"
                     />
                     <div
                         v-if="notifications.length === 0"

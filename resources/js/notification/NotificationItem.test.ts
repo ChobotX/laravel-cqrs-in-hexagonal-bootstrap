@@ -26,9 +26,9 @@ function createEntry(overrides: Partial<NotificationEntry> = {}): NotificationEn
     };
 }
 
-function mountItem(notification: NotificationEntry = createEntry(), compact = false): ReturnType<typeof mount> {
+function mountItem(notification: NotificationEntry = createEntry()): ReturnType<typeof mount> {
     return mount(NotificationItem, {
-        props: { notification, compact },
+        props: { notification },
     });
 }
 
@@ -100,12 +100,6 @@ describe('NotificationItem', () => {
         expect(wrapper.emitted('mark-read')).toEqual([['abc']]);
     });
 
-    it('shows mark-read button in compact mode too', () => {
-        const wrapper = mountItem(createEntry({ id: 'abc', readAt: null }), true);
-
-        expect(wrapper.find('[data-testid="mark-read-abc"]').exists()).toBe(true);
-    });
-
     it('navigates to linkUrl on click', async () => {
         const originalHref = window.location.href;
         const hrefSetter = vi.fn();
@@ -164,20 +158,14 @@ describe('NotificationItem', () => {
         expect(root.classes()).not.toContain('cursor-pointer');
     });
 
-    it('hides delete button in compact mode', () => {
-        const wrapper = mountItem(createEntry({ id: 'x' }), true);
-
-        expect(wrapper.find('[data-testid="delete-notification-x"]').exists()).toBe(false);
-    });
-
-    it('shows delete button in non-compact mode', () => {
-        const wrapper = mountItem(createEntry({ id: 'x' }), false);
+    it('shows delete button', () => {
+        const wrapper = mountItem(createEntry({ id: 'x' }));
 
         expect(wrapper.find('[data-testid="delete-notification-x"]').exists()).toBe(true);
     });
 
     it('emits delete on delete button click', async () => {
-        const wrapper = mountItem(createEntry({ id: 'del-1' }), false);
+        const wrapper = mountItem(createEntry({ id: 'del-1' }));
 
         await wrapper.find('[data-testid="delete-notification-del-1"]').trigger('click');
 

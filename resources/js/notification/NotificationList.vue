@@ -129,7 +129,6 @@ onMounted(() => {
                 v-for="notification in items"
                 :key="notification.id"
                 :notification="notification"
-                :compact="false"
                 @mark-read="void handleMarkRead($event)"
                 @delete="void handleDelete($event)"
             />
