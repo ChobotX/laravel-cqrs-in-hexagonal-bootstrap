@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Authorization;
 
+use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 final class RecordShareModel extends Model
 {
+    use HasOptimisticLocking;
     use HasUuids;
 
     public $incrementing = false;

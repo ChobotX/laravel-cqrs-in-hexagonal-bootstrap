@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Authorization;
 
+use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Database\Factories\RoleModelFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 final class RoleModel extends Model
 {
     use HasFactory;
+    use HasOptimisticLocking;
     use HasUuids;
     use SoftDeletes;
 

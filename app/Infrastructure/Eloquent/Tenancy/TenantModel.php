@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Tenancy;
 
+use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,6 +13,7 @@ use Override;
 
 final class TenantModel extends Model
 {
+    use HasOptimisticLocking;
     use HasUuids;
     use SoftDeletes;
 

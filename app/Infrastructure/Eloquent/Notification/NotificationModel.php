@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Notification;
 
+use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,7 @@ use Override;
  */
 final class NotificationModel extends Model
 {
+    use HasOptimisticLocking;
     use HasUuids;
 
     public $incrementing = false;

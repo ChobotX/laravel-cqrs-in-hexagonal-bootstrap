@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\User;
 
+use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Database\Factories\UserModelFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +17,7 @@ final class UserModel extends Authenticatable
 {
     use HasApiTokens;
     use HasFactory;
+    use HasOptimisticLocking;
     use HasUuids;
     use SoftDeletes;
 

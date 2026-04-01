@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Label;
 
+use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 final class LabelModel extends Model
 {
+    use HasOptimisticLocking;
     use HasUuids;
 
     public $incrementing = false;

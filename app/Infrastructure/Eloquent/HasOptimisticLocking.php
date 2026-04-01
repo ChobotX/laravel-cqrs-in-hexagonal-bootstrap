@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @mixin Model
+ *
+ * @property int $version
  */
 trait HasOptimisticLocking
 {
@@ -16,7 +18,7 @@ trait HasOptimisticLocking
     {
         static::creating(function (Model $model): void {
             if (! isset($model->attributes['version'])) {
-                $model->version = 1;
+                $model->setAttribute('version', 1);
             }
         });
     }
