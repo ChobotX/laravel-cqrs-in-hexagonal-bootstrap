@@ -7,10 +7,13 @@ namespace App\Domain\User\Command\SetPassword;
 use App\Contract\Auth\PasswordManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
+use App\Contract\Event\EventCollector;
+use App\Domain\User\Event\PasswordChanged;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRepository;
+use DateTimeImmutable;
 
 /** @implements CommandHandler<SetPasswordCommand> */
 final readonly class SetPasswordHandler implements CommandHandler
@@ -18,6 +21,7 @@ final readonly class SetPasswordHandler implements CommandHandler
     public function __construct(
         private UserRepository $userRepository,
         private PasswordManager $passwordManager,
+        private EventCollector $eventCollector,
     ) {}
 
     public function handle(Command $command): void
@@ -29,5 +33,10 @@ final readonly class SetPasswordHandler implements CommandHandler
         }
 
         $this->passwordManager->setPassword($user->id->value, $command->rawPassword);
+
+        $this->eventCollector->collect(new PasswordChanged(
+            userId: $user->id->value,
+            occurredAt: new DateTimeImmutable,
+        ));
     }
 }

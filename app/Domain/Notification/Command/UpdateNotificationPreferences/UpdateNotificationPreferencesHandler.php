@@ -6,17 +6,21 @@ namespace App\Domain\Notification\Command\UpdateNotificationPreferences;
 
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
+use App\Contract\Event\EventCollector;
 use App\Domain\Notification\ChannelPreference;
+use App\Domain\Notification\Event\NotificationPreferencesUpdated;
 use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationPreferenceRepository;
 use App\Domain\Notification\NotificationPreferences;
+use DateTimeImmutable;
 
 /** @implements CommandHandler<UpdateNotificationPreferencesCommand> */
 final readonly class UpdateNotificationPreferencesHandler implements CommandHandler
 {
     public function __construct(
         private NotificationPreferenceRepository $notificationPreferenceRepository,
+        private EventCollector $eventCollector,
     ) {}
 
     public function handle(Command $command): void
@@ -41,6 +45,11 @@ final readonly class UpdateNotificationPreferencesHandler implements CommandHand
         $this->notificationPreferenceRepository->save(new NotificationPreferences(
             userId: $command->userId,
             preferences: $channelPreferences,
+        ));
+
+        $this->eventCollector->collect(new NotificationPreferencesUpdated(
+            userId: $command->userId,
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

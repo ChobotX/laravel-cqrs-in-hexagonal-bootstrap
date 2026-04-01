@@ -95,6 +95,7 @@ use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotifica
 use App\Domain\Notification\Event\AllNotificationsRead;
 use App\Domain\Notification\Event\NotificationCreated;
 use App\Domain\Notification\Event\NotificationDeleted;
+use App\Domain\Notification\Event\NotificationPreferencesUpdated;
 use App\Domain\Notification\Event\NotificationRead;
 use App\Domain\Notification\EventHandler\CleanupNotificationsOnUserDeleted;
 use App\Domain\Notification\EventHandler\DeliverNotificationOnCreated;
@@ -147,6 +148,7 @@ use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
 use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
+use App\Domain\User\Event\PasswordChanged;
 use App\Domain\User\Event\UserCreated;
 use App\Domain\User\Event\UserDeleted;
 use App\Domain\User\Query\CountUsers\CountUsersHandler;
@@ -196,6 +198,8 @@ final class BusServiceProvider extends ServiceProvider
                 NotificationRead::class => [UpdateUnreadCountOnNotificationChange::class],
                 AllNotificationsRead::class => [UpdateUnreadCountOnNotificationChange::class],
                 NotificationDeleted::class => [UpdateUnreadCountOnNotificationChange::class],
+                NotificationPreferencesUpdated::class => [],
+                PasswordChanged::class => [],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
