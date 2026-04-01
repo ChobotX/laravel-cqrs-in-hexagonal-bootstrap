@@ -45,7 +45,20 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
 
     public function canWithScope(string $userId, string $permission): AccessDecision
     {
-        return $this->authorizationChecker->canWithScope($userId, $permission);
+        $key = $this->scopeCacheKey($userId, $permission);
+
+        /** @var array{granted: bool, scope: string} $cached */
+        $cached = $this->cacheRepository->remember(
+            $key,
+            $this->ttl,
+            function () use ($userId, $permission): array {
+                $accessDecision = $this->authorizationChecker->canWithScope($userId, $permission);
+
+                return ['granted' => $accessDecision->granted(), 'scope' => $accessDecision->scope()];
+            },
+        );
+
+        return new SimpleAccessDecision($cached['granted'], $cached['scope']);
     }
 
     /** @return list<string> */
@@ -67,6 +80,11 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
     private function permissionsCacheKey(string $userId): string
     {
         return sprintf('%s:auth:perms:%s:v%d', $this->tenantPrefix(), $userId, $this->authVersion($userId));
+    }
+
+    private function scopeCacheKey(string $userId, string $permission): string
+    {
+        return sprintf('%s:auth:scope:%s:%s:v%d', $this->tenantPrefix(), $userId, $permission, $this->authVersion($userId));
     }
 
     private function sharesCacheKey(
