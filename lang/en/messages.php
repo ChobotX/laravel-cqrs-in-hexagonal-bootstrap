@@ -246,6 +246,7 @@ return [
         'notification_ownership' => 'You do not have access to this notification.',
         'invalid_notification_type' => 'Value [:value] is not a valid notification type.',
         'invalid_notification_link' => 'Value [:value] is not a valid notification link.',
+        'concurrent_modification' => 'This record was modified by another user. Please reload and try again.',
     ],
 
     'pagination' => [

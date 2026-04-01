@@ -51,6 +51,8 @@ Non-`ScopeAwareQuery` queries pass through unchanged.
 
 Repositories implement contract interfaces and use Eloquent models internally. Domain objects are never Eloquent models — mappers translate between Eloquent models and domain objects.
 
+The `HasOptimisticLocking` trait (`app/Infrastructure/Eloquent/HasOptimisticLocking.php`) provides optimistic concurrency control. It overrides `performUpdate()` to add `WHERE version = ?` and increment the version column atomically. If 0 rows are affected (stale version), it throws `ConcurrentModificationException` (HTTP 409). The version is set to 1 on creation automatically.
+
 The `PaginatesQuery` trait (`app/Infrastructure/Eloquent/PaginatesQuery.php`) provides a `paginateBuilder()` helper that Eloquent repositories use for paginated list methods. It executes a `COUNT(*)` + offset/limit query and returns `[list<Model>, int $total]` for the caller to map and wrap in `PaginatedResult`.
 
 The `SortsQuery` trait (`app/Infrastructure/Eloquent/SortsQuery.php`) provides a `sortBuilder()` helper that applies `ORDER BY` to an Eloquent builder. Each repository using the trait must implement `textSortColumns()` returning column names where case-insensitive sorting via `LOWER()` applies. Non-text columns (timestamps, numerics) get plain `ORDER BY`. For computed columns like `permission_score`, repositories add `selectRaw` with the SQL expression before calling `sortBuilder()`.

@@ -238,6 +238,7 @@ return [
         'notification_ownership' => 'K tomuto upozornění nemáte přístup.',
         'invalid_notification_type' => 'Hodnota [:value] není platný typ upozornění.',
         'invalid_notification_link' => 'Hodnota [:value] není platný odkaz upozornění.',
+        'concurrent_modification' => 'Tento záznam byl změněn jiným uživatelem. Načtěte stránku znovu a zkuste to znovu.',
     ],
 
     'pagination' => [
