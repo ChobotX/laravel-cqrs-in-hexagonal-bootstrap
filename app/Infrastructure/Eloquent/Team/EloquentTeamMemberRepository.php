@@ -149,6 +149,33 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
         );
     }
 
+    /** @return list<string> */
+    public function visibleUserIds(string $userId): array
+    {
+        /** @var list<object{user_id: string}> $rows */
+        $rows = DB::select(<<<'SQL'
+            WITH RECURSIVE team_tree AS (
+                SELECT tm.team_id AS id
+                FROM team_members tm
+                JOIN teams t ON t.id = tm.team_id AND t.deleted_at IS NULL
+                WHERE tm.user_id = ?
+                UNION ALL
+                SELECT t.id FROM teams t JOIN team_tree tt ON t.parent_team_id = tt.id WHERE t.deleted_at IS NULL
+            )
+            SELECT DISTINCT tm.user_id
+            FROM team_members tm
+            JOIN team_tree tt ON tm.team_id = tt.id
+            SQL, [$userId]);
+
+        $userIds = array_map(fn (object $row): string => $row->user_id, $rows);
+
+        if (! in_array($userId, $userIds, true)) {
+            $userIds[] = $userId;
+        }
+
+        return $userIds;
+    }
+
     public function removeAllByUser(string $userId): void
     {
         TeamMemberModel::where('user_id', $userId)->delete();

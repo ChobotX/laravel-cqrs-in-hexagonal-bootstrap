@@ -27,20 +27,6 @@ final readonly class EloquentTeamMembershipChecker implements TeamMembershipChec
     /** @return list<string> */
     public function visibleUserIds(string $userId): array
     {
-        $teamIds = $this->teamMemberRepository->memberTeamIds($userId);
-
-        if ($teamIds === []) {
-            return [$userId];
-        }
-
-        $userIds = [$userId];
-
-        foreach ($teamIds as $teamId) {
-            foreach ($this->teamMemberRepository->listMembers($teamId) as $member) {
-                $userIds[] = $member->userId;
-            }
-        }
-
-        return array_values(array_unique($userIds));
+        return $this->teamMemberRepository->visibleUserIds($userId);
     }
 }

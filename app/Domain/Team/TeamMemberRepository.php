@@ -26,5 +26,8 @@ interface TeamMemberRepository
      */
     public function listMembers(string $teamId, array $sortings = []): array;
 
+    /** @return list<string> User IDs visible to this user (members of their teams + descendants, always includes self) */
+    public function visibleUserIds(string $userId): array;
+
     public function removeAllByUser(string $userId): void;
 }

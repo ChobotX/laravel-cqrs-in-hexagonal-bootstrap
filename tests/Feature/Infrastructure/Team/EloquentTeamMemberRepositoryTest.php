@@ -133,6 +133,42 @@ it('removes all team memberships by user', function (): void {
         ->and($eloquentTeamMemberRepository->isMember($userModel->id, $team2Id))->toBeFalse();
 });
 
+it('returns visible user ids from teams and descendants in single query', function (): void {
+    $userModel = createTeamMemberTestUser();
+    $user2 = createTeamMemberTestUser();
+    $user3 = createTeamMemberTestUser();
+    $outsider = createTeamMemberTestUser();
+
+    $parentId = '550e8400-e29b-41d4-a716-446655440d10';
+    $childId = '550e8400-e29b-41d4-a716-446655440d11';
+    $unrelatedId = '550e8400-e29b-41d4-a716-446655440d12';
+
+    createTeamMemberTestTeam($parentId);
+    createTeamMemberTestTeam($childId, $parentId);
+    createTeamMemberTestTeam($unrelatedId);
+
+    $eloquentTeamMemberRepository = teamMemberRepo();
+    $eloquentTeamMemberRepository->add($userModel->id, $parentId);
+    $eloquentTeamMemberRepository->add($user2->id, $parentId);
+    $eloquentTeamMemberRepository->add($user3->id, $childId);
+    $eloquentTeamMemberRepository->add($outsider->id, $unrelatedId);
+
+    $ids = $eloquentTeamMemberRepository->visibleUserIds($userModel->id);
+
+    expect($ids)->toContain($userModel->id, $user2->id, $user3->id)
+        ->and($ids)->not->toContain($outsider->id);
+});
+
+it('returns only self when user has no teams', function (): void {
+    $userModel = createTeamMemberTestUser();
+
+    $eloquentTeamMemberRepository = teamMemberRepo();
+
+    $ids = $eloquentTeamMemberRepository->visibleUserIds($userModel->id);
+
+    expect($ids)->toBe([$userModel->id]);
+});
+
 it('returns empty member team ids when user has no teams', function (): void {
     $userModel = createTeamMemberTestUser();
     createTeamMemberTestTeam('550e8400-e29b-41d4-a716-446655440d0b');
