@@ -393,6 +393,30 @@ When a user's session expires, the app redirects them to login and returns them 
 
 `SafeRedirectValidator` (`App\Presentation\Http\Security`) prevents open redirect attacks by only allowing relative paths (not protocol-relative `//`) or same-host absolute URLs.
 
+## Shared Vue components
+
+Reusable Vue components live in `resources/js/shared/`. These mirror the styling of their Blade counterparts to ensure visual consistency across server-rendered grids and Vue-powered lists.
+
+### `ActionButton`
+
+Vue equivalent of `<x-action-button>`. Icon-only button for row actions in Vue lists.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | required | Tooltip text (`data-tooltip`) and `aria-label` |
+| `variant` | `string` | `'default'` | `'default'` (indigo hover) or `'danger'` (red hover) |
+
+Uses a default slot for the icon SVG (`h-5 w-5`). Styling matches the Blade component: `rounded-lg p-2 text-gray-400`.
+
+**Example:**
+```vue
+<ActionButton variant="danger" :label="trans('messages.notifications.delete')" @click="handleDelete">
+    <svg class="h-5 w-5" ...><!-- heroicon-o-trash --></svg>
+</ActionButton>
+```
+
 ## Vue frontend rules (when applicable)
 
 - **Minimal frontend logic** — JavaScript should only handle UI interactions (toggles, transitions, form UX). All data shaping, filtering, sorting, and formatting must happen server-side. The backend serves ready-to-render payloads.
