@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Application\Authorization\ScopeTarget;
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
 use App\Domain\User\Query\SearchUsers\SearchUsersHandler;
 use App\Domain\User\Query\SearchUsers\SearchUsersQuery;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 

@@ -145,3 +145,9 @@ String literals in `===`/`!==` comparisons and `match()` arm conditions must use
 Every Eloquent entity model must use `HasOptimisticLocking`. Updates add `WHERE version = ?` and increment the version column atomically. Stale updates throw `ConcurrentModificationException` (HTTP 409). Junction models (identified by `$timestamps = false` or no primary key) are exempt. Models that don't need soft deletes must declare `#[HardDelete(reason: '...')]` with a mandatory explanation.
 **Why:** Prevents silent data loss from concurrent updates in a multi-user, multi-tab, multi-device environment. The mandatory reason on `#[HardDelete]` forces a conscious decision about each model's deletion semantics.
 **Enforced by:** PHPStan rule `EloquentModelRequiresTraitsRule`. See [tests/README.md](tests/README.md).
+
+### Domain\*\Contract pattern for cross-domain contracts
+
+Each bounded context exposes a `Contract` sub-namespace (`Domain/{Context}/Contract/`) containing types that may be imported cross-domain: value object IDs, repository interfaces, domain events, and service contracts. Internal types (handlers, exceptions, entities, non-ID value objects) are not importable cross-domain. The top-level `App\Contract` layer retains only truly shared infrastructure contracts (Command/Query/Event interfaces, Auth, Tenancy, etc.).
+**Why:** Provides a formal, enforceable boundary between domain contexts. Cross-domain imports are limited to a stable, narrow API surface. Changes to internal domain types don't break other contexts.
+**Enforced by:** PHPStan rule `NoCrossDomainDependenciesRule`. See [tests/README.md](tests/README.md).

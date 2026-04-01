@@ -6,9 +6,9 @@ namespace Tests\Helper;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamRepository;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
-use App\Domain\Team\TeamRepository;
 use App\Domain\Team\TeamSlug;
 
 final class FakeTeamRepository implements TeamRepository

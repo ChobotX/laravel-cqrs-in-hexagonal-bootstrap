@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
-use App\Domain\Notification\Event\AllNotificationsRead;
-use App\Domain\Notification\Event\NotificationDeleted;
-use App\Domain\Notification\Event\NotificationRead;
+use App\Domain\Notification\Contract\Event\AllNotificationsRead;
+use App\Domain\Notification\Contract\Event\NotificationDeleted;
+use App\Domain\Notification\Contract\Event\NotificationRead;
 use App\Domain\Notification\EventHandler\UpdateUnreadCountOnNotificationChange;
 use Tests\Helper\FakeNotificationBroadcaster;
 use Tests\Helper\FakeNotificationRepository;

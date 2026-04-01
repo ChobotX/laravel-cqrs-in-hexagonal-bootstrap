@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
 use App\Domain\Label\Command\CreateLabel\CreateLabelHandler;
-use App\Domain\Label\Event\LabelCreated;
+use App\Domain\Label\Contract\Event\LabelCreated;
+use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use Tests\Helper\FakeEventCollector;

@@ -8,10 +8,10 @@ use App\Application\Event\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Notification\NotificationBroadcaster;
-use App\Domain\Notification\Event\AllNotificationsRead;
-use App\Domain\Notification\Event\NotificationDeleted;
-use App\Domain\Notification\Event\NotificationRead;
-use App\Domain\Notification\NotificationRepository;
+use App\Domain\Notification\Contract\Event\AllNotificationsRead;
+use App\Domain\Notification\Contract\Event\NotificationDeleted;
+use App\Domain\Notification\Contract\Event\NotificationRead;
+use App\Domain\Notification\Contract\NotificationRepository;
 
 /** @implements DomainEventHandler<DomainEvent> */
 #[RetryPolicy(tries: 3, backoff: [10, 30, 60], timeout: 30)]

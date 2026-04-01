@@ -9,14 +9,14 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
 use App\Contract\Notification\NotificationChannelSenderRegistry;
-use App\Domain\Notification\Event\NotificationCreated;
+use App\Domain\Notification\Contract\Event\NotificationCreated;
+use App\Domain\Notification\Contract\NotificationId;
+use App\Domain\Notification\Contract\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\NotificationRepository;
 use App\Domain\Notification\Notification;
 use App\Domain\Notification\NotificationChannel;
-use App\Domain\Notification\NotificationId;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationLink;
-use App\Domain\Notification\NotificationPreferenceRepository;
-use App\Domain\Notification\NotificationRepository;
 use App\Domain\Notification\NotificationType;
 use DateTimeImmutable;
 

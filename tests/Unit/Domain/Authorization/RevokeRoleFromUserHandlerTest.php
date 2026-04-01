@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserHandler;
-use App\Domain\Authorization\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\RoleNotAssignedException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserPermissionRepository;

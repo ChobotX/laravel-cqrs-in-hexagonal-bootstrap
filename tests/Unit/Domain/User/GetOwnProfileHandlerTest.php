@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\Query\GetOwnProfile\GetOwnProfileHandler;
 use App\Domain\User\Query\GetOwnProfile\GetOwnProfileQuery;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 

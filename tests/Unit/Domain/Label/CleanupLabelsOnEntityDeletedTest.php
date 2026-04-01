@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EntityDeleted;
+use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\EventHandler\CleanupLabelsOnEntityDeleted;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use Tests\Helper\FakeLabelRepository;

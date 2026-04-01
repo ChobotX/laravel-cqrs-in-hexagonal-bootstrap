@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Authorization\Command\StopImpersonation\StopImpersonationCommand;
 use App\Domain\Authorization\Command\StopImpersonation\StopImpersonationHandler;
-use App\Domain\Authorization\Event\ImpersonationStopped;
+use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeImpersonationManager;
 

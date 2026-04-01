@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Exception\InvalidLabelIdException;
-use App\Domain\Label\LabelId;
 
 it('can be constructed with a valid UUID', function (): void {
     $id = new LabelId('550e8400-e29b-41d4-a716-446655440000');

@@ -8,7 +8,7 @@ use App\Application\Event\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Event\EntityDeleted;
-use App\Domain\Notification\NotificationRepository;
+use App\Domain\Notification\Contract\NotificationRepository;
 
 /** @implements DomainEventHandler<DomainEvent> */
 #[RetryPolicy(tries: 3, backoff: [30, 120, 300], timeout: 60)]

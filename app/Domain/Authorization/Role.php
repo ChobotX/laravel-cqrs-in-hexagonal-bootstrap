@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization;
 
+use App\Domain\Authorization\Contract\RoleId;
+
 final readonly class Role
 {
     /**

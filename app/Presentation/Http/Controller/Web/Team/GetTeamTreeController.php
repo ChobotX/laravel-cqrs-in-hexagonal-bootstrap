@@ -91,7 +91,7 @@ final readonly class GetTeamTreeController
      */
     private function mapNode(TeamTreeNode $teamTreeNode, array $visibleTeamIds, array $roleMap): array
     {
-        $parentId = $teamTreeNode->team->parentTeamId instanceof \App\Domain\Team\TeamId
+        $parentId = $teamTreeNode->team->parentTeamId instanceof \App\Domain\Team\Contract\TeamId
             ? $teamTreeNode->team->parentTeamId->value
             : '';
 

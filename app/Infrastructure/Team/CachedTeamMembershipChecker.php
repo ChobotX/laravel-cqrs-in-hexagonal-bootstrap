@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Team;
 
-use App\Contract\Team\TeamMembershipChecker;
+use App\Domain\Team\Contract\TeamMembershipChecker;
 
 final class CachedTeamMembershipChecker implements TeamMembershipChecker
 {

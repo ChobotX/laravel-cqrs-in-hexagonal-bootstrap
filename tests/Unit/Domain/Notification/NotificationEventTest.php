@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
-use App\Domain\Notification\Event\AllNotificationsRead;
-use App\Domain\Notification\Event\NotificationCreated;
-use App\Domain\Notification\Event\NotificationDeleted;
-use App\Domain\Notification\Event\NotificationRead;
+use App\Domain\Notification\Contract\Event\AllNotificationsRead;
+use App\Domain\Notification\Contract\Event\NotificationCreated;
+use App\Domain\Notification\Contract\Event\NotificationDeleted;
+use App\Domain\Notification\Contract\Event\NotificationRead;
 
 it('NotificationCreated carries all data', function (): void {
     $occurredAt = new DateTimeImmutable('2026-01-15T10:00:00+00:00');

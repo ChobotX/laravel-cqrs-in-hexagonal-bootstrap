@@ -11,7 +11,7 @@ use App\Contract\Event\DomainEventHandler;
 use App\Domain\Notification\Command\SendNotification\SendNotificationCommand;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\WelcomeNotification;
-use App\Domain\User\Event\UserCreated;
+use App\Domain\User\Contract\Event\UserCreated;
 
 /** @implements DomainEventHandler<UserCreated> */
 #[RetryPolicy(tries: 3, backoff: [10, 30, 60], timeout: 30)]

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleRevoked;
 use Tests\Helper\FakeAuthorizationRefresher;
 

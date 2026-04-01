@@ -8,7 +8,7 @@ use App\Application\Event\RetryPolicy;
 use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
-use App\Domain\Authorization\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 
 /** @implements DomainEventHandler<PermissionOverrideRemoved> */
 #[RetryPolicy(tries: 3, backoff: [5, 15, 30], timeout: 10)]

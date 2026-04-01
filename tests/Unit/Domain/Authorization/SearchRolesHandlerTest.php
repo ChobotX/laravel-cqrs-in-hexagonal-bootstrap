@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesHandler;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesQuery;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeRoleRepository;
 

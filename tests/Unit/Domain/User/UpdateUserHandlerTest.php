@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
+use App\Domain\User\Contract\Event\UserUpdated;
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
-use App\Domain\User\Event\UserUpdated;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;

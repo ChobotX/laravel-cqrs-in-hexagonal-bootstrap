@@ -8,11 +8,11 @@ use App\Contract\Auth\PasswordManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\User\Event\PasswordChanged;
+use App\Domain\User\Contract\Event\PasswordChanged;
+use App\Domain\User\Contract\UserId;
+use App\Domain\User\Contract\UserRepository;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
-use App\Domain\User\UserRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<SetPasswordCommand> */

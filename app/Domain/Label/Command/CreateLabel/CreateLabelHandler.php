@@ -7,13 +7,13 @@ namespace App\Domain\Label\Command\CreateLabel;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Label\Event\LabelCreated;
+use App\Domain\Label\Contract\Event\LabelCreated;
+use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\LabelRepository;
 use App\Domain\Label\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
-use App\Domain\Label\LabelRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<CreateLabelCommand> */

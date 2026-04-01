@@ -8,9 +8,9 @@ use App\Application\Event\RetryPolicy;
 use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
-use App\Domain\Authorization\Event\RoleDeleted;
-use App\Domain\Authorization\RoleId;
-use App\Domain\Authorization\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 
 /** @implements DomainEventHandler<RoleDeleted> */
 #[RetryPolicy(tries: 3, backoff: [5, 15, 30], timeout: 10)]

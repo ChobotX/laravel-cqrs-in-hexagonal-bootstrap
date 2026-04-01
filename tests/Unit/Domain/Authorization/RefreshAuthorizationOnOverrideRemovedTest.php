@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideRemoved;
 use Tests\Helper\FakeAuthorizationRefresher;
 

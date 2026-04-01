@@ -22,7 +22,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 
 | Rule | Enforces |
 |---|---|
-| `NoCrossDomainDependenciesRule` | No `App\Domain\{A}` → `App\Domain\{B}` imports (except `DomainEvent` imports in `EventHandler` classes) |
+| `NoCrossDomainDependenciesRule` | No `App\Domain\{A}` → `App\Domain\{B}` imports (except `Domain\{B}\Contract\*` which is allowed from any domain) |
 | `HandlersInDomainRule` | All `CommandHandler`, `QueryHandler`, `DomainEventHandler` implementations must live in `App\Domain\` |
 | `NoMixedAnnotationsRule` | No `mixed` in `@param`, `@return`, `@var` PHPDoc in `App\` |
 | `NoMockeryInDomainTestsRule` | No Mockery in `tests/Unit/Domain/` |

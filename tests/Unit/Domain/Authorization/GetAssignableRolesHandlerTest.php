@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\PermissionResolver;
@@ -10,7 +11,6 @@ use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesHandler;
 use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleAssignmentPolicy;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use App\Domain\Authorization\RolePermission;
 use Tests\Helper\FakeRoleRepository;

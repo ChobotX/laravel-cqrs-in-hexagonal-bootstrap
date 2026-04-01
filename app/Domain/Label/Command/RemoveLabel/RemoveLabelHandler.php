@@ -7,10 +7,10 @@ namespace App\Domain\Label\Command\RemoveLabel;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Label\Event\LabelDeleted;
-use App\Domain\Label\Event\LabelRemoved;
-use App\Domain\Label\LabelId;
-use App\Domain\Label\LabelRepository;
+use App\Domain\Label\Contract\Event\LabelDeleted;
+use App\Domain\Label\Contract\Event\LabelRemoved;
+use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\LabelRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RemoveLabelCommand> */

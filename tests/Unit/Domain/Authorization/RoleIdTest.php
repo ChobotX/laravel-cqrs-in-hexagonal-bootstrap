@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\InvalidRoleIdException;
-use App\Domain\Authorization\RoleId;
 
 it('creates a valid role id', function (): void {
     $id = new RoleId('550e8400-e29b-41d4-a716-446655440000');

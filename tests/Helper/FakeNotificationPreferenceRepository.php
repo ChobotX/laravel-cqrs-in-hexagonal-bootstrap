@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Notification\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\NotificationPreferenceRepository;
 use App\Domain\Notification\NotificationPreferences;
 
 final class FakeNotificationPreferenceRepository implements NotificationPreferenceRepository

@@ -7,12 +7,12 @@ namespace App\Domain\Label\Command\AssignLabel;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Label\Event\LabelAssigned;
+use App\Domain\Label\Contract\Event\LabelAssigned;
+use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\LabelRepository;
 use App\Domain\Label\Exception\LabelNamespaceMismatchException;
 use App\Domain\Label\Exception\LabelNotFoundException;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
-use App\Domain\Label\LabelRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<AssignLabelCommand> */

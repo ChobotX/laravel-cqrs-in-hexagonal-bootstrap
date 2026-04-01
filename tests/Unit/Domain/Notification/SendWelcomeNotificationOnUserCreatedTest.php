@@ -6,7 +6,7 @@ use App\Domain\Notification\Command\SendNotification\SendNotificationCommand;
 use App\Domain\Notification\EventHandler\SendWelcomeNotificationOnUserCreated;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\WelcomeNotification;
-use App\Domain\User\Event\UserCreated;
+use App\Domain\User\Contract\Event\UserCreated;
 use Tests\Helper\FakeCommandBus;
 
 it('dispatches SendNotificationCommand on user creation', function (): void {

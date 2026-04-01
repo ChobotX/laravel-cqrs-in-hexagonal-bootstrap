@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationCommand;
 use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationHandler;
-use App\Domain\Notification\Event\NotificationDeleted;
+use App\Domain\Notification\Contract\Event\NotificationDeleted;
+use App\Domain\Notification\Contract\NotificationId;
 use App\Domain\Notification\Exception\NotificationNotFoundException;
 use App\Domain\Notification\Exception\NotificationOwnershipException;
 use App\Domain\Notification\Notification;
 use App\Domain\Notification\NotificationChannel;
-use App\Domain\Notification\NotificationId;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationType;
 use Tests\Helper\FakeEventCollector;

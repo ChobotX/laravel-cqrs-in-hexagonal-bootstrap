@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Authorization\Command\StartImpersonation\StartImpersonationCommand;
 use App\Domain\Authorization\Command\StartImpersonation\StartImpersonationHandler;
-use App\Domain\Authorization\Event\ImpersonationStarted;
+use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\ImpersonationNotAllowedException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeImpersonationManager;

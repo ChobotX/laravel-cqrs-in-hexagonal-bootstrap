@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Authorization\Command\DeleteRole\DeleteRoleCommand;
 use App\Domain\Authorization\Command\DeleteRole\DeleteRoleHandler;
-use App\Domain\Authorization\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRoleRepository;

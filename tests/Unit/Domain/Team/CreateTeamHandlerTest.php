@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Team\Command\CreateTeam\CreateTeamCommand;
 use App\Domain\Team\Command\CreateTeam\CreateTeamHandler;
-use App\Domain\Team\Event\TeamCreated;
+use App\Domain\Team\Contract\Event\TeamCreated;
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeEventCollector;

@@ -12,7 +12,7 @@ use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Bus\Middleware;
-use App\Contract\Team\TeamMembershipChecker;
+use App\Domain\Team\Contract\TeamMembershipChecker;
 use Closure;
 use ReflectionClass;
 

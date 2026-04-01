@@ -7,13 +7,13 @@ namespace App\Domain\Team\Command\AddTeamMember;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Team\Event\TeamMemberAdded;
+use App\Domain\Team\Contract\Event\TeamMemberAdded;
+use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamMemberRepository;
+use App\Domain\Team\Contract\TeamRepository;
 use App\Domain\Team\Exception\TeamMemberAlreadyExistsException;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
-use App\Domain\Team\TeamMemberRepository;
-use App\Domain\Team\TeamRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<AddTeamMemberCommand> */

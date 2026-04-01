@@ -6,10 +6,10 @@ namespace App\Infrastructure\Eloquent\User;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Domain\User\Contract\UserId;
+use App\Domain\User\Contract\UserRepository;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
-use App\Domain\User\UserRepository;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;

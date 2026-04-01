@@ -6,9 +6,9 @@ namespace App\Domain\Authorization\Query\GetEffectivePermissions;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\EffectivePermission;
 use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\UserPermissionRepository;
 
 /** @implements QueryHandler<GetEffectivePermissionsQuery, list<EffectivePermission>> */
 final readonly class GetEffectivePermissionsHandler implements QueryHandler

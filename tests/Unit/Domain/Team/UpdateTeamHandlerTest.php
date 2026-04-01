@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamHandler;
-use App\Domain\Team\Event\TeamUpdated;
+use App\Domain\Team\Contract\Event\TeamUpdated;
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Exception\TeamCycleDetectedException;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeEventCollector;

@@ -3,17 +3,17 @@
 declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
-use App\Domain\Authorization\Event\ImpersonationStarted;
-use App\Domain\Authorization\Event\ImpersonationStopped;
-use App\Domain\Authorization\Event\PermissionOverrideRemoved;
-use App\Domain\Authorization\Event\PermissionOverrideSet;
-use App\Domain\Authorization\Event\RecordShared;
-use App\Domain\Authorization\Event\RecordShareRevoked;
-use App\Domain\Authorization\Event\RoleAssignedToUser;
-use App\Domain\Authorization\Event\RoleCreated;
-use App\Domain\Authorization\Event\RoleDeleted;
-use App\Domain\Authorization\Event\RoleRevokedFromUser;
-use App\Domain\Authorization\Event\RoleUpdated;
+use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
+use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
+use App\Domain\Authorization\Contract\Event\RecordShared;
+use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
+use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
+use App\Domain\Authorization\Contract\Event\RoleCreated;
+use App\Domain\Authorization\Contract\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\Event\RoleUpdated;
 
 it('ImpersonationStarted implements DomainEvent and exposes occurredAt', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');

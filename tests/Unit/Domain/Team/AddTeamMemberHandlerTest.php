@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
-use App\Domain\Team\Event\TeamMemberAdded;
+use App\Domain\Team\Contract\Event\TeamMemberAdded;
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Exception\TeamMemberAlreadyExistsException;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeEventCollector;

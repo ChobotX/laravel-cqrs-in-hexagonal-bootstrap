@@ -6,10 +6,10 @@ namespace App\Domain\User\Query\GetUserById;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\User\Contract\UserId;
+use App\Domain\User\Contract\UserRepository;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
-use App\Domain\User\UserRepository;
 
 /** @implements QueryHandler<GetUserByIdQuery, User> */
 final readonly class GetUserByIdHandler implements QueryHandler

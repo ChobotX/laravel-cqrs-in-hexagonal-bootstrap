@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Contract\Tenancy\TenantContext;
-use App\Domain\Authorization\Event\PermissionOverrideRemoved;
-use App\Domain\Authorization\Event\PermissionOverrideSet;
-use App\Domain\Authorization\Event\RoleAssignedToUser;
-use App\Domain\Authorization\Event\RoleDeleted;
-use App\Domain\Authorization\Event\RoleRevokedFromUser;
-use App\Domain\Authorization\Event\RoleUpdated;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
+use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
+use App\Domain\Authorization\Contract\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\Event\RoleUpdated;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideRemoved;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideSet;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleAssigned;

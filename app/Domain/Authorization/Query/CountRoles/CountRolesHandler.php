@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Query\CountRoles;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Authorization\RoleRepository;
+use App\Domain\Authorization\Contract\RoleRepository;
 
 /** @implements QueryHandler<CountRolesQuery, int> */
 final readonly class CountRolesHandler implements QueryHandler

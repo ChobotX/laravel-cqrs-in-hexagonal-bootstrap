@@ -17,7 +17,6 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 - `Http/` — `HttpStatus` interface with HTTP status code constants (`BAD_REQUEST`, `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `CREATED`, `NO_CONTENT`)
 - `IdGenerator` — generates unique identifiers
 - `Translation/` — `Translator` interface for framework-agnostic translations
-- `Team/` — `TeamMembershipChecker`
 - `Tenancy/` — `TenantContext` (current tenant ID/slug), `TenantBootstrapper` (resolve + switch schema), `TenantProvisioner` (create tenant + schema)
 - `Query/` — `Query`, `QueryHandler` interfaces
 

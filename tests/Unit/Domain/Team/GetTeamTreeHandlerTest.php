@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Application\Authorization\AccessContext;
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Query\GetTeamTree\GetTeamTreeHandler;
 use App\Domain\Team\Query\GetTeamTree\GetTeamTreeQuery;
 use App\Domain\Team\Query\GetTeamTree\TeamTreeNode;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamMember;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;

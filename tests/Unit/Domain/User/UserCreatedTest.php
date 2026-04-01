@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
-use App\Domain\User\Event\UserCreated;
+use App\Domain\User\Contract\Event\UserCreated;
 
 it('can be constructed with enriched data', function (): void {
     $occurredAt = new DateTimeImmutable('2026-01-15T10:00:00+00:00');

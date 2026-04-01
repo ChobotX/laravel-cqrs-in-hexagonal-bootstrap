@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
 use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesHandler;
-use App\Domain\Notification\Event\NotificationPreferencesUpdated;
+use App\Domain\Notification\Contract\Event\NotificationPreferencesUpdated;
 use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
 use Tests\Helper\FakeEventCollector;

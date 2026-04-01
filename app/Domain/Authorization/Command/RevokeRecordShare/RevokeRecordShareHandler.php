@@ -7,9 +7,9 @@ namespace App\Domain\Authorization\Command\RevokeRecordShare;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Event\RecordShareRevoked;
+use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
+use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\Exception\RecordShareNotFoundException;
-use App\Domain\Authorization\RecordShareRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RevokeRecordShareCommand> */

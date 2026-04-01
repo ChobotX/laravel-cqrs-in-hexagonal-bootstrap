@@ -7,11 +7,11 @@ namespace App\Domain\Team\Command\DeleteTeam;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Team\Event\TeamDeleted;
+use App\Domain\Team\Contract\Event\TeamDeleted;
+use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamRepository;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
-use App\Domain\Team\TeamRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<DeleteTeamCommand> */

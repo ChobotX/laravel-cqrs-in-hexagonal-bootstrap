@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Event\RoleUpdated;
+use App\Domain\Authorization\Contract\Event\RoleUpdated;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
 use Tests\Helper\FakeAuthorizationRefresher;
 use Tests\Helper\FakeUserPermissionRepository;

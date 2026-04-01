@@ -6,8 +6,8 @@ namespace App\Domain\Authorization\Query\GetUserRoles;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\UserPermissionRepository;
 
 /** @implements QueryHandler<GetUserRolesQuery, list<Role>> */
 final readonly class GetUserRolesHandler implements QueryHandler

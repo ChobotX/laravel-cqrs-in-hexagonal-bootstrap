@@ -9,15 +9,15 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RoleRepository;
 use App\Domain\Authorization\DefaultRole;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use App\Domain\Authorization\RolePermission;
-use App\Domain\Authorization\RoleRepository;
 
 /** @implements CommandHandler<SeedDefaultRolesCommand> */
 final readonly class SeedDefaultRolesHandler implements CommandHandler

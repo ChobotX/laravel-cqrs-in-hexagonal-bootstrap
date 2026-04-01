@@ -6,8 +6,8 @@ namespace App\Domain\Authorization\Query\GetUserOverrides;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\UserPermissionOverride;
-use App\Domain\Authorization\UserPermissionRepository;
 
 /** @implements QueryHandler<GetUserOverridesQuery, list<UserPermissionOverride>> */
 final readonly class GetUserOverridesHandler implements QueryHandler

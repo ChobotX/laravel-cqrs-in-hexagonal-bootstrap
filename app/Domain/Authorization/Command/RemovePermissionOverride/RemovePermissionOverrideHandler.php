@@ -8,11 +8,11 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\UserPermissionRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RemovePermissionOverrideCommand> */

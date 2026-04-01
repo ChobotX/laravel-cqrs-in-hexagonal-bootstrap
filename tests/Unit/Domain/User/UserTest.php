@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 
 it('can be constructed with all properties', function (): void {

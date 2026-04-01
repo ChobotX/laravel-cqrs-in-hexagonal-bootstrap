@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
+use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\RoleMapper;
@@ -65,11 +65,11 @@ it('throws RoleAlreadyExistsException on duplicate role name', function (): void
 
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440c07', 'name' => 'DupeRole', 'description' => 'D', 'is_system' => false]);
 
-    $role = $repo->findById(new App\Domain\Authorization\RoleId('550e8400-e29b-41d4-a716-446655440c07'));
+    $role = $repo->findById(new App\Domain\Authorization\Contract\RoleId('550e8400-e29b-41d4-a716-446655440c07'));
     assert($role instanceof App\Domain\Authorization\Role);
 
     $dupe = new App\Domain\Authorization\Role(
-        new App\Domain\Authorization\RoleId('550e8400-e29b-41d4-a716-446655440c08'),
+        new App\Domain\Authorization\Contract\RoleId('550e8400-e29b-41d4-a716-446655440c08'),
         new App\Domain\Authorization\RoleName('DupeRole'),
         'Another',
         false,

@@ -7,11 +7,11 @@ namespace App\Domain\User\Command\DeleteUser;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\User\Event\UserDeleted;
+use App\Domain\User\Contract\Event\UserDeleted;
+use App\Domain\User\Contract\UserId;
+use App\Domain\User\Contract\UserRepository;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
-use App\Domain\User\UserRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<DeleteUserCommand> */

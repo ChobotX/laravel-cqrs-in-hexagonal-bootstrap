@@ -8,7 +8,7 @@ use App\Application\Event\RetryPolicy;
 use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
-use App\Domain\Authorization\Event\RoleAssignedToUser;
+use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 
 /** @implements DomainEventHandler<RoleAssignedToUser> */
 #[RetryPolicy(tries: 3, backoff: [5, 15, 30], timeout: 10)]

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Team;
 
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
 

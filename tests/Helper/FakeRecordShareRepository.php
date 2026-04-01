@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Helper;
 
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\RecordShare;
-use App\Domain\Authorization\RecordShareRepository;
 
 final class FakeRecordShareRepository implements RecordShareRepository
 {

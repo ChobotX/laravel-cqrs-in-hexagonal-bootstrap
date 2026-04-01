@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
 use App\Domain\Notification\EventHandler\CleanupNotificationsOnUserDeleted;
-use App\Domain\User\Event\UserDeleted;
+use App\Domain\User\Contract\Event\UserDeleted;
 use Tests\Helper\FakeNotificationRepository;
 
 it('deletes all notifications for the deleted user', function (): void {

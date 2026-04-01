@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Exception\InvalidTeamIdException;
-use App\Domain\Team\TeamId;
 
 it('creates a valid team id', function (): void {
     $id = new TeamId('550e8400-e29b-41d4-a716-446655440000');

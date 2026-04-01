@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Event\PermissionOverrideSet;
+use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideSet;
 use Tests\Helper\FakeAuthorizationRefresher;
 

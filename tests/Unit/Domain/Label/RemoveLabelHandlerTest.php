@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Label\Command\RemoveLabel\RemoveLabelCommand;
 use App\Domain\Label\Command\RemoveLabel\RemoveLabelHandler;
-use App\Domain\Label\Event\LabelDeleted;
-use App\Domain\Label\Event\LabelRemoved;
+use App\Domain\Label\Contract\Event\LabelDeleted;
+use App\Domain\Label\Contract\Event\LabelRemoved;
+use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use Tests\Helper\FakeEventCollector;

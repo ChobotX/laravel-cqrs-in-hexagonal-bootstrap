@@ -91,12 +91,16 @@
                                     <x-action-button permission="users.list.update"
                                                      :href="route('users.edit', $user->id)"
                                                      icon="heroicon-o-pencil-square"
-                                                     :label="__('messages.users.edit_action') . ' ' . $user->name->value" />
+                                                     :label="__('messages.users.edit_action') .
+                                                         ' ' .
+                                                         $user->name->value" />
                                     <x-action-button permission="users.list.delete"
                                                      :action="route('users.destroy', $user->id)"
                                                      method="DELETE"
                                                      icon="heroicon-o-trash"
-                                                     :label="__('messages.users.delete_action') . ' ' . $user->name->value"
+                                                     :label="__('messages.users.delete_action') .
+                                                         ' ' .
+                                                         $user->name->value"
                                                      variant="danger"
                                                      confirm
                                                      :confirm-title="__('messages.users.delete_confirm_title')"

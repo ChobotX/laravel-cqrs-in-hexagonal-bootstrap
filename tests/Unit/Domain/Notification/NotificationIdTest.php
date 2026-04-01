@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Notification\Contract\NotificationId;
 use App\Domain\Notification\Exception\InvalidNotificationIdException;
-use App\Domain\Notification\NotificationId;
 
 it('can be constructed with a valid UUID', function (): void {
     $id = new NotificationId('550e8400-e29b-41d4-a716-446655440000');

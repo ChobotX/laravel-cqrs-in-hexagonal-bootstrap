@@ -6,14 +6,14 @@ namespace App\Infrastructure\Eloquent\Authorization;
 
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\OverrideType;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\UserPermissionOverride;
-use App\Domain\Authorization\UserPermissionRepository;
 
 final readonly class EloquentUserPermissionRepository implements UserPermissionRepository
 {

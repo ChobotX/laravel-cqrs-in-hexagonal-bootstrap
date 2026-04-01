@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserHandler;
-use App\Domain\Authorization\Event\RoleAssignedToUser;
+use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\DuplicateRoleAssignmentException;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRoleRepository;

@@ -7,11 +7,11 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
 use App\Domain\User\Query\ListUsers\ListUsersHandler;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
-use App\Domain\User\UserId;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 

@@ -6,7 +6,7 @@ namespace App\Domain\Team\Query\CountTeams;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Team\TeamRepository;
+use App\Domain\Team\Contract\TeamRepository;
 
 /** @implements QueryHandler<CountTeamsQuery, int> */
 final readonly class CountTeamsHandler implements QueryHandler

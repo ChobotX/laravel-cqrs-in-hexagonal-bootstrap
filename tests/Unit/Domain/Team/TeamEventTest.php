@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
-use App\Domain\Team\Event\TeamCreated;
-use App\Domain\Team\Event\TeamDeleted;
-use App\Domain\Team\Event\TeamMemberAdded;
-use App\Domain\Team\Event\TeamMemberRemoved;
-use App\Domain\Team\Event\TeamUpdated;
+use App\Domain\Team\Contract\Event\TeamCreated;
+use App\Domain\Team\Contract\Event\TeamDeleted;
+use App\Domain\Team\Contract\Event\TeamMemberAdded;
+use App\Domain\Team\Contract\Event\TeamMemberRemoved;
+use App\Domain\Team\Contract\Event\TeamUpdated;
 
 it('TeamCreated implements DomainEvent and exposes occurredAt', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');

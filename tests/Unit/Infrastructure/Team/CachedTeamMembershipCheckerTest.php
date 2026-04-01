@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Team\TeamMembershipChecker;
+use App\Domain\Team\Contract\TeamMembershipChecker;
 use App\Infrastructure\Team\CachedTeamMembershipChecker;
 
 it('memoizes memberTeamIds per userId', function (): void {

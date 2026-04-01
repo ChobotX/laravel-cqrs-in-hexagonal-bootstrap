@@ -8,9 +8,9 @@ use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Event\ImpersonationStarted;
+use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Exception\ImpersonationNotAllowedException;
-use App\Domain\Authorization\UserPermissionRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<StartImpersonationCommand> */

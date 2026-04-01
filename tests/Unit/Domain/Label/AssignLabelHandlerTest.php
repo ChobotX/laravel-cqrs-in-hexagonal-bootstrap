@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Command\AssignLabel\AssignLabelHandler;
-use App\Domain\Label\Event\LabelAssigned;
+use App\Domain\Label\Contract\Event\LabelAssigned;
+use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Exception\LabelNamespaceMismatchException;
 use App\Domain\Label\Exception\LabelNotFoundException;
 use App\Domain\Label\Label;
-use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use Tests\Helper\FakeEventCollector;

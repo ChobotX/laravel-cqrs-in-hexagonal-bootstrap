@@ -8,7 +8,7 @@ use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Event\ImpersonationStopped;
+use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<StopImpersonationCommand> */

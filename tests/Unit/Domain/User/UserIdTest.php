@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\Contract\UserId;
 use App\Domain\User\Exception\InvalidUserIdException;
-use App\Domain\User\UserId;
 
 it('can be constructed with a valid UUID', function (): void {
     $id = new UserId('550e8400-e29b-41d4-a716-446655440000');

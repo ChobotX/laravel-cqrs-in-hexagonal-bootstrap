@@ -7,13 +7,13 @@ namespace App\Domain\Authorization\Command\CreateRole;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Event\RoleCreated;
+use App\Domain\Authorization\Contract\Event\RoleCreated;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RoleRepository;
 use App\Domain\Authorization\Exception\RoleAlreadyExistsException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use App\Domain\Authorization\RolePermissionMapper;
-use App\Domain\Authorization\RoleRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<CreateRoleCommand> */

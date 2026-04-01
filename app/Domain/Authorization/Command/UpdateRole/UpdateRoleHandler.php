@@ -7,13 +7,13 @@ namespace App\Domain\Authorization\Command\UpdateRole;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Event\RoleUpdated;
+use App\Domain\Authorization\Contract\Event\RoleUpdated;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RoleRepository;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use App\Domain\Authorization\RolePermissionMapper;
-use App\Domain\Authorization\RoleRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<UpdateRoleCommand> */

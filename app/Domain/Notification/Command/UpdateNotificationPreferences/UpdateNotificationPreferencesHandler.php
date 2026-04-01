@@ -8,10 +8,10 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Notification\ChannelPreference;
-use App\Domain\Notification\Event\NotificationPreferencesUpdated;
+use App\Domain\Notification\Contract\Event\NotificationPreferencesUpdated;
+use App\Domain\Notification\Contract\NotificationPreferenceRepository;
 use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationPreferenceRepository;
 use App\Domain\Notification\NotificationPreferences;
 use DateTimeImmutable;
 

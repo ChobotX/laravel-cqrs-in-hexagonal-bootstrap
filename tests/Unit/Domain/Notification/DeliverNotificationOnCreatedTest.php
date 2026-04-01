@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Event\NotificationCreated;
+use App\Domain\Notification\Contract\Event\NotificationCreated;
+use App\Domain\Notification\Contract\NotificationId;
 use App\Domain\Notification\EventHandler\DeliverNotificationOnCreated;
 use App\Domain\Notification\Notification;
 use App\Domain\Notification\NotificationChannel;
-use App\Domain\Notification\NotificationId;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationType;
 use Tests\Helper\FakeNotificationBroadcaster;

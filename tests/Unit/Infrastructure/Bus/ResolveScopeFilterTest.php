@@ -12,7 +12,7 @@ use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
-use App\Contract\Team\TeamMembershipChecker;
+use App\Domain\Team\Contract\TeamMembershipChecker;
 use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
 
 /**

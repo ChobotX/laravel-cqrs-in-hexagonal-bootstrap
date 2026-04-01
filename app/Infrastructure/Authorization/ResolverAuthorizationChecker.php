@@ -7,10 +7,10 @@ namespace App\Infrastructure\Authorization;
 use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\RecordShareRepository;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\EffectivePermission;
 use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\RecordShareRepository;
-use App\Domain\Authorization\UserPermissionRepository;
 
 final readonly class ResolverAuthorizationChecker implements AuthorizationChecker
 {

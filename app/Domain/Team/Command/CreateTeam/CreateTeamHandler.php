@@ -7,13 +7,13 @@ namespace App\Domain\Team\Command\CreateTeam;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Team\Event\TeamCreated;
+use App\Domain\Team\Contract\Event\TeamCreated;
+use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamRepository;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
 use App\Domain\Team\Team;
-use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamName;
-use App\Domain\Team\TeamRepository;
 use App\Domain\Team\TeamSlug;
 use DateTimeImmutable;
 

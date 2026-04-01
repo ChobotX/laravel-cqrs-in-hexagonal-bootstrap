@@ -7,9 +7,9 @@ namespace App\Domain\Team\Command\RemoveTeamMember;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Team\Event\TeamMemberRemoved;
+use App\Domain\Team\Contract\Event\TeamMemberRemoved;
+use App\Domain\Team\Contract\TeamMemberRepository;
 use App\Domain\Team\Exception\TeamMemberNotFoundException;
-use App\Domain\Team\TeamMemberRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RemoveTeamMemberCommand> */

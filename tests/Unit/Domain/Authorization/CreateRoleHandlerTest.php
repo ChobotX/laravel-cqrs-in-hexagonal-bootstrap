@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Authorization\Command\CreateRole\CreateRoleCommand;
 use App\Domain\Authorization\Command\CreateRole\CreateRoleHandler;
-use App\Domain\Authorization\Event\RoleCreated;
+use App\Domain\Authorization\Contract\Event\RoleCreated;
+use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\RoleAlreadyExistsException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRoleRepository;

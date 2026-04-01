@@ -7,10 +7,10 @@ namespace App\Domain\Authorization\Command\RevokeRoleFromUser;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Exception\RoleNotAssignedException;
-use App\Domain\Authorization\RoleId;
-use App\Domain\Authorization\UserPermissionRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RevokeRoleFromUserCommand> */

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\Event\RoleDeleted;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleDeleted;
 use Tests\Helper\FakeAuthorizationRefresher;
 use Tests\Helper\FakeUserPermissionRepository;

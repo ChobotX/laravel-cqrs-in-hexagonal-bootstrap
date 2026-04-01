@@ -6,10 +6,10 @@ namespace App\Domain\Authorization\Query\GetRoleById;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RoleRepository;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RoleId;
-use App\Domain\Authorization\RoleRepository;
 
 /** @implements QueryHandler<GetRoleByIdQuery, Role> */
 final readonly class GetRoleByIdHandler implements QueryHandler

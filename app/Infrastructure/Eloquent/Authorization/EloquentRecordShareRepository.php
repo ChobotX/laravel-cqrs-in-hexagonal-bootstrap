@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Eloquent\Authorization;
 
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\RecordShare;
-use App\Domain\Authorization\RecordShareRepository;
 
 final readonly class EloquentRecordShareRepository implements RecordShareRepository
 {

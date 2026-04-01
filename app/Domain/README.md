@@ -148,13 +148,24 @@ Repository interfaces expose separate paginated methods (`allPaginated()`, `find
 
 List queries that support sorting implement `SortableQuery` alongside `Query`. When `sorting()` is `null` (no sorting requested), the handler applies a domain-appropriate default (e.g., users by name, roles by permission score). The `Sorting` value object carries a column name (a domain concept like `'name'` or `Sorting::PERMISSION_SCORE`) and a `SortDirection`. Infrastructure repositories translate these to SQL ORDER BY clauses, computing values for virtual columns like `permission_score` via SQL subqueries.
 
+## Domain\*\Contract pattern
+
+Each bounded context exposes a `Contract` sub-namespace containing types that other domains may import:
+
+- **Value object IDs**: `UserId`, `TeamId`, `RoleId`, `LabelId`, `NotificationId` — in `Domain/{Context}/Contract/`
+- **Repository interfaces**: `UserRepository`, `TeamRepository`, etc. — in `Domain/{Context}/Contract/`
+- **Domain events**: `UserCreated`, `RoleDeleted`, etc. — in `Domain/{Context}/Contract/Event/`
+- **Service contracts**: `TeamMembershipChecker` — in `Domain/Team/Contract/`
+
+Internal types (handlers, exceptions, entity classes, non-ID value objects) stay in `Domain/{Context}/` and are not importable cross-domain.
+
 ## Cross-domain communication
 
-Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule. Exception: `EventHandler` classes may import `DomainEvent` classes from other domains — events are the intended cross-domain communication channel.
+Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule. Any domain may import `Domain\{Other}\Contract\*` — this is the intended cross-domain boundary. Direct imports of `Domain\{Other}\*` (non-Contract) are blocked.
 
 ### Adding a domain event
 
-1. Create `app/Domain/{Context}/Event/{Name}.php`:
+1. Create `app/Domain/{Context}/Contract/Event/{Name}.php`:
    ```php
    final readonly class {Name} implements \App\Contract\Event\DomainEvent
    {
@@ -193,4 +204,4 @@ Bounded contexts must not depend on each other directly. Enforced by `NoCrossDom
 
 ### Cross-context data
 
-Never import from another context's Domain directly. Query on-demand via `QueryBus` or `CommandBus` instead. Event handlers may import `DomainEvent` classes from other domains for cross-domain reactions.
+Never import from another context's internal types directly. Use the `Contract` sub-namespace for cross-domain types, or query on-demand via `QueryBus` or `CommandBus`.

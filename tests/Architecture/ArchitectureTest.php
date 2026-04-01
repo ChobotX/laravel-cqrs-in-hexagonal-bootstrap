@@ -173,7 +173,7 @@ final class ArchitectureTest
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Presentation'))
             ->shouldNotDependOn()
-            ->classes(Selector::classname(\App\Contract\Team\TeamMembershipChecker::class));
+            ->classes(Selector::classname(\App\Domain\Team\Contract\TeamMembershipChecker::class));
     }
 
     public function testPresentationDoesNotDependOnAccessContext(): Rule

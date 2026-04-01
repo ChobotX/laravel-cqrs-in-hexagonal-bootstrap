@@ -8,9 +8,9 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Event\RecordShared;
+use App\Domain\Authorization\Contract\Event\RecordShared;
+use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\RecordShare;
-use App\Domain\Authorization\RecordShareRepository;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<ShareRecordCommand> */
