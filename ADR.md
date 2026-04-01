@@ -139,3 +139,9 @@ All command handler execution (including event job insertion) is wrapped in a da
 String literals in `===`/`!==` comparisons and `match()` arm conditions must use enums or class constants (empty string `''` excluded). Numeric literals other than `0`, `1`, `-1` must use class constants everywhere in `app/`. Constant definitions and enum case values are excluded.
 **Why:** Magic literals bypass IDE navigation, refactoring safety, and exhaustiveness checking. Named constants make intent explicit and prevent typo-driven bugs.
 **Enforced by:** PHPStan rules `NoMagicStringsRule` and `NoMagicNumbersRule`. See [tests/README.md](tests/README.md).
+
+### Optimistic locking on all entity models
+
+Every Eloquent entity model must use `HasOptimisticLocking`. Updates add `WHERE version = ?` and increment the version column atomically. Stale updates throw `ConcurrentModificationException` (HTTP 409). Junction models (identified by `$timestamps = false` or no primary key) are exempt. Models that don't need soft deletes must declare `#[HardDelete(reason: '...')]` with a mandatory explanation.
+**Why:** Prevents silent data loss from concurrent updates in a multi-user, multi-tab, multi-device environment. The mandatory reason on `#[HardDelete]` forces a conscious decision about each model's deletion semantics.
+**Enforced by:** PHPStan rule `EloquentModelRequiresTraitsRule`. See [tests/README.md](tests/README.md).

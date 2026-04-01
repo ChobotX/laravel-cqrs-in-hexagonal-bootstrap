@@ -42,6 +42,8 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `NoDirectLoggingRule` | Bans `Log::`, `logger()`, `report()` in `app/` — use `Logger` interface instead |
 | `NoMagicStringsRule` | No string literals in `===`/`!==` comparisons or `match()` arms — use enums or class constants |
 | `NoMagicNumbersRule` | No numeric literals (except `0`, `1`, `-1`) in `app/` — use class constants |
+| `EloquentModelRequiresTraitsRule` | Entity models must use `HasOptimisticLocking` and either `SoftDeletes` or `#[HardDelete(reason:)]` |
+| `EventHandlerRequiresRetryPolicyRule` | Every `DomainEventHandler` must declare `#[RetryPolicy]` |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

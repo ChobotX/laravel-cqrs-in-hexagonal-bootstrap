@@ -10,15 +10,23 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::connection('landlord')->table('tenants', function (Blueprint $blueprint): void {
-            $blueprint->integer('version')->default(1);
-        });
+        $tables = ['tenants', 'tenant_domains'];
+
+        foreach ($tables as $table) {
+            Schema::connection('landlord')->table($table, function (Blueprint $blueprint): void {
+                $blueprint->integer('version')->default(1);
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::connection('landlord')->table('tenants', function (Blueprint $blueprint): void {
-            $blueprint->dropColumn('version');
-        });
+        $tables = ['tenants', 'tenant_domains'];
+
+        foreach ($tables as $table) {
+            Schema::connection('landlord')->table($table, function (Blueprint $blueprint): void {
+                $blueprint->dropColumn('version');
+            });
+        }
     }
 };

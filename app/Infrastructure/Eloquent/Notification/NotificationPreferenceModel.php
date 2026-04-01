@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Notification;
 
+use App\Infrastructure\Eloquent\HardDelete;
 use Illuminate\Database\Eloquent\Model;
 use Override;
 
@@ -12,6 +13,7 @@ use Override;
  * @property string $level
  * @property list<string> $channels
  */
+#[HardDelete(reason: 'Replaceable config, delete+recreate pattern, no primary key')]
 final class NotificationPreferenceModel extends Model
 {
     public $incrementing = false;

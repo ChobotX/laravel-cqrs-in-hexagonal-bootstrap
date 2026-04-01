@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Notification;
 
+use App\Infrastructure\Eloquent\HardDelete;
 use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -25,6 +26,7 @@ use Override;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
+#[HardDelete(reason: 'User-owned ephemeral data, hard delete is acceptable')]
 final class NotificationModel extends Model
 {
     use HasOptimisticLocking;
