@@ -16,8 +16,7 @@ Use value objects for values with validation rules, equality semantics, or that 
 
 - `Email` — validates format via `filter_var(FILTER_VALIDATE_EMAIL)`, normalizes to lowercase, implements `equals()` and `Stringable`
 - `UserId` — validates UUID format via regex
-
-Candidates to consider when adding new domains: `UserName` (if name validation grows complex), monetary values, dates with domain meaning.
+- `UserName` — validates non-empty trimmed string, implements `Stringable`
 
 ## Domain rules
 
@@ -189,7 +188,8 @@ Bounded contexts must not depend on each other directly. Enforced by `NoCrossDom
    {EventClass}::class => [{HandlerClass}::class],
    ```
 
-3. Handlers run asynchronously via `HandleDomainEventJob` on the queue.
+3. Add `#[RetryPolicy(tries: N, backoff: [1, 5, 30], timeout: 60)]` — every event handler must explicitly declare its retry config.
+4. Handlers run asynchronously via `HandleDomainEventJob` on the queue.
 
 ### Cross-context data
 
