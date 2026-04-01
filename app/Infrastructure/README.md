@@ -41,6 +41,8 @@ For queries implementing `ScopeAwareQuery`, the middleware:
 
 Non-`ScopeAwareQuery` queries pass through unchanged.
 
+`CachedTeamMembershipChecker` is a request-scoped decorator (registered via `scoped()`) that memoizes `memberTeamIds()` and `visibleUserIds()` per userId within a single request. This prevents redundant DB calls when multiple scope-aware queries run in the same request.
+
 ## Logging
 
 `App\Infrastructure\Logging\LaravelLogger` implements `App\Contract\Logging\Logger`, wrapping Laravel's `Log` facade. This is the only place in the application where `Log::` is called directly — all other code must inject the `Logger` interface. Enforced by PHPStan rule `NoDirectLoggingRule`.

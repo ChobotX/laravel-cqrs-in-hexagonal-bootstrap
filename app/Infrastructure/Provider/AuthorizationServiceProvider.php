@@ -23,6 +23,7 @@ use App\Infrastructure\Authorization\CacheAuthorizationRefresher;
 use App\Infrastructure\Authorization\CachedAuthorizationChecker;
 use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use App\Infrastructure\Authorization\SessionImpersonationManager;
+use App\Infrastructure\Team\CachedTeamMembershipChecker;
 use App\Infrastructure\Team\EloquentTeamMembershipChecker;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Blade;
@@ -65,7 +66,10 @@ final class AuthorizationServiceProvider extends ServiceProvider
         $this->app->bind(AuthenticatedUser::class, RequestAuthenticatedUser::class);
         $this->app->bind(ImpersonationManager::class, SessionImpersonationManager::class);
 
-        $this->app->bind(TeamMembershipChecker::class, EloquentTeamMembershipChecker::class);
+        $this->app->bind(EloquentTeamMembershipChecker::class);
+        $this->app->scoped(TeamMembershipChecker::class, fn (): CachedTeamMembershipChecker => new CachedTeamMembershipChecker(
+            $this->app->make(EloquentTeamMembershipChecker::class),
+        ));
 
         $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, GetOwnEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, GetAssignableRolesHandler::class])
             ->needs('$availableModules')
