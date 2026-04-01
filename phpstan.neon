@@ -80,6 +80,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\EventHandlerRequiresRetryPolicyRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\ControllerRequiresPermissionRule
         tags:
             - phpstan.rules.rule

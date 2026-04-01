@@ -17,4 +17,9 @@ final class InvalidHandlerException extends RuntimeException
     {
         return new self(sprintf("Pipeline received '%s' but expected an instance of %s.", $actualClass, $expectedType));
     }
+
+    public static function missingRetryPolicy(string $handlerClass): self
+    {
+        return new self(sprintf("DomainEventHandler '%s' must declare a #[RetryPolicy] attribute.", $handlerClass));
+    }
 }

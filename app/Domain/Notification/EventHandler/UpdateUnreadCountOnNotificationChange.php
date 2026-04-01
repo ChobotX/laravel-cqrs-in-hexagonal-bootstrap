@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Notification\EventHandler;
 
+use App\Application\Event\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Notification\NotificationBroadcaster;
@@ -13,6 +14,7 @@ use App\Domain\Notification\Event\NotificationRead;
 use App\Domain\Notification\NotificationRepository;
 
 /** @implements DomainEventHandler<DomainEvent> */
+#[RetryPolicy(tries: 3, backoff: [10, 30, 60], timeout: 30)]
 final readonly class UpdateUnreadCountOnNotificationChange implements DomainEventHandler
 {
     public function __construct(

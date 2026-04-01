@@ -109,6 +109,7 @@ final class NoMagicNumbersRule implements Rule
         $content = $lines[$line - 1];
 
         return preg_match('/\bconst\s/', $content) === 1
-            || preg_match('/\bcase\s+\w+\s*=/', $content) === 1;
+            || preg_match('/\bcase\s+\w+\s*=/', $content) === 1
+            || preg_match('/#\[/', $content) === 1;
     }
 }
