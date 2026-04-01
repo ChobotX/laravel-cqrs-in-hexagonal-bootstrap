@@ -41,4 +41,7 @@ interface TeamRepository
     public function search(string $term, array $excludeTeamIds, int $limit): array;
 
     public function count(): int;
+
+    /** @return list<string> */
+    public function ancestorTeamIds(TeamId $teamId): array;
 }

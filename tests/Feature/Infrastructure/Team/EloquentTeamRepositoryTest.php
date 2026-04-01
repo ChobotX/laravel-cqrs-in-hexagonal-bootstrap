@@ -107,15 +107,27 @@ it('creates team with parent', function (): void {
         ->and($found->parentTeamId->value)->toBe('550e8400-e29b-41d4-a716-446655440b08');
 });
 
-it('detects cycle on update when setting descendant as parent', function (): void {
+it('returns ancestor team ids walking up the hierarchy', function (): void {
     $eloquentTeamRepository = teamRepo();
     $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', 'Grandparent', 'grandparent'));
     $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b11', 'Parent', 'parent-cy', '550e8400-e29b-41d4-a716-446655440b10'));
     $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b12', 'Child', 'child-cy', '550e8400-e29b-41d4-a716-446655440b11'));
 
-    $team = makeTestTeam('550e8400-e29b-41d4-a716-446655440b10', 'Grandparent', 'grandparent', '550e8400-e29b-41d4-a716-446655440b12');
-    $eloquentTeamRepository->update($team);
-})->throws(App\Domain\Team\Exception\TeamCycleDetectedException::class);
+    $ancestors = $eloquentTeamRepository->ancestorTeamIds(new TeamId('550e8400-e29b-41d4-a716-446655440b12'));
+
+    expect($ancestors)->toHaveCount(2)
+        ->and($ancestors)->toContain('550e8400-e29b-41d4-a716-446655440b11')
+        ->and($ancestors)->toContain('550e8400-e29b-41d4-a716-446655440b10');
+});
+
+it('returns empty ancestors for root team', function (): void {
+    $eloquentTeamRepository = teamRepo();
+    $eloquentTeamRepository->create(makeTestTeam('550e8400-e29b-41d4-a716-446655440b13', 'Root', 'root'));
+
+    $ancestors = $eloquentTeamRepository->ancestorTeamIds(new TeamId('550e8400-e29b-41d4-a716-446655440b13'));
+
+    expect($ancestors)->toBe([]);
+});
 
 it('counts teams', function (): void {
     $eloquentTeamRepository = teamRepo();

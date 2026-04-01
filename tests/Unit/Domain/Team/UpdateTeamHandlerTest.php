@@ -102,6 +102,47 @@ it('throws when setting self as parent', function (): void {
     ));
 })->throws(TeamCycleDetectedException::class);
 
+it('throws when setting descendant as parent creates cycle', function (): void {
+    $grandparent = new Team(
+        new TeamId('550e8400-e29b-41d4-a716-446655440000'),
+        new TeamName('Grandparent'),
+        new TeamSlug('grandparent'),
+        '',
+        null,
+    );
+    $parent = new Team(
+        new TeamId('660e8400-e29b-41d4-a716-446655440000'),
+        new TeamName('Parent'),
+        new TeamSlug('parent'),
+        '',
+        new TeamId('550e8400-e29b-41d4-a716-446655440000'),
+    );
+    $child = new Team(
+        new TeamId('770e8400-e29b-41d4-a716-446655440000'),
+        new TeamName('Child'),
+        new TeamSlug('child'),
+        '',
+        new TeamId('660e8400-e29b-41d4-a716-446655440000'),
+    );
+
+    $teamRepo = new FakeTeamRepository([
+        '550e8400-e29b-41d4-a716-446655440000' => $grandparent,
+        '660e8400-e29b-41d4-a716-446655440000' => $parent,
+        '770e8400-e29b-41d4-a716-446655440000' => $child,
+    ]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+
+    $handler->handle(new UpdateTeamCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'Grandparent',
+        slug: 'grandparent',
+        description: '',
+        parentTeamId: '770e8400-e29b-41d4-a716-446655440000',
+    ));
+})->throws(TeamCycleDetectedException::class);
+
 it('throws when parent team not found', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
     $eventCollector = new FakeEventCollector;

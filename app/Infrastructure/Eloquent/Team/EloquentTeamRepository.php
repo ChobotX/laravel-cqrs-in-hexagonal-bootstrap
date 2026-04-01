@@ -6,7 +6,6 @@ namespace App\Infrastructure\Eloquent\Team;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
-use App\Domain\Team\Exception\TeamCycleDetectedException;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamRepository;
@@ -75,35 +74,23 @@ final readonly class EloquentTeamRepository implements TeamRepository
 
     public function create(Team $team): void
     {
-        DB::transaction(function () use ($team): void {
-            if ($team->parentTeamId instanceof TeamId) {
-                $this->guardAgainstCycle($team->id->value, $team->parentTeamId->value);
-            }
-
-            $teamModel = new TeamModel;
-            $teamModel->id = $team->id->value;
-            $teamModel->parent_team_id = $team->parentTeamId?->value;
-            $teamModel->name = $team->name->value;
-            $teamModel->slug = $team->slug->value;
-            $teamModel->description = $team->description;
-            $teamModel->save();
-        });
+        $teamModel = new TeamModel;
+        $teamModel->id = $team->id->value;
+        $teamModel->parent_team_id = $team->parentTeamId?->value;
+        $teamModel->name = $team->name->value;
+        $teamModel->slug = $team->slug->value;
+        $teamModel->description = $team->description;
+        $teamModel->save();
     }
 
     public function update(Team $team): void
     {
-        DB::transaction(function () use ($team): void {
-            if ($team->parentTeamId instanceof TeamId) {
-                $this->guardAgainstCycle($team->id->value, $team->parentTeamId->value);
-            }
-
-            $model = TeamModel::findOrFail($team->id->value);
-            $model->parent_team_id = $team->parentTeamId?->value;
-            $model->name = $team->name->value;
-            $model->slug = $team->slug->value;
-            $model->description = $team->description;
-            $model->save();
-        });
+        $model = TeamModel::findOrFail($team->id->value);
+        $model->parent_team_id = $team->parentTeamId?->value;
+        $model->name = $team->name->value;
+        $model->slug = $team->slug->value;
+        $model->description = $team->description;
+        $model->save();
     }
 
     /** @return list<Team> */
@@ -147,6 +134,22 @@ final readonly class EloquentTeamRepository implements TeamRepository
     }
 
     /** @return list<string> */
+    public function ancestorTeamIds(TeamId $teamId): array
+    {
+        /** @var list<object{id: string}> $ancestors */
+        $ancestors = DB::select(<<<'SQL'
+            WITH RECURSIVE ancestor_tree AS (
+                SELECT parent_team_id AS id FROM teams WHERE id = ? AND deleted_at IS NULL AND parent_team_id IS NOT NULL
+                UNION ALL
+                SELECT t.parent_team_id AS id FROM teams t JOIN ancestor_tree at ON t.id = at.id WHERE t.deleted_at IS NULL AND t.parent_team_id IS NOT NULL
+            )
+            SELECT id FROM ancestor_tree
+            SQL, [$teamId->value]);
+
+        return array_map(fn (object $ancestor): string => $ancestor->id, $ancestors);
+    }
+
+    /** @return list<string> */
     private function textSortColumns(): array
     {
         return ['name', 'slug'];
@@ -165,24 +168,5 @@ final readonly class EloquentTeamRepository implements TeamRepository
         }
 
         return $query;
-    }
-
-    private function guardAgainstCycle(string $teamId, string $parentTeamId): void
-    {
-        /** @var list<object{id: string}> $descendants */
-        $descendants = DB::select(<<<'SQL'
-            WITH RECURSIVE team_tree AS (
-                SELECT id FROM teams WHERE parent_team_id = ? AND deleted_at IS NULL
-                UNION ALL
-                SELECT t.id FROM teams t JOIN team_tree tt ON t.parent_team_id = tt.id WHERE t.deleted_at IS NULL
-            )
-            SELECT id FROM team_tree
-            SQL, [$teamId]);
-
-        foreach ($descendants as $descendant) {
-            if ($descendant->id === $parentTeamId) {
-                throw new TeamCycleDetectedException($teamId, $parentTeamId);
-            }
-        }
     }
 }

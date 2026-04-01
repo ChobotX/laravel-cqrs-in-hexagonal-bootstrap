@@ -101,6 +101,25 @@ final class FakeTeamRepository implements TeamRepository
         unset($this->teams[$teamId->value]);
     }
 
+    /** @return list<string> */
+    public function ancestorTeamIds(TeamId $teamId): array
+    {
+        $ancestors = [];
+        $current = $this->teams[$teamId->value] ?? null;
+
+        while ($current?->parentTeamId !== null) {
+            $parentId = $current->parentTeamId->value;
+            if (in_array($parentId, $ancestors, true)) {
+                break;
+            }
+
+            $ancestors[] = $parentId;
+            $current = $this->teams[$parentId] ?? null;
+        }
+
+        return $ancestors;
+    }
+
     /** @return callable(Team): (string|int) */
     private function sortValueExtractor(string $column): callable
     {

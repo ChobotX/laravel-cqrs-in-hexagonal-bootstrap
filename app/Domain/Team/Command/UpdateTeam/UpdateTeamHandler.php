@@ -52,7 +52,7 @@ final readonly class UpdateTeamHandler implements CommandHandler
                 throw new TeamNotFoundException($command->parentTeamId);
             }
 
-            if ($parentTeamId->equals($teamId)) {
+            if ($parentTeamId->equals($teamId) || in_array($teamId->value, $this->teamRepository->ancestorTeamIds($parentTeamId), true)) {
                 throw new TeamCycleDetectedException($command->id, $command->parentTeamId);
             }
         }
