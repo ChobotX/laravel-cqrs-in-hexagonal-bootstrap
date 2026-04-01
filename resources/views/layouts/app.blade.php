@@ -10,11 +10,11 @@
     <meta name="reverb-app-key"
           content="{{ config('reverb.apps.apps.0.key') }}">
     <meta name="reverb-host"
-          content="{{ config('reverb.apps.apps.0.options.host') }}">
+          content="{{ config('reverb.apps.apps.0.options.client_host') }}">
     <meta name="reverb-port"
-          content="{{ config('reverb.apps.apps.0.options.port') }}">
+          content="{{ config('reverb.apps.apps.0.options.client_port') }}">
     <meta name="reverb-scheme"
-          content="{{ config('reverb.apps.apps.0.options.scheme') }}">
+          content="{{ config('reverb.apps.apps.0.options.client_scheme') }}">
     <title>@yield('title', __('messages.nav.dashboard'))</title>
     @include('components.sentry-meta')
     @vite(['resources/css/app.css', 'resources/js/app.ts'])
