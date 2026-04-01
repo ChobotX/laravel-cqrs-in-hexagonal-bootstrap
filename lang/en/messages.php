@@ -223,6 +223,8 @@ return [
         'invalid_role_id' => 'Value [:value] is not a valid role UUID.',
         'invalid_role_name' => 'Role name must not be empty.',
         'duplicate_role_assignment' => 'This role is already assigned to the user.',
+        'role_not_assigned' => 'This role is not assigned to the user.',
+        'record_share_not_found' => 'The record share does not exist.',
         'permission_denied' => 'You do not have permission to perform this action.',
         'impersonation_not_allowed' => 'You are not allowed to impersonate users.',
         'invalid_team_id' => 'Value [:value] is not a valid team UUID.',

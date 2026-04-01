@@ -30,6 +30,16 @@ final class FakeRecordShareRepository implements RecordShareRepository
         ];
     }
 
+    public function exists(string $granteeUserId, string $resourceType, string $resourceId): bool
+    {
+        return array_any(
+            $this->shared,
+            fn (RecordShare $recordShare): bool => $recordShare->granteeUserId === $granteeUserId
+                && $recordShare->resourceType === $resourceType
+                && $recordShare->resourceId === $resourceId,
+        );
+    }
+
     /** @return list<RecordShare> */
     public function findByGrantee(string $granteeUserId, ?string $resourceType = null): array
     {

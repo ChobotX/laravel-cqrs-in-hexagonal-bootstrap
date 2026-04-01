@@ -221,6 +221,8 @@ return [
         'invalid_role_id' => 'Hodnota [:value] není platné UUID role.',
         'invalid_role_name' => 'Název role nesmí být prázdný.',
         'duplicate_role_assignment' => 'Tato role je již uživateli přiřazena.',
+        'role_not_assigned' => 'Tato role není uživateli přiřazena.',
+        'record_share_not_found' => 'Sdílení záznamu neexistuje.',
         'permission_denied' => 'Nemáte oprávnění k provedení této akce.',
         'impersonation_not_allowed' => 'Nemáte oprávnění převzít identitu uživatelů.',
         'invalid_team_id' => 'Hodnota [:value] není platné UUID týmu.',

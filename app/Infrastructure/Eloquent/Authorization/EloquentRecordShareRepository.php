@@ -33,6 +33,14 @@ final readonly class EloquentRecordShareRepository implements RecordShareReposit
             ->delete();
     }
 
+    public function exists(string $granteeUserId, string $resourceType, string $resourceId): bool
+    {
+        return RecordShareModel::where('grantee_user_id', $granteeUserId)
+            ->where('resource_type', $resourceType)
+            ->where('resource_id', $resourceId)
+            ->exists();
+    }
+
     /** @return list<RecordShare> */
     public function findByGrantee(string $granteeUserId, ?string $resourceType = null): array
     {

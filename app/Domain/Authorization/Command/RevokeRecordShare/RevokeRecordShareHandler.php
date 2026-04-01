@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Event\RecordShareRevoked;
+use App\Domain\Authorization\Exception\RecordShareNotFoundException;
 use App\Domain\Authorization\RecordShareRepository;
 use DateTimeImmutable;
 
@@ -21,6 +22,10 @@ final readonly class RevokeRecordShareHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
+        if (! $this->recordShareRepository->exists($command->granteeUserId, $command->resourceType, $command->resourceId)) {
+            throw new RecordShareNotFoundException($command->granteeUserId, $command->resourceType, $command->resourceId);
+        }
+
         $this->recordShareRepository->revoke(
             $command->granteeUserId,
             $command->resourceType,

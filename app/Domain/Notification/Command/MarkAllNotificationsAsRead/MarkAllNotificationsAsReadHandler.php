@@ -21,6 +21,10 @@ final readonly class MarkAllNotificationsAsReadHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
+        if ($this->notificationRepository->countUnreadByRecipient($command->userId) === 0) {
+            return;
+        }
+
         $now = new DateTimeImmutable;
         $this->notificationRepository->markAllAsReadForRecipient($command->userId, $now);
 

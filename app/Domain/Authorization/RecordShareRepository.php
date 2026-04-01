@@ -10,6 +10,8 @@ interface RecordShareRepository
 
     public function revoke(string $granteeUserId, string $resourceType, string $resourceId): void;
 
+    public function exists(string $granteeUserId, string $resourceType, string $resourceId): bool;
+
     /** @return list<RecordShare> */
     public function findByGrantee(string $granteeUserId, ?string $resourceType = null): array;
 

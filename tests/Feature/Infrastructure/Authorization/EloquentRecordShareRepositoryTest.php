@@ -62,6 +62,17 @@ it('revokes a share', function (): void {
     expect($eloquentRecordShareRepository->findByGrantee($userModel->id))->toHaveCount(0);
 });
 
+it('checks if a share exists', function (): void {
+    $eloquentRecordShareRepository = shareRepo();
+    $userModel = createShareUser('550e8400-e29b-41d4-a716-446655440614');
+    $grantor = createShareUser('550e8400-e29b-41d4-a716-446655440615');
+
+    $eloquentRecordShareRepository->share(new RecordShare($userModel->id, 'document', '550e8400-e29b-41d4-a716-446655440616', Action::Read, $grantor->id));
+
+    expect($eloquentRecordShareRepository->exists($userModel->id, 'document', '550e8400-e29b-41d4-a716-446655440616'))->toBeTrue()
+        ->and($eloquentRecordShareRepository->exists($userModel->id, 'document', '550e8400-e29b-41d4-a716-446655440617'))->toBeFalse();
+});
+
 it('returns accessible resource ids', function (): void {
     $eloquentRecordShareRepository = shareRepo();
     $userModel = createShareUser('550e8400-e29b-41d4-a716-446655440610');
