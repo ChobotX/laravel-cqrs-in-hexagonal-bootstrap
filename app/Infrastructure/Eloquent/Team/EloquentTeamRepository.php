@@ -6,6 +6,7 @@ namespace App\Infrastructure\Eloquent\Team;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
 use App\Domain\Team\Team;
 use App\Domain\Team\TeamId;
 use App\Domain\Team\TeamRepository;
@@ -13,6 +14,7 @@ use App\Domain\Team\TeamSlug;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentTeamRepository implements TeamRepository
@@ -74,13 +76,17 @@ final readonly class EloquentTeamRepository implements TeamRepository
 
     public function create(Team $team): void
     {
-        $teamModel = new TeamModel;
-        $teamModel->id = $team->id->value;
-        $teamModel->parent_team_id = $team->parentTeamId?->value;
-        $teamModel->name = $team->name->value;
-        $teamModel->slug = $team->slug->value;
-        $teamModel->description = $team->description;
-        $teamModel->save();
+        try {
+            $teamModel = new TeamModel;
+            $teamModel->id = $team->id->value;
+            $teamModel->parent_team_id = $team->parentTeamId?->value;
+            $teamModel->name = $team->name->value;
+            $teamModel->slug = $team->slug->value;
+            $teamModel->description = $team->description;
+            $teamModel->save();
+        } catch (UniqueConstraintViolationException) {
+            throw new TeamSlugAlreadyExistsException($team->slug->value);
+        }
     }
 
     public function update(Team $team): void

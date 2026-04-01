@@ -6,12 +6,14 @@ namespace App\Infrastructure\Eloquent\User;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
 use App\Domain\User\UserRepository;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 final readonly class EloquentUserRepository implements UserRepository
 {
@@ -72,19 +74,27 @@ final readonly class EloquentUserRepository implements UserRepository
 
     public function create(User $user): void
     {
-        $userModel = new UserModel;
-        $userModel->id = $user->id->value;
-        $userModel->name = $user->name->value;
-        $userModel->email = $user->email->value;
-        $userModel->save();
+        try {
+            $userModel = new UserModel;
+            $userModel->id = $user->id->value;
+            $userModel->name = $user->name->value;
+            $userModel->email = $user->email->value;
+            $userModel->save();
+        } catch (UniqueConstraintViolationException) {
+            throw new EmailAlreadyExistsException($user->email->value);
+        }
     }
 
     public function update(User $user): void
     {
-        $userModel = UserModel::findOrFail($user->id->value);
-        $userModel->name = $user->name->value;
-        $userModel->email = $user->email->value;
-        $userModel->save();
+        try {
+            $userModel = UserModel::findOrFail($user->id->value);
+            $userModel->name = $user->name->value;
+            $userModel->email = $user->email->value;
+            $userModel->save();
+        } catch (UniqueConstraintViolationException) {
+            throw new EmailAlreadyExistsException($user->email->value);
+        }
     }
 
     public function delete(UserId $userId): void

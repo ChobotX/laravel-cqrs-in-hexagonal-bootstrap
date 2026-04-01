@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Label;
 
+use App\Domain\Label\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Label;
 use App\Domain\Label\LabelId;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use App\Domain\Label\LabelRepository;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentLabelRepository implements LabelRepository
@@ -43,11 +45,15 @@ final readonly class EloquentLabelRepository implements LabelRepository
 
     public function create(Label $label): void
     {
-        $labelModel = new LabelModel;
-        $labelModel->id = $label->id->value;
-        $labelModel->namespace = $label->namespace->value;
-        $labelModel->name = $label->name->value;
-        $labelModel->save();
+        try {
+            $labelModel = new LabelModel;
+            $labelModel->id = $label->id->value;
+            $labelModel->namespace = $label->namespace->value;
+            $labelModel->name = $label->name->value;
+            $labelModel->save();
+        } catch (UniqueConstraintViolationException) {
+            throw new LabelAlreadyExistsException($label->namespace->value, $label->name->value);
+        }
     }
 
     public function delete(LabelId $labelId): void

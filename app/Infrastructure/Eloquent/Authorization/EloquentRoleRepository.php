@@ -7,12 +7,14 @@ namespace App\Infrastructure\Eloquent\Authorization;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
+use App\Domain\Authorization\Exception\RoleAlreadyExistsException;
 use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleRepository;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentRoleRepository implements RoleRepository
@@ -93,23 +95,27 @@ final readonly class EloquentRoleRepository implements RoleRepository
 
     public function create(Role $role): void
     {
-        DB::transaction(function () use ($role): void {
-            $roleModel = new RoleModel;
-            $roleModel->id = $role->id->value;
-            $roleModel->name = $role->name->value;
-            $roleModel->description = $role->description;
-            $roleModel->is_system = $role->isSystem;
-            $roleModel->save();
+        try {
+            DB::transaction(function () use ($role): void {
+                $roleModel = new RoleModel;
+                $roleModel->id = $role->id->value;
+                $roleModel->name = $role->name->value;
+                $roleModel->description = $role->description;
+                $roleModel->is_system = $role->isSystem;
+                $roleModel->save();
 
-            foreach ($role->permissions as $permission) {
-                $roleModel->permissions()->create([
-                    'module' => $permission->permissionKey->module->value,
-                    'feature' => $permission->permissionKey->feature?->value,
-                    'action' => $permission->permissionKey->action?->value,
-                    'scope' => $permission->scope->value,
-                ]);
-            }
-        });
+                foreach ($role->permissions as $permission) {
+                    $roleModel->permissions()->create([
+                        'module' => $permission->permissionKey->module->value,
+                        'feature' => $permission->permissionKey->feature?->value,
+                        'action' => $permission->permissionKey->action?->value,
+                        'scope' => $permission->scope->value,
+                    ]);
+                }
+            });
+        } catch (UniqueConstraintViolationException) {
+            throw new RoleAlreadyExistsException($role->name->value);
+        }
     }
 
     public function update(Role $role): void
