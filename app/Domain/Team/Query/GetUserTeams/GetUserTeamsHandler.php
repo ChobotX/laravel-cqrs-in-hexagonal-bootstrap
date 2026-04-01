@@ -27,11 +27,6 @@ final readonly class GetUserTeamsHandler implements QueryHandler
             return [];
         }
 
-        $allTeams = $this->teamRepository->findAll();
-
-        return array_values(array_filter(
-            $allTeams,
-            fn (Team $team): bool => in_array($team->id->value, $teamIds, true),
-        ));
+        return $this->teamRepository->findAll($teamIds);
     }
 }
