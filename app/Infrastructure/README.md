@@ -4,7 +4,7 @@ Concrete implementations of contracts and framework integrations. All classes mu
 
 ## BusServiceProvider registration
 
-All command, query, and event handler mappings are registered in `app/Infrastructure/Provider/BusServiceProvider.php`.
+All command, query, and event handler mappings are registered in `app/Infrastructure/Provider/BusServiceProvider.php`. All handler implementations live in `App\Domain\` — Infrastructure only provides the wiring. Enforced by PHPStan rule `HandlersInDomainRule`.
 
 ```php
 // Commands
@@ -18,6 +18,14 @@ All command, query, and event handler mappings are registered in `app/Infrastruc
 ```
 
 Every new command, query, or event handler must be registered here. See [Domain README](../Domain/README.md) for full CQRS walkthrough.
+
+## Command Bus Middleware Pipeline
+
+**Pipeline order:** `AuthorizeAction` -> `WrapInTransaction` -> `DispatchCollectedEvents` -> Handler
+
+- `AuthorizeAction` -- checks `#[RequiresPermission]` attribute, runs outside the transaction for fast-fail
+- `WrapInTransaction` -- wraps handler execution and event dispatch in a single database transaction on the default (`tenant`) connection. Nested `DB::transaction()` calls in repositories create PostgreSQL SAVEPOINTs transparently. Commands can opt out with `#[SkipTransaction(reason: '...')]`.
+- `DispatchCollectedEvents` -- runs the handler, then flushes collected events to the async queue. Job rows are inserted within the same transaction, so handler writes and event jobs commit atomically.
 
 ## Scope Resolution Middleware
 

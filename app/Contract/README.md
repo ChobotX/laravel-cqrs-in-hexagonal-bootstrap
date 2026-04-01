@@ -6,18 +6,19 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 
 ## Contents
 
-- `Auth/` — `PasswordManager` interface for password operations
-- `Authorization/` — `AuthorizationChecker`, `ImpersonationManager`, `AccessDecision`
+- `Auth/` — `AuthenticatedUser` (current user identity), `PasswordManager` (password operations)
+- `Authorization/` — `AuthorizationChecker`, `AuthorizationRefresher`, `ImpersonationManager`, `AccessDecision`
 - `Bus/` — `Middleware` interface for bus middleware pipeline
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces
 - `Logging/` — `Logger` interface for framework-agnostic structured logging
-- `Notification/` — `NotificationChannelSender`, `NotificationChannelSenderRegistry`, `RecipientResolver` interfaces for the notification system
+- `Notification/` — `NotificationBroadcaster`, `NotificationChannelSender`, `NotificationChannelSenderRegistry`, `RecipientResolver` interfaces for the notification system
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
 - `Http/` — `HttpStatus` interface with HTTP status code constants (`BAD_REQUEST`, `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `CREATED`, `NO_CONTENT`)
+- `IdGenerator` — generates unique identifiers
 - `Translation/` — `Translator` interface for framework-agnostic translations
 - `Team/` — `TeamMembershipChecker`
-- `Tenancy/` — `TenantContext` (current tenant ID/slug), `TenantBootstrapper` (resolve + switch schema)
+- `Tenancy/` — `TenantContext` (current tenant ID/slug), `TenantBootstrapper` (resolve + switch schema), `TenantProvisioner` (create tenant + schema)
 - `Query/` — `Query`, `QueryHandler` interfaces
 
 ## Generic type parameters

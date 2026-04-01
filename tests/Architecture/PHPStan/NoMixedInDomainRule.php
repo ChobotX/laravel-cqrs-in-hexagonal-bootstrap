@@ -6,8 +6,11 @@ namespace Tests\Architecture\PHPStan;
 
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\IntersectionType;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\UnionType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -49,12 +52,12 @@ final class NoMixedInDomainRule implements Rule
     {
         $errors = [];
 
-        if ($this->isMixedIdentifier($classMethod->returnType)) {
+        if ($this->containsMixed($classMethod->returnType)) {
             $errors[] = $this->buildError('return');
         }
 
         foreach ($classMethod->params as $param) {
-            if ($this->isMixedIdentifier($param->type)) {
+            if ($this->containsMixed($param->type)) {
                 $errors[] = $this->buildError('parameter');
             }
         }
@@ -65,16 +68,28 @@ final class NoMixedInDomainRule implements Rule
     /** @return list<IdentifierRuleError> */
     private function checkProperty(Property $property): array
     {
-        if ($this->isMixedIdentifier($property->type)) {
+        if ($this->containsMixed($property->type)) {
             return [$this->buildError('property')];
         }
 
         return [];
     }
 
-    private function isMixedIdentifier(?Node $node): bool
+    private function containsMixed(?Node $node): bool
     {
-        return $node instanceof Identifier && $node->name === 'mixed';
+        if ($node instanceof Identifier) {
+            return $node->name === 'mixed';
+        }
+
+        if ($node instanceof NullableType) {
+            return $this->containsMixed($node->type);
+        }
+
+        if (! $node instanceof UnionType && ! $node instanceof IntersectionType) {
+            return false;
+        }
+
+        return array_any($node->types, fn (?Node $node): bool => $this->containsMixed($node));
     }
 
     private function buildError(string $position): IdentifierRuleError

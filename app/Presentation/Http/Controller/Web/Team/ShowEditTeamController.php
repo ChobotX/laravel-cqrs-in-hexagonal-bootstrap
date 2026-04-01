@@ -28,7 +28,7 @@ final readonly class ShowEditTeamController
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
         $team = $this->queryBus->dispatch(new GetTeamByIdQuery($teamId));
-        $paginatedResult = $this->queryBus->dispatch(new ListTeamsQuery($currentUserId));
+        $paginatedResult = $this->queryBus->dispatch(new ListTeamsQuery);
 
         $canManageLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
         $canCreateLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.create');

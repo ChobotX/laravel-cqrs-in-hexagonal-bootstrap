@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Application\Authorization\AccessContext;
+use App\Application\Authorization\ScopeTarget;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
-use App\Contract\Authorization\AccessDecision;
-use App\Contract\Authorization\AuthorizationChecker;
-use App\Contract\Team\TeamMembershipChecker;
+use App\Domain\Authorization\AccessScope;
 use App\Domain\Team\Query\ListTeams\ListTeamsHandler;
 use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
 use App\Domain\Team\Team;
@@ -17,71 +17,7 @@ use App\Domain\Team\TeamName;
 use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeTeamRepository;
 
-function listTeamsAuthChecker(string $scope = 'all'): AuthorizationChecker
-{
-    return new readonly class($scope) implements AuthorizationChecker
-    {
-        public function __construct(private string $scope) {}
-
-        public function can(string $userId, string $permission): bool
-        {
-            return true;
-        }
-
-        public function canWithScope(string $userId, string $permission): AccessDecision
-        {
-            return new readonly class($this->scope) implements AccessDecision
-            {
-                public function __construct(private string $scope) {}
-
-                public function granted(): bool
-                {
-                    return true;
-                }
-
-                public function scope(): string
-                {
-                    return $this->scope;
-                }
-            };
-        }
-
-        /** @return list<string> */
-        public function accessibleResourceIds(string $userId, string $resourceType, string $action): array
-        {
-            return [];
-        }
-    };
-}
-
-/** @param list<string> $teamIds */
-function listTeamsMembershipChecker(array $teamIds = []): TeamMembershipChecker
-{
-    return new readonly class($teamIds) implements TeamMembershipChecker
-    {
-        /** @param list<string> $teamIds */
-        public function __construct(private array $teamIds) {}
-
-        public function isTeamMember(string $userId, string $teamId): bool
-        {
-            return in_array($teamId, $this->teamIds, true);
-        }
-
-        /** @return list<string> */
-        public function memberTeamIds(string $userId): array
-        {
-            return $this->teamIds;
-        }
-
-        /** @return list<string> */
-        public function visibleUserIds(string $userId): array
-        {
-            return [];
-        }
-    };
-}
-
-it('lists all teams for All scope', function (): void {
+it('lists all teams when visibleIds is null (All scope)', function (): void {
     $team = new Team(
         new TeamId('550e8400-e29b-41d4-a716-446655440000'),
         new TeamName('Engineering'),
@@ -91,9 +27,10 @@ it('lists all teams for All scope', function (): void {
     );
 
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => $team]);
-    $handler = new ListTeamsHandler($teamRepo, listTeamsAuthChecker('all'), listTeamsMembershipChecker());
+    $handler = new ListTeamsHandler($teamRepo);
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
+    $listTeamsQuery = (new ListTeamsQuery)->withAccessContext(new AccessContext(AccessScope::All, null));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult)->toBeInstanceOf(PaginatedResult::class)
         ->and($paginatedResult->items)->toHaveCount(1)
@@ -102,15 +39,16 @@ it('lists all teams for All scope', function (): void {
 
 it('returns empty when no teams', function (): void {
     $teamRepo = new FakeTeamRepository;
-    $handler = new ListTeamsHandler($teamRepo, listTeamsAuthChecker('all'), listTeamsMembershipChecker());
+    $handler = new ListTeamsHandler($teamRepo);
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
+    $listTeamsQuery = (new ListTeamsQuery)->withAccessContext(new AccessContext(AccessScope::All, null));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items)->toBeEmpty()
         ->and($paginatedResult->total)->toBe(0);
 });
 
-it('filters teams by membership for Team scope', function (): void {
+it('filters teams by visibleIds (Team scope)', function (): void {
     $visible = new Team(
         new TeamId('550e8400-e29b-41d4-a716-446655440001'),
         new TeamName('My Team'),
@@ -132,19 +70,18 @@ it('filters teams by membership for Team scope', function (): void {
         '550e8400-e29b-41d4-a716-446655440002' => $hidden,
     ]);
 
-    $handler = new ListTeamsHandler(
-        $teamRepo,
-        listTeamsAuthChecker('team'),
-        listTeamsMembershipChecker(['550e8400-e29b-41d4-a716-446655440001']),
-    );
+    $handler = new ListTeamsHandler($teamRepo);
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
+    $listTeamsQuery = (new ListTeamsQuery)->withAccessContext(
+        new AccessContext(AccessScope::Team, ['550e8400-e29b-41d4-a716-446655440001']),
+    );
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items)->toHaveCount(1)
         ->and($paginatedResult->items[0]->name->value)->toBe('My Team');
 });
 
-it('returns empty for Own scope', function (): void {
+it('returns empty when visibleIds is empty (Own scope)', function (): void {
     $team = new Team(
         new TeamId('550e8400-e29b-41d4-a716-446655440000'),
         new TeamName('Engineering'),
@@ -154,9 +91,10 @@ it('returns empty for Own scope', function (): void {
     );
 
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => $team]);
-    $handler = new ListTeamsHandler($teamRepo, listTeamsAuthChecker('own'), listTeamsMembershipChecker());
+    $handler = new ListTeamsHandler($teamRepo);
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
+    $listTeamsQuery = (new ListTeamsQuery)->withAccessContext(new AccessContext(AccessScope::Own, []));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items)->toBeEmpty()
         ->and($paginatedResult->total)->toBe(0);
@@ -169,13 +107,11 @@ it('paginates teams when pagination is provided', function (): void {
         $teams[$id] = new Team(new TeamId($id), new TeamName('Team '.$i), new TeamSlug('team-'.$i), 'Desc', null);
     }
 
-    $handler = new ListTeamsHandler(
-        new FakeTeamRepository($teams),
-        listTeamsAuthChecker('all'),
-        listTeamsMembershipChecker(),
-    );
+    $handler = new ListTeamsHandler(new FakeTeamRepository($teams));
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1', new Pagination(1, 2)));
+    $listTeamsQuery = new ListTeamsQuery(pagination: new Pagination(1, 2))
+        ->withAccessContext(new AccessContext(AccessScope::All, null));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items)->toHaveCount(2)
         ->and($paginatedResult->total)->toBe(3)
@@ -199,29 +135,25 @@ it('paginates filtered teams for Team scope', function (): void {
         null,
     );
 
-    $handler = new ListTeamsHandler(
-        new FakeTeamRepository([
-            '550e8400-e29b-41d4-a716-446655440001' => $visible,
-            '550e8400-e29b-41d4-a716-446655440002' => $hidden,
-        ]),
-        listTeamsAuthChecker('team'),
-        listTeamsMembershipChecker(['550e8400-e29b-41d4-a716-446655440001']),
-    );
+    $handler = new ListTeamsHandler(new FakeTeamRepository([
+        '550e8400-e29b-41d4-a716-446655440001' => $visible,
+        '550e8400-e29b-41d4-a716-446655440002' => $hidden,
+    ]));
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1', new Pagination(1, 10)));
+    $listTeamsQuery = new ListTeamsQuery(pagination: new Pagination(1, 10))
+        ->withAccessContext(new AccessContext(AccessScope::Team, ['550e8400-e29b-41d4-a716-446655440001']));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items)->toHaveCount(1)
         ->and($paginatedResult->total)->toBe(1);
 });
 
 it('returns empty paginated result for Own scope with pagination', function (): void {
-    $handler = new ListTeamsHandler(
-        new FakeTeamRepository,
-        listTeamsAuthChecker('own'),
-        listTeamsMembershipChecker(),
-    );
+    $handler = new ListTeamsHandler(new FakeTeamRepository);
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1', new Pagination(1, 10)));
+    $listTeamsQuery = new ListTeamsQuery(pagination: new Pagination(1, 10))
+        ->withAccessContext(new AccessContext(AccessScope::Own, []));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items)->toBeEmpty()
         ->and($paginatedResult->total)->toBe(0);
@@ -245,36 +177,45 @@ it('applies default sorting by name ascending', function (): void {
         ),
     ];
 
-    $handler = new ListTeamsHandler(
-        new FakeTeamRepository($teams),
-        listTeamsAuthChecker('all'),
-        listTeamsMembershipChecker(),
-    );
+    $handler = new ListTeamsHandler(new FakeTeamRepository($teams));
 
-    $paginatedResult = $handler->handle(new ListTeamsQuery('user-1'));
+    $listTeamsQuery = (new ListTeamsQuery)->withAccessContext(new AccessContext(AccessScope::All, null));
+    $paginatedResult = $handler->handle($listTeamsQuery);
 
     expect($paginatedResult->items[0]->name->value)->toBe('Alpha')
         ->and($paginatedResult->items[1]->name->value)->toBe('Zebra');
 });
 
 it('supports withPagination immutable copy', function (): void {
-    $query = new ListTeamsQuery('user-1');
+    $query = new ListTeamsQuery;
     $listTeamsQuery = $query->withPagination(new Pagination(3, 5));
 
     expect($query->pagination())->toBeNull()
         ->and($listTeamsQuery->pagination())->toBeInstanceOf(Pagination::class)
-        ->and($listTeamsQuery->pagination())->not->toBeNull()
-        ->and($listTeamsQuery->pagination()?->page)->toBe(3)
-        ->and($listTeamsQuery->userId)->toBe('user-1');
+        ->and($listTeamsQuery->pagination()?->page)->toBe(3);
 });
 
 it('supports withSorting immutable copy', function (): void {
-    $query = new ListTeamsQuery('user-1');
+    $query = new ListTeamsQuery;
     $listTeamsQuery = $query->withSorting([new Sorting('name', SortDirection::Desc)]);
 
     expect($query->sorting())->toBe([])
         ->and($listTeamsQuery->sorting())->toHaveCount(1)
         ->and($listTeamsQuery->sorting()[0]->column)->toBe('name')
-        ->and($listTeamsQuery->sorting()[0]->direction)->toBe(SortDirection::Desc)
-        ->and($listTeamsQuery->userId)->toBe('user-1');
+        ->and($listTeamsQuery->sorting()[0]->direction)->toBe(SortDirection::Desc);
+});
+
+it('returns Team scope target', function (): void {
+    $query = new ListTeamsQuery;
+
+    expect($query->scopeTarget())->toBe(ScopeTarget::Team);
+});
+
+it('supports withAccessContext immutable copy', function (): void {
+    $query = new ListTeamsQuery;
+    $listTeamsQuery = $query->withAccessContext(new AccessContext(AccessScope::All, null));
+
+    expect($query->accessContext())->toBeNull()
+        ->and($listTeamsQuery->accessContext())->toBeInstanceOf(AccessContext::class)
+        ->and($listTeamsQuery->accessContext()?->scope)->toBe(AccessScope::All);
 });

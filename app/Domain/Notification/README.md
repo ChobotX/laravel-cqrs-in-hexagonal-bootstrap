@@ -38,13 +38,16 @@ Enterprise notification system with multi-channel delivery, user preferences, an
 
 ## Event Handlers
 
-**Domain** (`App\Domain\Notification\EventHandler\`):
-- `CleanupNotificationsOnUserDeleted` — listens to `UserDeleted`, removes all notifications
+All event handlers live in `App\Domain\Notification\EventHandler\`:
 
-**Infrastructure** (`App\Infrastructure\Notification\EventHandler\`):
-- `SendWelcomeNotificationOnUserCreated` — listens to `UserCreated`, dispatches `SendNotificationCommand` (in Infrastructure because it uses `CommandBus`)
-- `BroadcastNotificationCreated` — broadcasts new in-app notifications via WebSocket
-- `BroadcastUnreadCountUpdated` — broadcasts updated unread count after read/delete events
+| Handler | Event | Description |
+|---|---|---|
+| `CleanupNotificationsOnUserDeleted` | `UserDeleted` | Removes all notifications for deleted user |
+| `SendWelcomeNotificationOnUserCreated` | `UserCreated` | Dispatches welcome notification via `CommandBus` (cross-domain) |
+| `DeliverNotificationOnCreated` | `NotificationCreated` | Broadcasts new in-app notification via `NotificationBroadcaster` contract |
+| `UpdateUnreadCountOnNotificationChange` | `NotificationRead`, `AllNotificationsRead`, `NotificationDeleted` | Broadcasts updated unread count via `NotificationBroadcaster` contract |
+
+The `NotificationBroadcaster` contract abstracts real-time delivery. The infrastructure implementation (`LaravelNotificationBroadcaster`) dispatches Laravel broadcast events over WebSocket.
 
 ## Channel System
 

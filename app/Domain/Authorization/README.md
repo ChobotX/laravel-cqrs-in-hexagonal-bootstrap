@@ -163,14 +163,26 @@ Super admins can impersonate any user to see the application from their perspect
 - `$this->seedRoleWithPermissions($name, $desc, $perms)` — custom role
 - `$this->assignRole($userId, $roleId)` — assigns any role
 
+## Event Handlers
+
+Domain event handlers in `App\Domain\Authorization\EventHandler\` react to authorization changes and refresh the cached authorization state via the `AuthorizationRefresher` contract:
+
+| Handler | Event | Logic |
+|---|---|---|
+| `RefreshAuthorizationOnRoleAssigned` | `RoleAssignedToUser` | Refresh for the user |
+| `RefreshAuthorizationOnRoleRevoked` | `RoleRevokedFromUser` | Refresh for the user |
+| `RefreshAuthorizationOnOverrideSet` | `PermissionOverrideSet` | Refresh for the user |
+| `RefreshAuthorizationOnOverrideRemoved` | `PermissionOverrideRemoved` | Refresh for the user |
+| `RefreshAuthorizationOnRoleDeleted` | `RoleDeleted` | Refresh for all users with the role |
+| `RefreshAuthorizationOnRoleUpdated` | `RoleUpdated` | Refresh for all users with the role |
+
+The `AuthorizationRefresher` contract abstracts the refresh mechanism. The infrastructure implementation (`CacheAuthorizationRefresher`) clears the `auth:perms:{userId}` cache key.
+
 ## Caching
 
 - Effective permissions are cached per user with key `auth:perms:{userId}`
 - TTL: 5 minutes (configurable via `AUTH_PERMISSION_CACHE_TTL` env var)
-- Cache is automatically invalidated when:
-  - Role assigned/revoked to/from user
-  - Permission override set/removed
-  - Role updated or deleted (clears cache for all users with that role)
+- Cache is automatically invalidated by domain event handlers (see above)
 
 To debug cache issues, clear the authorization cache:
 ```bash

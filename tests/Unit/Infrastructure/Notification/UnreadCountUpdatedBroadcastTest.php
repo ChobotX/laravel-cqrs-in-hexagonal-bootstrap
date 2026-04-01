@@ -5,8 +5,9 @@ declare(strict_types=1);
 use App\Infrastructure\Notification\Broadcast\UnreadCountUpdatedBroadcast;
 use Illuminate\Broadcasting\PrivateChannel;
 
-it('broadcasts on private channel', function (): void {
+it('broadcasts on tenant-prefixed private channel', function (): void {
     $broadcast = new UnreadCountUpdatedBroadcast(
+        tenantSlug: 'acme',
         recipientId: '550e8400-e29b-41d4-a716-446655440000',
         count: 5,
     );
@@ -15,11 +16,12 @@ it('broadcasts on private channel', function (): void {
 
     expect($channels)->toHaveCount(1)
         ->and($channels[0])->toBeInstanceOf(PrivateChannel::class)
-        ->and($channels[0]->name)->toBe('private-notifications.550e8400-e29b-41d4-a716-446655440000');
+        ->and($channels[0]->name)->toBe('private-acme.notifications.550e8400-e29b-41d4-a716-446655440000');
 });
 
 it('uses UnreadCountUpdated as event name', function (): void {
     $broadcast = new UnreadCountUpdatedBroadcast(
+        tenantSlug: 'acme',
         recipientId: '550e8400-e29b-41d4-a716-446655440000',
         count: 3,
     );
@@ -29,6 +31,7 @@ it('uses UnreadCountUpdated as event name', function (): void {
 
 it('exposes count', function (): void {
     $broadcast = new UnreadCountUpdatedBroadcast(
+        tenantSlug: 'acme',
         recipientId: '550e8400-e29b-41d4-a716-446655440000',
         count: 7,
     );

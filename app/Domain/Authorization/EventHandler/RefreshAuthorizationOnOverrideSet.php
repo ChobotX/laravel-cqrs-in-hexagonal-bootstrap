@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Authorization\EventHandler;
+namespace App\Domain\Authorization\EventHandler;
 
+use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\Authorization\Event\PermissionOverrideSet;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 /** @implements DomainEventHandler<PermissionOverrideSet> */
-final readonly class InvalidateCacheOnOverrideSet implements DomainEventHandler
+final readonly class RefreshAuthorizationOnOverrideSet implements DomainEventHandler
 {
     public function __construct(
-        private CacheRepository $cacheRepository,
+        private AuthorizationRefresher $authorizationRefresher,
     ) {}
 
     public function handle(DomainEvent $domainEvent): void
     {
-        $this->cacheRepository->forget(sprintf('auth:perms:%s', $domainEvent->userId));
+        $this->authorizationRefresher->refreshForUser($domainEvent->userId);
     }
 }

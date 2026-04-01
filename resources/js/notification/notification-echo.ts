@@ -34,8 +34,9 @@ export function subscribeToNotifications(
     onCountUpdated: (count: number) => void,
 ): void {
     const echo = initEcho();
+    const tenantSlug = getMetaContent('tenant-slug');
 
-    echo.private(`notifications.${userId}`)
+    echo.private(`${tenantSlug}.notifications.${userId}`)
         .listen('.NotificationReceived', (event: { payload: NotificationEntry }) => {
             onReceived(event.payload);
         })

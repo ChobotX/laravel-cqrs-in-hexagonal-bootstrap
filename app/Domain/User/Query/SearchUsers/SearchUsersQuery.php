@@ -7,6 +7,7 @@ namespace App\Domain\User\Query\SearchUsers;
 use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
+use App\Application\Authorization\ScopeTarget;
 use App\Contract\Query\Query;
 use App\Domain\User\User;
 
@@ -27,6 +28,11 @@ final readonly class SearchUsersQuery implements Query, ScopeAwareQuery
         public int $limit = self::DEFAULT_LIMIT,
         private ?AccessContext $accessContext = null,
     ) {}
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::User;
+    }
 
     public function withAccessContext(AccessContext $accessContext): static
     {

@@ -27,7 +27,8 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 - **No static calls** in `App\Domain` except `parent::` (`NoStaticCallsInDomainRule`)
 - **Only `App\Contract\Exception\DomainException` implementors** can be thrown — the interface requires a `userMessage(Translator): string` method and a `statusCode(): int` method (`OnlyDomainExceptionsInDomainRule`)
 - **No Laravel helpers** in `App\Domain` — `__()`, `app()`, `config()`, etc. are blocked; use Contract interfaces instead (`NoLaravelHelpersInDomainRule`)
-- **No cross-domain dependencies** — `App\Domain\{ContextA}` must not depend on `App\Domain\{ContextB}` (`NoCrossDomainDependenciesRule`)
+- **No cross-domain dependencies** — `App\Domain\{ContextA}` must not depend on `App\Domain\{ContextB}`, except `EventHandler` classes may import `DomainEvent` classes from other domains (`NoCrossDomainDependenciesRule`)
+- **All handlers in Domain** — `CommandHandler`, `QueryHandler`, and `DomainEventHandler` implementations must live in `App\Domain\`; if a handler needs infrastructure, use a `Contract` interface (`HandlersInDomainRule`)
 - **No `assert()` calls** in `App\` namespace — use proper exceptions (`NoAssertInAppRule`)
 - **No `mixed` native type** in `App\Domain` — parameters, return types, and properties must use specific types (`NoMixedInDomainRule`)
 - **100% test coverage** of `app/Domain/` enforced by `phpunit.domain-coverage.xml`
@@ -67,6 +68,8 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
    ```
 
 4. Dispatch via `App\Application\Bus\CommandBus::dispatch()`.
+
+All commands are automatically wrapped in a database transaction by the `WrapInTransaction` middleware. For commands that must not run in a transaction (DDL, migrations, landlord-connection writes), add `#[SkipTransaction(reason: '...')]` from `App\Application\Bus\SkipTransaction`.
 
 ### Adding a query
 
@@ -148,7 +151,7 @@ List queries that support sorting implement `SortableQuery` alongside `Query`. W
 
 ## Cross-domain communication
 
-Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule.
+Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule. Exception: `EventHandler` classes may import `DomainEvent` classes from other domains — events are the intended cross-domain communication channel.
 
 ### Adding a domain event
 
@@ -190,4 +193,4 @@ Bounded contexts must not depend on each other directly. Enforced by `NoCrossDom
 
 ### Cross-context data
 
-Never import from another context's Domain. Query on-demand via `QueryBus` instead.
+Never import from another context's Domain directly. Query on-demand via `QueryBus` or `CommandBus` instead. Event handlers may import `DomainEvent` classes from other domains for cross-domain reactions.

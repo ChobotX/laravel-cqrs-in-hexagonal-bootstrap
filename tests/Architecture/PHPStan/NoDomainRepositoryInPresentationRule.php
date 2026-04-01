@@ -10,7 +10,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
-use function str_contains;
 use function str_starts_with;
 
 /**
@@ -33,7 +32,7 @@ final class NoDomainRepositoryInPresentationRule implements Rule
 
         $referencedName = $node->toString();
 
-        if (! str_starts_with($referencedName, 'App\Domain\\') || ! str_contains($referencedName, 'Repository')) {
+        if (! str_starts_with($referencedName, 'App\Domain\\') || ! str_ends_with($referencedName, 'Repository')) {
             return [];
         }
 

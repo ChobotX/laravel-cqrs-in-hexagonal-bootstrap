@@ -41,8 +41,7 @@ final readonly class ListTeamsController
 
         $paginatedResult = $this->queryBus->dispatch(
             new ListTeamsQuery(
-                $currentUserId,
-                $paginationRequest->pagination(),
+                pagination: $paginationRequest->pagination(),
             )->withSorting([$sorting]),
         );
 

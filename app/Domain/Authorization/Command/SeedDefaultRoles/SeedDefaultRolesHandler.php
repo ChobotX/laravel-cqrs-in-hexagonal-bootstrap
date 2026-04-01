@@ -10,6 +10,7 @@ use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
 use App\Domain\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\DefaultRole;
 use App\Domain\Authorization\Event\DefaultRolesSeeded;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
@@ -42,17 +43,17 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
         $readCreateUpdatePermissions = $this->buildActionPermissions(Action::Read, Action::Create, Action::Update);
 
         $roles = [
-            $this->createRole('Manager', 'Full access within tenant', [
+            $this->createRole(DefaultRole::MANAGER_NAME, DefaultRole::MANAGER_DESCRIPTION, [
                 [$allPermissions, AccessScope::All],
             ]),
-            $this->createRole('Team Leader', 'Full access scoped to own team hierarchy', [
+            $this->createRole(DefaultRole::TEAM_LEADER_NAME, DefaultRole::TEAM_LEADER_DESCRIPTION, [
                 [$allPermissions, AccessScope::Team],
             ]),
-            $this->createRole('Team Member', 'Can view all, create and update own resources', [
+            $this->createRole(DefaultRole::TEAM_MEMBER_NAME, DefaultRole::TEAM_MEMBER_DESCRIPTION, [
                 [$readPermissions, AccessScope::All],
                 [$createUpdatePermissions, AccessScope::Own],
             ]),
-            $this->createRole('Externist', 'External collaborator with own resource access', [
+            $this->createRole(DefaultRole::EXTERNIST_NAME, DefaultRole::EXTERNIST_DESCRIPTION, [
                 [$readCreateUpdatePermissions, AccessScope::Own],
             ]),
         ];

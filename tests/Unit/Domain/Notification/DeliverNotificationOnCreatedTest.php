@@ -3,19 +3,17 @@
 declare(strict_types=1);
 
 use App\Domain\Notification\Event\NotificationCreated;
+use App\Domain\Notification\EventHandler\DeliverNotificationOnCreated;
 use App\Domain\Notification\Notification;
 use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationId;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationType;
-use App\Infrastructure\Notification\Broadcast\NewNotificationBroadcast;
-use App\Infrastructure\Notification\Broadcast\UnreadCountUpdatedBroadcast;
-use App\Infrastructure\Notification\EventHandler\BroadcastNotificationCreated;
-use Tests\Helper\FakeEventsDispatcher;
+use Tests\Helper\FakeNotificationBroadcaster;
 use Tests\Helper\FakeNotificationRepository;
 
 it('broadcasts notification and unread count for in_app channel', function (): void {
-    $dispatcher = new FakeEventsDispatcher;
+    $broadcaster = new FakeNotificationBroadcaster;
 
     $notification = new Notification(
         id: new NotificationId('550e8400-e29b-41d4-a716-446655440000'),
@@ -35,7 +33,7 @@ it('broadcasts notification and unread count for in_app channel', function (): v
         '550e8400-e29b-41d4-a716-446655440000' => $notification,
     ]);
 
-    $handler = new BroadcastNotificationCreated($dispatcher, $repo);
+    $handler = new DeliverNotificationOnCreated($broadcaster, $repo);
 
     $event = new NotificationCreated(
         notificationId: '550e8400-e29b-41d4-a716-446655440000',
@@ -51,16 +49,18 @@ it('broadcasts notification and unread count for in_app channel', function (): v
 
     $handler->handle($event);
 
-    expect($dispatcher->dispatched)->toHaveCount(2)
-        ->and($dispatcher->dispatched[0])->toBeInstanceOf(NewNotificationBroadcast::class)
-        ->and($dispatcher->dispatched[1])->toBeInstanceOf(UnreadCountUpdatedBroadcast::class);
+    expect($broadcaster->broadcastedNotifications)->toHaveCount(1)
+        ->and($broadcaster->broadcastedNotifications[0]['recipientId'])->toBe('660e8400-e29b-41d4-a716-446655440000')
+        ->and($broadcaster->broadcastedNotifications[0]['notificationId'])->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($broadcaster->broadcastedUnreadCounts)->toHaveCount(1)
+        ->and($broadcaster->broadcastedUnreadCounts[0]['recipientId'])->toBe('660e8400-e29b-41d4-a716-446655440000');
 });
 
 it('skips broadcast for non in_app channel', function (): void {
-    $dispatcher = new FakeEventsDispatcher;
+    $broadcaster = new FakeNotificationBroadcaster;
     $repo = new FakeNotificationRepository;
 
-    $handler = new BroadcastNotificationCreated($dispatcher, $repo);
+    $handler = new DeliverNotificationOnCreated($broadcaster, $repo);
 
     $event = new NotificationCreated(
         notificationId: '550e8400-e29b-41d4-a716-446655440000',
@@ -76,5 +76,6 @@ it('skips broadcast for non in_app channel', function (): void {
 
     $handler->handle($event);
 
-    expect($dispatcher->dispatched)->toHaveCount(0);
+    expect($broadcaster->broadcastedNotifications)->toHaveCount(0)
+        ->and($broadcaster->broadcastedUnreadCounts)->toHaveCount(0);
 });

@@ -26,6 +26,9 @@ final class FakeUserPermissionRepository implements UserPermissionRepository
     /** @var list<array{userId: string, roleId: string}> */
     public array $revokedRoles = [];
 
+    /** @var array<string, list<string>> */
+    public array $userIdsByRole = [];
+
     /** @return list<Role> */
     public function userRoles(string $userId): array
     {
@@ -73,6 +76,6 @@ final class FakeUserPermissionRepository implements UserPermissionRepository
     /** @return list<string> */
     public function userIdsWithRole(RoleId $roleId): array
     {
-        return [];
+        return $this->userIdsByRole[$roleId->value] ?? [];
     }
 }

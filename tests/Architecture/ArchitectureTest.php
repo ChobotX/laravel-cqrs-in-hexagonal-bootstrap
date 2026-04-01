@@ -25,6 +25,7 @@ final class ArchitectureTest
                 Selector::inNamespace('App\Application\Authorization'),
                 Selector::inNamespace('App\Application\Pagination'),
                 Selector::inNamespace('App\Application\Sorting'),
+                Selector::inNamespace('App\Application\Bus'),
                 Selector::inNamespace('App\Application\Tenancy'),
             );
     }

@@ -2,22 +2,21 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Notification\EventHandler;
+namespace App\Domain\Notification\EventHandler;
 
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
+use App\Contract\Notification\NotificationBroadcaster;
 use App\Domain\Notification\Event\AllNotificationsRead;
 use App\Domain\Notification\Event\NotificationDeleted;
 use App\Domain\Notification\Event\NotificationRead;
 use App\Domain\Notification\NotificationRepository;
-use App\Infrastructure\Notification\Broadcast\UnreadCountUpdatedBroadcast;
-use Illuminate\Contracts\Events\Dispatcher;
 
 /** @implements DomainEventHandler<DomainEvent> */
-final readonly class BroadcastUnreadCountUpdated implements DomainEventHandler
+final readonly class UpdateUnreadCountOnNotificationChange implements DomainEventHandler
 {
     public function __construct(
-        private Dispatcher $eventDispatcher,
+        private NotificationBroadcaster $notificationBroadcaster,
         private NotificationRepository $notificationRepository,
     ) {}
 
@@ -31,10 +30,10 @@ final readonly class BroadcastUnreadCountUpdated implements DomainEventHandler
 
         $unreadCount = $this->notificationRepository->countUnreadByRecipient($recipientId);
 
-        $this->eventDispatcher->dispatch(new UnreadCountUpdatedBroadcast(
+        $this->notificationBroadcaster->broadcastUnreadCountUpdated(
             recipientId: $recipientId,
             count: $unreadCount,
-        ));
+        );
     }
 
     private function resolveRecipientId(DomainEvent $domainEvent): ?string

@@ -7,6 +7,7 @@ namespace App\Domain\User\Query\ListUsers;
 use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
+use App\Application\Authorization\ScopeTarget;
 use App\Application\Pagination\PaginableQuery;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
@@ -38,6 +39,11 @@ final readonly class ListUsersQuery implements PaginableQuery, Query, ScopeAware
     public function pagination(): ?Pagination
     {
         return $this->pagination;
+    }
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::User;
     }
 
     public function withAccessContext(AccessContext $accessContext): static

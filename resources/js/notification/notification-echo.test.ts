@@ -52,6 +52,7 @@ describe('notification-echo', () => {
             setMeta('reverb-host', 'localhost'),
             setMeta('reverb-port', '8080'),
             setMeta('reverb-scheme', 'http'),
+            setMeta('tenant-slug', 'acme'),
         ];
     });
 
@@ -110,7 +111,7 @@ describe('notification-echo', () => {
 
         subscribeToNotifications('user-123', onReceived, onCountUpdated);
 
-        expect(echoMocks.privateFn).toHaveBeenCalledWith('notifications.user-123');
+        expect(echoMocks.privateFn).toHaveBeenCalledWith('acme.notifications.user-123');
         expect(echoMocks.listen).toHaveBeenCalledWith('.NotificationReceived', expect.any(Function));
         expect(echoMocks.listen).toHaveBeenCalledWith('.UnreadCountUpdated', expect.any(Function));
     });

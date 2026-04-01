@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Authorization\ScopeTarget;
 use App\Domain\User\Email;
 use App\Domain\User\Query\SearchUsers\SearchUsersHandler;
 use App\Domain\User\Query\SearchUsers\SearchUsersQuery;
@@ -80,4 +81,10 @@ it('matches diacritics term against ascii name', function (): void {
 
     expect($result)->toHaveCount(1)
         ->and($result[0]->name)->toBe('Ondřej Černý');
+});
+
+it('returns User scope target', function (): void {
+    $query = new SearchUsersQuery('test', []);
+
+    expect($query->scopeTarget())->toBe(ScopeTarget::User);
 });

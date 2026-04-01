@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Authorization\ScopeTarget;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
@@ -111,4 +112,10 @@ it('supports withSorting immutable copy', function (): void {
         ->and($listUsersQuery->sorting())->toHaveCount(1)
         ->and($listUsersQuery->sorting()[0]->column)->toBe('email')
         ->and($listUsersQuery->sorting()[0]->direction)->toBe(SortDirection::Desc);
+});
+
+it('returns User scope target', function (): void {
+    $query = new ListUsersQuery;
+
+    expect($query->scopeTarget())->toBe(ScopeTarget::User);
 });

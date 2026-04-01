@@ -14,6 +14,8 @@ namespace App\Application\Authorization;
  */
 interface ScopeAwareQuery
 {
+    public function scopeTarget(): ScopeTarget;
+
     public function withAccessContext(AccessContext $accessContext): static;
 
     public function accessContext(): ?AccessContext;

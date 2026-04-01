@@ -59,6 +59,12 @@ All other console commands (e.g. `user:create`) use `#[TenantAwareCommand]` and 
 
 This inserts the tenant record, creates the PostgreSQL schema, and runs all tenant migrations.
 
+## Queue Jobs
+
+`HandleDomainEventJob` serializes the current tenant slug alongside the domain event. When the queue worker processes the job, it calls `TenantBootstrapper::bootstrapBySlug()` to restore tenant context before executing the handler. This ensures event handlers have the correct tenant schema active regardless of worker configuration.
+
+Queue connections use `after_commit: true` — jobs are only dispatched to the queue after the triggering database transaction commits, preventing handlers from reading uncommitted data.
+
 ## Domain Isolation
 
 The domain layer is fully tenant-agnostic. Enforced by PHPat rule `testDomainDoesNotDependOnTenancy` — `App\Domain\*` cannot import `App\Contract\Tenancy\*`.

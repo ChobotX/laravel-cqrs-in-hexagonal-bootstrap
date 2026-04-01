@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Provider;
 
 use App\Contract\IdGenerator;
+use App\Contract\Notification\NotificationBroadcaster;
 use App\Contract\Notification\NotificationChannelSenderRegistry;
 use App\Contract\Notification\RecipientResolver;
 use App\Domain\Authorization\RecordShareRepository;
@@ -28,6 +29,7 @@ use App\Infrastructure\Eloquent\User\EloquentUserRepository;
 use App\Infrastructure\Notification\ChannelSenderRegistry;
 use App\Infrastructure\Notification\EloquentRecipientResolver;
 use App\Infrastructure\Notification\EmailNotificationSender;
+use App\Infrastructure\Notification\LaravelNotificationBroadcaster;
 use App\Infrastructure\UuidIdGenerator;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -50,6 +52,7 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(NotificationChannelSenderRegistry::class, fn (): ChannelSenderRegistry => new ChannelSenderRegistry([
             'email' => $this->app->make(EmailNotificationSender::class),
         ]));
+        $this->app->bind(NotificationBroadcaster::class, LaravelNotificationBroadcaster::class);
         $this->app->bind(IdGenerator::class, UuidIdGenerator::class);
     }
 }

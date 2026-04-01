@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
+use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AccessDecision;
@@ -14,11 +15,15 @@ use App\Contract\Team\TeamMembershipChecker;
 use App\Domain\Authorization\AccessScope;
 use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
 
-/** @param list<string>|null $teamVisibleIds */
+/**
+ * @param  list<string>|null  $teamVisibleUserIds
+ * @param  list<string>|null  $memberTeamIds
+ */
 function buildScopeMiddleware(
     ?string $userId = 'user-1',
     string $scope = 'all',
-    ?array $teamVisibleIds = null,
+    ?array $teamVisibleUserIds = null,
+    ?array $memberTeamIds = null,
 ): ResolveScopeFilter {
     $authenticatedUser = new readonly class($userId) implements AuthenticatedUser
     {
@@ -74,10 +79,16 @@ function buildScopeMiddleware(
         }
     };
 
-    $teamMembershipChecker = new readonly class($teamVisibleIds ?? []) implements TeamMembershipChecker
+    $teamMembershipChecker = new readonly class($teamVisibleUserIds ?? [], $memberTeamIds ?? []) implements TeamMembershipChecker
     {
-        /** @param list<string> $visibleIds */
-        public function __construct(private array $visibleIds) {}
+        /**
+         * @param  list<string>  $visibleUserIds
+         * @param  list<string>  $teamIds
+         */
+        public function __construct(
+            private array $visibleUserIds,
+            private array $teamIds,
+        ) {}
 
         public function isTeamMember(string $userId, string $teamId): bool
         {
@@ -87,28 +98,27 @@ function buildScopeMiddleware(
         /** @return list<string> */
         public function memberTeamIds(string $userId): array
         {
-            return [];
+            return $this->teamIds;
         }
 
         /** @return list<string> */
         public function visibleUserIds(string $userId): array
         {
-            return $this->visibleIds;
+            return $this->visibleUserIds;
         }
     };
 
     return new ResolveScopeFilter($authenticatedUser, $authorizationChecker, $teamMembershipChecker);
 }
 
-function dispatchScopeQuery(ResolveScopeFilter $resolveScopeFilter, ResolveScopeFilterTestQuery $resolveScopeFilterTestQuery): ResolveScopeFilterTestQuery
+function dispatchScopeQuery(ResolveScopeFilter $resolveScopeFilter, object $query): object
 {
-    $captured = $resolveScopeFilterTestQuery;
-    $resolveScopeFilter->handle($resolveScopeFilterTestQuery, function (object $msg) use (&$captured): string {
+    $captured = $query;
+    $resolveScopeFilter->handle($query, function (object $msg) use (&$captured): string {
         $captured = $msg;
 
         return 'ok';
     });
-    assert($captured instanceof ResolveScopeFilterTestQuery);
 
     return $captured;
 }
@@ -130,63 +140,102 @@ it('passes through when user id is null', function (): void {
     $resolveScopeFilter = buildScopeMiddleware(userId: null);
     $query = new ResolveScopeFilterTestQuery;
 
-    $resolveScopeFilterTestQuery = dispatchScopeQuery($resolveScopeFilter, $query);
+    $result = dispatchScopeQuery($resolveScopeFilter, $query);
+    assert($result instanceof ResolveScopeFilterTestQuery);
 
-    expect($resolveScopeFilterTestQuery)->toBe($query);
-    expect($resolveScopeFilterTestQuery->accessContext())->toBeNull();
+    expect($result)->toBe($query);
+    expect($result->accessContext())->toBeNull();
 });
 
 it('passes through ScopeAwareQuery without RequiresPermission', function (): void {
     $resolveScopeFilter = buildScopeMiddleware();
     $query = new ResolveScopeFilterTestNoPermissionQuery;
-    $captured = $query;
 
-    $resolveScopeFilter->handle($query, function (object $msg) use (&$captured): string {
-        $captured = $msg;
+    $result = dispatchScopeQuery($resolveScopeFilter, $query);
+    assert($result instanceof ResolveScopeFilterTestNoPermissionQuery);
 
-        return 'ok';
-    });
-    assert($captured instanceof ResolveScopeFilterTestNoPermissionQuery);
-
-    expect($captured)->toBe($query);
-    expect($captured->accessContext())->toBeNull();
+    expect($result)->toBe($query);
+    expect($result->accessContext())->toBeNull();
 });
 
-it('resolves All scope with null visibleIds', function (): void {
+it('resolves All scope with null visibleIds for User target', function (): void {
     $resolveScopeFilter = buildScopeMiddleware(scope: 'all');
-    $resolveScopeFilterTestQuery = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    assert($result instanceof ResolveScopeFilterTestQuery);
 
-    $context = $resolveScopeFilterTestQuery->accessContext();
+    $context = $result->accessContext();
     assert($context instanceof AccessContext);
 
     expect($context->scope)->toBe(AccessScope::All);
     expect($context->visibleIds)->toBeNull();
 });
 
-it('resolves Own scope with only current user id', function (): void {
+it('resolves Own scope with only current user id for User target', function (): void {
     $resolveScopeFilter = buildScopeMiddleware(userId: 'user-42', scope: 'own');
-    $resolveScopeFilterTestQuery = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    assert($result instanceof ResolveScopeFilterTestQuery);
 
-    $context = $resolveScopeFilterTestQuery->accessContext();
+    $context = $result->accessContext();
     assert($context instanceof AccessContext);
 
     expect($context->scope)->toBe(AccessScope::Own);
     expect($context->visibleIds)->toBe(['user-42']);
 });
 
-it('resolves Team scope with visible user ids from TeamMembershipChecker', function (): void {
+it('resolves Team scope with visible user ids for User target', function (): void {
     $resolveScopeFilter = buildScopeMiddleware(
         userId: 'user-1',
         scope: 'team',
-        teamVisibleIds: ['user-1', 'user-2', 'user-3'],
+        teamVisibleUserIds: ['user-1', 'user-2', 'user-3'],
     );
-    $resolveScopeFilterTestQuery = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    assert($result instanceof ResolveScopeFilterTestQuery);
 
-    $context = $resolveScopeFilterTestQuery->accessContext();
+    $context = $result->accessContext();
     assert($context instanceof AccessContext);
 
     expect($context->scope)->toBe(AccessScope::Team);
     expect($context->visibleIds)->toBe(['user-1', 'user-2', 'user-3']);
+});
+
+it('resolves All scope with null visibleIds for Team target', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(scope: 'all');
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestTeamQuery);
+    assert($result instanceof ResolveScopeFilterTestTeamQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::All);
+    expect($context->visibleIds)->toBeNull();
+});
+
+it('resolves Own scope with empty array for Team target', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(userId: 'user-42', scope: 'own');
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestTeamQuery);
+    assert($result instanceof ResolveScopeFilterTestTeamQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::Own);
+    expect($context->visibleIds)->toBe([]);
+});
+
+it('resolves Team scope with member team ids for Team target', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(
+        userId: 'user-1',
+        scope: 'team',
+        memberTeamIds: ['team-1', 'team-2'],
+    );
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestTeamQuery);
+    assert($result instanceof ResolveScopeFilterTestTeamQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::Team);
+    expect($context->visibleIds)->toBe(['team-1', 'team-2']);
 });
 
 /** @implements Query<list<string>> */
@@ -196,6 +245,11 @@ final readonly class ResolveScopeFilterTestQuery implements Query, ScopeAwareQue
     public function __construct(
         private ?AccessContext $accessContext = null,
     ) {}
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::User;
+    }
 
     public function withAccessContext(AccessContext $accessContext): static
     {
@@ -215,6 +269,35 @@ final readonly class ResolveScopeFilterTestNoPermissionQuery implements Query, S
     public function __construct(
         private ?AccessContext $accessContext = null,
     ) {}
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::User;
+    }
+
+    public function withAccessContext(AccessContext $accessContext): static
+    {
+        return new self($accessContext);
+    }
+
+    public function accessContext(): ?AccessContext
+    {
+        return $this->accessContext;
+    }
+}
+
+/** @implements Query<list<string>> */
+#[RequiresPermission('test.team.read')]
+final readonly class ResolveScopeFilterTestTeamQuery implements Query, ScopeAwareQuery
+{
+    public function __construct(
+        private ?AccessContext $accessContext = null,
+    ) {}
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::Team;
+    }
 
     public function withAccessContext(AccessContext $accessContext): static
     {

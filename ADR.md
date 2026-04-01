@@ -44,11 +44,17 @@ Only `App\Contract\Exception\DomainException` implementors may be thrown in doma
 **Why:** Domain exceptions carry user-facing messages and HTTP status codes by contract.
 **Enforced by:** PHPStan rule `OnlyDomainExceptionsInDomainRule`. See [app/Domain/README.md](app/Domain/README.md).
 
-### No cross-domain imports
+### No cross-domain imports (with event exception)
 
-`App\Domain\{ContextA}` must not import from `App\Domain\{ContextB}`. Use QueryBus for cross-context data.
-**Why:** Enforces bounded context isolation. Contexts communicate through the bus, not direct coupling.
+`App\Domain\{ContextA}` must not import from `App\Domain\{ContextB}`. Use QueryBus for cross-context data. Exception: `EventHandler` classes may import `DomainEvent` classes from other domains — events are the intended cross-domain communication channel.
+**Why:** Enforces bounded context isolation. Contexts communicate through the bus or domain events, not direct coupling.
 **Enforced by:** PHPStan rule `NoCrossDomainDependenciesRule`. See [app/Domain/README.md](app/Domain/README.md).
+
+### All handlers must live in Domain
+
+All `CommandHandler`, `QueryHandler`, and `DomainEventHandler` implementations must live in `App\Domain\`. If a handler needs infrastructure (cache, broadcasting, mail), it must use a `Contract` interface — never import framework classes directly.
+**Why:** Handlers contain business decisions (what/when). Moving them to Infrastructure to avoid domain purity rules is a backdoor that undermines hexagonal architecture. The decision is domain; the implementation is infrastructure.
+**Enforced by:** PHPStan rule `HandlersInDomainRule`. See [app/Domain/README.md](app/Domain/README.md).
 
 ### Every Command/Query needs permission attribute
 
@@ -121,6 +127,12 @@ All logging must go through `App\Contract\Logging\Logger` (backend) or the `logg
 All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere.
 **Why:** Centralized config prevents accidental non-transactional traits that break parallel test execution and database isolation.
 **Enforced by:** PHPStan rule `NoDatabaseTraitsInTestsRule`. See [tests/README.md](tests/README.md).
+
+### Command bus transaction wrapper
+
+All command handler execution (including event job insertion) is wrapped in a database transaction by the `WrapInTransaction` bus middleware. Nested `DB::transaction()` calls (from repositories or inner command dispatches) create PostgreSQL SAVEPOINTs. Commands can opt out with `#[SkipTransaction(reason: '...')]` (e.g. tenancy commands that write to the `landlord` connection or run DDL/migrations).
+**Why:** Ensures atomicity -- handler writes and queued event jobs commit or roll back together. With the database queue driver, job rows are invisible to workers until commit.
+**Enforced by:** Middleware pipeline order in `BusServiceProvider`. `#[SkipTransaction]` for opt-out.
 
 ### No magic literals
 

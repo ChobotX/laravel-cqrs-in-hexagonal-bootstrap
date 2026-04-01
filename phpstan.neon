@@ -123,6 +123,10 @@ services:
         class: Tests\Architecture\PHPStan\NoMagicNumbersRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\HandlersInDomainRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

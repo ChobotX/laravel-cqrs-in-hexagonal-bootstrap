@@ -6,6 +6,7 @@ namespace App\Infrastructure\Authorization;
 
 use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Contract\Tenancy\TenantContext;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 final readonly class CachedAuthorizationChecker implements AuthorizationChecker
@@ -13,6 +14,7 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
     public function __construct(
         private AuthorizationChecker $authorizationChecker,
         private CacheRepository $cacheRepository,
+        private TenantContext $tenantContext,
         private int $ttl,
     ) {}
 
@@ -64,7 +66,7 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
 
     private function permissionsCacheKey(string $userId): string
     {
-        return sprintf('auth:perms:%s', $userId);
+        return sprintf('%s:auth:perms:%s:v%d', $this->tenantPrefix(), $userId, $this->authVersion($userId));
     }
 
     private function sharesCacheKey(
@@ -72,6 +74,22 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
         string $resourceType,
         string $action,
     ): string {
-        return sprintf('auth:shares:%s:%s:%s', $userId, $resourceType, $action);
+        return sprintf('%s:auth:shares:%s:%s:%s:v%d', $this->tenantPrefix(), $userId, $resourceType, $action, $this->authVersion($userId));
+    }
+
+    private function tenantPrefix(): string
+    {
+        return $this->tenantContext->isResolved() ? $this->tenantContext->currentTenantSlug() : 'default';
+    }
+
+    private function authVersion(string $userId): int
+    {
+        /** @var int $version */
+        $version = $this->cacheRepository->get(
+            sprintf('%s:auth:version:%s', $this->tenantPrefix(), $userId),
+            0,
+        );
+
+        return $version;
     }
 }

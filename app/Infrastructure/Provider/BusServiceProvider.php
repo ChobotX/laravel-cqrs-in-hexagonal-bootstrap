@@ -8,6 +8,7 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\EventBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Event\EventCollector;
+use App\Contract\Tenancy\TenantContext;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserHandler;
 use App\Domain\Authorization\Command\CreateRole\CreateRoleCommand;
@@ -38,6 +39,12 @@ use App\Domain\Authorization\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Event\RoleDeleted;
 use App\Domain\Authorization\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Event\RoleUpdated;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideRemoved;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideSet;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleAssigned;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleDeleted;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleRevoked;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
 use App\Domain\Authorization\Query\CountRoles\CountRolesHandler;
 use App\Domain\Authorization\Query\CountRoles\CountRolesQuery;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationHandler;
@@ -90,6 +97,9 @@ use App\Domain\Notification\Event\NotificationCreated;
 use App\Domain\Notification\Event\NotificationDeleted;
 use App\Domain\Notification\Event\NotificationRead;
 use App\Domain\Notification\EventHandler\CleanupNotificationsOnUserDeleted;
+use App\Domain\Notification\EventHandler\DeliverNotificationOnCreated;
+use App\Domain\Notification\EventHandler\SendWelcomeNotificationOnUserCreated;
+use App\Domain\Notification\EventHandler\UpdateUnreadCountOnNotificationChange;
 use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsHandler;
 use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
 use App\Domain\Notification\Query\GetNotificationPreferences\GetNotificationPreferencesHandler;
@@ -151,22 +161,14 @@ use App\Domain\User\Query\ListUsers\ListUsersHandler;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\Query\SearchUsers\SearchUsersHandler;
 use App\Domain\User\Query\SearchUsers\SearchUsersQuery;
-use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnOverrideRemoved;
-use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnOverrideSet;
-use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnRoleAssigned;
-use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnRoleDeleted;
-use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnRoleRevoked;
-use App\Infrastructure\Authorization\EventHandler\InvalidateCacheOnRoleUpdated;
 use App\Infrastructure\Bus\InMemoryEventCollector;
 use App\Infrastructure\Bus\LaravelCommandBus;
 use App\Infrastructure\Bus\LaravelQueryBus;
 use App\Infrastructure\Bus\Middleware\AuthorizeAction;
 use App\Infrastructure\Bus\Middleware\DispatchCollectedEvents;
 use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
+use App\Infrastructure\Bus\Middleware\WrapInTransaction;
 use App\Infrastructure\Bus\QueuedEventBus;
-use App\Infrastructure\Notification\EventHandler\BroadcastNotificationCreated;
-use App\Infrastructure\Notification\EventHandler\BroadcastUnreadCountUpdated;
-use App\Infrastructure\Notification\EventHandler\SendWelcomeNotificationOnUserCreated;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -181,20 +183,21 @@ final class BusServiceProvider extends ServiceProvider
         $this->app->singleton(EventBus::class, fn (): QueuedEventBus => new QueuedEventBus(
             dispatcher: $this->app->make(Dispatcher::class),
             handlers: [
-                RoleAssignedToUser::class => [InvalidateCacheOnRoleAssigned::class],
-                RoleRevokedFromUser::class => [InvalidateCacheOnRoleRevoked::class],
-                PermissionOverrideSet::class => [InvalidateCacheOnOverrideSet::class],
-                PermissionOverrideRemoved::class => [InvalidateCacheOnOverrideRemoved::class],
-                RoleUpdated::class => [InvalidateCacheOnRoleUpdated::class],
-                RoleDeleted::class => [InvalidateCacheOnRoleDeleted::class],
+                RoleAssignedToUser::class => [RefreshAuthorizationOnRoleAssigned::class],
+                RoleRevokedFromUser::class => [RefreshAuthorizationOnRoleRevoked::class],
+                PermissionOverrideSet::class => [RefreshAuthorizationOnOverrideSet::class],
+                PermissionOverrideRemoved::class => [RefreshAuthorizationOnOverrideRemoved::class],
+                RoleUpdated::class => [RefreshAuthorizationOnRoleUpdated::class],
+                RoleDeleted::class => [RefreshAuthorizationOnRoleDeleted::class],
                 UserCreated::class => [SendWelcomeNotificationOnUserCreated::class],
                 UserDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupNotificationsOnUserDeleted::class],
                 TeamDeleted::class => [CleanupLabelsOnEntityDeleted::class],
-                NotificationCreated::class => [BroadcastNotificationCreated::class],
-                NotificationRead::class => [BroadcastUnreadCountUpdated::class],
-                AllNotificationsRead::class => [BroadcastUnreadCountUpdated::class],
-                NotificationDeleted::class => [BroadcastUnreadCountUpdated::class],
+                NotificationCreated::class => [DeliverNotificationOnCreated::class],
+                NotificationRead::class => [UpdateUnreadCountOnNotificationChange::class],
+                AllNotificationsRead::class => [UpdateUnreadCountOnNotificationChange::class],
+                NotificationDeleted::class => [UpdateUnreadCountOnNotificationChange::class],
             ],
+            tenantContext: $this->app->make(TenantContext::class),
         ));
 
         $this->app->singleton(CommandBus::class, fn (): LaravelCommandBus => new LaravelCommandBus(
@@ -236,6 +239,7 @@ final class BusServiceProvider extends ServiceProvider
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),
+                $this->app->make(WrapInTransaction::class),
                 $this->app->make(DispatchCollectedEvents::class),
             ],
         ));

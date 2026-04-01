@@ -12,6 +12,7 @@ final readonly class NewNotificationBroadcast implements ShouldBroadcast
 {
     /** @param array<string, mixed> $payload */
     public function __construct(
+        private string $tenantSlug,
         private string $recipientId,
         public array $payload,
     ) {}
@@ -19,7 +20,7 @@ final readonly class NewNotificationBroadcast implements ShouldBroadcast
     /** @return list<Channel> */
     public function broadcastOn(): array
     {
-        return [new PrivateChannel(sprintf('notifications.%s', $this->recipientId))];
+        return [new PrivateChannel(sprintf('%s.notifications.%s', $this->tenantSlug, $this->recipientId))];
     }
 
     public function broadcastAs(): string

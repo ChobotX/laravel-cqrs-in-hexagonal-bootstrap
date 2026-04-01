@@ -6,8 +6,10 @@ namespace App\Infrastructure\Provider;
 
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Team\TeamMembershipChecker;
+use App\Contract\Tenancy\TenantContext;
 use App\Domain\Authorization\Command\SeedDefaultRoles\SeedDefaultRolesHandler;
 use App\Domain\Authorization\PermissionResolver;
 use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesHandler;
@@ -17,6 +19,7 @@ use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePer
 use App\Domain\Authorization\RecordShareRepository;
 use App\Domain\Authorization\UserPermissionRepository;
 use App\Infrastructure\Auth\RequestAuthenticatedUser;
+use App\Infrastructure\Authorization\CacheAuthorizationRefresher;
 use App\Infrastructure\Authorization\CachedAuthorizationChecker;
 use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use App\Infrastructure\Authorization\SessionImpersonationManager;
@@ -53,10 +56,12 @@ final class AuthorizationServiceProvider extends ServiceProvider
             return new CachedAuthorizationChecker(
                 authorizationChecker: $resolverAuthorizationChecker,
                 cacheRepository: $this->app->make(CacheRepository::class),
+                tenantContext: $this->app->make(TenantContext::class),
                 ttl: $ttl,
             );
         });
 
+        $this->app->bind(AuthorizationRefresher::class, CacheAuthorizationRefresher::class);
         $this->app->bind(AuthenticatedUser::class, RequestAuthenticatedUser::class);
         $this->app->bind(ImpersonationManager::class, SessionImpersonationManager::class);
 

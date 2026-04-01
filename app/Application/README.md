@@ -15,6 +15,10 @@ $this->commandBus->dispatch(new SomeCommand($data));
 $result = $this->queryBus->dispatch(new SomeQuery($id));
 ```
 
+## Transaction control
+
+- `App\Application\Bus\SkipTransaction` — attribute opting a command out of the `WrapInTransaction` bus middleware. Requires a `reason` string. Use for commands that write to a different connection (e.g. landlord), run DDL/migrations, or manage their own transactions.
+
 ## Authorization attributes and interfaces
 
 - `App\Application\Authorization\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.

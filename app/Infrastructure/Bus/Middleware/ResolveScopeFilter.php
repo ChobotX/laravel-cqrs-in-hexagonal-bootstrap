@@ -7,6 +7,7 @@ namespace App\Infrastructure\Bus\Middleware;
 use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
+use App\Application\Authorization\ScopeTarget;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Bus\Middleware;
@@ -46,8 +47,14 @@ final readonly class ResolveScopeFilter implements Middleware
 
         $visibleIds = match ($accessScope) {
             AccessScope::All => null,
-            AccessScope::Own => [$userId],
-            AccessScope::Team => $this->teamMembershipChecker->visibleUserIds($userId),
+            AccessScope::Own => match ($message->scopeTarget()) {
+                ScopeTarget::User => [$userId],
+                ScopeTarget::Team => [],
+            },
+            AccessScope::Team => match ($message->scopeTarget()) {
+                ScopeTarget::User => $this->teamMembershipChecker->visibleUserIds($userId),
+                ScopeTarget::Team => $this->teamMembershipChecker->memberTeamIds($userId),
+            },
         };
 
         $accessContext = new AccessContext($accessScope, $visibleIds);
