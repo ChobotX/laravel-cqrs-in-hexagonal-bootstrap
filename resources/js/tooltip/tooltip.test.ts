@@ -319,6 +319,22 @@ describe('tooltip bridge', () => {
         expect(isVisible()).toBe(false);
     });
 
+    it('shows tooltip when hovering SVG child inside data-tooltip button', () => {
+        document.body.innerHTML = `
+            <button data-tooltip="Delete">
+                <svg class="h-5 w-5" viewBox="0 0 24 24"><path d="M6 18L18 6" /></svg>
+            </button>
+        `;
+        const btn = document.querySelector('button') as HTMLElement;
+        const path = document.querySelector('path') as Element;
+        mockRect(btn, { top: 200, left: 400, bottom: 236, right: 436, width: 36, height: 36 });
+
+        mouseOver(path);
+
+        expect(isVisible()).toBe(true);
+        expect(getTooltip()?.textContent).toBe('Delete');
+    });
+
     it('handles mouseout on non-trigger element', () => {
         const btn = document.querySelector('button') as HTMLElement;
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });

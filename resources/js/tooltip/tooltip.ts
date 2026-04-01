@@ -95,9 +95,10 @@ function hideTooltip(): void {
 }
 
 function findTrigger(target: EventTarget | null): HTMLElement | null {
-    if (!(target instanceof HTMLElement)) {
+    if (!(target instanceof Element)) {
         return null;
     }
+
     return target.closest<HTMLElement>('[data-tooltip]');
 }
 
