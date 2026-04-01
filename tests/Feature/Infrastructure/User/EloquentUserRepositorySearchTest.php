@@ -28,7 +28,7 @@ it('searches by name substring', function (): void {
     $results = searchRepo()->search('Alice', [], 10);
 
     expect($results)->toHaveCount(1)
-        ->and($results[0]->name)->toBe('Alice Wonderland');
+        ->and($results[0]->name->value)->toBe('Alice Wonderland');
 });
 
 it('searches by email substring', function (): void {
@@ -38,7 +38,7 @@ it('searches by email substring', function (): void {
     $results = searchRepo()->search('acme', [], 10);
 
     expect($results)->toHaveCount(1)
-        ->and($results[0]->name)->toBe('Charlie Brown');
+        ->and($results[0]->name->value)->toBe('Charlie Brown');
 });
 
 it('search is case-insensitive', function (): void {
@@ -47,7 +47,7 @@ it('search is case-insensitive', function (): void {
     $results = searchRepo()->search('eve', [], 10);
 
     expect($results)->toHaveCount(1)
-        ->and($results[0]->name)->toBe('Eve Adams');
+        ->and($results[0]->name->value)->toBe('Eve Adams');
 });
 
 it('excludes specified user ids', function (): void {
@@ -57,7 +57,7 @@ it('excludes specified user ids', function (): void {
     $results = searchRepo()->search('Test', ['550e8400-e29b-41d4-a716-446655440d00'], 10);
 
     expect($results)->toHaveCount(1)
-        ->and($results[0]->name)->toBe('Grace Test');
+        ->and($results[0]->name->value)->toBe('Grace Test');
 });
 
 it('limits results', function (): void {
@@ -76,7 +76,7 @@ it('matches ignoring diacritics', function (): void {
     $results = searchRepo()->search('cerny', [], 10);
 
     expect($results)->toHaveCount(1)
-        ->and($results[0]->name)->toBe('Ondřej Černý');
+        ->and($results[0]->name->value)->toBe('Ondřej Černý');
 });
 
 it('matches diacritics term against diacritics name', function (): void {
@@ -85,7 +85,7 @@ it('matches diacritics term against diacritics name', function (): void {
     $results = searchRepo()->search('stastny', [], 10);
 
     expect($results)->toHaveCount(1)
-        ->and($results[0]->name)->toBe('Jiří Šťastný');
+        ->and($results[0]->name->value)->toBe('Jiří Šťastný');
 });
 
 it('filters search results by onlyIds scope', function (): void {
@@ -96,8 +96,8 @@ it('filters search results by onlyIds scope', function (): void {
     $results = searchRepo()->search('Scoped', [], 10, ['550e8400-e29b-41d4-a716-446655440f00', '550e8400-e29b-41d4-a716-446655440f02']);
 
     expect($results)->toHaveCount(2)
-        ->and($results[0]->name)->toBe('Scoped Alpha')
-        ->and($results[1]->name)->toBe('Scoped Gamma');
+        ->and($results[0]->name->value)->toBe('Scoped Alpha')
+        ->and($results[1]->name->value)->toBe('Scoped Gamma');
 });
 
 it('returns empty when no matches', function (): void {

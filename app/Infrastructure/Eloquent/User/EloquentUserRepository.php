@@ -74,7 +74,7 @@ final readonly class EloquentUserRepository implements UserRepository
     {
         $userModel = new UserModel;
         $userModel->id = $user->id->value;
-        $userModel->name = $user->name;
+        $userModel->name = $user->name->value;
         $userModel->email = $user->email->value;
         $userModel->save();
     }
@@ -82,7 +82,7 @@ final readonly class EloquentUserRepository implements UserRepository
     public function update(User $user): void
     {
         $userModel = UserModel::findOrFail($user->id->value);
-        $userModel->name = $user->name;
+        $userModel->name = $user->name->value;
         $userModel->email = $user->email->value;
         $userModel->save();
     }

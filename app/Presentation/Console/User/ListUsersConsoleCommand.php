@@ -30,7 +30,7 @@ final class ListUsersConsoleCommand extends Command
         $this->table(
             ['ID', 'Name', 'Email'],
             array_map(
-                static fn (User $user): array => [$user->id->value, $user->name, $user->email->value],
+                static fn (User $user): array => [$user->id->value, $user->name->value, $user->email->value],
                 $paginatedResult->items,
             ),
         );

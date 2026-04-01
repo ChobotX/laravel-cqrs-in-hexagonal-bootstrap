@@ -32,7 +32,7 @@ final class GetUserConsoleCommand extends Command
 
         $this->table(
             ['ID', 'Name', 'Email'],
-            [[$user->id->value, $user->name, $user->email->value]],
+            [[$user->id->value, $user->name->value, $user->email->value]],
         );
 
         return self::SUCCESS;

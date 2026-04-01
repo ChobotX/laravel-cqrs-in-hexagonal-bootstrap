@@ -99,7 +99,7 @@ final class FakeUserRepository implements UserRepository
                     return false;
                 }
 
-                return str_contains($this->stripDiacritics(mb_strtolower($user->name)), $normalizedTerm)
+                return str_contains($this->stripDiacritics(mb_strtolower($user->name->value)), $normalizedTerm)
                     || str_contains($this->stripDiacritics(mb_strtolower($user->email->value)), $normalizedTerm);
             },
         );
@@ -111,7 +111,7 @@ final class FakeUserRepository implements UserRepository
     private function sortValueExtractor(string $column): callable
     {
         return match ($column) {
-            'name' => fn (User $user): string => $user->name,
+            'name' => fn (User $user): string => $user->name->value,
             'email' => fn (User $user): string => $user->email->value,
             default => fn (User $user): int => 0,
         };

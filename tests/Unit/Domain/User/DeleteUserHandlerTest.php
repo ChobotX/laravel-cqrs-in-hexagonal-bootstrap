@@ -9,13 +9,14 @@ use App\Domain\User\Event\UserDeleted;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;
 
 it('calls delete on the repository', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -33,7 +34,7 @@ it('calls delete on the repository', function (): void {
 it('collects an enriched UserDeleted event', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 

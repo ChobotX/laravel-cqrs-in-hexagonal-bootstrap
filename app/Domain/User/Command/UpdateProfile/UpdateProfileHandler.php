@@ -9,10 +9,10 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\User\Event\UserUpdated;
-use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use App\Domain\User\UserRepository;
 use DateTimeImmutable;
 
@@ -33,13 +33,11 @@ final readonly class UpdateProfileHandler implements CommandHandler
             throw new UserNotFoundException($command->userId);
         }
 
-        if (trim($command->name) === '') {
-            throw new InvalidUserDataException('User name must not be empty.');
-        }
+        $userName = new UserName($command->name);
 
         $user = new User(
             id: $existing->id,
-            name: $command->name,
+            name: $userName,
             email: $existing->email,
         );
 
@@ -51,7 +49,7 @@ final readonly class UpdateProfileHandler implements CommandHandler
 
         $this->eventCollector->collect(new UserUpdated(
             userId: $user->id->value,
-            name: $user->name,
+            name: $user->name->value,
             email: $user->email->value,
             occurredAt: new DateTimeImmutable,
         ));

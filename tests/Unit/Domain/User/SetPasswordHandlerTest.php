@@ -9,12 +9,13 @@ use App\Domain\User\Email;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 
 it('sets the password for an existing user', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 

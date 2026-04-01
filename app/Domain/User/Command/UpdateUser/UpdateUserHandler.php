@@ -10,10 +10,10 @@ use App\Contract\Event\EventCollector;
 use App\Domain\User\Email;
 use App\Domain\User\Event\UserUpdated;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use App\Domain\User\UserRepository;
 use DateTimeImmutable;
 
@@ -33,10 +33,7 @@ final readonly class UpdateUserHandler implements CommandHandler
             throw new UserNotFoundException($command->id);
         }
 
-        if (trim($command->name) === '') {
-            throw new InvalidUserDataException('User name must not be empty.');
-        }
-
+        $userName = new UserName($command->name);
         $email = new Email($command->email);
 
         $existingByEmail = $this->userRepository->findByEmail($email->value);
@@ -47,7 +44,7 @@ final readonly class UpdateUserHandler implements CommandHandler
 
         $user = new User(
             id: $existing->id,
-            name: $command->name,
+            name: $userName,
             email: $email,
         );
 
@@ -55,7 +52,7 @@ final readonly class UpdateUserHandler implements CommandHandler
 
         $this->eventCollector->collect(new UserUpdated(
             userId: $user->id->value,
-            name: $user->name,
+            name: $user->name->value,
             email: $user->email->value,
             occurredAt: new DateTimeImmutable,
         ));

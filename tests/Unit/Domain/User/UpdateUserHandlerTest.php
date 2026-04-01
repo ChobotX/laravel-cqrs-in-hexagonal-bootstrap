@@ -11,13 +11,14 @@ use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;
 
 it('saves an updated user via the repository', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -34,14 +35,14 @@ it('saves an updated user via the repository', function (): void {
 
     expect($repository->saved)->toHaveCount(1);
     expect($repository->saved[0]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($repository->saved[0]->name)->toBe('Jane Doe')
+        ->and($repository->saved[0]->name->value)->toBe('Jane Doe')
         ->and($repository->saved[0]->email->value)->toBe('jane@example.com');
 });
 
 it('collects an enriched UserUpdated event', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -81,7 +82,7 @@ it('throws UserNotFoundException when user does not exist', function (): void {
 it('throws when name is empty', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -100,12 +101,12 @@ it('throws when name is empty', function (): void {
 it('throws when email belongs to another user', function (): void {
     $user1 = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
     $user2 = new User(
         new UserId('660e8400-e29b-41d4-a716-446655440000'),
-        'Jane Doe',
+        new UserName('Jane Doe'),
         new Email('jane@example.com'),
     );
 
@@ -127,7 +128,7 @@ it('throws when email belongs to another user', function (): void {
 it('allows keeping the same email for the same user', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -143,5 +144,5 @@ it('allows keeping the same email for the same user', function (): void {
     ));
 
     expect($repository->saved)->toHaveCount(1)
-        ->and($repository->saved[0]->name)->toBe('John Updated');
+        ->and($repository->saved[0]->name->value)->toBe('John Updated');
 });

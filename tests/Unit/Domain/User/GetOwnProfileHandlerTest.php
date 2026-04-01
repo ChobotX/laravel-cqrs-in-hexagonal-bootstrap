@@ -8,12 +8,13 @@ use App\Domain\User\Query\GetOwnProfile\GetOwnProfileHandler;
 use App\Domain\User\Query\GetOwnProfile\GetOwnProfileQuery;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 
 it('returns the user when found', function (): void {
     $user = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -22,7 +23,7 @@ it('returns the user when found', function (): void {
 
     $result = $handler->handle(new GetOwnProfileQuery('550e8400-e29b-41d4-a716-446655440000'));
 
-    expect($result->name)->toBe('John Doe')
+    expect($result->name->value)->toBe('John Doe')
         ->and($result->email->value)->toBe('john@example.com');
 });
 

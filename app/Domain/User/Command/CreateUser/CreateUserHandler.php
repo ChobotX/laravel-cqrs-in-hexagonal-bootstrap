@@ -10,9 +10,9 @@ use App\Contract\Event\EventCollector;
 use App\Domain\User\Email;
 use App\Domain\User\Event\UserCreated;
 use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use App\Domain\User\UserRepository;
 use DateTimeImmutable;
 
@@ -26,10 +26,7 @@ final readonly class CreateUserHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
-        if (trim($command->name) === '') {
-            throw new InvalidUserDataException('User name must not be empty.');
-        }
-
+        $userName = new UserName($command->name);
         $email = new Email($command->email);
 
         if ($this->userRepository->findByEmail($email->value) instanceof User) {
@@ -38,7 +35,7 @@ final readonly class CreateUserHandler implements CommandHandler
 
         $user = new User(
             id: new UserId($command->id),
-            name: $command->name,
+            name: $userName,
             email: $email,
         );
 
@@ -46,7 +43,7 @@ final readonly class CreateUserHandler implements CommandHandler
 
         $this->eventCollector->collect(new UserCreated(
             userId: $user->id->value,
-            name: $user->name,
+            name: $user->name->value,
             email: $user->email->value,
             occurredAt: new DateTimeImmutable,
         ));

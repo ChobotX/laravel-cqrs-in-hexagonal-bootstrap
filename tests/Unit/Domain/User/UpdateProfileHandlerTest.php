@@ -11,6 +11,7 @@ use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;
 
@@ -32,7 +33,7 @@ function profilePasswordManager(array &$calls = []): PasswordManager
 it('updates name and keeps email unchanged', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -48,14 +49,14 @@ it('updates name and keeps email unchanged', function (): void {
     ));
 
     expect($repository->saved)->toHaveCount(1)
-        ->and($repository->saved[0]->name)->toBe('Jane Doe')
+        ->and($repository->saved[0]->name->value)->toBe('Jane Doe')
         ->and($repository->saved[0]->email->value)->toBe('john@example.com');
 });
 
 it('sets password when provided', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -80,7 +81,7 @@ it('sets password when provided', function (): void {
 it('skips password when null', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -103,7 +104,7 @@ it('skips password when null', function (): void {
 it('skips password when empty string', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -126,7 +127,7 @@ it('skips password when empty string', function (): void {
 it('collects UserUpdated event', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 
@@ -164,7 +165,7 @@ it('throws UserNotFoundException when user does not exist', function (): void {
 it('throws when name is empty', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 

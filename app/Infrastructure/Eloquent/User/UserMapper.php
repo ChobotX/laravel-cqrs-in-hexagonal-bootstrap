@@ -7,6 +7,7 @@ namespace App\Infrastructure\Eloquent\User;
 use App\Domain\User\Email;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 
 final readonly class UserMapper
 {
@@ -14,7 +15,7 @@ final readonly class UserMapper
     {
         return new User(
             id: new UserId($userModel->id),
-            name: $userModel->name,
+            name: new UserName($userModel->name),
             email: new Email($userModel->email),
         );
     }

@@ -22,7 +22,7 @@
                            id="name"
                            name="name"
                            type="text"
-                           value="{{ old('name', $user->name) }}"
+                           value="{{ old('name', $user->name->value) }}"
                            required
                            @error('name') aria-describedby="name-error" aria-invalid="true" @enderror>
                     @error('name')

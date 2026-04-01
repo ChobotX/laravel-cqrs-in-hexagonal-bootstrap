@@ -7,12 +7,13 @@ use App\Domain\User\Query\GetUserByEmail\GetUserByEmailHandler;
 use App\Domain\User\Query\GetUserByEmail\GetUserByEmailQuery;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 
 it('returns user when found by email', function (): void {
     $user = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        'John Doe',
+        new UserName('John Doe'),
         new Email('john@example.com'),
     );
 

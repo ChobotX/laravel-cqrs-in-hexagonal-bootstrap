@@ -36,12 +36,12 @@
                                 <div class="flex items-center gap-3">
                                     <div
                                          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}{{ strtoupper(substr($user->name, strpos($user->name, ' ') + 1, 1)) }}
+                                        {{ strtoupper(substr($user->name->value, 0, 1)) }}{{ strtoupper(substr($user->name->value, strpos($user->name->value, ' ') + 1, 1)) }}
                                     </div>
                                     <div>
                                         <div class="flex items-center gap-1.5">
                                             <span
-                                                  class="text-base font-medium text-gray-900 sm:text-sm">{{ $user->name }}</span>
+                                                  class="text-base font-medium text-gray-900 sm:text-sm">{{ $user->name->value }}</span>
                                             @if ($canReadLabels)
                                                 <x-badge-list :labels="$userLabels[$user->id->value] ?? []" />
                                             @endif
@@ -86,22 +86,22 @@
                                                          icon="heroicon-o-finger-print"
                                                          :label="__('messages.impersonation.start') .
                                                              ' ' .
-                                                             $user->name" />
+                                                             $user->name->value" />
                                     @endif
                                     <x-action-button permission="users.list.update"
                                                      :href="route('users.edit', $user->id)"
                                                      icon="heroicon-o-pencil-square"
-                                                     :label="__('messages.users.edit_action') . ' ' . $user->name" />
+                                                     :label="__('messages.users.edit_action') . ' ' . $user->name->value" />
                                     <x-action-button permission="users.list.delete"
                                                      :action="route('users.destroy', $user->id)"
                                                      method="DELETE"
                                                      icon="heroicon-o-trash"
-                                                     :label="__('messages.users.delete_action') . ' ' . $user->name"
+                                                     :label="__('messages.users.delete_action') . ' ' . $user->name->value"
                                                      variant="danger"
                                                      confirm
                                                      :confirm-title="__('messages.users.delete_confirm_title')"
                                                      :confirm-message="__('messages.users.delete_confirm_message', [
-                                                         'name' => $user->name,
+                                                         'name' => $user->name->value,
                                                      ])" />
                                 </div>
                             </td>

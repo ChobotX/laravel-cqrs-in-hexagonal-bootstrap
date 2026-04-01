@@ -10,6 +10,7 @@ use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\User;
 use App\Domain\User\UserId;
+use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;
 
@@ -27,7 +28,7 @@ it('saves a user via the repository', function (): void {
 
     expect($repository->saved)->toHaveCount(1);
     expect($repository->saved[0]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($repository->saved[0]->name)->toBe('John Doe')
+        ->and($repository->saved[0]->name->value)->toBe('John Doe')
         ->and($repository->saved[0]->email->value)->toBe('john@example.com');
 });
 
@@ -68,7 +69,7 @@ it('throws when name is empty', function (): void {
 it('throws when email already exists', function (): void {
     $existing = new User(
         new UserId('660e8400-e29b-41d4-a716-446655440000'),
-        'Existing User',
+        new UserName('Existing User'),
         new Email('john@example.com'),
     );
 
