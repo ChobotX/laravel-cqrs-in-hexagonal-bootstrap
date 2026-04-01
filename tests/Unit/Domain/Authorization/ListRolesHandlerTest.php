@@ -6,7 +6,7 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization;
+namespace App\Contract\Authorization;
 
 enum AccessScope: string
 {

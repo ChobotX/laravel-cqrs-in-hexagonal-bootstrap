@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Authorization;
 
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;

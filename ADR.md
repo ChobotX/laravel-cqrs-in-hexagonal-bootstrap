@@ -16,15 +16,15 @@ Domain handlers contain business rules directly. They are not thin orchestrators
 
 ### Stateless for k8s: cookie sessions, no file state, stderr logging
 
-Auth via Sanctum tokens. Sessions use cookie driver (client-side). Cache is array/database/redis. Logs go to stderr. No file-based state anywhere.
+Auth via session guard with cookie driver (web) and Sanctum Bearer tokens (API). Sessions use cookie driver (client-side). Cache is array/database/redis. Logs go to stderr. No file-based state anywhere.
 **Why:** Horizontal pod scaling without sticky sessions or shared filesystems.
 **Enforced by:** Convention. Config removes file-based drivers.
 
-### Sanctum token auth, no session auth
+### Stateless auth: session guard with cookie driver (web), Sanctum Bearer (API)
 
-Web routes use Sanctum token in HTTP-only cookie (middleware copies to Bearer header). API routes use standard Bearer header.
-**Why:** Single auth mechanism for all routes. No server-side session state for auth.
-**Enforced by:** Convention.
+Web routes use Laravel's `session` auth guard with the `cookie` session driver (client-side, no server state). API routes use Sanctum Bearer tokens. Both mechanisms are fully stateless — no server-side session storage exists.
+**Why:** The session guard with cookie driver provides standard Laravel auth flow (login/logout, CSRF) without server-side state. Sanctum Bearer tokens serve API consumers. Cookie session driver stores encrypted session data in the cookie itself, enabling horizontal pod scaling without sticky sessions.
+**Enforced by:** `config/auth.php` (session guard), `config/session.php` (cookie driver), `routes/api.php` (auth:sanctum middleware).
 
 ### No App→App inheritance
 

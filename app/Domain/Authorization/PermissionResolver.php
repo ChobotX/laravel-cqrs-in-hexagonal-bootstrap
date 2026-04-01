@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization;
 
+use App\Contract\Authorization\AccessScope;
+
 final readonly class PermissionResolver
 {
     public const string SUPER_ADMIN_SOURCE = 'system:super-admin';

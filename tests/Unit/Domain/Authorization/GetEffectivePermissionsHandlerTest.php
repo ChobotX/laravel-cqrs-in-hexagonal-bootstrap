@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\PermissionResolver;

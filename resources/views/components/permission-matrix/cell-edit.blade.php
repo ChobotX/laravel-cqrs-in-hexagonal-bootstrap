@@ -2,7 +2,7 @@
     $existing = $existingPermissions->get($permKey);
     $isEnabled = $existing !== null;
     $currentScope = $existing?->scope->value ?? 'all';
-    $scopes = \App\Domain\Authorization\AccessScope::cases();
+    $scopes = \App\Contract\Authorization\AccessScope::cases();
 @endphp
 
 <div class="flex flex-col items-center gap-1">

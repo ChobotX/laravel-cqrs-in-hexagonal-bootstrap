@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
-use App\Domain\Authorization\Event\DefaultRolesSeeded;
 use App\Domain\Authorization\Event\ImpersonationStarted;
 use App\Domain\Authorization\Event\ImpersonationStopped;
 use App\Domain\Authorization\Event\PermissionOverrideRemoved;
@@ -15,18 +14,6 @@ use App\Domain\Authorization\Event\RoleCreated;
 use App\Domain\Authorization\Event\RoleDeleted;
 use App\Domain\Authorization\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Event\RoleUpdated;
-
-it('DefaultRolesSeeded implements DomainEvent and exposes occurredAt', function (): void {
-    $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
-    $event = new DefaultRolesSeeded(
-        roleIds: ['id-1', 'id-2'],
-        occurredAt: $occurredAt,
-    );
-
-    expect($event)->toBeInstanceOf(DomainEvent::class)
-        ->and($event->occurredAt())->toBe($occurredAt)
-        ->and($event->roleIds)->toBe(['id-1', 'id-2']);
-});
 
 it('ImpersonationStarted implements DomainEvent and exposes occurredAt', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');

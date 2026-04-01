@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
 use App\Domain\Authorization\EffectivePermission;
 use App\Domain\Authorization\Feature;

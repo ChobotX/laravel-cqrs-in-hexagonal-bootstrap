@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Authorization;
 
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 
 final readonly class AccessContext
 {

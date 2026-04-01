@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\OverrideType;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\Role;

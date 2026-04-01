@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\AccessScope;
+use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Command\SeedDefaultRoles\SeedDefaultRolesCommand;
 use App\Domain\Authorization\Command\SeedDefaultRoles\SeedDefaultRolesHandler;
-use App\Domain\Authorization\Event\DefaultRolesSeeded;
 use App\Domain\Authorization\Role;
-use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeIdGenerator;
 use Tests\Helper\FakeRoleRepository;
 
@@ -29,7 +27,6 @@ function seedRoles(): FakeRoleRepository
 
     $handler = new SeedDefaultRolesHandler(
         $repository,
-        new FakeEventCollector,
         new FakeIdGenerator,
         testModules(),
     );
@@ -57,24 +54,6 @@ it('seeds four default roles', function (): void {
 
     $names = array_map(fn (Role $role): string => $role->name->value, $fakeRoleRepository->saved);
     expect($names)->toContain('Manager', 'Team Leader', 'Team Member', 'Externist');
-});
-
-it('emits DefaultRolesSeeded event with role ids', function (): void {
-    $repository = new FakeRoleRepository;
-    $eventCollector = new FakeEventCollector;
-
-    $handler = new SeedDefaultRolesHandler(
-        $repository,
-        $eventCollector,
-        new FakeIdGenerator,
-        testModules(),
-    );
-
-    $handler->handle(new SeedDefaultRolesCommand);
-
-    expect($eventCollector->collected)->toHaveCount(1);
-    assert($eventCollector->collected[0] instanceof DefaultRolesSeeded);
-    expect($eventCollector->collected[0]->roleIds)->toHaveCount(4);
 });
 
 it('manager role has all module permissions with all scope', function (): void {

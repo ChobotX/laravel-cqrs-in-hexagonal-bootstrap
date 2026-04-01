@@ -9,10 +9,10 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Bus\Middleware;
 use App\Contract\Team\TeamMembershipChecker;
-use App\Domain\Authorization\AccessScope;
 use Closure;
 use ReflectionClass;
 

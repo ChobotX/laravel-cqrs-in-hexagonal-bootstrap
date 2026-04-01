@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Command\SeedDefaultRoles;
 
+use App\Contract\Authorization\AccessScope;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
-use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
-use App\Domain\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
 use App\Domain\Authorization\DefaultRole;
-use App\Domain\Authorization\Event\DefaultRolesSeeded;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
@@ -20,7 +18,6 @@ use App\Domain\Authorization\RoleId;
 use App\Domain\Authorization\RoleName;
 use App\Domain\Authorization\RolePermission;
 use App\Domain\Authorization\RoleRepository;
-use DateTimeImmutable;
 
 /** @implements CommandHandler<SeedDefaultRolesCommand> */
 final readonly class SeedDefaultRolesHandler implements CommandHandler
@@ -30,7 +27,6 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
      */
     public function __construct(
         private RoleRepository $roleRepository,
-        private EventCollector $eventCollector,
         private IdGenerator $idGenerator,
         private array $availableModules,
     ) {}
@@ -58,17 +54,9 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
             ]),
         ];
 
-        $roleIds = [];
-
         foreach ($roles as $role) {
             $this->roleRepository->create($role);
-            $roleIds[] = $role->id->value;
         }
-
-        $this->eventCollector->collect(new DefaultRolesSeeded(
-            roleIds: $roleIds,
-            occurredAt: new DateTimeImmutable,
-        ));
     }
 
     /** @return list<PermissionKey> */

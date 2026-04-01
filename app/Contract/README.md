@@ -7,7 +7,7 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 ## Contents
 
 - `Auth/` — `AuthenticatedUser` (current user identity), `PasswordManager` (password operations)
-- `Authorization/` — `AuthorizationChecker`, `AuthorizationRefresher`, `ImpersonationManager`, `AccessDecision`
+- `Authorization/` — `AuthorizationChecker`, `AuthorizationRefresher`, `ImpersonationManager`, `AccessDecision`, `AccessScope`
 - `Bus/` — `Middleware` interface for bus middleware pipeline
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces

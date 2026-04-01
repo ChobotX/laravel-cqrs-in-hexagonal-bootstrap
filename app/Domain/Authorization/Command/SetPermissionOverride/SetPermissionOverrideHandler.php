@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Command\SetPermissionOverride;
 
+use App\Contract\Authorization\AccessScope;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Event\PermissionOverrideSet;
 use App\Domain\Authorization\Feature;

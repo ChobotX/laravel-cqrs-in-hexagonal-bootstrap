@@ -9,10 +9,10 @@ use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AccessDecision;
+use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
 use App\Contract\Team\TeamMembershipChecker;
-use App\Domain\Authorization\AccessScope;
 use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
 
 /**
