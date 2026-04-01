@@ -29,7 +29,7 @@ final readonly class GetTeamTreeController
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
         /** @var list<TeamTreeNode> $treeNodes */
-        $treeNodes = $this->queryBus->dispatch(new GetTeamTreeQuery($currentUserId));
+        $treeNodes = $this->queryBus->dispatch(new GetTeamTreeQuery);
 
         $visibleTeamIds = $this->extractVisibleTeamIds($treeNodes);
         $roleMap = $this->buildRoleMap($treeNodes, $currentUserId);
