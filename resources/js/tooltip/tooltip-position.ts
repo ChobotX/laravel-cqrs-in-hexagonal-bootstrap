@@ -1,58 +1,99 @@
-export type Position = 'top' | 'bottom' | 'left' | 'right';
+export type Position = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
-export const VIEWPORT_MARGIN = 50;
-export const OFFSET = 8;
+export const EDGE_MARGIN = 50;
+export const ARROW_OFFSET = 10;
 
-const FLIP: Record<Position, Position> = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' };
+const VALID_POSITIONS: Set<string> = new Set([
+    'top',
+    'bottom',
+    'left',
+    'right',
+    'top-left',
+    'top-right',
+    'bottom-left',
+    'bottom-right',
+]);
 
 export function isValidPosition(value: string | null): value is Position {
-    return value === 'top' || value === 'bottom' || value === 'left' || value === 'right';
+    return typeof value === 'string' && VALID_POSITIONS.has(value);
 }
 
 export function resolvePosition(preferred: Position, triggerRect: DOMRect, tooltipRect: DOMRect): Position {
-    const hitsEdge: Record<Position, boolean> = {
-        top: triggerRect.top - tooltipRect.height - OFFSET < VIEWPORT_MARGIN,
-        bottom: triggerRect.bottom + tooltipRect.height + OFFSET > window.innerHeight - VIEWPORT_MARGIN,
-        left: triggerRect.left - tooltipRect.width - OFFSET < VIEWPORT_MARGIN,
-        right: triggerRect.right + tooltipRect.width + OFFSET > window.innerWidth - VIEWPORT_MARGIN,
+    const centerX = triggerRect.left + triggerRect.width / 2;
+
+    const hitsRight =
+        preferred === 'left' || preferred === 'right'
+            ? triggerRect.right + tooltipRect.width + ARROW_OFFSET > window.innerWidth - EDGE_MARGIN
+            : centerX + tooltipRect.width / 2 > window.innerWidth - EDGE_MARGIN;
+
+    const hitsLeft =
+        preferred === 'left' || preferred === 'right'
+            ? triggerRect.left - tooltipRect.width - ARROW_OFFSET < EDGE_MARGIN
+            : centerX - tooltipRect.width / 2 < EDGE_MARGIN;
+
+    const hitsTop = triggerRect.top - tooltipRect.height - ARROW_OFFSET < EDGE_MARGIN;
+    const hitsBottom = triggerRect.bottom + tooltipRect.height + ARROW_OFFSET > window.innerHeight - EDGE_MARGIN;
+
+    const key = `${hitsRight},${hitsLeft},${hitsTop},${hitsBottom}`;
+
+    const fallback: Record<string, Position> = {
+        'true,false,true,false': 'bottom-left',
+        'true,false,false,true': 'top-left',
+        'false,true,true,false': 'bottom-right',
+        'false,true,false,true': 'top-right',
+        'true,false,false,false': 'left',
+        'false,true,false,false': 'right',
+        'false,false,true,false': 'bottom',
+        'false,false,false,true': 'top',
     };
 
-    if (hitsEdge[preferred]) {
-        return FLIP[preferred];
-    }
+    return fallback[key] ?? preferred;
+}
 
-    return preferred;
+export interface TooltipCoordinates {
+    top: number;
+    left: number;
+    arrowLeft: number;
 }
 
 export function calculateCoordinates(
     position: Position,
     triggerRect: DOMRect,
     tooltipRect: DOMRect,
-): { top: number; left: number } {
-    let top: number;
-    let left: number;
+): TooltipCoordinates {
+    const { top, left, right, bottom, width: aw, height: ah } = triggerRect;
+    const sx = window.scrollX;
+    const sy = window.scrollY;
+    const tw = tooltipRect.width;
+    const th = tooltipRect.height;
+    const centerX = sx + left + aw / 2;
+    const centerY = sy + top + ah / 2;
+    const centeredLeft = centerX - tw / 2;
 
     switch (position) {
         case 'top':
-            top = triggerRect.top - tooltipRect.height - OFFSET;
-            left = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
-            break;
+            return { top: sy + top - th - ARROW_OFFSET, left: centeredLeft, arrowLeft: tw / 2 };
         case 'bottom':
-            top = triggerRect.bottom + OFFSET;
-            left = triggerRect.left + triggerRect.width / 2 - tooltipRect.width / 2;
-            break;
+            return { top: sy + bottom + ARROW_OFFSET, left: centeredLeft, arrowLeft: tw / 2 };
         case 'left':
-            top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
-            left = triggerRect.left - tooltipRect.width - OFFSET;
-            break;
+            return { top: centerY - th / 2, left: sx + left - tw - ARROW_OFFSET, arrowLeft: tw / 2 };
         case 'right':
-            top = triggerRect.top + triggerRect.height / 2 - tooltipRect.height / 2;
-            left = triggerRect.right + OFFSET;
-            break;
+            return { top: centerY - th / 2, left: sx + right + ARROW_OFFSET, arrowLeft: tw / 2 };
+        case 'top-left': {
+            const l = sx + right - tw;
+            return { top: sy + top - th - ARROW_OFFSET, left: l, arrowLeft: centerX - l };
+        }
+        case 'top-right': {
+            const l = sx + left;
+            return { top: sy + top - th - ARROW_OFFSET, left: l, arrowLeft: centerX - l };
+        }
+        case 'bottom-left': {
+            const l = sx + right - tw;
+            return { top: sy + bottom + ARROW_OFFSET, left: l, arrowLeft: centerX - l };
+        }
+        case 'bottom-right': {
+            const l = sx + left;
+            return { top: sy + bottom + ARROW_OFFSET, left: l, arrowLeft: centerX - l };
+        }
     }
-
-    left = Math.max(VIEWPORT_MARGIN, Math.min(left, window.innerWidth - tooltipRect.width - VIEWPORT_MARGIN));
-    top = Math.max(VIEWPORT_MARGIN, Math.min(top, window.innerHeight - tooltipRect.height - VIEWPORT_MARGIN));
-
-    return { top, left };
 }

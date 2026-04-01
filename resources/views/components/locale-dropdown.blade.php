@@ -2,8 +2,8 @@
      data-dropdown>
     <button class="flex items-center text-gray-500 transition-colors hover:text-gray-700"
             data-dropdown-toggle
+            data-tooltip="{{ __('messages.a11y.language_switcher') }}"
             type="button"
-            title="{{ __('messages.a11y.language_switcher') }}"
             aria-label="{{ __('messages.a11y.language_switcher') }}"
             aria-expanded="false"
             aria-haspopup="true">

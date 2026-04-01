@@ -15,7 +15,7 @@ it('renders control button with title and aria-label', function (): void {
 
     expect($rendered)
         ->toContain('type="button"')
-        ->toContain('title="Close menu"')
+        ->toContain('data-tooltip="Close menu"')
         ->toContain('aria-label="Close menu"')
         ->toContain('<span>X</span>');
 });

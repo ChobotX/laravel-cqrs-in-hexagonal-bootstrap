@@ -9,7 +9,7 @@
 
 /* Tooltip */
 .tooltip {
-    position: fixed;
+    position: absolute;
     z-index: 9999;
     max-width: 20rem;
     border-radius: 0.5rem;
@@ -22,7 +22,7 @@
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.15s ease-in-out, visibility 0.15s ease-in-out;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .tooltip--visible {
@@ -39,15 +39,19 @@
     transform: rotate(45deg);
 }
 
-.tooltip--top::before {
+.tooltip--top::before,
+.tooltip--top-left::before,
+.tooltip--top-right::before {
     bottom: -0.25rem;
-    left: 50%;
+    left: var(--arrow-left, 50%);
     margin-left: -0.25rem;
 }
 
-.tooltip--bottom::before {
+.tooltip--bottom::before,
+.tooltip--bottom-left::before,
+.tooltip--bottom-right::before {
     top: -0.25rem;
-    left: 50%;
+    left: var(--arrow-left, 50%);
     margin-left: -0.25rem;
 }
 

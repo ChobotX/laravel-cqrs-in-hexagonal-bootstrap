@@ -110,7 +110,7 @@ onUnmounted(() => {
         <button
             class="relative rounded-lg p-1.5 text-gray-500 transition-colors hover:text-gray-700"
             type="button"
-            :title="trans('messages.notifications.title')"
+            :data-tooltip="trans('messages.notifications.title')"
             :aria-label="trans('messages.notifications.title')"
             :aria-expanded="isOpen"
             aria-haspopup="true"

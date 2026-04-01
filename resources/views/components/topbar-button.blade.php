@@ -18,8 +18,8 @@
                   action="{{ $action }}">
                 @csrf
                 <button class="{{ $colorClasses }} flex items-center gap-1.5 text-sm transition-colors"
+                        data-tooltip="{{ $label }}"
                         type="submit"
-                        title="{{ $label }}"
                         aria-label="{{ $label }}">
                     <x-dynamic-component class="h-5 w-5"
                                          aria-hidden="true"
@@ -32,8 +32,8 @@
               action="{{ $action }}">
             @csrf
             <button class="{{ $colorClasses }} flex items-center gap-1.5 text-sm transition-colors"
+                    data-tooltip="{{ $label }}"
                     type="submit"
-                    title="{{ $label }}"
                     aria-label="{{ $label }}">
                 <x-dynamic-component class="h-5 w-5"
                                      aria-hidden="true"

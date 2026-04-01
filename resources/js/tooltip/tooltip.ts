@@ -2,6 +2,16 @@ import { calculateCoordinates, isValidPosition, type Position, resolvePosition }
 
 const TOOLTIP_ID = 'app-tooltip';
 const OFF_SCREEN = -9999;
+const ALL_POSITIONS = [
+    'tooltip--top',
+    'tooltip--bottom',
+    'tooltip--left',
+    'tooltip--right',
+    'tooltip--top-left',
+    'tooltip--top-right',
+    'tooltip--bottom-left',
+    'tooltip--bottom-right',
+] as const;
 
 let currentTrigger: HTMLElement | null = null;
 
@@ -62,18 +72,19 @@ function showTooltip(trigger: HTMLElement): void {
 
     tooltip.style.top = `${OFF_SCREEN}px`;
     tooltip.style.left = `${OFF_SCREEN}px`;
-    tooltip.classList.remove('tooltip--top', 'tooltip--bottom', 'tooltip--left', 'tooltip--right');
+    tooltip.classList.remove(...ALL_POSITIONS);
     tooltip.classList.add('tooltip--visible');
 
     const triggerRect = trigger.getBoundingClientRect();
     const tooltipRect = tooltip.getBoundingClientRect();
     const preferred = getPreferredPosition(trigger);
     const position = resolvePosition(preferred, triggerRect, tooltipRect);
-    const { top, left } = calculateCoordinates(position, triggerRect, tooltipRect);
+    const { top, left, arrowLeft } = calculateCoordinates(position, triggerRect, tooltipRect);
 
     tooltip.classList.add(`tooltip--${position}`);
     tooltip.style.top = `${top}px`;
     tooltip.style.left = `${left}px`;
+    tooltip.style.setProperty('--arrow-left', `${arrowLeft}px`);
 }
 
 function hideTooltip(): void {
@@ -84,13 +95,7 @@ function hideTooltip(): void {
     currentTrigger = null;
     const tooltip = document.getElementById(TOOLTIP_ID);
     if (tooltip) {
-        tooltip.classList.remove(
-            'tooltip--visible',
-            'tooltip--top',
-            'tooltip--bottom',
-            'tooltip--left',
-            'tooltip--right',
-        );
+        tooltip.classList.remove('tooltip--visible', ...ALL_POSITIONS);
     }
 }
 

@@ -24,8 +24,8 @@
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}{{ strtoupper(substr(auth()->user()->name, strpos(auth()->user()->name, ' ') + 1, 1)) }}
             </div>
             <a class="hidden text-base text-gray-600 transition-colors hover:text-indigo-600 sm:inline sm:text-sm"
-               href="{{ route('profile') }}"
-               title="{{ __('messages.profile.title') }}">{{ auth()->user()->email }}</a>
+               data-tooltip="{{ __('messages.profile.title') }}"
+               href="{{ route('profile') }}">{{ auth()->user()->email }}</a>
         </div>
         <div id="app-notification-bell"
              data-user-id="{{ auth()->user()->id }}">

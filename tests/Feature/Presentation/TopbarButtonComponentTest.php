@@ -15,7 +15,7 @@ it('renders form button with skip-permission', function (): void {
 
     expect($rendered)
         ->toContain('action="/logout"')
-        ->toContain('title="Logout"')
+        ->toContain('data-tooltip="Logout"')
         ->toContain('aria-label="Logout"')
         ->toContain('text-gray-500');
 });
@@ -58,7 +58,7 @@ it('renders when user has permission', function (): void {
 
     expect($rendered)
         ->toContain('action="/some-action"')
-        ->toContain('title="Notify"')
+        ->toContain('data-tooltip="Notify"')
         ->toContain('aria-label="Notify"');
 });
 

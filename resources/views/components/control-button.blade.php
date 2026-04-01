@@ -1,6 +1,6 @@
 @props(['label', 'class' => ''])
 
-<button title="{{ $label }}"
+<button data-tooltip="{{ $label }}"
         aria-label="{{ $label }}"
         {{ $attributes->merge(['class' => $class, 'type' => 'button']) }}>
     {{ $slot }}
