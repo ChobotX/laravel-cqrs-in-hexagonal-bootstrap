@@ -20,24 +20,11 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
 
     public function can(string $userId, string $permission): bool
     {
-        /** @var array<string, bool> $permissions */
-        $permissions = $this->cacheRepository->remember(
-            $this->permissionsCacheKey($userId),
+        /** @var bool $result */
+        $result = $this->cacheRepository->remember(
+            $this->canCacheKey($userId, $permission),
             $this->ttl,
-            fn (): array => [],
-        );
-
-        if (isset($permissions[$permission])) {
-            return $permissions[$permission];
-        }
-
-        $result = $this->authorizationChecker->can($userId, $permission);
-
-        $permissions[$permission] = $result;
-        $this->cacheRepository->put(
-            $this->permissionsCacheKey($userId),
-            $permissions,
-            $this->ttl,
+            fn (): bool => $this->authorizationChecker->can($userId, $permission),
         );
 
         return $result;
@@ -77,9 +64,9 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
         );
     }
 
-    private function permissionsCacheKey(string $userId): string
+    private function canCacheKey(string $userId, string $permission): string
     {
-        return sprintf('%s:auth:perms:%s:v%d', $this->tenantPrefix(), $userId, $this->authVersion($userId));
+        return sprintf('%s:auth:can:%s:%s:v%d', $this->tenantPrefix(), $userId, $permission, $this->authVersion($userId));
     }
 
     private function scopeCacheKey(string $userId, string $permission): string

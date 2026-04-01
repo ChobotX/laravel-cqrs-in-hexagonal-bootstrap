@@ -34,7 +34,7 @@ it('delegates to inner checker on cache miss and caches the result', function ()
 it('returns cached result on cache hit', function (): void {
     [$checker, $inner, $cache] = cachedCheckerSetup();
 
-    $cache->put('acme:auth:perms:user-1:v0', ['users.list.read' => true], 300);
+    $cache->put('acme:auth:can:user-1:users.list.read:v0', true, 300);
 
     expect($checker->can('user-1', 'users.list.read'))->toBeTrue();
     expect($inner->canCallCount)->toBe(0);
@@ -79,7 +79,7 @@ it('uses tenant-prefixed cache keys', function (): void {
 
     $checker->can('user-1', 'users.list.read');
 
-    expect($cache->has('tenant-a:auth:perms:user-1:v0'))->toBeTrue();
+    expect($cache->has('tenant-a:auth:can:user-1:users.list.read:v0'))->toBeTrue();
 });
 
 it('isolates cache between tenants', function (): void {

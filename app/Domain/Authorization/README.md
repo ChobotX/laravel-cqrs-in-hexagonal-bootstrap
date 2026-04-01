@@ -176,17 +176,19 @@ Domain event handlers in `App\Domain\Authorization\EventHandler\` react to autho
 | `RefreshAuthorizationOnRoleDeleted` | `RoleDeleted` | Refresh for all users with the role |
 | `RefreshAuthorizationOnRoleUpdated` | `RoleUpdated` | Refresh for all users with the role |
 
-The `AuthorizationRefresher` contract abstracts the refresh mechanism. The infrastructure implementation (`CacheAuthorizationRefresher`) clears the `auth:perms:{userId}` cache key.
+The `AuthorizationRefresher` contract abstracts the refresh mechanism. The infrastructure implementation (`CacheAuthorizationRefresher`) increments the `auth:version:{userId}` counter, which invalidates all versioned cache keys for that user.
 
 ## Caching
 
-- Effective permissions are cached per user with key `auth:perms:{userId}`
+- Permission checks are cached per user per permission with key `{tenant}:auth:can:{userId}:{permission}:v{version}`
+- Scope decisions are cached with key `{tenant}:auth:scope:{userId}:{permission}:v{version}`
+- Resource shares are cached with key `{tenant}:auth:shares:{userId}:{resourceType}:{action}:v{version}`
 - TTL: 5 minutes (configurable via `AUTH_PERMISSION_CACHE_TTL` env var)
-- Cache is automatically invalidated by domain event handlers (see above)
+- Cache is automatically invalidated by domain event handlers via version increment (see above)
 
-To debug cache issues, clear the authorization cache:
+To debug cache issues, increment the auth version to invalidate all cached entries for a user:
 ```bash
-php artisan cache:forget "auth:perms:{userId}"
+php artisan tinker --execute="cache()->increment('{tenant}:auth:version:{userId}')"
 ```
 
 ## Database Tables
