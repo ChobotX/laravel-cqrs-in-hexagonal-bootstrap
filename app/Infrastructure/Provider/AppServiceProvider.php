@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace App\Infrastructure\Provider;
 
 use App\Contract\Logging\Logger;
+use App\Contract\Persistence\TransactionManager;
+use App\Contract\Tracing\TraceContext;
 use App\Contract\Translation\Translator;
 use App\Infrastructure\Logging\LaravelLogger;
+use App\Infrastructure\Persistence\LaravelTransactionManager;
+use App\Infrastructure\Tracing\LaravelTraceContext;
 use App\Infrastructure\Translation\LaravelTranslator;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -29,6 +33,8 @@ final class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(Logger::class, LaravelLogger::class);
         $this->app->bind(Translator::class, LaravelTranslator::class);
+        $this->app->bind(TransactionManager::class, LaravelTransactionManager::class);
+        $this->app->bind(TraceContext::class, LaravelTraceContext::class);
     }
 
     public function boot(): void

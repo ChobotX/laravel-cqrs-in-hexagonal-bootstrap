@@ -8,7 +8,7 @@ use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Domain\Authorization\Exception\PermissionDeniedException;
-use App\Infrastructure\Bus\Middleware\AuthorizeAction;
+use App\Domain\Authorization\Middleware\AuthorizeAction;
 
 function buildTestMiddleware(
     ?string $userId = 'user-1',

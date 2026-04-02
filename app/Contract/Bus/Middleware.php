@@ -8,5 +8,11 @@ use Closure;
 
 interface Middleware
 {
+    /**
+     * @template TResult
+     *
+     * @param  Closure(object): TResult  $next
+     * @return TResult
+     */
     public function handle(object $message, Closure $next): mixed;
 }

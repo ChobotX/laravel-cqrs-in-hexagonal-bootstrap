@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Bus\Middleware;
+namespace App\Domain\Authorization\Middleware;
 
 use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
@@ -24,6 +24,12 @@ final readonly class ResolveScopeFilter implements Middleware
         private TeamMembershipChecker $teamMembershipChecker,
     ) {}
 
+    /**
+     * @template TResult
+     *
+     * @param  Closure(object): TResult  $next
+     * @return TResult
+     */
     public function handle(object $message, Closure $next): mixed
     {
         if (! $message instanceof ScopeAwareQuery) {

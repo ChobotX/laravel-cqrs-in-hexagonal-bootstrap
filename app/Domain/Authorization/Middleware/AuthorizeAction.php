@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Bus\Middleware;
+namespace App\Domain\Authorization\Middleware;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
@@ -19,6 +19,12 @@ final readonly class AuthorizeAction implements Middleware
         private AuthorizationChecker $authorizationChecker,
     ) {}
 
+    /**
+     * @template TResult
+     *
+     * @param  Closure(object): TResult  $next
+     * @return TResult
+     */
     public function handle(object $message, Closure $next): mixed
     {
         $reflectionClass = new ReflectionClass($message);

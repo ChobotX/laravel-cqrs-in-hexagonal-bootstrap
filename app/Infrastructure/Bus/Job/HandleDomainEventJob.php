@@ -9,6 +9,7 @@ use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Logging\Logger;
 use App\Contract\Tenancy\TenantBootstrapper;
+use App\Contract\Tracing\TraceContext;
 use App\Infrastructure\Bus\InvalidHandlerException;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,6 +20,8 @@ use Throwable;
 final class HandleDomainEventJob implements ShouldQueue
 {
     use Queueable;
+
+    private const int NANOSECONDS_PER_MILLISECOND = 1_000_000;
 
     public bool $deleteWhenMissingModels = true;
 
@@ -55,19 +58,65 @@ final class HandleDomainEventJob implements ShouldQueue
             throw InvalidHandlerException::expectedType($this->handlerClass, DomainEventHandler::class);
         }
 
-        $domainEventHandler->handle($this->domainEvent);
+        $logger = $container->make(Logger::class);
+        $traceContext = $container->make(TraceContext::class);
+        $context = $this->baseContext($traceContext);
+        $startTime = (int) hrtime(true);
+
+        $logger->debug('Domain event handler dispatching', [
+            ...$context,
+            'level' => 'debug',
+            'data' => get_object_vars($this->domainEvent),
+        ]);
+
+        try {
+            $domainEventHandler->handle($this->domainEvent);
+        } catch (Throwable $throwable) {
+            $logger->error('Domain event handler failed', [
+                ...$context,
+                'level' => 'error',
+                'duration_ms' => $this->durationMs($startTime),
+                'exception' => $throwable->getMessage(),
+            ]);
+
+            throw $throwable;
+        }
+
+        $logger->info('Domain event handled', [
+            ...$context,
+            'level' => 'info',
+            'duration_ms' => $this->durationMs($startTime),
+        ]);
     }
 
     public function failed(Throwable $throwable): void
     {
         $logger = app(Logger::class);
+        $traceContext = app(TraceContext::class);
 
         $logger->error('Domain event handler failed permanently', [
-            'handler' => $this->handlerClass,
-            'event' => $this->domainEvent::class,
-            'tenant' => $this->tenantSlug,
+            ...$this->baseContext($traceContext),
+            'level' => 'error',
             'exception' => $throwable->getMessage(),
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function baseContext(TraceContext $traceContext): array
+    {
+        return [
+            'trace_id' => $traceContext->traceId(),
+            'event' => $this->domainEvent::class,
+            'handler' => $this->handlerClass,
+            'tenant' => $this->tenantSlug,
+        ];
+    }
+
+    private function durationMs(int $startTime): float
+    {
+        return ((int) hrtime(true) - $startTime) / self::NANOSECONDS_PER_MILLISECOND;
     }
 
     /**

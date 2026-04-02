@@ -17,6 +17,7 @@
     </testsuites>
     <source>
         <include>
+            <directory>app/Application</directory>
             <directory>app/Domain</directory>
             <directory>app/Infrastructure</directory>
             <directory>app/Presentation/Console</directory>

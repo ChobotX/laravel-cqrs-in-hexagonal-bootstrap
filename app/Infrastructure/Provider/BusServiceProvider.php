@@ -6,6 +6,9 @@ namespace App\Infrastructure\Provider;
 
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\EventBus;
+use App\Application\Bus\Middleware\DispatchCollectedEvents;
+use App\Application\Bus\Middleware\LogBusMessage;
+use App\Application\Bus\Middleware\WrapInTransaction;
 use App\Application\Bus\QueryBus;
 use App\Contract\Event\EventCollector;
 use App\Contract\Tenancy\TenantContext;
@@ -45,6 +48,8 @@ use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleAssigned;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleDeleted;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleRevoked;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
+use App\Domain\Authorization\Middleware\AuthorizeAction;
+use App\Domain\Authorization\Middleware\ResolveScopeFilter;
 use App\Domain\Authorization\Query\CountRoles\CountRolesHandler;
 use App\Domain\Authorization\Query\CountRoles\CountRolesQuery;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationHandler;
@@ -182,10 +187,6 @@ use App\Domain\User\Query\SearchUsers\SearchUsersQuery;
 use App\Infrastructure\Bus\InMemoryEventCollector;
 use App\Infrastructure\Bus\LaravelCommandBus;
 use App\Infrastructure\Bus\LaravelQueryBus;
-use App\Infrastructure\Bus\Middleware\AuthorizeAction;
-use App\Infrastructure\Bus\Middleware\DispatchCollectedEvents;
-use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
-use App\Infrastructure\Bus\Middleware\WrapInTransaction;
 use App\Infrastructure\Bus\QueuedEventBus;
 use Illuminate\Contracts\Bus\Dispatcher;
 use Illuminate\Support\ServiceProvider;
@@ -263,6 +264,7 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteFileCommand::class => DeleteFileHandler::class,
             ],
             middleware: [
+                $this->app->make(LogBusMessage::class),
                 $this->app->make(AuthorizeAction::class),
                 $this->app->make(WrapInTransaction::class),
                 $this->app->make(DispatchCollectedEvents::class),

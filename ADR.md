@@ -110,6 +110,12 @@ Scope-based data filtering (All/Team/Own) is domain logic that must not leak int
 **Why:** Scope filtering was originally done in controllers — fetching all records and filtering in PHP. This violated hexagonal architecture (domain logic in presentation), harmed performance (full table loads), and duplicated logic across controllers.
 **Enforced by:** PHPStan rule `NoScopeResolutionInPresentationRule` (blocks `canWithScope()` in Presentation), PHPat rules `testPresentationDoesNotDependOnTeamMembershipChecker` and `testPresentationDoesNotDependOnAccessContext` (block scope-related imports). See [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md).
 
+### Middleware lives in business layers, not Infrastructure
+
+Bus middleware is business logic — the decision of *what to do* around handler execution (authorize, transact, log, dispatch events). Infrastructure only provides the framework implementations of contracts these middleware depend on. Context-specific middleware lives in its domain (`Domain\Authorization\Middleware\`), shared middleware lives in Application (`Application\Bus\Middleware\`).
+**Why:** Middleware was originally in Infrastructure alongside framework plumbing. But the decisions it encodes (check permissions, wrap in transaction, log with trace context) are business rules. Putting them in Infrastructure violates the principle: "decision is domain, implementation is infra." Infrastructure dependencies (database, context facade) are abstracted behind contracts (`TransactionManager`, `TraceContext`).
+**Enforced by:** PHPat rule `testMiddlewareDoesNotLiveInInfrastructure` in `tests/Architecture/ArchitectureTest.php`.
+
 ### URL-based API versioning
 
 Public API routes use URL-based versioning: `/api/v1/`. API controllers live under `App\Presentation\Http\Controller\Api\V1\{Context}\`. Internal API (`/internal-api/`) and web routes are unversioned. Resources and form requests remain unversioned until a breaking change requires a v2 variant.

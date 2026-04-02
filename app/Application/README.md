@@ -1,6 +1,6 @@
 # Application Layer
 
-Thin orchestration layer. Contains bus interfaces that dispatch commands, queries, and events to their domain handlers.
+Shared business logic layer. Contains bus interfaces, shared bus middleware, and cross-cutting orchestration that doesn't belong to a specific domain context.
 
 ## Bus interfaces
 
@@ -14,6 +14,14 @@ Usage from Presentation or Infrastructure:
 $this->commandBus->dispatch(new SomeCommand($data));
 $result = $this->queryBus->dispatch(new SomeQuery($id));
 ```
+
+## Shared Bus Middleware
+
+Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus orchestration that doesn't belong to a specific domain context. Context-specific middleware (authorization) lives in the respective domain. Enforced by PHPStan rule `testMiddlewareDoesNotLiveInInfrastructure`.
+
+- `LogBusMessage` — logs every command dispatch with structured context: `trace_id`, `user_id`, `tenant_id`, message class, `duration_ms`, and `level`. Logs `debug` before execution with full message data (respects `LOG_LEVEL`), `info` on success, `error` on failure. Not applied to QueryBus — queries are read-only.
+- `WrapInTransaction` — wraps handler execution in a database transaction via `TransactionManager` contract. Commands can opt out with `#[SkipTransaction(reason: '...')]`.
+- `DispatchCollectedEvents` — runs the handler, then flushes collected events to the async queue via `EventBus`.
 
 ## Transaction control
 

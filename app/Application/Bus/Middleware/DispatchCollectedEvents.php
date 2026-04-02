@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Infrastructure\Bus\Middleware;
+namespace App\Application\Bus\Middleware;
 
 use App\Application\Bus\EventBus;
 use App\Contract\Bus\Middleware;
@@ -16,6 +16,12 @@ final readonly class DispatchCollectedEvents implements Middleware
         private EventBus $eventBus,
     ) {}
 
+    /**
+     * @template TResult
+     *
+     * @param  Closure(object): TResult  $next
+     * @return TResult
+     */
     public function handle(object $message, Closure $next): mixed
     {
         $result = $next($message);

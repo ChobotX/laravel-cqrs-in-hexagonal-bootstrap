@@ -192,6 +192,17 @@ final class ArchitectureTest
             );
     }
 
+    // ── Middleware placement ──────────────────────────────────────
+
+    public function testMiddlewareDoesNotLiveInInfrastructure(): Rule
+    {
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Infrastructure'))
+            ->shouldNotImplement()
+            ->classes(Selector::classname(\App\Contract\Bus\Middleware::class))
+            ->because('Middleware is business logic — place in Domain (context-specific) or Application (shared).');
+    }
+
     // ── Safety nets ─────────────────────────────────────────────
 
     public function testNoCustomInheritance(): Rule

@@ -77,7 +77,7 @@ use App\Application\Authorization\RequiresPermission;
 final readonly class CreateUserCommand implements Command { ... }
 ```
 
-The `AuthorizeAction` bus middleware reads this attribute and checks permissions before the handler runs.
+The `AuthorizeAction` bus middleware (`App\Domain\Authorization\Middleware\AuthorizeAction`) reads this attribute and checks permissions before the handler runs.
 
 ## Skipping Authorization
 
@@ -94,7 +94,7 @@ The `reason` parameter is required — forces a conscious decision.
 
 ## Record-Level Access (Scope Filtering)
 
-Scope filtering is handled transparently by the `ResolveScopeFilter` bus middleware. Controllers never resolve scope — they dispatch a `ScopeAwareQuery` and the middleware enriches it with an `AccessContext` before the handler runs.
+Scope filtering is handled transparently by the `ResolveScopeFilter` bus middleware (`App\Domain\Authorization\Middleware\ResolveScopeFilter`). Controllers never resolve scope — they dispatch a `ScopeAwareQuery` and the middleware enriches it with an `AccessContext` before the handler runs.
 
 **Flow:**
 
@@ -153,6 +153,13 @@ Super admins can impersonate any user to see the application from their perspect
 **Session lookup**: `SessionImpersonationManager` checks the `X-Impersonate-Token` header first (API), then falls back to the authenticated guard ID (web).
 
 **Security:** Only users with a system role (super admin) can impersonate. The impersonated user's permissions are used — the impersonator does NOT retain their super-admin powers.
+
+## Bus Middleware
+
+Authorization middleware lives in `App\Domain\Authorization\Middleware\` because it IS authorization business logic, not shared infrastructure plumbing. Enforced by PHPStan rule `testMiddlewareDoesNotLiveInInfrastructure`.
+
+- `AuthorizeAction` — checks `#[RequiresPermission]` attribute before command/query execution. Fast-fails if the user lacks the required permission.
+- `ResolveScopeFilter` — enriches `ScopeAwareQuery` instances with `AccessContext` based on the user's scope-level permission. Resolves visible IDs via `TeamMembershipChecker`.
 
 ## Testing
 

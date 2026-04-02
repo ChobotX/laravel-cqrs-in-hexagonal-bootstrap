@@ -52,7 +52,7 @@ final class NoMixedInDomainRule implements Rule
     {
         $errors = [];
 
-        if ($this->containsMixed($classMethod->returnType)) {
+        if ($this->containsMixed($classMethod->returnType) && ! $this->hasSpecificReturnAnnotation($classMethod)) {
             $errors[] = $this->buildError('return');
         }
 
@@ -73,6 +73,21 @@ final class NoMixedInDomainRule implements Rule
         }
 
         return [];
+    }
+
+    private function hasSpecificReturnAnnotation(ClassMethod $classMethod): bool
+    {
+        $docComment = $classMethod->getDocComment();
+
+        if (! $docComment instanceof \PhpParser\Comment\Doc) {
+            return false;
+        }
+
+        if (preg_match('/@return\s+(\S+)/', $docComment->getText(), $matches) !== 1) {
+            return false;
+        }
+
+        return $matches[1] !== 'mixed';
     }
 
     private function containsMixed(?Node $node): bool

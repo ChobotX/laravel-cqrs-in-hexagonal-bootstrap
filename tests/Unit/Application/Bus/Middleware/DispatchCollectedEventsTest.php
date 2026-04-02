@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\Application\Bus\EventBus;
+use App\Application\Bus\Middleware\DispatchCollectedEvents;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EventCollector;
-use App\Infrastructure\Bus\Middleware\DispatchCollectedEvents;
 
 it('flushes collected events and dispatches them after handler success', function (): void {
     $event = new readonly class implements DomainEvent

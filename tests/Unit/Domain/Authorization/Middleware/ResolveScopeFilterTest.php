@@ -12,8 +12,8 @@ use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
+use App\Domain\Authorization\Middleware\ResolveScopeFilter;
 use App\Domain\Team\Contract\TeamMembershipChecker;
-use App\Infrastructure\Bus\Middleware\ResolveScopeFilter;
 
 /**
  * @param  list<string>|null  $teamVisibleUserIds

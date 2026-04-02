@@ -19,27 +19,21 @@ All command, query, and event handler mappings are registered in `app/Infrastruc
 
 Every new command, query, or event handler must be registered here. See [Domain README](../Domain/README.md) for full CQRS walkthrough.
 
-## Command Bus Middleware Pipeline
+## Bus Middleware Pipeline
 
-**Pipeline order:** `AuthorizeAction` -> `WrapInTransaction` -> `DispatchCollectedEvents` -> Handler
+Middleware is business logic and lives outside Infrastructure. See [Application README](../Application/README.md) for shared middleware and [Authorization README](../Domain/Authorization/README.md) for authorization middleware. Enforced by PHPStan rule `testMiddlewareDoesNotLiveInInfrastructure`.
 
-- `AuthorizeAction` -- checks `#[RequiresPermission]` attribute, runs outside the transaction for fast-fail
-- `WrapInTransaction` -- wraps handler execution and event dispatch in a single database transaction on the default (`tenant`) connection. Nested `DB::transaction()` calls in repositories create PostgreSQL SAVEPOINTs transparently. Commands can opt out with `#[SkipTransaction(reason: '...')]`.
-- `DispatchCollectedEvents` -- runs the handler, then flushes collected events to the async queue. Job rows are inserted within the same transaction, so handler writes and event jobs commit atomically.
+**Command pipeline:** `LogBusMessage` → `AuthorizeAction` → `WrapInTransaction` → `DispatchCollectedEvents` → Handler
 
-## Scope Resolution Middleware
+**Query pipeline:** `AuthorizeAction` → `ResolveScopeFilter` → Handler
 
-`ResolveScopeFilter` is a query bus middleware that transparently enriches `ScopeAwareQuery` objects with the actor's access scope. It runs after `AuthorizeAction` in the middleware pipeline.
+`BusServiceProvider` wires middleware instances from Domain and Application into the bus implementations.
 
-**Pipeline order:** `AuthorizeAction` → `ResolveScopeFilter` → Handler
+## Domain Event Handler Logging
 
-For queries implementing `ScopeAwareQuery`, the middleware:
-1. Reads `#[RequiresPermission]` attribute via reflection
-2. Calls `AuthorizationChecker::canWithScope()` to get the scope
-3. For `Team` scope: resolves visible IDs via `TeamMembershipChecker::visibleUserIds()`
-4. Creates a new query instance via `withAccessContext()` (immutable copy pattern — query objects are `final readonly`)
+`HandleDomainEventJob` logs every event handler execution with structured context: `trace_id`, `level`, event class, handler class, tenant slug, and `duration_ms`. Logs `debug` before execution with full event data (respects `LOG_LEVEL`), `info` on success, `error` on failure (with exception). The `failed()` callback also includes `trace_id` and `level` for permanent failures. Uses `TraceContext` contract for trace propagation.
 
-Non-`ScopeAwareQuery` queries pass through unchanged.
+## Scope Resolution
 
 `CachedTeamMembershipChecker` is a request-scoped decorator (registered via `scoped()`) that memoizes `memberTeamIds()` and `visibleUserIds()` per userId within a single request. This prevents redundant DB calls when multiple scope-aware queries run in the same request.
 
