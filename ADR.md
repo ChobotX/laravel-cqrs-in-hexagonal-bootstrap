@@ -14,16 +14,16 @@ Domain handlers contain business rules directly. They are not thin orchestrators
 **Why:** Avoids unnecessary indirection. The hexagonal shell (Infrastructure + Presentation) handles I/O; handlers handle logic.
 **Enforced by:** Convention. See [app/Domain/README.md](app/Domain/README.md).
 
-### Stateless for k8s: cookie sessions, no file state, stderr logging
+### Scalable for k8s: database sessions, no file state, stderr logging
 
-Auth via session guard with cookie driver (web) and Sanctum Bearer tokens (API). Sessions use cookie driver (client-side). Cache is array/database/redis. Logs go to stderr. No file-based state anywhere.
-**Why:** Horizontal pod scaling without sticky sessions or shared filesystems.
-**Enforced by:** Convention. Config removes file-based drivers.
+Auth via session guard with database session driver (web) and Sanctum Bearer tokens (API). Sessions are stored in the tenant's `sessions` table (schema-isolated per tenant). Cache is array/database/redis. Logs go to stderr. No file-based state anywhere.
+**Why:** Database sessions avoid the 4KB cookie size limit that caused silent validation error loss. Per-tenant schema isolation keeps sessions tenant-scoped. For k8s scaling, sticky sessions or a shared database are required (already the case with PostgreSQL).
+**Enforced by:** Convention. Config removes file-based drivers. Session table in tenant migration.
 
-### Stateless auth: session guard with cookie driver (web), Sanctum Bearer (API)
+### Database session auth: session guard with database driver (web), Sanctum Bearer (API)
 
-Web routes use Laravel's `session` auth guard with the `cookie` session driver (client-side, no server state). API routes use Sanctum Bearer tokens. Both mechanisms are fully stateless — no server-side session storage exists.
-**Why:** The session guard with cookie driver provides standard Laravel auth flow (login/logout, CSRF) without server-side state. Sanctum Bearer tokens serve API consumers. Cookie session driver stores encrypted session data in the cookie itself, enabling horizontal pod scaling without sticky sessions.
+Web routes use Laravel's `session` auth guard with the `database` session driver (server-side, per-tenant schema). API routes use Sanctum Bearer tokens. Sessions are stored in the `sessions` table within each tenant's PostgreSQL schema, providing automatic tenant isolation.
+**Why:** The cookie session driver hit the 4KB browser cookie size limit, causing validation errors and flash data to be silently dropped. Database sessions have no size limit and integrate naturally with the schema-per-tenant architecture.
 **Enforced by:** `config/auth.php` (session guard), `config/session.php` (cookie driver), `routes/api.php` (auth:sanctum middleware).
 
 ### No App→App inheritance
