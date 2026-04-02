@@ -57,6 +57,14 @@ The `PaginatesQuery` trait (`app/Infrastructure/Eloquent/PaginatesQuery.php`) pr
 
 The `SortsQuery` trait (`app/Infrastructure/Eloquent/SortsQuery.php`) provides a `sortBuilder()` helper that applies `ORDER BY` to an Eloquent builder. Each repository using the trait must implement `textSortColumns()` returning column names where case-insensitive sorting via `LOWER()` applies. Non-text columns (timestamps, numerics) get plain `ORDER BY`. For computed columns like `permission_score`, repositories add `selectRaw` with the SQL expression before calling `sortBuilder()`.
 
+## File Storage
+
+`App\Infrastructure\Filesystem\LaravelFileStorage` implements `App\Domain\File\Contract\FileStorage`, wrapping Laravel's `Illuminate\Contracts\Filesystem\Filesystem`. This is the only place in the application that touches the filesystem directly — all other code must inject the `FileStorage` interface. Storage paths use `{namespace}/{uuid}.{extension}` format. Files are streamed via `SplFileInfo::getPathname()` to avoid loading full contents into memory.
+
+A dedicated `files` disk is configured in `config/filesystems.php`. Swapping storage backends (local ↔ S3) requires only changing `FILES_DISK_DRIVER` in `.env` — no code changes. The disk is resolved via `FilesystemFactory::disk('files')` in `RepositoryServiceProvider`.
+
+Enforced by PHPStan rules `NoDirectFilesystemAccessRule` (bans facade calls and PHP file functions) and `NoDirectFilesystemImportRule` (bans framework filesystem imports) outside `Infrastructure\Filesystem\`.
+
 ## Tenant Schema Management
 
 Schema-based multi-tenancy is implemented in `App\Infrastructure\Tenancy\`. See [Tenancy/README.md](Tenancy/README.md) for full details.

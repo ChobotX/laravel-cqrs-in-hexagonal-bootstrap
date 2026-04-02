@@ -239,6 +239,14 @@ return [
         'invalid_notification_type' => 'Hodnota [:value] není platný typ upozornění.',
         'invalid_notification_link' => 'Hodnota [:value] není platný odkaz upozornění.',
         'concurrent_modification' => 'Tento záznam byl změněn jiným uživatelem. Načtěte stránku znovu a zkuste to znovu.',
+        'invalid_file_id' => 'Hodnota [:value] není platné UUID souboru.',
+        'invalid_file_name' => 'Hodnota [:value] není platný název souboru.',
+        'invalid_file_namespace' => 'Hodnota [:value] není platný jmenný prostor souboru.',
+        'invalid_mime_type' => 'Hodnota [:value] není platný MIME typ.',
+        'invalid_storage_path' => 'Hodnota [:value] není platná cesta úložiště.',
+        'invalid_file_version' => 'Hodnota [:value] není platná verze souboru.',
+        'file_not_found' => 'Soubor s id [:id] nebyl nalezen.',
+        'file_storage_error' => 'Operace úložiště souborů selhala.',
     ],
 
     'pagination' => [

@@ -135,6 +135,14 @@ services:
         class: Tests\Architecture\PHPStan\EloquentModelRequiresTraitsRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoDirectFilesystemAccessRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoDirectFilesystemImportRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

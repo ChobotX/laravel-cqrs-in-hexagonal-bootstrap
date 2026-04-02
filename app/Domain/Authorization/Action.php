@@ -10,4 +10,5 @@ enum Action: string
     case Create = 'create';
     case Update = 'update';
     case Delete = 'delete';
+    case Upload = 'upload';
 }

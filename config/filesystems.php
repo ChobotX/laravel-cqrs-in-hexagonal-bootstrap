@@ -49,6 +49,13 @@ return [
             'report' => false,
         ],
 
+        'files' => [
+            'driver' => env('FILES_DISK_DRIVER', 'local'),
+            'root' => storage_path('app/files'),
+            'throw' => true,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

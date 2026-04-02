@@ -152,10 +152,10 @@ List queries that support sorting implement `SortableQuery` alongside `Query`. W
 
 Each bounded context exposes a `Contract` sub-namespace containing types that other domains may import:
 
-- **Value object IDs**: `UserId`, `TeamId`, `RoleId`, `LabelId`, `NotificationId` — in `Domain/{Context}/Contract/`
-- **Repository interfaces**: `UserRepository`, `TeamRepository`, etc. — in `Domain/{Context}/Contract/`
-- **Domain events**: `UserCreated`, `RoleDeleted`, etc. — in `Domain/{Context}/Contract/Event/`
-- **Service contracts**: `TeamMembershipChecker` — in `Domain/Team/Contract/`
+- **Value object IDs**: `UserId`, `TeamId`, `RoleId`, `LabelId`, `NotificationId`, `FileId` — in `Domain/{Context}/Contract/`
+- **Repository interfaces**: `UserRepository`, `TeamRepository`, `FileRepository`, etc. — in `Domain/{Context}/Contract/`
+- **Service contracts**: `FileStorage` — in `Domain/File/Contract/`, `TeamMembershipChecker` — in `Domain/Team/Contract/`
+- **Domain events**: `UserCreated`, `RoleDeleted`, `FileStored`, `FileDeleted`, etc. — in `Domain/{Context}/Contract/Event/`
 
 Internal types (handlers, exceptions, entity classes, non-ID value objects) stay in `Domain/{Context}/` and are not importable cross-domain.
 

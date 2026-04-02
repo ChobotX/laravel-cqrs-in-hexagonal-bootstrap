@@ -41,6 +41,15 @@ return [
                 ],
             ],
         ],
+        'files' => [
+            'label' => 'Files',
+            'features' => [
+                'storage' => [
+                    'label' => 'File Storage',
+                    'actions' => ['read', 'upload', 'delete'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

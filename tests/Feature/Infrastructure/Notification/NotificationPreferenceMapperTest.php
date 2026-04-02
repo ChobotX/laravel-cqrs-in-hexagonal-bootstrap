@@ -32,6 +32,12 @@ it('maps collection of preference models to domain', function (): void {
         ->and($notificationPreferences->preferences[1]->channels)->toBe([NotificationChannel::InApp, NotificationChannel::Email]);
 });
 
+it('has no primary key', function (): void {
+    $model = new NotificationPreferenceModel;
+
+    expect($model->getKey())->toBeNull();
+});
+
 it('maps empty collection to empty preferences', function (): void {
     $collection = new Collection([]);
 

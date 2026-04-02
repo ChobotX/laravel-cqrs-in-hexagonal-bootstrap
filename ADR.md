@@ -146,6 +146,12 @@ Every Eloquent entity model must use `HasOptimisticLocking`. Updates add `WHERE 
 **Why:** Prevents silent data loss from concurrent updates in a multi-user, multi-tab, multi-device environment. The mandatory reason on `#[HardDelete]` forces a conscious decision about each model's deletion semantics.
 **Enforced by:** PHPStan rule `EloquentModelRequiresTraitsRule`. See [tests/README.md](tests/README.md).
 
+### Centralized file storage through domain contract
+
+All file operations (store, retrieve, delete) must go through `App\Domain\File\Contract\FileStorage`. Direct filesystem access — `Storage::` facade, PHP file functions (`fopen`, `file_get_contents`, `unlink`, etc.), and `Illuminate\Filesystem` imports — is banned outside `App\Infrastructure\Filesystem\`. Files are organized by namespace (directory on disk), versioned in the database (never overwritten), and tracked with full metadata. The `FileUpload` domain value object wraps `\SplFileInfo` for framework-agnostic file input.
+**Why:** Prevents scattered filesystem calls across the codebase, ensures every file has a database record (who uploaded, when, where), and makes swapping storage backends (local ↔ S3) a config change. Versioning prevents silent data loss.
+**Enforced by:** PHPStan rules `NoDirectFilesystemAccessRule` and `NoDirectFilesystemImportRule`. See [app/Domain/File/README.md](app/Domain/File/README.md).
+
 ### Domain\*\Contract pattern for cross-domain contracts
 
 Each bounded context exposes a `Contract` sub-namespace (`Domain/{Context}/Contract/`) containing types that may be imported cross-domain: value object IDs, repository interfaces, domain events, and service contracts. Internal types (handlers, exceptions, entities, non-ID value objects) are not importable cross-domain. The top-level `App\Contract` layer retains only truly shared infrastructure contracts (Command/Query/Event interfaces, Auth, Tenancy, etc.).

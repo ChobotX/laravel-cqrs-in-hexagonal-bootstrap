@@ -71,6 +71,18 @@ use App\Domain\Authorization\Query\ListRoles\ListRolesHandler;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesHandler;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesQuery;
+use App\Domain\File\Command\DeleteFile\DeleteFileCommand;
+use App\Domain\File\Command\DeleteFile\DeleteFileHandler;
+use App\Domain\File\Command\StoreFile\StoreFileCommand;
+use App\Domain\File\Command\StoreFile\StoreFileHandler;
+use App\Domain\File\Contract\Event\FileDeleted;
+use App\Domain\File\Contract\Event\FileStored;
+use App\Domain\File\Query\GetFileById\GetFileByIdHandler;
+use App\Domain\File\Query\GetFileById\GetFileByIdQuery;
+use App\Domain\File\Query\GetFileVersions\GetFileVersionsHandler;
+use App\Domain\File\Query\GetFileVersions\GetFileVersionsQuery;
+use App\Domain\File\Query\GetLatestFileVersion\GetLatestFileVersionHandler;
+use App\Domain\File\Query\GetLatestFileVersion\GetLatestFileVersionQuery;
 use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Command\AssignLabel\AssignLabelHandler;
 use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
@@ -200,6 +212,8 @@ final class BusServiceProvider extends ServiceProvider
                 NotificationDeleted::class => [UpdateUnreadCountOnNotificationChange::class],
                 NotificationPreferencesUpdated::class => [],
                 PasswordChanged::class => [],
+                FileStored::class => [],
+                FileDeleted::class => [CleanupLabelsOnEntityDeleted::class],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
@@ -240,6 +254,8 @@ final class BusServiceProvider extends ServiceProvider
                 CreateTenantCommand::class => CreateTenantHandler::class,
                 MigrateTenantCommand::class => MigrateTenantHandler::class,
                 MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
+                StoreFileCommand::class => StoreFileHandler::class,
+                DeleteFileCommand::class => DeleteFileHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),
@@ -282,6 +298,9 @@ final class BusServiceProvider extends ServiceProvider
                 ListOwnNotificationsQuery::class => ListOwnNotificationsHandler::class,
                 CountUnreadNotificationsQuery::class => CountUnreadNotificationsHandler::class,
                 GetNotificationPreferencesQuery::class => GetNotificationPreferencesHandler::class,
+                GetFileByIdQuery::class => GetFileByIdHandler::class,
+                GetFileVersionsQuery::class => GetFileVersionsHandler::class,
+                GetLatestFileVersionQuery::class => GetLatestFileVersionHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

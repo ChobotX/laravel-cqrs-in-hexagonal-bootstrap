@@ -18,6 +18,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md) | Authorization module — permissions, RBAC, impersonation |
 | [app/Domain/Team/README.md](app/Domain/Team/README.md) | Team module — hierarchy, membership, scope filtering |
 | [app/Domain/Label/README.md](app/Domain/Label/README.md) | Label module — universal namespaced labels, polymorphic assignment, orphan cleanup |
+| [app/Domain/File/README.md](app/Domain/File/README.md) | File module — centralized storage, namespace directories, versioning, PHPStan enforcement |
 | [app/Domain/Notification/README.md](app/Domain/Notification/README.md) | Notification module — multi-channel delivery, preferences, real-time |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
@@ -52,6 +53,7 @@ When you change **one** of these, check **all** listed files:
 | Add/change class structural rule | `app/README.md` (class rules table), `ADR.md` if it's a new decision |
 | Add/change presentation pattern | `app/Presentation/README.md` |
 | Add/change API versioning pattern | `ADR.md`, `app/Presentation/README.md`, `routes/api.php`, `QUICKSTART.md` |
+| Add/change file storage pattern | `app/Domain/File/README.md`, `app/Infrastructure/README.md`, `ADR.md` |
 | Add/change infrastructure pattern | `app/Infrastructure/README.md` |
 | Add/change contract interface | `app/Contract/README.md` (contents list + generic type docs if applicable) |
 | Add/change coverage config | `tests/README.md`, `AGENTS.md` (coverage config row) |

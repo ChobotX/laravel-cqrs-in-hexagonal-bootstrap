@@ -247,6 +247,14 @@ return [
         'invalid_notification_type' => 'Value [:value] is not a valid notification type.',
         'invalid_notification_link' => 'Value [:value] is not a valid notification link.',
         'concurrent_modification' => 'This record was modified by another user. Please reload and try again.',
+        'invalid_file_id' => 'Value [:value] is not a valid file UUID.',
+        'invalid_file_name' => 'Value [:value] is not a valid file name.',
+        'invalid_file_namespace' => 'Value [:value] is not a valid file namespace.',
+        'invalid_mime_type' => 'Value [:value] is not a valid MIME type.',
+        'invalid_storage_path' => 'Value [:value] is not a valid storage path.',
+        'invalid_file_version' => 'Value [:value] is not a valid file version.',
+        'file_not_found' => 'File with id [:id] not found.',
+        'file_storage_error' => 'File storage operation failed.',
     ],
 
     'pagination' => [
