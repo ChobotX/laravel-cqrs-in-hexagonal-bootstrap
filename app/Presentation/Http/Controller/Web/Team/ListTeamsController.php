@@ -10,8 +10,7 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Label\Label;
-use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
+use App\Domain\Label\Query\GetLabelsForEntities\GetLabelsForEntitiesQuery;
 use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
 use App\Domain\Team\Team;
 use App\Presentation\Http\Request\Web\PaginationRequest;
@@ -49,8 +48,10 @@ final readonly class ListTeamsController
             return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
         }
 
+        $teamIds = array_map(fn (Team $team): string => $team->id->value, $paginatedResult->items);
+
         $canReadLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
-        $teamLabels = $canReadLabels ? $this->buildTeamLabelsMap($paginatedResult->items) : [];
+        $teamLabels = $canReadLabels ? $this->queryBus->dispatch(new GetLabelsForEntitiesQuery($teamIds)) : [];
 
         return view('teams.index', [
             'result' => $paginatedResult,
@@ -58,22 +59,5 @@ final readonly class ListTeamsController
             'canReadLabels' => $canReadLabels,
             'teamLabels' => $teamLabels,
         ]);
-    }
-
-    /**
-     * @param  list<Team>  $teams
-     * @return array<string, list<Label>>
-     */
-    private function buildTeamLabelsMap(array $teams): array
-    {
-        $map = [];
-
-        foreach ($teams as $team) {
-            $map[$team->id->value] = $this->queryBus->dispatch(
-                new GetEntityLabelsQuery($team->id->value),
-            );
-        }
-
-        return $map;
     }
 }

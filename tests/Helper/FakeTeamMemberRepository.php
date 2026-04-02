@@ -65,6 +65,18 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
         return $this->memberships[$userId] ?? [];
     }
 
+    /** @return array<string, list<string>> */
+    public function directMemberTeamIdsForUsers(array $userIds): array
+    {
+        $map = [];
+
+        foreach ($userIds as $userId) {
+            $map[$userId] = $this->directMemberTeamIds($userId);
+        }
+
+        return $map;
+    }
+
     /** @return list<TeamMember> */
     public function listMembers(string $teamId, array $sortings = []): array
     {

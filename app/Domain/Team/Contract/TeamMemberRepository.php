@@ -22,6 +22,12 @@ interface TeamMemberRepository
     public function directMemberTeamIds(string $userId): array;
 
     /**
+     * @param  list<string>  $userIds
+     * @return array<string, list<string>> userId => directTeamIds
+     */
+    public function directMemberTeamIdsForUsers(array $userIds): array;
+
+    /**
      * @param  list<Sorting>  $sortings
      * @return list<TeamMember>
      */

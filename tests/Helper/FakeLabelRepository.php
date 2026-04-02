@@ -95,6 +95,18 @@ final class FakeLabelRepository implements LabelRepository
         ));
     }
 
+    /** @return array<string, list<Label>> */
+    public function findByLabelableIds(array $labelableIds): array
+    {
+        $map = [];
+
+        foreach ($labelableIds as $labelableId) {
+            $map[$labelableId] = $this->findByLabelableId($labelableId);
+        }
+
+        return $map;
+    }
+
     public function assignLabel(string $labelId, string $labelableId): void
     {
         $this->assignments[] = ['labelId' => $labelId, 'labelableId' => $labelableId];

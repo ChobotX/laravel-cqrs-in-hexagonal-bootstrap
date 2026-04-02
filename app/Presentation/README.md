@@ -59,9 +59,7 @@ Controllers may use `AuthorizationChecker::can()` for binary UI visibility check
 
 ## Controller command dispatch
 
-Controllers must not dispatch commands inside loops. Looping over `CommandBus->dispatch()` is orchestration logic that belongs in a Domain command handler. Instead, dispatch a single aggregate command (e.g., `SyncEntityLabelsCommand`) that encapsulates the diff and iteration internally.
-
-Query dispatches in loops are allowed — controllers may build data maps by querying per-item for view assembly.
+Controllers must not dispatch bus messages inside loops. Looping over `->dispatch()` — whether commands or queries — is an N+1 pattern. Commands should use aggregate handlers (e.g., `SyncEntityLabelsCommand`). Queries should use batch queries that accept multiple IDs (e.g., `GetRolesForUsersQuery`, `GetLabelsForEntitiesQuery`).
 
 Enforced by PHPStan rule `NoBusDispatchInControllerLoopsRule`.
 

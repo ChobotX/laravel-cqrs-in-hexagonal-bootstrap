@@ -15,6 +15,12 @@ interface UserPermissionRepository
     /** @return list<Role> */
     public function userRoles(string $userId): array;
 
+    /**
+     * @param  list<string>  $userIds
+     * @return array<string, list<Role>> userId => roles
+     */
+    public function userRolesForUsers(array $userIds): array;
+
     public function assignRole(string $userId, RoleId $roleId): void;
 
     public function revokeRole(string $userId, RoleId $roleId): void;

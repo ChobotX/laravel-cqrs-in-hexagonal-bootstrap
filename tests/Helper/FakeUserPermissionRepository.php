@@ -35,6 +35,18 @@ final class FakeUserPermissionRepository implements UserPermissionRepository
         return $this->userRolesMap[$userId] ?? [];
     }
 
+    /** @return array<string, list<Role>> */
+    public function userRolesForUsers(array $userIds): array
+    {
+        $map = [];
+
+        foreach ($userIds as $userId) {
+            $map[$userId] = $this->userRoles($userId);
+        }
+
+        return $map;
+    }
+
     public function assignRole(string $userId, RoleId $roleId): void
     {
         $this->assignedRoles[] = [

@@ -10,12 +10,11 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
-use App\Domain\Label\Label;
-use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
-use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
-use App\Domain\Team\Team;
+use App\Domain\Label\Query\GetLabelsForEntities\GetLabelsForEntitiesQuery;
+use App\Domain\Team\Query\GetTeamsForUsers\GetTeamsForUsersQuery;
 use App\Domain\User\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\User;
 use App\Presentation\Http\Request\Web\PaginationRequest;
@@ -51,9 +50,11 @@ final readonly class ListUsersController
             return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
         }
 
-        $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
+        $userIds = array_map(fn (User $user): string => $user->id->value, $paginatedResult->items);
 
-        $userRoles = $canReadRoles ? $this->buildUserRolesMap($paginatedResult->items) : [];
+        $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
+        $userRoles = $canReadRoles ? $this->queryBus->dispatch(new GetRolesForUsersQuery($userIds)) : [];
+
         $isSuperAdmin = false;
 
         if ($canReadRoles) {
@@ -62,10 +63,10 @@ final readonly class ListUsersController
         }
 
         $canReadTeams = $this->authorizationChecker->can($currentUserId, 'teams.members.read');
-        $userTeams = $canReadTeams ? $this->buildUserTeamsMap($paginatedResult->items) : [];
+        $userTeams = $canReadTeams ? $this->queryBus->dispatch(new GetTeamsForUsersQuery($userIds)) : [];
 
         $canReadLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
-        $userLabels = $canReadLabels ? $this->buildUserLabelsMap($paginatedResult->items) : [];
+        $userLabels = $canReadLabels ? $this->queryBus->dispatch(new GetLabelsForEntitiesQuery($userIds)) : [];
 
         return view('users.index', [
             'result' => $paginatedResult,
@@ -79,56 +80,5 @@ final readonly class ListUsersController
             'isSuperAdmin' => $isSuperAdmin,
             'currentUserId' => $currentUserId,
         ]);
-    }
-
-    /**
-     * @param  list<User>  $users
-     * @return array<string, list<Role>>
-     */
-    private function buildUserRolesMap(array $users): array
-    {
-        $map = [];
-
-        foreach ($users as $user) {
-            $map[$user->id->value] = $this->queryBus->dispatch(
-                new GetUserRolesQuery($user->id->value),
-            );
-        }
-
-        return $map;
-    }
-
-    /**
-     * @param  list<User>  $users
-     * @return array<string, list<Team>>
-     */
-    private function buildUserTeamsMap(array $users): array
-    {
-        $map = [];
-
-        foreach ($users as $user) {
-            $map[$user->id->value] = $this->queryBus->dispatch(
-                new GetUserTeamsQuery($user->id->value),
-            );
-        }
-
-        return $map;
-    }
-
-    /**
-     * @param  list<User>  $users
-     * @return array<string, list<Label>>
-     */
-    private function buildUserLabelsMap(array $users): array
-    {
-        $map = [];
-
-        foreach ($users as $user) {
-            $map[$user->id->value] = $this->queryBus->dispatch(
-                new GetEntityLabelsQuery($user->id->value),
-            );
-        }
-
-        return $map;
     }
 }

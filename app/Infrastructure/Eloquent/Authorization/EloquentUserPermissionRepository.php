@@ -35,6 +35,37 @@ final readonly class EloquentUserPermissionRepository implements UserPermissionR
         );
     }
 
+    /** @return array<string, list<Role>> */
+    public function userRolesForUsers(array $userIds): array
+    {
+        $userRoles = UserRoleModel::whereIn('user_id', $userIds)->get();
+
+        $allRoleIds = $userRoles->pluck('role_id')->unique()->values()->all();
+
+        $rolesById = RoleModel::with('permissions')
+            ->whereIn('id', $allRoleIds)
+            ->get()
+            ->mapWithKeys(fn (RoleModel $roleModel): array => [$roleModel->id => $this->roleMapper->toDomain($roleModel)]);
+
+        /** @var array<string, list<Role>> $map */
+        $map = [];
+
+        foreach ($userIds as $userId) {
+            $map[$userId] = [];
+        }
+
+        foreach ($userRoles as $userRole) {
+            /** @var Role|null $role */
+            $role = $rolesById->get($userRole->role_id);
+
+            if ($role instanceof Role) {
+                $map[$userRole->user_id][] = $role;
+            }
+        }
+
+        return $map;
+    }
+
     public function assignRole(string $userId, RoleId $roleId): void
     {
         $userRoleModel = new UserRoleModel;

@@ -67,6 +67,30 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
         return $ids;
     }
 
+    /** @return array<string, list<string>> */
+    public function directMemberTeamIdsForUsers(array $userIds): array
+    {
+        /** @var array<string, list<string>> $map */
+        $map = [];
+
+        foreach ($userIds as $userId) {
+            $map[$userId] = [];
+        }
+
+        $rows = TeamMemberModel::query()
+            ->join('teams', 'teams.id', '=', 'team_members.team_id')
+            ->whereIn('team_members.user_id', $userIds)
+            ->whereNull('teams.deleted_at')
+            ->select('team_members.user_id', 'team_members.team_id')
+            ->get();
+
+        foreach ($rows as $row) {
+            $map[$row->user_id][] = $row->team_id;
+        }
+
+        return $map;
+    }
+
     /** @return list<string> */
     public function memberTeamIds(string $userId): array
     {

@@ -70,6 +70,8 @@ use App\Domain\Authorization\Query\GetRecordShares\GetRecordSharesHandler;
 use App\Domain\Authorization\Query\GetRecordShares\GetRecordSharesQuery;
 use App\Domain\Authorization\Query\GetRoleById\GetRoleByIdHandler;
 use App\Domain\Authorization\Query\GetRoleById\GetRoleByIdQuery;
+use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersHandler;
+use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesHandler;
 use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesHandler;
@@ -105,6 +107,8 @@ use App\Domain\Label\Command\SyncEntityLabels\SyncEntityLabelsHandler;
 use App\Domain\Label\EventHandler\CleanupLabelsOnEntityDeleted;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsHandler;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
+use App\Domain\Label\Query\GetLabelsForEntities\GetLabelsForEntitiesHandler;
+use App\Domain\Label\Query\GetLabelsForEntities\GetLabelsForEntitiesQuery;
 use App\Domain\Label\Query\SearchLabels\SearchLabelsHandler;
 use App\Domain\Label\Query\SearchLabels\SearchLabelsQuery;
 use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationCommand;
@@ -149,6 +153,8 @@ use App\Domain\Team\Query\CountTeams\CountTeamsHandler;
 use App\Domain\Team\Query\CountTeams\CountTeamsQuery;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
 use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
+use App\Domain\Team\Query\GetTeamsForUsers\GetTeamsForUsersHandler;
+use App\Domain\Team\Query\GetTeamsForUsers\GetTeamsForUsersQuery;
 use App\Domain\Team\Query\GetTeamTree\GetTeamTreeHandler;
 use App\Domain\Team\Query\GetTeamTree\GetTeamTreeQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsHandler;
@@ -293,6 +299,7 @@ final class BusServiceProvider extends ServiceProvider
                 CountRolesQuery::class => CountRolesHandler::class,
                 GetRoleByIdQuery::class => GetRoleByIdHandler::class,
                 GetUserRolesQuery::class => GetUserRolesHandler::class,
+                GetRolesForUsersQuery::class => GetRolesForUsersHandler::class,
                 GetUserOverridesQuery::class => GetUserOverridesHandler::class,
                 GetOwnOverridesQuery::class => GetOwnOverridesHandler::class,
                 GetEffectivePermissionsQuery::class => GetEffectivePermissionsHandler::class,
@@ -306,11 +313,13 @@ final class BusServiceProvider extends ServiceProvider
                 GetTeamTreeQuery::class => GetTeamTreeHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,
                 GetUserTeamsQuery::class => GetUserTeamsHandler::class,
+                GetTeamsForUsersQuery::class => GetTeamsForUsersHandler::class,
                 SearchTeamsQuery::class => SearchTeamsHandler::class,
                 SearchRolesQuery::class => SearchRolesHandler::class,
                 GetAssignableRolesQuery::class => GetAssignableRolesHandler::class,
                 SearchLabelsQuery::class => SearchLabelsHandler::class,
                 GetEntityLabelsQuery::class => GetEntityLabelsHandler::class,
+                GetLabelsForEntitiesQuery::class => GetLabelsForEntitiesHandler::class,
                 ListOwnNotificationsQuery::class => ListOwnNotificationsHandler::class,
                 CountUnreadNotificationsQuery::class => CountUnreadNotificationsHandler::class,
                 GetNotificationPreferencesQuery::class => GetNotificationPreferencesHandler::class,

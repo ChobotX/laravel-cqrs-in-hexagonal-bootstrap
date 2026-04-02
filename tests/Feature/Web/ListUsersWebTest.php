@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Infrastructure\Eloquent\Label\LabelModel;
 use App\Infrastructure\Eloquent\Team\TeamMemberModel;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 it('shows users table for authenticated user', function (): void {
@@ -480,4 +482,39 @@ it('does not redirect on page 1 even with few results', function (): void {
         ->get('/users?page=1&per_page=15')
         ->assertOk()
         ->assertSee('Single Admin');
+});
+
+it('loads batch teams and labels for listed users', function (): void {
+    $role = $this->seedRoleWithPermissions(
+        'Full Viewer',
+        'Can view everything',
+        ['users.list.read' => 'all', 'users.roles.read' => 'all', 'teams.members.read' => 'all', 'labels.management.read' => 'all'],
+    );
+
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440f00',
+        'name' => 'Full Viewer',
+        'email' => 'full-viewer@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignRole($admin->id, $role->id);
+
+    $target = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440f01',
+        'name' => 'Target Batch',
+        'email' => 'target-batch@example.com',
+    ]);
+
+    TeamModel::create(['id' => '00000000-0000-0000-0000-0000000000f0', 'name' => 'Batch Team', 'slug' => 'batch-team', 'description' => '']);
+    TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-0000000000f0', 'user_id' => $target->id, 'joined_at' => now()]);
+
+    $label = LabelModel::create(['id' => '00000000-0000-0000-0000-0000000000f1', 'namespace' => 'users', 'name' => 'Batch Label']);
+    DB::table('label_assignments')->insert(['label_id' => $label->id, 'labelable_id' => $target->id]);
+
+    $this->actingAs($admin)
+        ->get('/users')
+        ->assertOk()
+        ->assertSee('Target Batch')
+        ->assertSee('Batch Team')
+        ->assertSee('Batch Label');
 });

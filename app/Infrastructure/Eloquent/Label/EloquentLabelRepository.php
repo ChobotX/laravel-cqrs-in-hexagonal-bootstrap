@@ -96,6 +96,36 @@ final readonly class EloquentLabelRepository implements LabelRepository
         );
     }
 
+    /** @return array<string, list<Label>> */
+    public function findByLabelableIds(array $labelableIds): array
+    {
+        if ($labelableIds === []) {
+            return [];
+        }
+
+        /** @var array<string, list<Label>> $map */
+        $map = [];
+
+        foreach ($labelableIds as $labelableId) {
+            $map[$labelableId] = [];
+        }
+
+        $rows = LabelModel::query()
+            ->join('label_assignments', 'labels.id', '=', 'label_assignments.label_id')
+            ->whereIn('label_assignments.labelable_id', $labelableIds)
+            ->orderByRaw('LOWER(labels.name) ASC')
+            ->select('labels.*', 'label_assignments.labelable_id')
+            ->get();
+
+        foreach ($rows as $row) {
+            /** @var string $labelableId */
+            $labelableId = $row->getAttribute('labelable_id');
+            $map[$labelableId][] = $this->labelMapper->toDomain($row);
+        }
+
+        return $map;
+    }
+
     public function assignLabel(string $labelId, string $labelableId): void
     {
         DB::table('label_assignments')->insertOrIgnore([

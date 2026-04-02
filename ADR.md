@@ -166,8 +166,8 @@ Infrastructure throws domain exceptions (implementing `DomainException`); the Pr
 
 ### Controllers must not orchestrate commands in loops
 
-When a controller dispatches commands inside a loop, it's doing sync/orchestration logic that belongs in a Domain command handler. Controllers should dispatch a single aggregate command (e.g., `SyncEntityLabelsCommand`) that encapsulates the diff and loop internally.
-**Why:** Sync logic for roles/teams/labels was duplicated across 3 controllers with permission checks mixed in. Extracting to domain handlers eliminated duplication and kept authorization in the business layer.
+Controllers must not dispatch bus messages inside loops — neither commands nor queries. Command loops indicate orchestration that belongs in a domain handler. Query loops are N+1 performance problems that should use batch queries accepting multiple IDs.
+**Why:** Sync logic for roles/teams/labels was duplicated across 3 controllers. Query loops dispatched per-user/per-team queries for list views. Both were replaced: sync logic moved to domain handlers (`SyncEntityLabelsCommand`, etc.), query loops replaced with batch queries (`GetRolesForUsersQuery`, `GetLabelsForEntitiesQuery`, `GetTeamsForUsersQuery`).
 **Enforced by:** PHPStan rule `NoBusDispatchInControllerLoopsRule`. See [tests/README.md](tests/README.md).
 
 ### Blade templates must not reference non-Presentation App classes

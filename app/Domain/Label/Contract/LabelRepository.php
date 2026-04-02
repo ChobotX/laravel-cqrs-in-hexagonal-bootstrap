@@ -27,6 +27,12 @@ interface LabelRepository
     /** @return list<Label> */
     public function findByLabelableId(string $labelableId): array;
 
+    /**
+     * @param  list<string>  $labelableIds
+     * @return array<string, list<Label>> labelableId => labels
+     */
+    public function findByLabelableIds(array $labelableIds): array;
+
     public function assignLabel(string $labelId, string $labelableId): void;
 
     public function removeAssignment(string $labelId, string $labelableId): void;

@@ -49,7 +49,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `FileStorageOnlyInFileDomainRule` | Bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\Filesystem` — forces bus usage |
 | `ControllerDependenciesRule` | Controllers may only inject `CommandBus`, `QueryBus`, `AuthenticatedUser`, `AuthorizationChecker`, `IdGenerator`, `Guard` — no domain services or infrastructure |
 | `NoHttpExceptionsInInfrastructureRule` | Infrastructure must not throw Symfony HTTP exceptions — throw domain exceptions instead, Presentation translates |
-| `NoBusDispatchInControllerLoopsRule` | Controllers must not call `CommandBus->dispatch()` inside foreach loops — extract orchestration into a domain handler |
+| `NoBusDispatchInControllerLoopsRule` | Controllers must not call `->dispatch()` inside foreach loops — use batch queries or aggregate commands instead |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

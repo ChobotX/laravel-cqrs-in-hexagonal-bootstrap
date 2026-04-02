@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
+use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\Role;
 use App\Domain\Team\Query\GetTeamTree\GetTeamTreeQuery;
 use App\Domain\Team\Query\GetTeamTree\TeamTreeNode;
@@ -75,13 +75,13 @@ final readonly class GetTeamTreeController
             }
         }
 
-        $map = [];
+        $uniqueUserIds = array_keys($userIds);
 
-        foreach (array_keys($userIds) as $userId) {
-            $map[$userId] = $this->queryBus->dispatch(new GetUserRolesQuery($userId));
+        if ($uniqueUserIds === []) {
+            return [];
         }
 
-        return $map;
+        return $this->queryBus->dispatch(new GetRolesForUsersQuery($uniqueUserIds));
     }
 
     /**
