@@ -6,9 +6,9 @@ namespace App\Presentation\Http\Controller\Web\File;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\File\Contract\FileStorage;
 use App\Domain\File\File;
 use App\Domain\File\Query\GetFileById\GetFileByIdQuery;
+use App\Domain\File\Query\GetFileContent\GetFileContentQuery;
 use Illuminate\Http\Response;
 
 #[RequiresPermission('files.storage.read')]
@@ -16,7 +16,6 @@ final readonly class ServeFileController
 {
     public function __construct(
         private QueryBus $queryBus,
-        private FileStorage $fileStorage,
     ) {}
 
     public function __invoke(string $fileId): Response
@@ -24,7 +23,8 @@ final readonly class ServeFileController
         /** @var File $file */
         $file = $this->queryBus->dispatch(new GetFileByIdQuery($fileId));
 
-        $contents = $this->fileStorage->retrieve($file->storagePath);
+        /** @var string $contents */
+        $contents = $this->queryBus->dispatch(new GetFileContentQuery($fileId));
 
         return new Response($contents, Response::HTTP_OK, [
             'Content-Type' => $file->mimeType->value,

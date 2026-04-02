@@ -40,6 +40,7 @@ Domain-level file input abstraction wrapping `\SplFileInfo` with metadata (`File
 | Query | Permission | Returns |
 |-------|-----------|---------|
 | `GetFileByIdQuery` | `files.storage.read` | `File` (throws `FileNotFoundException`) |
+| `GetFileContentQuery` | `files.storage.read` | `string` raw file bytes (throws `FileNotFoundException`) |
 | `GetFileVersionsQuery` | `files.storage.read` | `list<File>` all versions ordered by version_number |
 | `GetLatestFileVersionQuery` | `files.storage.read` | `File` latest version (throws `FileNotFoundException`) |
 
@@ -51,9 +52,10 @@ Domain-level file input abstraction wrapping `\SplFileInfo` with metadata (`File
 ## Contracts
 
 - `FileRepository` — CRUD + version queries for file database records
-- `FileStorage` — store/retrieve/delete/exists/url for actual file bytes. Infrastructure implements with Laravel's `Filesystem`.
+- `FileStorage` — store/retrieve/delete/exists/url for actual file bytes. Infrastructure implements with Laravel's `Filesystem`. **Only usable within `Domain\File` and `Infrastructure\Filesystem`** — other domains must use commands/queries through the bus.
 
 ## PHPStan Enforcement
 
 - `NoDirectFilesystemAccessRule` — bans `Storage::` facade, `storage_path()`, and PHP file functions (`fopen`, `file_get_contents`, `unlink`, etc.) outside `Infrastructure\Filesystem\`
 - `NoDirectFilesystemImportRule` — bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\Filesystem\`
+- `FileStorageOnlyInFileDomainRule` — bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\Filesystem` — forces all file operations through the CQRS bus

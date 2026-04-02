@@ -79,6 +79,8 @@ use App\Domain\File\Contract\Event\FileDeleted;
 use App\Domain\File\Contract\Event\FileStored;
 use App\Domain\File\Query\GetFileById\GetFileByIdHandler;
 use App\Domain\File\Query\GetFileById\GetFileByIdQuery;
+use App\Domain\File\Query\GetFileContent\GetFileContentHandler;
+use App\Domain\File\Query\GetFileContent\GetFileContentQuery;
 use App\Domain\File\Query\GetFileVersions\GetFileVersionsHandler;
 use App\Domain\File\Query\GetFileVersions\GetFileVersionsQuery;
 use App\Domain\File\Query\GetLatestFileVersion\GetLatestFileVersionHandler;
@@ -299,6 +301,7 @@ final class BusServiceProvider extends ServiceProvider
                 CountUnreadNotificationsQuery::class => CountUnreadNotificationsHandler::class,
                 GetNotificationPreferencesQuery::class => GetNotificationPreferencesHandler::class,
                 GetFileByIdQuery::class => GetFileByIdHandler::class,
+                GetFileContentQuery::class => GetFileContentHandler::class,
                 GetFileVersionsQuery::class => GetFileVersionsHandler::class,
                 GetLatestFileVersionQuery::class => GetLatestFileVersionHandler::class,
             ],
