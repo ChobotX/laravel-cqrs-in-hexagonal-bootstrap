@@ -30,7 +30,7 @@
                                 <img class="h-16 w-16 rounded-full object-cover ring-1 ring-gray-200"
                                      src="{{ route('files.show', $user->avatarFileId->value) }}"
                                      alt="{{ $user->name->value }}">
-                                <button class="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow transition-colors hover:bg-red-600"
+                                <button class="absolute -right-1 -top-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full bg-red-500 text-white shadow transition-colors hover:bg-red-600"
                                         data-avatar-remove-btn
                                         type="button"
                                         title="{{ __('messages.users.avatar_remove') }}"
