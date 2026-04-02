@@ -11,6 +11,7 @@ interface MemberRole {
 interface TeamMember {
     id: string;
     name: string;
+    avatarUrl: string | null;
     detailUrl: string;
     roles: MemberRole[];
 }
@@ -70,7 +71,12 @@ function renderNodeContent(node: { data: TeamNode }): string {
                 )
                 .join(' ');
 
+            const avatar = member.avatarUrl
+                ? `<img src="${member.avatarUrl}" alt="" class="org-member-avatar" />`
+                : `<span class="org-member-avatar-placeholder">${escapeHtml(member.name.charAt(0))}</span>`;
+
             return `<div class="org-member-row">
+                ${avatar}
                 <a href="${member.detailUrl}" data-testid="member-link-${member.id}" class="org-member-name" onclick="event.stopPropagation()">${escapeHtml(member.name)}</a>
                 <span class="org-role-list">${roleBadges}</span>
             </div>`;
@@ -298,6 +304,29 @@ onUnmounted(() => {
     padding: 3px 0;
     font-size: 12px;
     line-height: 1.5;
+}
+
+.org-member-avatar {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.org-member-avatar-placeholder {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-size: 9px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
 }
 
 .org-member-name {

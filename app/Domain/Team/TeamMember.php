@@ -14,5 +14,6 @@ final readonly class TeamMember
         public string $userName,
         public string $userEmail,
         public DateTimeImmutable $joinedAt,
+        public ?string $avatarFileId = null,
     ) {}
 }

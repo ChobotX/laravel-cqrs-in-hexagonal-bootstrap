@@ -123,6 +123,7 @@ final readonly class GetTeamTreeController
         return [
             'id' => $teamMember->userId,
             'name' => $teamMember->userName,
+            'avatarUrl' => $teamMember->avatarFileId !== null ? route('files.show', ['fileId' => $teamMember->avatarFileId]) : null,
             'detailUrl' => route('users.edit', ['userId' => $teamMember->userId]),
             'roles' => array_map(fn (Role $role): array => [
                 'id' => $role->id->value,

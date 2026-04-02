@@ -71,6 +71,7 @@ interface TreeMemberRole {
 interface TreeMember {
     id: string;
     name: string;
+    avatarUrl: string | null;
     detailUrl: string;
     roles: TreeMemberRole[];
 }
@@ -100,12 +101,14 @@ const mockTreeData: TreeResponse = {
                 {
                     id: 'user-1',
                     name: 'Alice',
+                    avatarUrl: '/files/avatar-1',
                     detailUrl: '/users/user-1/edit',
                     roles: [{ id: 'role-1', name: 'Developer', detailUrl: '/roles/role-1' }],
                 },
                 {
                     id: 'user-2',
                     name: 'Bob',
+                    avatarUrl: null,
                     detailUrl: '/users/user-2/edit',
                     roles: [],
                 },

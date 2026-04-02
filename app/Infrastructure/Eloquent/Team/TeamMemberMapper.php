@@ -19,6 +19,7 @@ final readonly class TeamMemberMapper
             userName: $user !== null ? $user->name : '',
             userEmail: $user !== null ? $user->email : '',
             joinedAt: new DateTimeImmutable($teamMemberModel->joined_at),
+            avatarFileId: $user?->avatar_file_id,
         );
     }
 }

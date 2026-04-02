@@ -13,6 +13,7 @@ import './auto-submit';
 import './autocomplete/autocomplete-app';
 import './team-tree/team-tree-app';
 import './team-tree-toggle';
+import './avatar-remove';
 import './notification/notification-bell-app';
 import './notification/notification-list-app';
 import './notification/notification-preferences-app';
