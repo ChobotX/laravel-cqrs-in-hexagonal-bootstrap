@@ -21,6 +21,9 @@
             <directory>app/Presentation/Http/Resource</directory>
             <directory>app/Presentation/Http/Security</directory>
         </include>
+        <exclude>
+            <file>app/Presentation/Console/Tenancy/DropSchemasCommand.php</file>
+        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

@@ -28,6 +28,8 @@
         </include>
         <exclude>
             <directory suffix="Model.php">app/Infrastructure/Eloquent</directory>
+            <directory>app/Infrastructure/Dev</directory>
+            <file>app/Presentation/Console/Tenancy/DropSchemasCommand.php</file>
         </exclude>
     </source>
     <php>

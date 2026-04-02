@@ -16,10 +16,14 @@ final class SetupCommand extends Command
 
     protected $signature = 'tenant:setup';
 
-    protected $description = 'Run landlord migrations, create default tenants, run tenant migrations, and seed';
+    protected $description = 'Drop all schemas, run landlord migrations, create default tenants, run tenant migrations, and seed';
 
     public function handle(Artisan $artisan): int
     {
+        $this->info('Dropping existing schemas...');
+        $artisan->call('tenant:drop-schemas');
+        $this->line($artisan->output());
+
         $this->info('Running landlord migrations...');
         $artisan->call('migrate', [
             '--database' => 'landlord',

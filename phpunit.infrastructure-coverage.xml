@@ -18,6 +18,7 @@
         </include>
         <exclude>
             <directory suffix="Model.php">app/Infrastructure/Eloquent</directory>
+            <directory>app/Infrastructure/Dev</directory>
         </exclude>
     </source>
     <php>
