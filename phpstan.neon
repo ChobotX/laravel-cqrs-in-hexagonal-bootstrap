@@ -147,6 +147,10 @@ services:
         class: Tests\Architecture\PHPStan\FileStorageOnlyInFileDomainRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\ControllerDependenciesRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:
