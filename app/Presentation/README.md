@@ -30,6 +30,12 @@ Controllers must not type-hint `Illuminate\Http\Request` directly. If a controll
 
 Enforced by `ControllerMustUseFormRequestRule` PHPStan rule.
 
+## Controller dependencies
+
+Controllers may only inject: `CommandBus`, `QueryBus`, `AuthenticatedUser`, `AuthorizationChecker`, `IdGenerator`, `Guard`. No domain services, repositories, or infrastructure. All data access goes through the bus. Nullable, union, and intersection types are unwrapped and checked individually.
+
+Enforced by `ControllerDependenciesRule` PHPStan rule.
+
 ## Console commands
 
 All Artisan commands must `use StrictArguments` (`App\Presentation\Console\Trait\StrictArguments`).

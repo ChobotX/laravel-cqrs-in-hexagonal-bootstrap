@@ -5,9 +5,13 @@ declare(strict_types=1);
 namespace Tests\Architecture\PHPStan;
 
 use PhpParser\Node;
+use PhpParser\Node\IntersectionType;
 use PhpParser\Node\Name;
+use PhpParser\Node\NullableType;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\UnionType;
 use PHPStan\Analyser\Scope;
+use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
@@ -46,33 +50,62 @@ final class ControllerDependenciesRule implements Rule
         $errors = [];
 
         foreach ($node->getParams() as $param) {
-            $error = $this->checkParam($param, $scope);
-
-            if ($error instanceof \PHPStan\Rules\IdentifierRuleError) {
-                $errors[] = $error;
-            }
+            $errors = [...$errors, ...$this->checkParam($param, $scope)];
         }
 
         return $errors;
     }
 
-    private function checkParam(Node\Param $param, Scope $scope): ?\PHPStan\Rules\IdentifierRuleError
+    /**
+     * @return list<IdentifierRuleError>
+     */
+    private function checkParam(Node\Param $param, Scope $scope): array
     {
-        if (! $param->type instanceof Name) {
-            return null;
+        $type = $param->type;
+
+        if (! $type instanceof Node) {
+            return [];
         }
 
-        $typeName = $scope->resolveName($param->type);
+        return $this->checkType($type, $scope);
+    }
+
+    /**
+     * @return list<IdentifierRuleError>
+     */
+    private function checkType(Node $type, Scope $scope): array
+    {
+        if ($type instanceof NullableType) {
+            return $this->checkType($type->type, $scope);
+        }
+
+        if ($type instanceof UnionType || $type instanceof IntersectionType) {
+            $errors = [];
+
+            foreach ($type->types as $inner) {
+                $errors = [...$errors, ...$this->checkType($inner, $scope)];
+            }
+
+            return $errors;
+        }
+
+        if (! $type instanceof Name) {
+            return [];
+        }
+
+        $typeName = $scope->resolveName($type);
 
         if (in_array($typeName, self::ALLOWED_TYPES, true)) {
-            return null;
+            return [];
         }
 
-        return RuleErrorBuilder::message(sprintf(
-            'Controller must not inject %s. Controllers may only depend on CommandBus, QueryBus, AuthenticatedUser, AuthorizationChecker, IdGenerator, and Guard.',
-            $typeName,
-        ))
-            ->identifier('controller.forbiddenDependency')
-            ->build();
+        return [
+            RuleErrorBuilder::message(sprintf(
+                'Controller must not inject %s. Controllers may only depend on CommandBus, QueryBus, AuthenticatedUser, AuthorizationChecker, IdGenerator, and Guard.',
+                $typeName,
+            ))
+                ->identifier('controller.forbiddenDependency')
+                ->build(),
+        ];
     }
 }
