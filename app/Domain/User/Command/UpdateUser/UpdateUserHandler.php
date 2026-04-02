@@ -7,6 +7,7 @@ namespace App\Domain\User\Command\UpdateUser;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\File\Contract\FileId;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Contract\UserRepository;
@@ -46,6 +47,7 @@ final readonly class UpdateUserHandler implements CommandHandler
             id: $existing->id,
             name: $userName,
             email: $email,
+            avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : null,
         );
 
         $this->userRepository->update($user);
@@ -55,6 +57,7 @@ final readonly class UpdateUserHandler implements CommandHandler
             name: $user->name->value,
             email: $user->email->value,
             occurredAt: new DateTimeImmutable,
+            avatarFileId: $user->avatarFileId?->value,
         ));
     }
 }

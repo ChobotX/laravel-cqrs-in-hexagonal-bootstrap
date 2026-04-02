@@ -7,6 +7,7 @@ namespace App\Domain\User\Command\CreateUser;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\File\Contract\FileId;
 use App\Domain\User\Contract\Event\UserCreated;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Contract\UserRepository;
@@ -37,6 +38,7 @@ final readonly class CreateUserHandler implements CommandHandler
             id: new UserId($command->id),
             name: $userName,
             email: $email,
+            avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : null,
         );
 
         $this->userRepository->create($user);
@@ -46,6 +48,7 @@ final readonly class CreateUserHandler implements CommandHandler
             name: $user->name->value,
             email: $user->email->value,
             occurredAt: new DateTimeImmutable,
+            avatarFileId: $user->avatarFileId?->value,
         ));
     }
 }

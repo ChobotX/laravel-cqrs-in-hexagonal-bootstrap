@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
+use App\Domain\File\Contract\FileId;
 use App\Domain\User\Contract\UserId;
 
 final readonly class User
@@ -12,5 +13,6 @@ final readonly class User
         public UserId $id,
         public UserName $name,
         public Email $email,
+        public ?FileId $avatarFileId = null,
     ) {}
 }

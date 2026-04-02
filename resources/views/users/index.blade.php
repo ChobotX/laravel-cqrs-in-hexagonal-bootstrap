@@ -34,10 +34,16 @@
                         <tr class="transition-colors hover:bg-gray-50/50">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div
-                                         class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
-                                        {{ strtoupper(substr($user->name->value, 0, 1)) }}{{ strtoupper(substr($user->name->value, strpos($user->name->value, ' ') + 1, 1)) }}
-                                    </div>
+                                    @if ($user->avatarFileId !== null)
+                                        <img alt="{{ $user->name->value }}"
+                                             class="h-9 w-9 shrink-0 rounded-full object-cover"
+                                             src="{{ route('files.show', $user->avatarFileId->value) }}">
+                                    @else
+                                        <div
+                                             class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">
+                                            {{ strtoupper(substr($user->name->value, 0, 1)) }}{{ strtoupper(substr($user->name->value, strpos($user->name->value, ' ') + 1, 1)) }}
+                                        </div>
+                                    @endif
                                     <div>
                                         <div class="flex items-center gap-1.5">
                                             <span

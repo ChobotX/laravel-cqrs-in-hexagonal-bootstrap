@@ -11,8 +11,22 @@
 
             <form class="space-y-5 p-6"
                   method="POST"
-                  action="{{ route('users.store') }}">
+                  action="{{ route('users.store') }}"
+                  enctype="multipart/form-data">
                 @csrf
+
+                <div>
+                    <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.users.avatar') }}</label>
+                    <input id="avatar"
+                           name="avatar"
+                           type="file"
+                           accept="image/*"
+                           class="text-base text-gray-500 sm:text-sm">
+                    @error('avatar')
+                        <p class="mt-1 text-base text-red-600 sm:text-sm"
+                           id="avatar-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 <div>
                     <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"

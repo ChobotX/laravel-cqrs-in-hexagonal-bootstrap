@@ -25,7 +25,7 @@ final class UserModel extends Authenticatable
 
     protected $table = 'users';
 
-    protected $fillable = ['id', 'name', 'email', 'password'];
+    protected $fillable = ['id', 'name', 'email', 'password', 'avatar_file_id'];
 
     protected $keyType = 'string';
 

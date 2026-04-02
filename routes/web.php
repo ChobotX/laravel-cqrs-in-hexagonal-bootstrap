@@ -16,6 +16,7 @@ use App\Presentation\Http\Controller\Web\Authorization\StartImpersonationControl
 use App\Presentation\Http\Controller\Web\Authorization\StopImpersonationController as WebStopImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as WebUpdateRoleController;
 use App\Presentation\Http\Controller\Web\Dashboard\DashboardController;
+use App\Presentation\Http\Controller\Web\File\ServeFileController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
 use App\Presentation\Http\Controller\Web\Notification\ShowNotificationsController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
@@ -49,6 +50,8 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/profile', UpdateProfileController::class)->name('profile.update');
     Route::get('/notifications', ShowNotificationsController::class)->name('notifications.index');
     Route::post('/logout', LogoutController::class)->name('logout');
+
+    Route::get('/files/{fileId}', ServeFileController::class)->name('files.show');
 
     Route::get('/users', ListUsersController::class)->name('users.index');
     Route::get('/users/create', ShowCreateUserController::class)->name('users.create');

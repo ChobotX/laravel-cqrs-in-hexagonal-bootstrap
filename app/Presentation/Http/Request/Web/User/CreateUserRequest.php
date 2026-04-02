@@ -17,15 +17,17 @@ final class CreateUserRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
         ];
     }
 
-    public function toCommand(): CreateUserCommand
+    public function toCommand(?string $avatarFileId = null): CreateUserCommand
     {
         return new CreateUserCommand(
             id: Str::uuid()->toString(),
             name: $this->string('name')->toString(),
             email: $this->string('email')->toString(),
+            avatarFileId: $avatarFileId,
         );
     }
 }

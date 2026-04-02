@@ -14,6 +14,7 @@ final readonly class UserUpdated implements DomainEvent
         public string $name,
         public string $email,
         public DateTimeImmutable $occurredAt,
+        public ?string $avatarFileId = null,
     ) {}
 
     public function occurredAt(): DateTimeImmutable

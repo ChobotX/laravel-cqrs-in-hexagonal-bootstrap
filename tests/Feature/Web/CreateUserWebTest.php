@@ -3,7 +3,9 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 it('shows the create user form', function (): void {
     $this->seedSuperAdminRole();
@@ -81,6 +83,61 @@ it('validates password confirmation', function (): void {
             'password' => 'secret1234',
             'password_confirmation' => 'mismatch',
         ])->assertSessionHasErrors('password');
+});
+
+it('creates a user with avatar', function (): void {
+    Storage::fake('files');
+
+    $this->seedSuperAdminRole();
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440034',
+        'name' => 'Admin User',
+        'email' => 'admin-avatar@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($user->id);
+
+    $file = UploadedFile::fake()->image('avatar.jpg', 100, 100);
+
+    $this->actingAs($user)
+        ->post('/users', [
+            'name' => 'Avatar User',
+            'email' => 'avatar-user@example.com',
+            'password' => 'secret1234',
+            'password_confirmation' => 'secret1234',
+            'avatar' => $file,
+        ])->assertRedirect('/users')
+        ->assertSessionHas('success');
+
+    $created = UserModel::where('email', 'avatar-user@example.com')->first();
+    expect($created->avatar_file_id)->not->toBeNull();
+
+    $this->assertDatabaseHas('files', [
+        'id' => $created->avatar_file_id,
+        'namespace' => 'user-avatars',
+    ]);
+});
+
+it('creates a user without avatar', function (): void {
+    $this->seedSuperAdminRole();
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440035',
+        'name' => 'Admin User',
+        'email' => 'admin-noavatar@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($user->id);
+
+    $this->actingAs($user)
+        ->post('/users', [
+            'name' => 'No Avatar User',
+            'email' => 'no-avatar@example.com',
+            'password' => 'secret1234',
+            'password_confirmation' => 'secret1234',
+        ])->assertRedirect('/users');
+
+    $created = UserModel::where('email', 'no-avatar@example.com')->first();
+    expect($created->avatar_file_id)->toBeNull();
 });
 
 it('redirects unauthenticated user', function (): void {

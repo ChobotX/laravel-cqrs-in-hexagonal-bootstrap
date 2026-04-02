@@ -14,5 +14,6 @@ final readonly class UpdateProfileCommand implements Command
         public string $userId,
         public string $name,
         public ?string $rawPassword,
+        public ?string $avatarFileId = null,
     ) {}
 }

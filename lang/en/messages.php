@@ -62,6 +62,8 @@ return [
         'no_role' => 'No role',
         'delete_confirm_title' => 'Delete User',
         'delete_confirm_message' => 'Are you sure you want to delete :name? This action cannot be undone.',
+        'avatar' => 'Avatar',
+        'avatar_remove' => 'Remove avatar',
         'empty' => 'No users found.',
         'roles' => 'Roles',
         'roles_subtitle' => 'Assign roles to this user',

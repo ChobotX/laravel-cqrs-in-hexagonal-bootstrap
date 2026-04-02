@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
+use App\Infrastructure\Eloquent\File\FileModel;
 use App\Infrastructure\Eloquent\Team\TeamMemberModel;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 it('shows the edit form pre-filled', function (): void {
@@ -701,4 +704,121 @@ it('removes labels via form submission when deselected', function (): void {
         'label_id' => '550e8400-e29b-41d4-a716-446655440211',
         'labelable_id' => '550e8400-e29b-41d4-a716-446655440203',
     ]);
+});
+
+it('uploads avatar via update form', function (): void {
+    Storage::fake('files');
+
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440300',
+        'name' => 'Admin Avatar',
+        'email' => 'admin-avatar@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440301',
+        'name' => 'Target Avatar',
+        'email' => 'target-avatar@example.com',
+    ]);
+
+    $file = UploadedFile::fake()->image('avatar.png', 100, 100);
+
+    $this->actingAs($admin)
+        ->put('/users/550e8400-e29b-41d4-a716-446655440301', [
+            'name' => 'Target Avatar',
+            'email' => 'target-avatar@example.com',
+            'avatar' => $file,
+        ])->assertRedirect();
+
+    $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440301');
+    expect($updated->avatar_file_id)->not->toBeNull();
+
+    $this->assertDatabaseHas('files', [
+        'id' => $updated->avatar_file_id,
+        'namespace' => 'user-avatars',
+    ]);
+});
+
+it('removes avatar via update form', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440302',
+        'name' => 'Admin Rm Avatar',
+        'email' => 'admin-rmavatar@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $fileId = Str::uuid()->toString();
+    FileModel::create([
+        'id' => $fileId,
+        'namespace' => 'user-avatars',
+        'original_name' => 'old-avatar.png',
+        'storage_path' => 'user-avatars/old.png',
+        'mime_type' => 'image/png',
+        'size_in_bytes' => 100,
+        'version_number' => 1,
+        'uploaded_by' => $admin->id,
+        'uploaded_at' => now(),
+    ]);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440303',
+        'name' => 'Target Rm Avatar',
+        'email' => 'target-rmavatar@example.com',
+        'avatar_file_id' => $fileId,
+    ]);
+
+    $this->actingAs($admin)
+        ->put('/users/550e8400-e29b-41d4-a716-446655440303', [
+            'name' => 'Target Rm Avatar',
+            'email' => 'target-rmavatar@example.com',
+            'remove_avatar' => '1',
+        ])->assertRedirect();
+
+    $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440303');
+    expect($updated->avatar_file_id)->toBeNull();
+});
+
+it('preserves avatar when no change submitted', function (): void {
+    $this->seedSuperAdminRole();
+    $admin = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440304',
+        'name' => 'Admin Keep Avatar',
+        'email' => 'admin-keepavatar@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+    $this->assignSuperAdmin($admin->id);
+
+    $fileId = Str::uuid()->toString();
+    FileModel::create([
+        'id' => $fileId,
+        'namespace' => 'user-avatars',
+        'original_name' => 'keep-avatar.png',
+        'storage_path' => 'user-avatars/keep.png',
+        'mime_type' => 'image/png',
+        'size_in_bytes' => 100,
+        'version_number' => 1,
+        'uploaded_by' => $admin->id,
+        'uploaded_at' => now(),
+    ]);
+
+    UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440305',
+        'name' => 'Target Keep Avatar',
+        'email' => 'target-keepavatar@example.com',
+        'avatar_file_id' => $fileId,
+    ]);
+
+    $this->actingAs($admin)
+        ->put('/users/550e8400-e29b-41d4-a716-446655440305', [
+            'name' => 'Target Keep Avatar Updated',
+            'email' => 'target-keepavatar@example.com',
+        ])->assertRedirect();
+
+    $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440305');
+    expect($updated->avatar_file_id)->toBe($fileId);
 });

@@ -7,10 +7,12 @@ namespace Database\Seeders;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
+use App\Infrastructure\Eloquent\File\FileModel;
 use App\Infrastructure\Eloquent\Label\LabelModel;
 use App\Infrastructure\Eloquent\Team\TeamMemberModel;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -58,6 +60,7 @@ final class TenantSeeder extends Seeder
         $this->seedBrandTeam($teamLeaderRole->id, $teamMemberRole->id, $externistRole->id);
 
         $this->seedCrossTeamMembers();
+        $this->seedAvatars();
         $this->seedLabels();
         $this->call(NotificationSeeder::class);
     }
@@ -302,6 +305,50 @@ final class TenantSeeder extends Seeder
 
         // Yuki Tanaka (UX Research) also in Brand & Identity — same hierarchy level
         $this->addTeamMember($this->userIds['yuki.tanaka@test.com'], self::TEAM_BRAND_ID);
+    }
+
+    private function seedAvatars(): void
+    {
+        $usersWithAvatars = [
+            'admin@test.com',
+            'eva.collins@test.com',
+            'frank.davis@test.com',
+            'grace.miller@test.com',
+            'henry.park@test.com',
+            'irene.walsh@test.com',
+            'karen.lopez@test.com',
+            'liam.chen@test.com',
+            'sarah.blake@test.com',
+            'tom.nguyen@test.com',
+            'xander.moore@test.com',
+            'beth.morgan@test.com',
+            'carlos.diaz@test.com',
+        ];
+
+        $filesystem = app(FilesystemFactory::class)->disk('files');
+        $pixel = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==');
+
+        foreach ($usersWithAvatars as $email) {
+            $userId = $this->userIds[$email];
+            $fileId = Str::uuid()->toString();
+            $storagePath = sprintf('user-avatars/%s.png', $fileId);
+
+            $filesystem->put($storagePath, $pixel);
+
+            FileModel::create([
+                'id' => $fileId,
+                'namespace' => 'user-avatars',
+                'original_name' => sprintf('%s-avatar.png', explode('@', $email)[0]),
+                'storage_path' => $storagePath,
+                'mime_type' => 'image/png',
+                'size_in_bytes' => strlen($pixel),
+                'version_number' => 1,
+                'uploaded_by' => $userId,
+                'uploaded_at' => now(),
+            ]);
+
+            UserModel::where('id', $userId)->update(['avatar_file_id' => $fileId]);
+        }
     }
 
     private function seedLabels(): void

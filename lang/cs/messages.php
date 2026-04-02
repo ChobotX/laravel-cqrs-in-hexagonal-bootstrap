@@ -62,6 +62,8 @@ return [
         'no_role' => 'Bez role',
         'delete_confirm_title' => 'Smazat uživatele',
         'delete_confirm_message' => 'Opravdu chcete smazat uživatele :name? Tuto akci nelze vrátit zpět.',
+        'avatar' => 'Avatar',
+        'avatar_remove' => 'Odstranit avatar',
         'empty' => 'Nebyli nalezeni žádní uživatelé.',
         'roles' => 'Role',
         'roles_subtitle' => 'Přiřadit role tomuto uživateli',

@@ -79,6 +79,7 @@ final readonly class EloquentUserRepository implements UserRepository
             $userModel->id = $user->id->value;
             $userModel->name = $user->name->value;
             $userModel->email = $user->email->value;
+            $userModel->avatar_file_id = $user->avatarFileId?->value;
             $userModel->save();
         } catch (UniqueConstraintViolationException) {
             throw new EmailAlreadyExistsException($user->email->value);
@@ -91,6 +92,7 @@ final readonly class EloquentUserRepository implements UserRepository
             $userModel = UserModel::findOrFail($user->id->value);
             $userModel->name = $user->name->value;
             $userModel->email = $user->email->value;
+            $userModel->avatar_file_id = $user->avatarFileId?->value;
             $userModel->save();
         } catch (UniqueConstraintViolationException) {
             throw new EmailAlreadyExistsException($user->email->value);

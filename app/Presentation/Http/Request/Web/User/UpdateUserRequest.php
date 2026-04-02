@@ -21,15 +21,18 @@ final class UpdateUserRequest extends FormRequest
             'roles.*' => ['string', 'uuid'],
             'labels' => ['sometimes', 'array'],
             'labels.*' => ['string', 'uuid'],
+            'avatar' => ['nullable', 'image', 'max:2048'],
+            'remove_avatar' => ['sometimes', 'boolean'],
         ];
     }
 
-    public function toCommand(): UpdateUserCommand
+    public function toCommand(?string $avatarFileId = null): UpdateUserCommand
     {
         return new UpdateUserCommand(
             id: $this->routeString('userId'),
             name: $this->string('name')->toString(),
             email: $this->string('email')->toString(),
+            avatarFileId: $avatarFileId,
         );
     }
 }

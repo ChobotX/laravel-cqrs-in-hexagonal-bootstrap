@@ -11,9 +11,49 @@
 
             <form class="space-y-5 p-6"
                   method="POST"
-                  action="{{ route('users.update', $user->id) }}">
+                  action="{{ route('users.update', $user->id) }}"
+                  enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
+
+                <div>
+                    <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.users.avatar') }}</label>
+                    <div class="flex items-center gap-4">
+                        @if ($user->avatarFileId !== null)
+                            <img alt="{{ $user->name->value }}"
+                                 class="h-16 w-16 rounded-full object-cover"
+                                 src="{{ route('files.show', $user->avatarFileId->value) }}">
+                            <div class="flex flex-col gap-1">
+                                <input id="avatar"
+                                       name="avatar"
+                                       type="file"
+                                       accept="image/*"
+                                       class="text-base text-gray-500 sm:text-sm">
+                                <label class="inline-flex items-center gap-1.5 text-base text-gray-500 sm:text-sm">
+                                    <input name="remove_avatar"
+                                           type="checkbox"
+                                           value="1"
+                                           class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                                    {{ __('messages.users.avatar_remove') }}
+                                </label>
+                            </div>
+                        @else
+                            <div
+                                 class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+                                {{ strtoupper(substr($user->name->value, 0, 1)) }}{{ strtoupper(substr($user->name->value, strpos($user->name->value, ' ') + 1, 1)) }}
+                            </div>
+                            <input id="avatar"
+                                   name="avatar"
+                                   type="file"
+                                   accept="image/*"
+                                   class="text-base text-gray-500 sm:text-sm">
+                        @endif
+                    </div>
+                    @error('avatar')
+                        <p class="mt-1 text-base text-red-600 sm:text-sm"
+                           id="avatar-error">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 <div>
                     <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"

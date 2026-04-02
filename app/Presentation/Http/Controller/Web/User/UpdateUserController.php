@@ -14,6 +14,10 @@ use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserComman
 use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
+use App\Domain\File\Command\StoreFile\StoreFileCommand;
+use App\Domain\File\FileName;
+use App\Domain\File\FileUpload;
+use App\Domain\File\MimeType;
 use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Command\RemoveLabel\RemoveLabelCommand;
 use App\Domain\Label\Label;
@@ -23,12 +27,18 @@ use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\Team\Team;
 use App\Domain\User\Command\SetPassword\SetPasswordCommand;
+use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
+use App\Domain\User\User;
 use App\Presentation\Http\Request\Web\User\UpdateUserRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 
 #[RequiresPermission('users.list.update')]
 final readonly class UpdateUserController
 {
+    private const string AVATAR_NAMESPACE = 'user-avatars';
+
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
@@ -38,7 +48,8 @@ final readonly class UpdateUserController
 
     public function __invoke(UpdateUserRequest $updateUserRequest): RedirectResponse
     {
-        $updateUserCommand = $updateUserRequest->toCommand();
+        $avatarFileId = $this->resolveAvatarFileId($updateUserRequest);
+        $updateUserCommand = $updateUserRequest->toCommand($avatarFileId);
 
         $this->commandBus->dispatch($updateUserCommand);
 
@@ -139,5 +150,38 @@ final readonly class UpdateUserController
         foreach ($toRemove as $labelId) {
             $this->commandBus->dispatch(new RemoveLabelCommand($labelId, $targetUserId));
         }
+    }
+
+    private function resolveAvatarFileId(UpdateUserRequest $updateUserRequest): ?string
+    {
+        if ($updateUserRequest->boolean('remove_avatar')) {
+            return null;
+        }
+
+        $file = $updateUserRequest->file('avatar');
+
+        if ($file instanceof UploadedFile) {
+            $fileId = Str::uuid()->toString();
+            $userId = $updateUserRequest->routeString('userId');
+
+            $this->commandBus->dispatch(new StoreFileCommand(
+                id: $fileId,
+                namespace: self::AVATAR_NAMESPACE,
+                uploadedBy: $userId,
+                upload: new FileUpload(
+                    originalName: new FileName($file->getClientOriginalName()),
+                    mimeType: new MimeType($file->getMimeType() ?? 'image/jpeg'),
+                    sizeInBytes: (int) $file->getSize(),
+                    file: $file,
+                ),
+            ));
+
+            return $fileId;
+        }
+
+        /** @var User $currentUser */
+        $currentUser = $this->queryBus->dispatch(new GetUserByIdQuery($updateUserRequest->routeString('userId')));
+
+        return $currentUser->avatarFileId?->value;
     }
 }
