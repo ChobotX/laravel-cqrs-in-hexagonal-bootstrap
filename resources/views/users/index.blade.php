@@ -35,9 +35,9 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
                                     @if ($user->avatarFileId !== null)
-                                        <img alt="{{ $user->name->value }}"
-                                             class="h-9 w-9 shrink-0 rounded-full object-cover"
-                                             src="{{ route('files.show', $user->avatarFileId->value) }}">
+                                        <img class="h-9 w-9 shrink-0 rounded-full object-cover"
+                                             src="{{ route('files.show', $user->avatarFileId->value) }}"
+                                             alt="{{ $user->name->value }}">
                                     @else
                                         <div
                                              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-700">

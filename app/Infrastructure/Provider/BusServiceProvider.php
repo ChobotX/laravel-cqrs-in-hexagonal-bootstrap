@@ -73,6 +73,8 @@ use App\Domain\Authorization\Query\SearchRoles\SearchRolesHandler;
 use App\Domain\Authorization\Query\SearchRoles\SearchRolesQuery;
 use App\Domain\File\Command\DeleteFile\DeleteFileCommand;
 use App\Domain\File\Command\DeleteFile\DeleteFileHandler;
+use App\Domain\File\Command\StoreAvatar\StoreAvatarCommand;
+use App\Domain\File\Command\StoreAvatar\StoreAvatarHandler;
 use App\Domain\File\Command\StoreFile\StoreFileCommand;
 use App\Domain\File\Command\StoreFile\StoreFileHandler;
 use App\Domain\File\Contract\Event\FileDeleted;
@@ -257,6 +259,7 @@ final class BusServiceProvider extends ServiceProvider
                 MigrateTenantCommand::class => MigrateTenantHandler::class,
                 MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
                 StoreFileCommand::class => StoreFileHandler::class,
+                StoreAvatarCommand::class => StoreAvatarHandler::class,
                 DeleteFileCommand::class => DeleteFileHandler::class,
             ],
             middleware: [

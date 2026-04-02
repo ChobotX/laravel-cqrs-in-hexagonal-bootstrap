@@ -61,7 +61,7 @@ final class NoDirectFilesystemAccessRule implements Rule
     {
         $file = $scope->getFile();
 
-        if (! str_contains($file, '/app/') || str_contains($file, '/Infrastructure/Filesystem/')) {
+        if (! str_contains($file, '/app/') || str_contains($file, '/Infrastructure/Filesystem/') || str_contains($file, '/Infrastructure/Image/')) {
             return [];
         }
 

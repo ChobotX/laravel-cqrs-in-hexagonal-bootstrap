@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Contract\Translation\Translator;
 use App\Domain\File\Exception\FileNotFoundException;
 use App\Domain\File\Exception\FileStorageException;
+use App\Domain\File\Exception\ImageProcessingException;
 use App\Domain\File\Exception\InvalidFileIdException;
 use App\Domain\File\Exception\InvalidFileNameException;
 use App\Domain\File\Exception\InvalidFileNamespaceException;
@@ -91,4 +92,13 @@ it('FileStorageException has status 422 and translates', function (): void {
         ->and($e->getMessage())->toContain('docs/file.pdf')
         ->and($e->userMessage(fileTestTranslator()))->toBe('messages.exceptions.file_storage_error:')
         ->and($e->path)->toBe('docs/file.pdf');
+});
+
+it('ImageProcessingException has status 422 and translates', function (): void {
+    $e = new ImageProcessingException('resize failed');
+
+    expect($e->statusCode())->toBe(422)
+        ->and($e->getMessage())->toContain('resize failed')
+        ->and($e->userMessage(fileTestTranslator()))->toBe('messages.exceptions.image_processing_error:')
+        ->and($e->detail)->toBe('resize failed');
 });

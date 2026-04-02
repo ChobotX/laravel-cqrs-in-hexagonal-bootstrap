@@ -14,7 +14,7 @@ use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserComman
 use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Role;
-use App\Domain\File\Command\StoreFile\StoreFileCommand;
+use App\Domain\File\Command\StoreAvatar\StoreAvatarCommand;
 use App\Domain\File\FileName;
 use App\Domain\File\FileUpload;
 use App\Domain\File\MimeType;
@@ -162,12 +162,11 @@ final readonly class UpdateUserController
 
         if ($file instanceof UploadedFile) {
             $fileId = Str::uuid()->toString();
-            $userId = $updateUserRequest->routeString('userId');
 
-            $this->commandBus->dispatch(new StoreFileCommand(
+            $this->commandBus->dispatch(new StoreAvatarCommand(
                 id: $fileId,
                 namespace: self::AVATAR_NAMESPACE,
-                uploadedBy: $userId,
+                uploadedBy: $updateUserRequest->routeString('userId'),
                 upload: new FileUpload(
                     originalName: new FileName($file->getClientOriginalName()),
                     mimeType: new MimeType($file->getMimeType() ?? 'image/jpeg'),

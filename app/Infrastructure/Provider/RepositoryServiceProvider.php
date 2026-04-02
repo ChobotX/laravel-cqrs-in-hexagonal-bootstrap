@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Provider;
 
 use App\Contract\IdGenerator;
+use App\Contract\Image\ImageProcessor;
 use App\Contract\Notification\NotificationBroadcaster;
 use App\Contract\Notification\NotificationChannelSenderRegistry;
 use App\Contract\Notification\RecipientResolver;
@@ -30,6 +31,7 @@ use App\Infrastructure\Eloquent\Team\EloquentTeamMemberRepository;
 use App\Infrastructure\Eloquent\Team\EloquentTeamRepository;
 use App\Infrastructure\Eloquent\User\EloquentUserRepository;
 use App\Infrastructure\Filesystem\LaravelFileStorage;
+use App\Infrastructure\Image\GdImageProcessor;
 use App\Infrastructure\Notification\ChannelSenderRegistry;
 use App\Infrastructure\Notification\EloquentRecipientResolver;
 use App\Infrastructure\Notification\EmailNotificationSender;
@@ -62,6 +64,7 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(FileStorage::class, fn (): LaravelFileStorage => new LaravelFileStorage(
             $this->app->make(FilesystemFactory::class)->disk('files'),
         ));
+        $this->app->bind(ImageProcessor::class, GdImageProcessor::class);
         $this->app->bind(IdGenerator::class, UuidIdGenerator::class);
     }
 }

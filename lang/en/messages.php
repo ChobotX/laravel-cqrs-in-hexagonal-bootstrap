@@ -257,6 +257,7 @@ return [
         'invalid_file_version' => 'Value [:value] is not a valid file version.',
         'file_not_found' => 'File with id [:id] not found.',
         'file_storage_error' => 'File storage operation failed.',
+        'image_processing_error' => 'Image processing failed.',
     ],
 
     'pagination' => [

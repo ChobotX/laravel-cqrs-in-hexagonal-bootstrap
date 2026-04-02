@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Web\User;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Contract\Auth\AuthenticatedUser;
-use App\Domain\File\Command\StoreFile\StoreFileCommand;
+use App\Domain\File\Command\StoreAvatar\StoreAvatarCommand;
 use App\Domain\File\FileName;
 use App\Domain\File\FileUpload;
 use App\Domain\File\MimeType;
@@ -49,7 +49,7 @@ final readonly class CreateUserController
 
         $fileId = Str::uuid()->toString();
 
-        $this->commandBus->dispatch(new StoreFileCommand(
+        $this->commandBus->dispatch(new StoreAvatarCommand(
             id: $fileId,
             namespace: self::AVATAR_NAMESPACE,
             uploadedBy: $this->authenticatedUser->id() ?? '',

@@ -249,6 +249,7 @@ return [
         'invalid_file_version' => 'Hodnota [:value] není platná verze souboru.',
         'file_not_found' => 'Soubor s id [:id] nebyl nalezen.',
         'file_storage_error' => 'Operace úložiště souborů selhala.',
+        'image_processing_error' => 'Zpracování obrázku selhalo.',
     ],
 
     'pagination' => [

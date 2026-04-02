@@ -21,7 +21,7 @@ final class UpdateUserRequest extends FormRequest
             'roles.*' => ['string', 'uuid'],
             'labels' => ['sometimes', 'array'],
             'labels.*' => ['string', 'uuid'],
-            'avatar' => ['nullable', 'image', 'max:2048'],
+            'avatar' => ['nullable', 'image', 'max:10240'],
             'remove_avatar' => ['sometimes', 'boolean'],
         ];
     }
