@@ -16,6 +16,7 @@ use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
 final class TenantSeeder extends Seeder
@@ -309,39 +310,45 @@ final class TenantSeeder extends Seeder
 
     private function seedAvatars(): void
     {
+        // Deterministic avatar IDs from i.pravatar.cc (1-70 available)
         $usersWithAvatars = [
-            'admin@test.com',
-            'eva.collins@test.com',
-            'frank.davis@test.com',
-            'grace.miller@test.com',
-            'henry.park@test.com',
-            'irene.walsh@test.com',
-            'karen.lopez@test.com',
-            'liam.chen@test.com',
-            'sarah.blake@test.com',
-            'tom.nguyen@test.com',
-            'xander.moore@test.com',
-            'beth.morgan@test.com',
-            'carlos.diaz@test.com',
+            'admin@test.com' => 11,
+            'eva.collins@test.com' => 32,
+            'frank.davis@test.com' => 12,
+            'grace.miller@test.com' => 25,
+            'henry.park@test.com' => 52,
+            'irene.walsh@test.com' => 44,
+            'karen.lopez@test.com' => 45,
+            'liam.chen@test.com' => 53,
+            'sarah.blake@test.com' => 47,
+            'tom.nguyen@test.com' => 14,
+            'xander.moore@test.com' => 55,
+            'beth.morgan@test.com' => 38,
+            'carlos.diaz@test.com' => 59,
         ];
 
         $filesystem = app(FilesystemFactory::class)->disk('files');
-        $pixel = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==');
 
-        foreach ($usersWithAvatars as $email) {
+        foreach ($usersWithAvatars as $email => $avatarId) {
+            $imageBytes = $this->downloadAvatar($avatarId);
+
+            if ($imageBytes === null) {
+                continue;
+            }
+
             $userId = $this->userIds[$email];
             $fileId = Str::uuid()->toString();
-            $storagePath = sprintf('user-avatars/%s.png', $fileId);
+            $storagePath = sprintf('user-avatars/%s.jpg', $fileId);
 
-            $filesystem->put($storagePath, $pixel);
+            $filesystem->put($storagePath, $imageBytes);
 
             FileModel::create([
                 'id' => $fileId,
                 'namespace' => 'user-avatars',
-                'original_name' => sprintf('%s-avatar.png', explode('@', $email)[0]),
+                'original_name' => sprintf('%s-avatar.jpg', explode('@', $email)[0]),
                 'storage_path' => $storagePath,
-                'mime_type' => 'image/png',
-                'size_in_bytes' => strlen($pixel),
+                'mime_type' => 'image/jpeg',
+                'size_in_bytes' => strlen($imageBytes),
                 'version_number' => 1,
                 'uploaded_by' => $userId,
                 'uploaded_at' => now(),
@@ -349,6 +356,17 @@ final class TenantSeeder extends Seeder
 
             UserModel::where('id', $userId)->update(['avatar_file_id' => $fileId]);
         }
+    }
+
+    private function downloadAvatar(int $avatarId): ?string
+    {
+        $response = Http::timeout(10)->get(sprintf('https://i.pravatar.cc/150?img=%d', $avatarId));
+
+        if ($response->failed()) {
+            return null;
+        }
+
+        return $response->body();
     }
 
     private function seedLabels(): void
