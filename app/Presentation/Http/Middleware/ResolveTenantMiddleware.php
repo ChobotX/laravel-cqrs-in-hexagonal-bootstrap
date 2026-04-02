@@ -7,11 +7,13 @@ namespace App\Presentation\Http\Middleware;
 use App\Contract\Http\HttpStatus;
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\Tenancy\Exception\InactiveTenantException;
+use App\Domain\Tenancy\Exception\TenantNotFoundException;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final readonly class ResolveTenantMiddleware
 {
@@ -46,12 +48,16 @@ final readonly class ResolveTenantMiddleware
 
         try {
             $this->tenantBootstrapper->bootstrapByDomain($subdomain);
-        } catch (NotFoundHttpException) {
+        } catch (TenantNotFoundException|InactiveTenantException) {
             abort(HttpStatus::NOT_FOUND);
         }
 
+        $tenantSlug = $this->tenantContext->currentTenantSlug();
+
         Context::add('tenant_id', $this->tenantContext->currentTenantId());
-        Context::add('tenant_slug', $this->tenantContext->currentTenantSlug());
+        Context::add('tenant_slug', $tenantSlug);
+
+        View::share('tenantSlug', $tenantSlug);
 
         return $next($request);
     }

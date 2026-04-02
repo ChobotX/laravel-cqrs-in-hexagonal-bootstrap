@@ -158,6 +158,24 @@ All file operations (store, retrieve, delete) must go through `App\Domain\File\C
 **Why:** Prevents scattered filesystem calls across the codebase, ensures every file has a database record (who uploaded, when, where), and makes swapping storage backends (local ↔ S3) a config change. Versioning prevents silent data loss.
 **Enforced by:** PHPStan rules `NoDirectFilesystemAccessRule` and `NoDirectFilesystemImportRule`. See [app/Domain/File/README.md](app/Domain/File/README.md).
 
+### Infrastructure must not throw HTTP exceptions
+
+Infrastructure throws domain exceptions (implementing `DomainException`); the Presentation layer catches them and translates to HTTP responses. This prevents Infrastructure from making decisions about HTTP semantics.
+**Why:** An `is_active` check in `TenantResolver` threw `NotFoundHttpException` — a business rule + HTTP decision in Infrastructure. Moving to domain exceptions keeps the concern boundary clean.
+**Enforced by:** PHPStan rule `NoHttpExceptionsInInfrastructureRule`, PHPat rule `testInfrastructureDoesNotDependOnHttpExceptions`. See [tests/README.md](tests/README.md).
+
+### Controllers must not orchestrate commands in loops
+
+When a controller dispatches commands inside a loop, it's doing sync/orchestration logic that belongs in a Domain command handler. Controllers should dispatch a single aggregate command (e.g., `SyncEntityLabelsCommand`) that encapsulates the diff and loop internally.
+**Why:** Sync logic for roles/teams/labels was duplicated across 3 controllers with permission checks mixed in. Extracting to domain handlers eliminated duplication and kept authorization in the business layer.
+**Enforced by:** PHPStan rule `NoBusDispatchInControllerLoopsRule`. See [tests/README.md](tests/README.md).
+
+### Blade templates must not reference non-Presentation App classes
+
+Blade templates may only reference `App\Presentation\*` types. All other data (authenticated user, tenant slug, access scopes) must be passed from controllers or shared via middleware using `View::share`.
+**Why:** Views referencing `App\Contract`, `App\Domain`, or `App\Application` types bypass the Presentation boundary. Service provider `View::share` in `AuthorizationServiceProvider` and middleware share common view data.
+**Enforced by:** Shell lint `bin/lint-blade-layers.sh`. See [tests/README.md](tests/README.md).
+
 ### Domain\*\Contract pattern for cross-domain contracts
 
 Each bounded context exposes a `Contract` sub-namespace (`Domain/{Context}/Contract/`) containing types that may be imported cross-domain: value object IDs, repository interfaces, domain events, and service contracts. Internal types (handlers, exceptions, entities, non-ID value objects) are not importable cross-domain. The top-level `App\Contract` layer retains only truly shared infrastructure contracts (Command/Query/Event interfaces, Auth, Tenancy, etc.).

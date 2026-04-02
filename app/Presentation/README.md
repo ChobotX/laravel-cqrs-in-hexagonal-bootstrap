@@ -57,9 +57,18 @@ Controllers may use `AuthorizationChecker::can()` for binary UI visibility check
 - `testPresentationDoesNotDependOnTeamMembershipChecker` — blocks service import
 - `testPresentationDoesNotDependOnAccessContext` — blocks `AccessContext`/`AccessScope` imports
 
+## Controller command dispatch
+
+Controllers must not dispatch commands inside loops. Looping over `CommandBus->dispatch()` is orchestration logic that belongs in a Domain command handler. Instead, dispatch a single aggregate command (e.g., `SyncEntityLabelsCommand`) that encapsulates the diff and iteration internally.
+
+Query dispatches in loops are allowed — controllers may build data maps by querying per-item for view assembly.
+
+Enforced by PHPStan rule `NoBusDispatchInControllerLoopsRule`.
+
 ## View rules
 
 - **Dumb templates** — Blade views must contain zero business logic. All computation, formatting, and decision-making happens in controllers or dedicated view models before data reaches the template.
+- **No non-Presentation references** — Blade templates must not reference any `App\*` namespace except `App\Presentation\*`. All data from other layers (authenticated user, tenant slug, access scopes) must be passed from controllers or shared via middleware using `View::share`. Enforced by `bin/lint-blade-layers.sh`.
 - **Backend over frontend** — prefer server-side calculations over client-side. Templates receive ready-to-render data.
 - **Reusable components** — split views into small, single-responsibility Blade partials/components (`resources/views/components/`). Follow SRP and DRY — extract shared UI into components rather than duplicating markup across pages.
 - **Blade formatting** — all `.blade.php` files must pass `blade-formatter --check-formatted`. Config in `.bladeformatterrc.json` enforces: 4-space indent, 120-char line width, force-aligned attribute wrapping (min 2 attrs), code-guide HTML attribute ordering, Tailwind class sorting, no multiple empty lines. Run `composer format:blade` to auto-fix.

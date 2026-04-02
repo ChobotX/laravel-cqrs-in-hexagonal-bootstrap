@@ -50,6 +50,7 @@
         "lint:blade": "bash bin/lint-blade-no-js.sh",
         "lint:blade:a11y": "bash bin/lint-blade-a11y.sh",
         "lint:blade:url": "bash bin/lint-blade-url.sh",
+        "lint:blade:layers": "bash bin/lint-blade-layers.sh",
         "format:blade": "npx blade-formatter --write resources/views/**/*.blade.php",
         "format:blade:check": "npx blade-formatter --check-formatted resources/views/**/*.blade.php",
         "lint:ts": "npx biome check resources/js/",

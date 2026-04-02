@@ -98,7 +98,7 @@
                     <select class="rounded-lg border-gray-300 px-3 py-2 text-sm focus:border-indigo-600 focus:ring-indigo-600"
                             id="override-scope"
                             name="scope">
-                        @foreach (\App\Contract\Authorization\AccessScope::cases() as $scope)
+                        @foreach ($accessScopes as $scope)
                             <option value="{{ $scope->value }}">{{ __("messages.scopes.{$scope->value}") }}</option>
                         @endforeach
                     </select>

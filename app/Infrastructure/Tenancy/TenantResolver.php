@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
+use App\Domain\Tenancy\Exception\InactiveTenantException;
+use App\Domain\Tenancy\Exception\TenantNotFoundException;
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 final readonly class TenantResolver
 {
@@ -17,13 +18,13 @@ final readonly class TenantResolver
             ->first();
 
         if ($domainModel === null || ! $domainModel->tenant instanceof TenantModel) {
-            throw new NotFoundHttpException(sprintf('Tenant not found for domain "%s".', $subdomain));
+            throw new TenantNotFoundException($subdomain);
         }
 
         $tenant = $domainModel->tenant;
 
         if (! $tenant->is_active) {
-            throw new NotFoundHttpException(sprintf('Tenant "%s" is inactive.', $subdomain));
+            throw new InactiveTenantException($subdomain);
         }
 
         return $tenant;
@@ -34,11 +35,11 @@ final readonly class TenantResolver
         $tenant = TenantModel::where('slug', $slug)->first();
 
         if (! $tenant instanceof TenantModel) {
-            throw new NotFoundHttpException(sprintf('Tenant not found for slug "%s".', $slug));
+            throw new TenantNotFoundException($slug);
         }
 
         if (! $tenant->is_active) {
-            throw new NotFoundHttpException(sprintf('Tenant "%s" is inactive.', $slug));
+            throw new InactiveTenantException($slug);
         }
 
         return $tenant;

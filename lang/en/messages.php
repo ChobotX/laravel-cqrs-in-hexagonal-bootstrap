@@ -258,6 +258,8 @@ return [
         'file_not_found' => 'File with id [:id] not found.',
         'file_storage_error' => 'File storage operation failed.',
         'image_processing_error' => 'Image processing failed.',
+        'tenant_not_found' => 'Tenant [:identifier] not found.',
+        'tenant_inactive' => 'Tenant [:identifier] is inactive.',
     ],
 
     'pagination' => [

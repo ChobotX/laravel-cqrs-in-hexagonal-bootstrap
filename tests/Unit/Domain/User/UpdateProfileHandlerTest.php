@@ -5,13 +5,16 @@ declare(strict_types=1);
 use App\Contract\Auth\PasswordManager;
 use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
 use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
+use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
+use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\InvalidUserDataException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserName;
+use Tests\Helper\FakeAuthorizationChecker;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;
 
@@ -30,22 +33,43 @@ function profilePasswordManager(array &$calls = []): PasswordManager
     };
 }
 
-it('updates name and keeps email unchanged', function (): void {
-    $existing = new User(
+function createProfileHandler(
+    FakeUserRepository $fakeUserRepository,
+    FakeEventCollector $fakeEventCollector,
+    bool $hasUserUpdatePermission = false,
+    ?PasswordManager $passwordManager = null,
+): UpdateProfileHandler {
+    /** @var list<array{userId: string, rawPassword: string}> $calls */
+    $calls = [];
+
+    return new UpdateProfileHandler(
+        $fakeUserRepository,
+        $passwordManager ?? profilePasswordManager($calls),
+        new FakeAuthorizationChecker(
+            $hasUserUpdatePermission ? ['users.list.update'] : [],
+        ),
+        $fakeEventCollector,
+    );
+}
+
+function existingUser(): User
+{
+    return new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
         new UserName('John Doe'),
         new Email('john@example.com'),
     );
+}
 
-    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+it('updates name and keeps email unchanged', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager(), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'Jane Doe',
-        rawPassword: null,
     ));
 
     expect($repository->saved)->toHaveCount(1)
@@ -54,68 +78,67 @@ it('updates name and keeps email unchanged', function (): void {
 });
 
 it('sets password when provided', function (): void {
-    $existing = new User(
-        new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        new UserName('John Doe'),
-        new Email('john@example.com'),
-    );
-
-    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
     /** @var list<array{userId: string, rawPassword: string}> $calls */
     $calls = [];
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager($calls), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, passwordManager: profilePasswordManager($calls));
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'John Doe',
         rawPassword: 'new-password-123',
     ));
 
-    expect($calls)->toHaveCount(1);
-    expect($calls[0])->toHaveKey('rawPassword')
+    expect($calls)->toHaveCount(1)
         ->and($calls[0]['rawPassword'])->toBe('new-password-123');
 });
 
-it('skips password when null', function (): void {
-    $existing = new User(
-        new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        new UserName('John Doe'),
-        new Email('john@example.com'),
-    );
+it('emits PasswordChanged event when password is set', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
 
-    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        rawPassword: 'new-password-123',
+    ));
+
+    $passwordEvents = array_filter(
+        $eventCollector->collected,
+        fn (App\Contract\Event\DomainEvent $domainEvent): bool => $domainEvent instanceof PasswordChanged,
+    );
+    expect($passwordEvents)->toHaveCount(1);
+});
+
+it('skips password when null', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
     /** @var list<array{userId: string, rawPassword: string}> $calls */
     $calls = [];
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager($calls), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, passwordManager: profilePasswordManager($calls));
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'John Doe',
-        rawPassword: null,
     ));
 
     expect($calls)->toBeEmpty();
 });
 
 it('skips password when empty string', function (): void {
-    $existing = new User(
-        new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        new UserName('John Doe'),
-        new Email('john@example.com'),
-    );
-
-    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
     /** @var list<array{userId: string, rawPassword: string}> $calls */
     $calls = [];
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager($calls), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, passwordManager: profilePasswordManager($calls));
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'John Doe',
         rawPassword: '',
@@ -125,58 +148,117 @@ it('skips password when empty string', function (): void {
 });
 
 it('collects UserUpdated event', function (): void {
-    $existing = new User(
-        new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        new UserName('John Doe'),
-        new Email('john@example.com'),
-    );
-
-    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager(), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'Jane Doe',
-        rawPassword: null,
     ));
 
-    expect($eventCollector->collected)->toHaveCount(1)
-        ->and($eventCollector->collected[0])->toBeInstanceOf(UserUpdated::class);
-    assert($eventCollector->collected[0] instanceof UserUpdated);
-    expect($eventCollector->collected[0]->name)->toBe('Jane Doe')
-        ->and($eventCollector->collected[0]->email)->toBe('john@example.com');
+    $userUpdatedEvents = array_filter(
+        $eventCollector->collected,
+        fn (App\Contract\Event\DomainEvent $domainEvent): bool => $domainEvent instanceof UserUpdated,
+    );
+    expect($userUpdatedEvents)->toHaveCount(1);
+    /** @var UserUpdated $event */
+    $event = array_values($userUpdatedEvents)[0];
+    expect($event->name)->toBe('Jane Doe')
+        ->and($event->email)->toBe('john@example.com');
 });
 
 it('throws UserNotFoundException when user does not exist', function (): void {
     $repository = new FakeUserRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager(), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: 'Jane Doe',
-        rawPassword: null,
     ));
 })->throws(UserNotFoundException::class);
 
 it('throws when name is empty', function (): void {
-    $existing = new User(
-        new UserId('550e8400-e29b-41d4-a716-446655440000'),
-        new UserName('John Doe'),
-        new Email('john@example.com'),
-    );
-
-    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateProfileHandler($repository, profilePasswordManager(), $eventCollector);
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
 
-    $handler->handle(new UpdateProfileCommand(
+    $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
         name: '',
-        rawPassword: null,
     ));
 })->throws(InvalidUserDataException::class, 'User name must not be empty.');
+
+it('updates email when user has users.list.update permission', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, hasUserUpdatePermission: true);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'new@example.com',
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->email->value)->toBe('new@example.com');
+});
+
+it('ignores email when user lacks users.list.update permission', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, hasUserUpdatePermission: false);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'new@example.com',
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->email->value)->toBe('john@example.com');
+});
+
+it('ignores email when email is null', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, hasUserUpdatePermission: true);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->email->value)->toBe('john@example.com');
+});
+
+it('throws EmailAlreadyExistsException when email is taken', function (): void {
+    $user = existingUser();
+    $otherUser = new User(
+        new UserId('550e8400-e29b-41d4-a716-446655440001'),
+        new UserName('Other User'),
+        new Email('taken@example.com'),
+    );
+
+    $repository = new FakeUserRepository([
+        '550e8400-e29b-41d4-a716-446655440000' => $user,
+        '550e8400-e29b-41d4-a716-446655440001' => $otherUser,
+    ]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector, hasUserUpdatePermission: true);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'taken@example.com',
+    ));
+})->throws(EmailAlreadyExistsException::class);

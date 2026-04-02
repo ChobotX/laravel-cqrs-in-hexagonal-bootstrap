@@ -34,6 +34,8 @@ use App\Domain\Authorization\Command\StartImpersonation\StartImpersonationComman
 use App\Domain\Authorization\Command\StartImpersonation\StartImpersonationHandler;
 use App\Domain\Authorization\Command\StopImpersonation\StopImpersonationCommand;
 use App\Domain\Authorization\Command\StopImpersonation\StopImpersonationHandler;
+use App\Domain\Authorization\Command\SyncUserRoles\SyncUserRolesCommand;
+use App\Domain\Authorization\Command\SyncUserRoles\SyncUserRolesHandler;
 use App\Domain\Authorization\Command\UpdateRole\UpdateRoleCommand;
 use App\Domain\Authorization\Command\UpdateRole\UpdateRoleHandler;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
@@ -98,6 +100,8 @@ use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
 use App\Domain\Label\Command\CreateLabel\CreateLabelHandler;
 use App\Domain\Label\Command\RemoveLabel\RemoveLabelCommand;
 use App\Domain\Label\Command\RemoveLabel\RemoveLabelHandler;
+use App\Domain\Label\Command\SyncEntityLabels\SyncEntityLabelsCommand;
+use App\Domain\Label\Command\SyncEntityLabels\SyncEntityLabelsHandler;
 use App\Domain\Label\EventHandler\CleanupLabelsOnEntityDeleted;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsHandler;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
@@ -136,6 +140,8 @@ use App\Domain\Team\Command\DeleteTeam\DeleteTeamCommand;
 use App\Domain\Team\Command\DeleteTeam\DeleteTeamHandler;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberHandler;
+use App\Domain\Team\Command\SyncUserTeams\SyncUserTeamsCommand;
+use App\Domain\Team\Command\SyncUserTeams\SyncUserTeamsHandler;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamHandler;
 use App\Domain\Team\Contract\Event\TeamDeleted;
@@ -236,6 +242,7 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteRoleCommand::class => DeleteRoleHandler::class,
                 AssignRoleToUserCommand::class => AssignRoleToUserHandler::class,
                 RevokeRoleFromUserCommand::class => RevokeRoleFromUserHandler::class,
+                SyncUserRolesCommand::class => SyncUserRolesHandler::class,
                 SetPermissionOverrideCommand::class => SetPermissionOverrideHandler::class,
                 RemovePermissionOverrideCommand::class => RemovePermissionOverrideHandler::class,
                 ShareRecordCommand::class => ShareRecordHandler::class,
@@ -248,9 +255,11 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteTeamCommand::class => DeleteTeamHandler::class,
                 AddTeamMemberCommand::class => AddTeamMemberHandler::class,
                 RemoveTeamMemberCommand::class => RemoveTeamMemberHandler::class,
+                SyncUserTeamsCommand::class => SyncUserTeamsHandler::class,
                 CreateLabelCommand::class => CreateLabelHandler::class,
                 AssignLabelCommand::class => AssignLabelHandler::class,
                 RemoveLabelCommand::class => RemoveLabelHandler::class,
+                SyncEntityLabelsCommand::class => SyncEntityLabelsHandler::class,
                 SendNotificationCommand::class => SendNotificationHandler::class,
                 MarkNotificationAsReadCommand::class => MarkNotificationAsReadHandler::class,
                 MarkAllNotificationsAsReadCommand::class => MarkAllNotificationsAsReadHandler::class,

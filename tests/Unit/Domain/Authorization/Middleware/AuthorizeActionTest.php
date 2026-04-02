@@ -23,6 +23,11 @@ function buildTestMiddleware(
             return $this->userId;
         }
 
+        public function name(): ?string
+        {
+            return null;
+        }
+
         public function impersonatorId(): ?string
         {
             return null;

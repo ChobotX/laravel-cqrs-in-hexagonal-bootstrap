@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\Tenancy\Exception\InactiveTenantException;
+use App\Domain\Tenancy\Exception\TenantNotFoundException;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 
 it('resolves tenant from subdomain', function (): void {
@@ -41,7 +43,7 @@ it('resolves tenant via CLI bootstrapper', function (): void {
 it('throws for unknown slug via CLI', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapBySlug('nonexistent');
-})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+})->throws(TenantNotFoundException::class);
 
 it('resets tenant context via bootstrapper', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
@@ -64,18 +66,18 @@ it('resolves tenant by domain via bootstrapper', function (): void {
 it('throws for unknown domain via bootstrapper', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapByDomain('nonexistent');
-})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+})->throws(TenantNotFoundException::class);
 
 it('throws for inactive tenant domain', function (): void {
     TenantModel::where('slug', testTenantSlug())->update(['is_active' => false]);
 
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapByDomain(testTenantDomain());
-})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+})->throws(InactiveTenantException::class);
 
 it('throws for inactive tenant slug', function (): void {
     TenantModel::where('slug', testTenantSlug())->update(['is_active' => false]);
 
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapBySlug(testTenantSlug());
-})->throws(Symfony\Component\HttpKernel\Exception\NotFoundHttpException::class);
+})->throws(InactiveTenantException::class);

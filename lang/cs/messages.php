@@ -250,6 +250,8 @@ return [
         'file_not_found' => 'Soubor s id [:id] nebyl nalezen.',
         'file_storage_error' => 'Operace úložiště souborů selhala.',
         'image_processing_error' => 'Zpracování obrázku selhalo.',
+        'tenant_not_found' => 'Tenant [:identifier] nebyl nalezen.',
+        'tenant_inactive' => 'Tenant [:identifier] je neaktivní.',
     ],
 
     'pagination' => [

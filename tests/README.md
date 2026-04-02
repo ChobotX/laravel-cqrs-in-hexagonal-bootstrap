@@ -48,8 +48,20 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `NoDirectFilesystemImportRule` | Bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\Filesystem\` |
 | `FileStorageOnlyInFileDomainRule` | Bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\Filesystem` — forces bus usage |
 | `ControllerDependenciesRule` | Controllers may only inject `CommandBus`, `QueryBus`, `AuthenticatedUser`, `AuthorizationChecker`, `IdGenerator`, `Guard` — no domain services or infrastructure |
+| `NoHttpExceptionsInInfrastructureRule` | Infrastructure must not throw Symfony HTTP exceptions — throw domain exceptions instead, Presentation translates |
+| `NoBusDispatchInControllerLoopsRule` | Controllers must not call `CommandBus->dispatch()` inside foreach loops — extract orchestration into a domain handler |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
+
+## Blade lint scripts
+
+Shell scripts in `bin/` enforce Blade template rules:
+
+| Script | Enforces |
+|---|---|
+| `lint-blade-no-js.sh` | No inline `<script>` tags, event handlers, or `javascript:` URLs |
+| `lint-blade-a11y.sh` | Accessibility checks on Blade templates |
+| `lint-blade-layers.sh` | Blade templates must not reference `App\*` namespaces except `App\Presentation\*` — all data via controllers/middleware |
 
 ## Adding a new PHPStan rule
 

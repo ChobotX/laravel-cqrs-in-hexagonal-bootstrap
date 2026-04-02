@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Domain\User\Command\UpdateProfile;
 
 use App\Contract\Auth\PasswordManager;
+use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\File\Contract\FileId;
+use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Email;
+use App\Domain\User\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Exception\UserNotFoundException;
 use App\Domain\User\User;
 use App\Domain\User\UserName;
@@ -23,6 +27,7 @@ final readonly class UpdateProfileHandler implements CommandHandler
     public function __construct(
         private UserRepository $userRepository,
         private PasswordManager $passwordManager,
+        private AuthorizationChecker $authorizationChecker,
         private EventCollector $eventCollector,
     ) {}
 
@@ -34,12 +39,12 @@ final readonly class UpdateProfileHandler implements CommandHandler
             throw new UserNotFoundException($command->userId);
         }
 
-        $userName = new UserName($command->name);
+        $email = $this->resolveEmail($command, $existing);
 
         $user = new User(
             id: $existing->id,
-            name: $userName,
-            email: $existing->email,
+            name: new UserName($command->name),
+            email: $email,
             avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : $existing->avatarFileId,
         );
 
@@ -47,6 +52,10 @@ final readonly class UpdateProfileHandler implements CommandHandler
 
         if ($command->rawPassword !== null && $command->rawPassword !== '') {
             $this->passwordManager->setPassword($user->id->value, $command->rawPassword);
+            $this->eventCollector->collect(new PasswordChanged(
+                userId: $user->id->value,
+                occurredAt: new DateTimeImmutable,
+            ));
         }
 
         $this->eventCollector->collect(new UserUpdated(
@@ -56,5 +65,21 @@ final readonly class UpdateProfileHandler implements CommandHandler
             occurredAt: new DateTimeImmutable,
             avatarFileId: $user->avatarFileId?->value,
         ));
+    }
+
+    private function resolveEmail(UpdateProfileCommand $updateProfileCommand, User $user): Email
+    {
+        if ($updateProfileCommand->email === null || ! $this->authorizationChecker->can($updateProfileCommand->userId, 'users.list.update')) {
+            return $user->email;
+        }
+
+        $email = new Email($updateProfileCommand->email);
+        $existingByEmail = $this->userRepository->findByEmail($email->value);
+
+        if ($existingByEmail instanceof User && ! $existingByEmail->id->equals($user->id)) {
+            throw new EmailAlreadyExistsException($email->value);
+        }
+
+        return $email;
     }
 }

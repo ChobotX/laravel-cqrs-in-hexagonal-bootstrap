@@ -6,6 +6,8 @@ namespace App\Infrastructure\Auth;
 
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\ImpersonationManager;
+use App\Domain\User\Contract\UserId;
+use App\Domain\User\Contract\UserRepository;
 use Illuminate\Contracts\Auth\Guard;
 
 final readonly class RequestAuthenticatedUser implements AuthenticatedUser
@@ -13,6 +15,7 @@ final readonly class RequestAuthenticatedUser implements AuthenticatedUser
     public function __construct(
         private Guard $guard,
         private ImpersonationManager $impersonationManager,
+        private UserRepository $userRepository,
     ) {}
 
     public function id(): ?string
@@ -31,6 +34,24 @@ final readonly class RequestAuthenticatedUser implements AuthenticatedUser
         $id = $user->getAuthIdentifier();
 
         return $id;
+    }
+
+    public function name(): ?string
+    {
+        $userId = $this->id();
+
+        if ($userId === null) {
+            return null;
+        }
+
+        if ($this->impersonationManager->isActive()) {
+            return $this->userRepository->findById(new UserId($userId))?->name->value;
+        }
+
+        /** @var \App\Infrastructure\Eloquent\User\UserModel|null $user */
+        $user = $this->guard->user();
+
+        return $user?->name;
     }
 
     public function impersonatorId(): ?string

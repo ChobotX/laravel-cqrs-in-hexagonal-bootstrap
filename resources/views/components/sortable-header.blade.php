@@ -24,7 +24,7 @@
        title="{{ $label }}">
         {{ $label }}
         @if ($isActive)
-            @if ($sorting->direction === \App\Application\Sorting\SortDirection::Asc)
+            @if ($sorting->direction->value === 'asc')
                 <x-heroicon-s-chevron-up class="size-3.5 text-indigo-600" />
             @else
                 <x-heroicon-s-chevron-down class="size-3.5 text-indigo-600" />

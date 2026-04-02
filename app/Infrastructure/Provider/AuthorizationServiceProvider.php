@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\Provider;
 
 use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Tenancy\TenantContext;
 use App\Domain\Authorization\Command\SeedDefaultRoles\SeedDefaultRolesHandler;
+use App\Domain\Authorization\Command\SyncUserRoles\SyncUserRolesHandler;
 use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\PermissionResolver;
@@ -27,6 +29,7 @@ use App\Infrastructure\Team\CachedTeamMembershipChecker;
 use App\Infrastructure\Team\EloquentTeamMembershipChecker;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -71,7 +74,7 @@ final class AuthorizationServiceProvider extends ServiceProvider
             $this->app->make(EloquentTeamMembershipChecker::class),
         ));
 
-        $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, GetOwnEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, GetAssignableRolesHandler::class])
+        $this->app->when([GetAvailableModulesHandler::class, GetEffectivePermissionsHandler::class, GetOwnEffectivePermissionsHandler::class, SeedDefaultRolesHandler::class, GetAssignableRolesHandler::class, SyncUserRolesHandler::class])
             ->needs('$availableModules')
             ->give(static function (): array {
                 /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */
@@ -92,6 +95,8 @@ final class AuthorizationServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        View::share('accessScopes', AccessScope::cases());
+
         Blade::if('hasPermission', function (string $permission): bool {
             $authenticatedUser = $this->app->make(AuthenticatedUser::class);
 

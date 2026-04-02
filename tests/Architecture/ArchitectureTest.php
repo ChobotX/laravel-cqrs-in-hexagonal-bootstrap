@@ -192,6 +192,18 @@ final class ArchitectureTest
             );
     }
 
+    // ── Infrastructure exception boundary ─────────────────────────
+
+    public function testInfrastructureDoesNotDependOnHttpExceptions(): Rule
+    {
+        // Infrastructure should throw domain exceptions (implementing DomainException).
+        // The Presentation layer translates them to HTTP status codes.
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Infrastructure'))
+            ->shouldNotDependOn()
+            ->classes(Selector::inNamespace('Symfony\Component\HttpKernel\Exception'));
+    }
+
     // ── Middleware placement ──────────────────────────────────────
 
     public function testMiddlewareDoesNotLiveInInfrastructure(): Rule

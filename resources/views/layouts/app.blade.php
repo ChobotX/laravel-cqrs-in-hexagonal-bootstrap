@@ -16,7 +16,7 @@
     <meta name="reverb-scheme"
           content="{{ config('reverb.apps.apps.0.options.client_scheme') }}">
     <meta name="tenant-slug"
-          content="{{ app(\App\Contract\Tenancy\TenantContext::class)->currentTenantSlug() }}">
+          content="{{ $tenantSlug ?? '' }}">
     <title>@yield('title', __('messages.nav.dashboard'))</title>
     @include('components.sentry-meta')
     @vite(['resources/css/app.css', 'resources/js/app.ts'])

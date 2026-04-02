@@ -71,4 +71,10 @@ Key classes:
 - `TenantMigrator` — creates schema + runs tenant migrations
 - `ConsoleTenantBootstrap` — event listener for CLI tenant resolution via `#[TenantAwareCommand]`
 
+## Exception boundaries
+
+Infrastructure must not throw Symfony HTTP exceptions (`HttpException`, `NotFoundHttpException`, etc.). When an infrastructure operation fails, throw a domain exception implementing `DomainException`. The Presentation layer catches domain exceptions and translates them to appropriate HTTP responses (e.g., `TenantNotFoundException` → 404 in `ResolveTenantMiddleware`).
+
+Enforced by PHPStan rule `NoHttpExceptionsInInfrastructureRule` and PHPat rule `testInfrastructureDoesNotDependOnHttpExceptions`.
+
 The Infrastructure layer may depend on Application, Domain, and Contract. It must not depend on Presentation.

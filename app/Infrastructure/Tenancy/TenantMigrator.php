@@ -30,7 +30,7 @@ final readonly class TenantMigrator
 
     public function migrateAll(): void
     {
-        $tenants = TenantModel::where('is_active', true)->get();
+        $tenants = TenantModel::all();
 
         foreach ($tenants as $tenant) {
             $this->setupTenant($tenant);

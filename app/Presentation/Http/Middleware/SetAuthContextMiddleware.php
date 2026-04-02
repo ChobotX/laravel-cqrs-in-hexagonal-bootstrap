@@ -8,6 +8,7 @@ use App\Contract\Auth\AuthenticatedUser;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
 final readonly class SetAuthContextMiddleware
@@ -32,6 +33,8 @@ final readonly class SetAuthContextMiddleware
                 Context::add('impersonator_id', $impersonatorId);
             }
         }
+
+        View::share('authenticatedUser', $this->authenticatedUser);
 
         return $next($request);
     }
