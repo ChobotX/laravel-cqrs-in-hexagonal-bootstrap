@@ -74,10 +74,16 @@ it('sets empty parentId for root teams', function (): void {
     $userModel = treeTestAdmin();
     treeTestTeams();
 
-    $this->actingAs($userModel)
+    $response = $this->actingAs($userModel)
         ->getJson('/internal-api/teams/tree')
-        ->assertOk()
-        ->assertJsonPath('data.0.parentId', '');
+        ->assertOk();
+
+    /** @var list<array{name: string, parentId: string}> $data */
+    $data = $response->json('data');
+    $rootTeam = array_values(array_filter($data, fn (array $node): bool => $node['name'] === 'Company'));
+
+    expect($rootTeam)->toHaveCount(1)
+        ->and($rootTeam[0]['parentId'])->toBe('');
 });
 
 it('preserves parent references for child teams', function (): void {
