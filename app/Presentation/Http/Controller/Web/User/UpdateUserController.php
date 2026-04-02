@@ -166,7 +166,7 @@ final readonly class UpdateUserController
             $this->commandBus->dispatch(new StoreAvatarCommand(
                 id: $fileId,
                 namespace: self::AVATAR_NAMESPACE,
-                uploadedBy: $updateUserRequest->routeString('userId'),
+                uploadedBy: $this->authenticatedUser->id() ?? '',
                 upload: new FileUpload(
                     originalName: new FileName($file->getClientOriginalName()),
                     mimeType: new MimeType($file->getMimeType() ?? 'image/jpeg'),

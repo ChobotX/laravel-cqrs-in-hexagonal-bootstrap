@@ -24,7 +24,7 @@ Auth via session guard with database session driver (web) and Sanctum Bearer tok
 
 Web routes use Laravel's `session` auth guard with the `database` session driver (server-side, per-tenant schema). API routes use Sanctum Bearer tokens. Sessions are stored in the `sessions` table within each tenant's PostgreSQL schema, providing automatic tenant isolation.
 **Why:** The cookie session driver hit the 4KB browser cookie size limit, causing validation errors and flash data to be silently dropped. Database sessions have no size limit and integrate naturally with the schema-per-tenant architecture.
-**Enforced by:** `config/auth.php` (session guard), `config/session.php` (cookie driver), `routes/api.php` (auth:sanctum middleware).
+**Enforced by:** `config/auth.php` (session guard), `config/session.php` (database driver), `routes/api.php` (auth:sanctum middleware).
 
 ### No App→App inheritance
 

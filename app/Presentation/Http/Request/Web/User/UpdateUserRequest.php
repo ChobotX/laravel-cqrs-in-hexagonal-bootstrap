@@ -19,6 +19,8 @@ final class UpdateUserRequest extends FormRequest
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'roles' => ['sometimes', 'array'],
             'roles.*' => ['string', 'uuid'],
+            'teams' => ['sometimes', 'array'],
+            'teams.*' => ['string', 'uuid'],
             'labels' => ['sometimes', 'array'],
             'labels.*' => ['string', 'uuid'],
             'avatar' => ['nullable', 'image', 'max:10240'],
