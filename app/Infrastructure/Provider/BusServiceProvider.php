@@ -96,6 +96,49 @@ use App\Domain\File\Query\GetFileVersions\GetFileVersionsHandler;
 use App\Domain\File\Query\GetFileVersions\GetFileVersionsQuery;
 use App\Domain\File\Query\GetLatestFileVersion\GetLatestFileVersionHandler;
 use App\Domain\File\Query\GetLatestFileVersion\GetLatestFileVersionQuery;
+use App\Domain\Registry\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
+use App\Domain\Registry\Command\ActivateDefinitionVersion\ActivateDefinitionVersionHandler;
+use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionCommand;
+use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionHandler;
+use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionCommand;
+use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionHandler;
+use App\Domain\Registry\Command\CreateEntry\CreateEntryCommand;
+use App\Domain\Registry\Command\CreateEntry\CreateEntryHandler;
+use App\Domain\Registry\Command\DeleteDefinition\DeleteDefinitionCommand;
+use App\Domain\Registry\Command\DeleteDefinition\DeleteDefinitionHandler;
+use App\Domain\Registry\Command\DeleteEntry\DeleteEntryCommand;
+use App\Domain\Registry\Command\DeleteEntry\DeleteEntryHandler;
+use App\Domain\Registry\Command\DeprecateDefinitionVersion\DeprecateDefinitionVersionCommand;
+use App\Domain\Registry\Command\DeprecateDefinitionVersion\DeprecateDefinitionVersionHandler;
+use App\Domain\Registry\Command\UpdateDefinition\UpdateDefinitionCommand;
+use App\Domain\Registry\Command\UpdateDefinition\UpdateDefinitionHandler;
+use App\Domain\Registry\Command\UpdateEntry\UpdateEntryCommand;
+use App\Domain\Registry\Command\UpdateEntry\UpdateEntryHandler;
+use App\Domain\Registry\Contract\Event\DefinitionCreated;
+use App\Domain\Registry\Contract\Event\DefinitionDeleted;
+use App\Domain\Registry\Contract\Event\DefinitionUpdated;
+use App\Domain\Registry\Contract\Event\DefinitionVersionActivated;
+use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
+use App\Domain\Registry\Contract\Event\DefinitionVersionDeprecated;
+use App\Domain\Registry\Contract\Event\EntryCreated;
+use App\Domain\Registry\Contract\Event\EntryDeleted;
+use App\Domain\Registry\Contract\Event\EntryUpdated;
+use App\Domain\Registry\Query\GetActiveDefinitionVersion\GetActiveDefinitionVersionHandler;
+use App\Domain\Registry\Query\GetActiveDefinitionVersion\GetActiveDefinitionVersionQuery;
+use App\Domain\Registry\Query\GetDefinitionById\GetDefinitionByIdHandler;
+use App\Domain\Registry\Query\GetDefinitionById\GetDefinitionByIdQuery;
+use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugHandler;
+use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
+use App\Domain\Registry\Query\GetEntryById\GetEntryByIdHandler;
+use App\Domain\Registry\Query\GetEntryById\GetEntryByIdQuery;
+use App\Domain\Registry\Query\ListDefinitions\ListDefinitionsHandler;
+use App\Domain\Registry\Query\ListDefinitions\ListDefinitionsQuery;
+use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsHandler;
+use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
+use App\Domain\Registry\Query\ListEntries\ListEntriesHandler;
+use App\Domain\Registry\Query\ListEntries\ListEntriesQuery;
+use App\Domain\Registry\Query\ListEntriesByDefinitionSlug\ListEntriesByDefinitionSlugHandler;
+use App\Domain\Registry\Query\ListEntriesByDefinitionSlug\ListEntriesByDefinitionSlugQuery;
 use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Command\AssignLabel\AssignLabelHandler;
 use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
@@ -231,6 +274,15 @@ final class BusServiceProvider extends ServiceProvider
                 PasswordChanged::class => [],
                 FileStored::class => [],
                 FileDeleted::class => [CleanupLabelsOnEntityDeleted::class],
+                DefinitionCreated::class => [],
+                DefinitionUpdated::class => [],
+                DefinitionDeleted::class => [],
+                DefinitionVersionCreated::class => [],
+                DefinitionVersionActivated::class => [],
+                DefinitionVersionDeprecated::class => [],
+                EntryCreated::class => [],
+                EntryUpdated::class => [],
+                EntryDeleted::class => [],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
@@ -277,6 +329,15 @@ final class BusServiceProvider extends ServiceProvider
                 StoreFileCommand::class => StoreFileHandler::class,
                 StoreAvatarCommand::class => StoreAvatarHandler::class,
                 DeleteFileCommand::class => DeleteFileHandler::class,
+                CreateDefinitionCommand::class => CreateDefinitionHandler::class,
+                UpdateDefinitionCommand::class => UpdateDefinitionHandler::class,
+                DeleteDefinitionCommand::class => DeleteDefinitionHandler::class,
+                CreateDefinitionVersionCommand::class => CreateDefinitionVersionHandler::class,
+                ActivateDefinitionVersionCommand::class => ActivateDefinitionVersionHandler::class,
+                DeprecateDefinitionVersionCommand::class => DeprecateDefinitionVersionHandler::class,
+                CreateEntryCommand::class => CreateEntryHandler::class,
+                UpdateEntryCommand::class => UpdateEntryHandler::class,
+                DeleteEntryCommand::class => DeleteEntryHandler::class,
             ],
             middleware: [
                 $this->app->make(LogBusMessage::class),
@@ -327,6 +388,14 @@ final class BusServiceProvider extends ServiceProvider
                 GetFileContentQuery::class => GetFileContentHandler::class,
                 GetFileVersionsQuery::class => GetFileVersionsHandler::class,
                 GetLatestFileVersionQuery::class => GetLatestFileVersionHandler::class,
+                GetDefinitionByIdQuery::class => GetDefinitionByIdHandler::class,
+                GetDefinitionBySlugQuery::class => GetDefinitionBySlugHandler::class,
+                ListDefinitionsQuery::class => ListDefinitionsHandler::class,
+                ListDefinitionVersionsQuery::class => ListDefinitionVersionsHandler::class,
+                GetActiveDefinitionVersionQuery::class => GetActiveDefinitionVersionHandler::class,
+                GetEntryByIdQuery::class => GetEntryByIdHandler::class,
+                ListEntriesQuery::class => ListEntriesHandler::class,
+                ListEntriesByDefinitionSlugQuery::class => ListEntriesByDefinitionSlugHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

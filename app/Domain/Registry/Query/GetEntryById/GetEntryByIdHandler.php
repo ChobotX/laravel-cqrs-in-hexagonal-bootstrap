@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Registry\Query\GetEntryById;
+
+use App\Contract\Query\Query;
+use App\Contract\Query\QueryHandler;
+use App\Domain\Registry\Contract\EntryId;
+use App\Domain\Registry\Contract\EntryRepository;
+use App\Domain\Registry\Entry;
+
+/**
+ * @implements QueryHandler<GetEntryByIdQuery, ?Entry>
+ */
+final readonly class GetEntryByIdHandler implements QueryHandler
+{
+    public function __construct(
+        private EntryRepository $entryRepository,
+    ) {}
+
+    /** @return ?Entry */
+    public function handle(Query $query): ?Entry
+    {
+        return $this->entryRepository->findById(new EntryId($query->id));
+    }
+}

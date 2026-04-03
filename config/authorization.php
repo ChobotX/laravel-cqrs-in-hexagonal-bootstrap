@@ -50,6 +50,19 @@ return [
                 ],
             ],
         ],
+        'registry' => [
+            'label' => 'Registry',
+            'features' => [
+                'definitions' => [
+                    'label' => 'Definitions',
+                    'actions' => ['read', 'create', 'update', 'delete'],
+                ],
+                'entries' => [
+                    'label' => 'Entries',
+                    'actions' => ['read', 'create', 'update', 'delete'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

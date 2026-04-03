@@ -1,0 +1,45 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Registry\Command\ActivateDefinitionVersion;
+
+use App\Contract\Command\Command;
+use App\Contract\Command\CommandHandler;
+use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Event\DefinitionVersionActivated;
+use App\Domain\Registry\DefinitionVersion;
+use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
+use App\Domain\Registry\VersionStatus;
+use DateTimeImmutable;
+
+/** @implements CommandHandler<ActivateDefinitionVersionCommand> */
+final readonly class ActivateDefinitionVersionHandler implements CommandHandler
+{
+    public function __construct(
+        private DefinitionVersionRepository $definitionVersionRepository,
+        private EventCollector $eventCollector,
+    ) {}
+
+    public function handle(Command $command): void
+    {
+        $versionId = new DefinitionVersionId($command->id);
+        $version = $this->definitionVersionRepository->findById($versionId);
+
+        if (! $version instanceof DefinitionVersion) {
+            throw new DefinitionVersionNotFoundException($command->id);
+        }
+
+        $this->definitionVersionRepository->deactivateAllForDefinition($version->definitionId);
+        $this->definitionVersionRepository->updateStatus($version->id, VersionStatus::Active);
+
+        $this->eventCollector->collect(new DefinitionVersionActivated(
+            versionId: $version->id->value,
+            definitionId: $version->definitionId->value,
+            version: $version->version->value,
+            occurredAt: new DateTimeImmutable(),
+        ));
+    }
+}

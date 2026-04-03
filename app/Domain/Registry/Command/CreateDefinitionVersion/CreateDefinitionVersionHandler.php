@@ -1,0 +1,58 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Domain\Registry\Command\CreateDefinitionVersion;
+
+use App\Contract\Command\Command;
+use App\Contract\Command\CommandHandler;
+use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
+use App\Domain\Registry\Definition;
+use App\Domain\Registry\DefinitionVersion;
+use App\Domain\Registry\Exception\DefinitionNotFoundException;
+use App\Domain\Registry\VersionStatus;
+use DateTimeImmutable;
+
+/** @implements CommandHandler<CreateDefinitionVersionCommand> */
+final readonly class CreateDefinitionVersionHandler implements CommandHandler
+{
+    public function __construct(
+        private DefinitionRepository $definitionRepository,
+        private DefinitionVersionRepository $definitionVersionRepository,
+        private EventCollector $eventCollector,
+    ) {}
+
+    public function handle(Command $command): void
+    {
+        $definitionId = new DefinitionId($command->definitionId);
+        $definition = $this->definitionRepository->findById($definitionId);
+
+        if (! $definition instanceof Definition) {
+            throw new DefinitionNotFoundException($command->definitionId);
+        }
+
+        $versionNumber = $this->definitionVersionRepository->nextVersionNumber($definition->id);
+
+        $version = new DefinitionVersion(
+            id: new DefinitionVersionId($command->id),
+            definitionId: $definition->id,
+            version: $versionNumber,
+            schema: $command->schema,
+            status: VersionStatus::Draft,
+        );
+
+        $this->definitionVersionRepository->create($version);
+
+        $this->eventCollector->collect(new DefinitionVersionCreated(
+            versionId: $version->id->value,
+            definitionId: $definition->id->value,
+            version: $version->version->value,
+            occurredAt: new DateTimeImmutable(),
+        ));
+    }
+}
