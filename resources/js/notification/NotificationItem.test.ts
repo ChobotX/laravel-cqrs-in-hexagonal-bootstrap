@@ -136,6 +136,48 @@ describe('NotificationItem', () => {
         expect(hrefSetter).toHaveBeenCalledWith('/some/page');
     });
 
+    it('emits mark-read when clicking through an unread notification with link', async () => {
+        const originalHref = window.location.href;
+        Object.defineProperty(window, 'location', {
+            value: {
+                ...window.location,
+                get href() {
+                    return originalHref;
+                },
+                set href(_v: string) {
+                    /* noop */
+                },
+            },
+            writable: true,
+        });
+
+        const wrapper = mountItem(createEntry({ id: 'unread-1', linkUrl: '/target', readAt: null }));
+        await wrapper.find('[data-testid="notification-unread-1"]').trigger('click');
+
+        expect(wrapper.emitted('mark-read')).toEqual([['unread-1']]);
+    });
+
+    it('does not emit mark-read when clicking through an already-read notification with link', async () => {
+        const originalHref = window.location.href;
+        Object.defineProperty(window, 'location', {
+            value: {
+                ...window.location,
+                get href() {
+                    return originalHref;
+                },
+                set href(_v: string) {
+                    /* noop */
+                },
+            },
+            writable: true,
+        });
+
+        const wrapper = mountItem(createEntry({ id: 'read-1', linkUrl: '/target', readAt: '2026-01-15T10:00:00Z' }));
+        await wrapper.find('[data-testid="notification-read-1"]').trigger('click');
+
+        expect(wrapper.emitted('mark-read')).toBeUndefined();
+    });
+
     it('does not navigate when no linkUrl', async () => {
         const originalHref = window.location.href;
         const hrefSetter = vi.fn();

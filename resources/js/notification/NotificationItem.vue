@@ -61,6 +61,10 @@ const timeAgo = computed(() => {
 
 function handleClick(): void {
     if (props.notification.linkUrl) {
+        if (isUnread.value) {
+            emit('mark-read', props.notification.id);
+        }
+
         window.location.href = props.notification.linkUrl;
     }
 }
