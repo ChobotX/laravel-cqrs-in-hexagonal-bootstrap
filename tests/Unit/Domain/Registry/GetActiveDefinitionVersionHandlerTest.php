@@ -32,8 +32,8 @@ it('returns the active version', function (): void {
 
     $result = $handler->handle(new GetActiveDefinitionVersionQuery(definitionId: '550e8400-e29b-41d4-a716-446655440000'));
 
-    expect($result)->toBeInstanceOf(DefinitionVersion::class)
-        ->and($result->status)->toBe(VersionStatus::Active);
+    assert($result instanceof DefinitionVersion);
+    expect($result->status)->toBe(VersionStatus::Active);
 });
 
 it('returns null when no active version exists', function (): void {

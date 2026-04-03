@@ -27,8 +27,8 @@ it('returns an entry when found', function (): void {
 
     $result = $handler->handle(new GetEntryByIdQuery(id: '770e8400-e29b-41d4-a716-446655440000'));
 
-    expect($result)->toBeInstanceOf(Entry::class)
-        ->and($result->id->value)->toBe('770e8400-e29b-41d4-a716-446655440000');
+    assert($result instanceof Entry);
+    expect($result->id->value)->toBe('770e8400-e29b-41d4-a716-446655440000');
 });
 
 it('returns null when not found', function (): void {

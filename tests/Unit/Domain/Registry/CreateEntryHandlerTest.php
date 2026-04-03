@@ -31,6 +31,10 @@ use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeJsonSchemaValidator;
 use Tests\Helper\FakeSchemaSerializer;
 
+/**
+ * @param array{schema?: Schema, defRepo?: FakeDefinitionRepository, versionRepo?: FakeDefinitionVersionRepository, entryRepo?: FakeEntryRepository, validator?: FakeJsonSchemaValidator, serializer?: FakeSchemaSerializer} $overrides
+ * @return array{CreateEntryHandler, FakeEntryRepository, FakeEventCollector}
+ */
 function createEntryHandlerFixtures(array $overrides = []): array
 {
     $definition = new Definition(

@@ -36,8 +36,8 @@ it('returns serialized schema when active version exists', function (): void {
 
     $result = $handler->handle(new GetSerializedSchemaQuery(definitionId: '550e8400-e29b-41d4-a716-446655440000'));
 
-    expect($result)->toBeInstanceOf(JsonSchema::class)
-        ->and($result->encoded)->toBeString()
+    assert($result instanceof JsonSchema);
+    expect($result->encoded)->toBeString()
         ->and(json_decode($result->encoded, true))->toBe(['type' => 'object', 'properties' => ['name' => ['type' => 'string']]]);
 });
 

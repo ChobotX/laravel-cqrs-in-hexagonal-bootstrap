@@ -24,8 +24,8 @@ it('returns a definition when found by namespace and slug', function (): void {
 
     $result = $handler->handle(new GetDefinitionBySlugQuery(namespace: 'crm', slug: 'employees'));
 
-    expect($result)->toBeInstanceOf(Definition::class)
-        ->and($result->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000');
+    assert($result instanceof Definition);
+    expect($result->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000');
 });
 
 it('returns null when not found', function (): void {

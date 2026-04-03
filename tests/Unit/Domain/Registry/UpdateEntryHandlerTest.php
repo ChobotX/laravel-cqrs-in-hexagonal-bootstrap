@@ -26,6 +26,10 @@ use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeJsonSchemaValidator;
 use Tests\Helper\FakeSchemaSerializer;
 
+/**
+ * @param array{schema?: Schema, entryRepo?: FakeEntryRepository, versionRepo?: FakeDefinitionVersionRepository, validator?: FakeJsonSchemaValidator, serializer?: FakeSchemaSerializer} $overrides
+ * @return array{UpdateEntryHandler, FakeEntryRepository, FakeEventCollector}
+ */
 function updateEntryHandlerFixtures(array $overrides = []): array
 {
     $schema = $overrides['schema'] ?? new Schema([new StringField('name', 'Name', true)]);
