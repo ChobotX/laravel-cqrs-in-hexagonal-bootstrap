@@ -34,6 +34,21 @@ use App\Presentation\Http\Controller\Web\User\ShowCreateUserController;
 use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
 use App\Presentation\Http\Controller\Web\User\ShowProfileController;
 use App\Presentation\Http\Controller\Web\User\UpdateProfileController;
+use App\Presentation\Http\Controller\Web\Registry\ActivateDefinitionVersionController;
+use App\Presentation\Http\Controller\Web\Registry\CreateDefinitionController;
+use App\Presentation\Http\Controller\Web\Registry\CreateDefinitionVersionController;
+use App\Presentation\Http\Controller\Web\Registry\CreateEntryController;
+use App\Presentation\Http\Controller\Web\Registry\DeleteDefinitionController;
+use App\Presentation\Http\Controller\Web\Registry\DeleteEntryController;
+use App\Presentation\Http\Controller\Web\Registry\DeprecateDefinitionVersionController;
+use App\Presentation\Http\Controller\Web\Registry\ListDefinitionsController;
+use App\Presentation\Http\Controller\Web\Registry\ListEntriesController;
+use App\Presentation\Http\Controller\Web\Registry\ShowCreateDefinitionController;
+use App\Presentation\Http\Controller\Web\Registry\ShowCreateEntryController;
+use App\Presentation\Http\Controller\Web\Registry\ShowDefinitionController;
+use App\Presentation\Http\Controller\Web\Registry\ShowEditEntryController;
+use App\Presentation\Http\Controller\Web\Registry\UpdateDefinitionController;
+use App\Presentation\Http\Controller\Web\Registry\UpdateEntryController;
 use App\Presentation\Http\Controller\Web\User\UpdateUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -80,4 +95,22 @@ Route::middleware('auth')->group(function (): void {
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');
+
+    Route::get('/registry', ListDefinitionsController::class)->name('registry.definitions.index');
+    Route::get('/registry/create', ShowCreateDefinitionController::class)->name('registry.definitions.create');
+    Route::post('/registry', CreateDefinitionController::class)->name('registry.definitions.store');
+    Route::get('/registry/{namespace}/{slug}', ShowDefinitionController::class)->name('registry.definitions.show');
+    Route::put('/registry/{namespace}/{slug}', UpdateDefinitionController::class)->name('registry.definitions.update');
+    Route::delete('/registry/{namespace}/{slug}', DeleteDefinitionController::class)->name('registry.definitions.destroy');
+
+    Route::post('/registry/{namespace}/{slug}/versions', CreateDefinitionVersionController::class)->name('registry.versions.store');
+    Route::post('/registry/{namespace}/{slug}/versions/{version}/activate', ActivateDefinitionVersionController::class)->name('registry.versions.activate');
+    Route::post('/registry/{namespace}/{slug}/versions/{version}/deprecate', DeprecateDefinitionVersionController::class)->name('registry.versions.deprecate');
+
+    Route::get('/registry/{namespace}/{slug}/entries', ListEntriesController::class)->name('registry.entries.index');
+    Route::get('/registry/{namespace}/{slug}/entries/create', ShowCreateEntryController::class)->name('registry.entries.create');
+    Route::post('/registry/{namespace}/{slug}/entries', CreateEntryController::class)->name('registry.entries.store');
+    Route::get('/registry/{namespace}/{slug}/entries/{entryId}/edit', ShowEditEntryController::class)->name('registry.entries.edit');
+    Route::put('/registry/{namespace}/{slug}/entries/{entryId}', UpdateEntryController::class)->name('registry.entries.update');
+    Route::delete('/registry/{namespace}/{slug}/entries/{entryId}', DeleteEntryController::class)->name('registry.entries.destroy');
 });

@@ -12,6 +12,7 @@ use App\Domain\Registry\Contract\DefinitionRepository;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
+use App\Domain\Registry\Contract\SchemaSerializer;
 use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
@@ -24,6 +25,7 @@ final readonly class CreateDefinitionVersionHandler implements CommandHandler
     public function __construct(
         private DefinitionRepository $definitionRepository,
         private DefinitionVersionRepository $definitionVersionRepository,
+        private SchemaSerializer $schemaSerializer,
         private EventCollector $eventCollector,
     ) {}
 
@@ -37,12 +39,13 @@ final readonly class CreateDefinitionVersionHandler implements CommandHandler
         }
 
         $versionNumber = $this->definitionVersionRepository->nextVersionNumber($definition->id);
+        $schema = $this->schemaSerializer->fromJsonSchema($command->schemaData);
 
         $version = new DefinitionVersion(
             id: new DefinitionVersionId($command->id),
             definitionId: $definition->id,
             version: $versionNumber,
-            schema: $command->schema,
+            schema: $schema,
             status: VersionStatus::Draft,
         );
 

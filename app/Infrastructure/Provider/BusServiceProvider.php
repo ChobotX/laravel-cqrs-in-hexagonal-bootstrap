@@ -131,6 +131,8 @@ use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugHandler;
 use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Query\GetEntryById\GetEntryByIdHandler;
 use App\Domain\Registry\Query\GetEntryById\GetEntryByIdQuery;
+use App\Domain\Registry\Query\GetSerializedSchema\GetSerializedSchemaHandler;
+use App\Domain\Registry\Query\GetSerializedSchema\GetSerializedSchemaQuery;
 use App\Domain\Registry\Query\ListDefinitions\ListDefinitionsHandler;
 use App\Domain\Registry\Query\ListDefinitions\ListDefinitionsQuery;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsHandler;
@@ -393,6 +395,7 @@ final class BusServiceProvider extends ServiceProvider
                 ListDefinitionsQuery::class => ListDefinitionsHandler::class,
                 ListDefinitionVersionsQuery::class => ListDefinitionVersionsHandler::class,
                 GetActiveDefinitionVersionQuery::class => GetActiveDefinitionVersionHandler::class,
+                GetSerializedSchemaQuery::class => GetSerializedSchemaHandler::class,
                 GetEntryByIdQuery::class => GetEntryByIdHandler::class,
                 ListEntriesQuery::class => ListEntriesHandler::class,
                 ListEntriesByDefinitionSlugQuery::class => ListEntriesByDefinitionSlugHandler::class,

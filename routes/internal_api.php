@@ -12,6 +12,7 @@ use App\Presentation\Http\Controller\Web\Notification\MarkAllNotificationsAsRead
 use App\Presentation\Http\Controller\Web\Notification\MarkNotificationAsReadController;
 use App\Presentation\Http\Controller\Web\Team\GetTeamTreeController;
 use App\Presentation\Http\Controller\Web\Team\SearchTeamsController;
+use App\Presentation\Http\Controller\Api\Registry\ListEntriesApiController;
 use App\Presentation\Http\Controller\Web\User\SearchUsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -28,4 +29,6 @@ Route::middleware('auth')->prefix('internal-api')->group(function (): void {
     Route::post('/notifications/{notificationId}/mark-read', MarkNotificationAsReadController::class)->name('internal-api.notifications.mark-read');
     Route::post('/notifications/mark-all-read', MarkAllNotificationsAsReadController::class)->name('internal-api.notifications.mark-all-read');
     Route::delete('/notifications/{notificationId}', DeleteNotificationController::class)->name('internal-api.notifications.destroy');
+
+    Route::get('/registry/{namespace}/{slug}/entries', ListEntriesApiController::class)->name('internal-api.registry.entries');
 });
