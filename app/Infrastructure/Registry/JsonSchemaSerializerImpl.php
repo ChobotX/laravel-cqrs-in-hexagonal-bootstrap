@@ -21,24 +21,39 @@ use App\Domain\Registry\Schema\StringField;
 final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
 {
     private const string TYPE_STRING = 'string';
+
     private const string TYPE_INTEGER = 'integer';
+
     private const string TYPE_NUMBER = 'number';
+
     private const string TYPE_BOOLEAN = 'boolean';
+
     private const string TYPE_OBJECT = 'object';
+
     private const string TYPE_ARRAY = 'array';
+
     private const string FORMAT_DATE = 'date';
+
     private const string FORMAT_EMAIL = 'email';
+
     private const string FORMAT_UUID = 'uuid';
+
     private const string X_LABEL = 'x-field-label';
+
     private const string X_TYPE = 'x-field-type';
+
     private const string X_REFERENCE = 'x-reference';
+
     private const string X_MULTILINE = 'x-multiline';
+
     private const string X_FILE = 'x-file';
+
     private const string FIELD_FILE = 'file';
+
     private const string FIELD_REPEATER = 'repeater';
 
     public function __construct(
-        private JsonSchemaDeserializer $deserializer,
+        private JsonSchemaDeserializer $jsonSchemaDeserializer,
     ) {}
 
     public function toJsonSchema(Schema $schema): array
@@ -69,106 +84,106 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
 
     public function fromJsonSchema(array $jsonSchema): Schema
     {
-        return $this->deserializer->deserialize($jsonSchema);
+        return $this->jsonSchemaDeserializer->deserialize($jsonSchema);
     }
 
     /** @return array<string, mixed> */
-    private function fieldToJson(SchemaField $field): array
+    private function fieldToJson(SchemaField $schemaField): array
     {
         return match (true) {
-            $field instanceof StringField => $this->stringToJson($field),
-            $field instanceof IntegerField => $this->integerToJson($field),
-            $field instanceof NumberField => $this->numberToJson($field),
-            $field instanceof BooleanField => ['type' => self::TYPE_BOOLEAN, self::X_LABEL => $field->label()],
-            $field instanceof DateField => ['type' => self::TYPE_STRING, 'format' => self::FORMAT_DATE, self::X_LABEL => $field->label()],
-            $field instanceof EmailField => ['type' => self::TYPE_STRING, 'format' => self::FORMAT_EMAIL, self::X_LABEL => $field->label()],
-            $field instanceof ReferenceField => $this->referenceToJson($field),
-            $field instanceof FileField => $this->fileToJson($field),
-            $field instanceof RepeaterField => $this->repeaterToJson($field),
-            $field instanceof ObjectField => $this->objectToJson($field),
-            default => ['type' => self::TYPE_STRING, self::X_LABEL => $field->label()],
+            $schemaField instanceof StringField => $this->stringToJson($schemaField),
+            $schemaField instanceof IntegerField => $this->integerToJson($schemaField),
+            $schemaField instanceof NumberField => $this->numberToJson($schemaField),
+            $schemaField instanceof BooleanField => ['type' => self::TYPE_BOOLEAN, self::X_LABEL => $schemaField->label()],
+            $schemaField instanceof DateField => ['type' => self::TYPE_STRING, 'format' => self::FORMAT_DATE, self::X_LABEL => $schemaField->label()],
+            $schemaField instanceof EmailField => ['type' => self::TYPE_STRING, 'format' => self::FORMAT_EMAIL, self::X_LABEL => $schemaField->label()],
+            $schemaField instanceof ReferenceField => $this->referenceToJson($schemaField),
+            $schemaField instanceof FileField => $this->fileToJson($schemaField),
+            $schemaField instanceof RepeaterField => $this->repeaterToJson($schemaField),
+            $schemaField instanceof ObjectField => $this->objectToJson($schemaField),
+            default => ['type' => self::TYPE_STRING, self::X_LABEL => $schemaField->label()],
         };
     }
 
     /** @return array<string, mixed> */
-    private function stringToJson(StringField $field): array
+    private function stringToJson(StringField $stringField): array
     {
-        $s = ['type' => self::TYPE_STRING, self::X_LABEL => $field->label()];
+        $s = ['type' => self::TYPE_STRING, self::X_LABEL => $stringField->label()];
 
-        if ($field->multiline) {
+        if ($stringField->multiline) {
             $s[self::X_MULTILINE] = true;
         }
 
-        if ($field->minLength !== null) {
-            $s['minLength'] = $field->minLength;
+        if ($stringField->minLength !== null) {
+            $s['minLength'] = $stringField->minLength;
         }
 
-        if ($field->maxLength !== null) {
-            $s['maxLength'] = $field->maxLength;
+        if ($stringField->maxLength !== null) {
+            $s['maxLength'] = $stringField->maxLength;
         }
 
         return $s;
     }
 
     /** @return array<string, mixed> */
-    private function integerToJson(IntegerField $field): array
+    private function integerToJson(IntegerField $integerField): array
     {
-        $s = ['type' => self::TYPE_INTEGER, self::X_LABEL => $field->label()];
+        $s = ['type' => self::TYPE_INTEGER, self::X_LABEL => $integerField->label()];
 
-        if ($field->min !== null) {
-            $s['minimum'] = $field->min;
+        if ($integerField->min !== null) {
+            $s['minimum'] = $integerField->min;
         }
 
-        if ($field->max !== null) {
-            $s['maximum'] = $field->max;
+        if ($integerField->max !== null) {
+            $s['maximum'] = $integerField->max;
         }
 
         return $s;
     }
 
     /** @return array<string, mixed> */
-    private function numberToJson(NumberField $field): array
+    private function numberToJson(NumberField $numberField): array
     {
-        $s = ['type' => self::TYPE_NUMBER, self::X_LABEL => $field->label()];
+        $s = ['type' => self::TYPE_NUMBER, self::X_LABEL => $numberField->label()];
 
-        if ($field->min !== null) {
-            $s['minimum'] = $field->min;
+        if ($numberField->min !== null) {
+            $s['minimum'] = $numberField->min;
         }
 
-        if ($field->max !== null) {
-            $s['maximum'] = $field->max;
+        if ($numberField->max !== null) {
+            $s['maximum'] = $numberField->max;
         }
 
         return $s;
     }
 
     /** @return array<string, mixed> */
-    private function referenceToJson(ReferenceField $field): array
+    private function referenceToJson(ReferenceField $referenceField): array
     {
         return [
             'type' => self::TYPE_STRING,
             'format' => self::FORMAT_UUID,
-            self::X_LABEL => $field->label(),
-            self::X_REFERENCE => ['namespace' => $field->referenceNamespace, 'slug' => $field->referenceSlug],
+            self::X_LABEL => $referenceField->label(),
+            self::X_REFERENCE => ['namespace' => $referenceField->referenceNamespace, 'slug' => $referenceField->referenceSlug],
         ];
     }
 
     /** @return array<string, mixed> */
-    private function fileToJson(FileField $field): array
+    private function fileToJson(FileField $fileField): array
     {
-        $s = ['type' => self::TYPE_STRING, 'format' => self::FORMAT_UUID, self::X_LABEL => $field->label(), self::X_TYPE => self::FIELD_FILE];
+        $s = ['type' => self::TYPE_STRING, 'format' => self::FORMAT_UUID, self::X_LABEL => $fileField->label(), self::X_TYPE => self::FIELD_FILE];
         $fc = [];
 
-        if ($field->allowedMimeTypes !== null) {
-            $fc['allowedMimeTypes'] = $field->allowedMimeTypes;
+        if ($fileField->allowedMimeTypes !== null) {
+            $fc['allowedMimeTypes'] = $fileField->allowedMimeTypes;
         }
 
-        if ($field->maxSizeBytes !== null) {
-            $fc['maxSizeBytes'] = $field->maxSizeBytes;
+        if ($fileField->maxSizeBytes !== null) {
+            $fc['maxSizeBytes'] = $fileField->maxSizeBytes;
         }
 
-        if ($field->fileNamespace !== null) {
-            $fc['namespace'] = $field->fileNamespace;
+        if ($fileField->fileNamespace !== null) {
+            $fc['namespace'] = $fileField->fileNamespace;
         }
 
         if ($fc !== []) {
@@ -179,33 +194,33 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
     }
 
     /** @return array<string, mixed> */
-    private function repeaterToJson(RepeaterField $field): array
+    private function repeaterToJson(RepeaterField $repeaterField): array
     {
-        $items = $this->fieldsToObjectSchema($field->fields);
-        $s = ['type' => self::TYPE_ARRAY, 'items' => $items, self::X_LABEL => $field->label(), self::X_TYPE => self::FIELD_REPEATER];
+        $items = $this->fieldsToObjectSchema($repeaterField->fields);
+        $s = ['type' => self::TYPE_ARRAY, 'items' => $items, self::X_LABEL => $repeaterField->label(), self::X_TYPE => self::FIELD_REPEATER];
 
-        if ($field->minItems > 0) {
-            $s['minItems'] = $field->minItems;
+        if ($repeaterField->minItems > 0) {
+            $s['minItems'] = $repeaterField->minItems;
         }
 
-        if ($field->maxItems !== null) {
-            $s['maxItems'] = $field->maxItems;
+        if ($repeaterField->maxItems !== null) {
+            $s['maxItems'] = $repeaterField->maxItems;
         }
 
         return $s;
     }
 
     /** @return array<string, mixed> */
-    private function objectToJson(ObjectField $field): array
+    private function objectToJson(ObjectField $objectField): array
     {
-        $inner = $this->fieldsToObjectSchema($field->properties);
-        $inner[self::X_LABEL] = $field->label();
+        $inner = $this->fieldsToObjectSchema($objectField->properties);
+        $inner[self::X_LABEL] = $objectField->label();
 
         return $inner;
     }
 
     /**
-     * @param list<SchemaField> $fields
+     * @param  list<SchemaField>  $fields
      * @return array<string, mixed>
      */
     private function fieldsToObjectSchema(array $fields): array
@@ -213,11 +228,11 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
         $properties = [];
         $required = [];
 
-        foreach ($fields as $f) {
-            $properties[$f->name()] = $this->fieldToJson($f);
+        foreach ($fields as $field) {
+            $properties[$field->name()] = $this->fieldToJson($field);
 
-            if ($f->isRequired()) {
-                $required[] = $f->name();
+            if ($field->isRequired()) {
+                $required[] = $field->name();
             }
         }
 

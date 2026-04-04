@@ -10,15 +10,15 @@ use App\Domain\Registry\VersionStatus;
 
 interface DefinitionVersionRepository
 {
-    public function findById(DefinitionVersionId $versionId): ?DefinitionVersion;
+    public function findById(DefinitionVersionId $definitionVersionId): ?DefinitionVersion;
 
-    public function findByDefinitionAndVersion(DefinitionId $definitionId, VersionNumber $version): ?DefinitionVersion;
+    public function findByDefinitionAndVersion(DefinitionId $definitionId, VersionNumber $versionNumber): ?DefinitionVersion;
 
     public function findActiveByDefinition(DefinitionId $definitionId): ?DefinitionVersion;
 
-    public function create(DefinitionVersion $version): void;
+    public function create(DefinitionVersion $definitionVersion): void;
 
-    public function updateStatus(DefinitionVersionId $id, VersionStatus $status): void;
+    public function updateStatus(DefinitionVersionId $definitionVersionId, VersionStatus $versionStatus): void;
 
     public function nextVersionNumber(DefinitionId $definitionId): VersionNumber;
 

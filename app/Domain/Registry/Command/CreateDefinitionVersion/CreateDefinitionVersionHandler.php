@@ -41,7 +41,7 @@ final readonly class CreateDefinitionVersionHandler implements CommandHandler
         $versionNumber = $this->definitionVersionRepository->nextVersionNumber($definition->id);
         $schema = $this->schemaSerializer->fromJsonSchema($command->schemaData);
 
-        $version = new DefinitionVersion(
+        $definitionVersion = new DefinitionVersion(
             id: new DefinitionVersionId($command->id),
             definitionId: $definition->id,
             version: $versionNumber,
@@ -49,13 +49,13 @@ final readonly class CreateDefinitionVersionHandler implements CommandHandler
             status: VersionStatus::Draft,
         );
 
-        $this->definitionVersionRepository->create($version);
+        $this->definitionVersionRepository->create($definitionVersion);
 
         $this->eventCollector->collect(new DefinitionVersionCreated(
-            versionId: $version->id->value,
+            versionId: $definitionVersion->id->value,
             definitionId: $definition->id->value,
-            version: $version->version->value,
-            occurredAt: new DateTimeImmutable(),
+            version: $definitionVersion->version->value,
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

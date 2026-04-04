@@ -30,10 +30,10 @@ final class FakeDefinitionRepository implements DefinitionRepository
         return $this->definitions[$definitionId->value] ?? null;
     }
 
-    public function findByNamespaceAndSlug(DefinitionNamespace $namespace, DefinitionSlug $slug): ?Definition
+    public function findByNamespaceAndSlug(DefinitionNamespace $definitionNamespace, DefinitionSlug $definitionSlug): ?Definition
     {
         foreach ($this->definitions as $definition) {
-            if ($definition->namespace->value === $namespace->value && $definition->slug->value === $slug->value) {
+            if ($definition->namespace->value === $definitionNamespace->value && $definition->slug->value === $definitionSlug->value) {
                 return $definition;
             }
         }
@@ -60,17 +60,29 @@ final class FakeDefinitionRepository implements DefinitionRepository
     }
 
     /** @return PaginatedResult<Definition> */
-    public function allPaginated(Pagination $pagination, ?DefinitionNamespace $namespace = null): PaginatedResult
+    public function allPaginated(Pagination $pagination, ?DefinitionNamespace $definitionNamespace = null): PaginatedResult
     {
         $items = array_values($this->definitions);
 
-        if ($namespace !== null) {
+        if ($definitionNamespace instanceof DefinitionNamespace) {
             $items = array_values(array_filter(
                 $items,
-                fn (Definition $d): bool => $d->namespace->value === $namespace->value,
+                fn (Definition $definition): bool => $definition->namespace->value === $definitionNamespace->value,
             ));
         }
 
         return $this->paginateArray($items, $pagination);
+    }
+
+    /** @return list<string> */
+    public function allNamespaces(): array
+    {
+        $namespaces = array_unique(array_map(
+            fn (Definition $definition): string => $definition->namespace->value,
+            $this->definitions,
+        ));
+        sort($namespaces);
+
+        return $namespaces;
     }
 }

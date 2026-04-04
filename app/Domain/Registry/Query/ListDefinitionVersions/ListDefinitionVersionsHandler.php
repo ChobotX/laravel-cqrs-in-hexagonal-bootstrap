@@ -16,12 +16,12 @@ use App\Domain\Registry\DefinitionVersion;
 final readonly class ListDefinitionVersionsHandler implements QueryHandler
 {
     public function __construct(
-        private DefinitionVersionRepository $versionRepository,
+        private DefinitionVersionRepository $definitionVersionRepository,
     ) {}
 
     /** @return list<DefinitionVersion> */
     public function handle(Query $query): array
     {
-        return $this->versionRepository->findAllByDefinition(new DefinitionId($query->definitionId));
+        return $this->definitionVersionRepository->findAllByDefinition(new DefinitionId($query->definitionId));
     }
 }

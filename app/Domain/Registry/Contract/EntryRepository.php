@@ -26,5 +26,5 @@ interface EntryRepository
     public function existsByDefinition(DefinitionId $definitionId): bool;
 
     /** @return list<Entry> */
-    public function findByDefinitionSlug(DefinitionNamespace $namespace, DefinitionSlug $slug): array;
+    public function findByDefinitionSlug(DefinitionNamespace $definitionNamespace, DefinitionSlug $definitionSlug): array;
 }

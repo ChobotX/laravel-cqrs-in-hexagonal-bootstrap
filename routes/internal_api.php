@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Presentation\Http\Controller\Api\Registry\ListDefinitionsApiController;
+use App\Presentation\Http\Controller\Api\Registry\ListEntriesApiController;
+use App\Presentation\Http\Controller\Api\Registry\ListNamespacesApiController;
 use App\Presentation\Http\Controller\Web\Authorization\SearchRolesController;
 use App\Presentation\Http\Controller\Web\Label\CreateLabelController;
 use App\Presentation\Http\Controller\Web\Label\SearchLabelsController;
@@ -12,7 +15,6 @@ use App\Presentation\Http\Controller\Web\Notification\MarkAllNotificationsAsRead
 use App\Presentation\Http\Controller\Web\Notification\MarkNotificationAsReadController;
 use App\Presentation\Http\Controller\Web\Team\GetTeamTreeController;
 use App\Presentation\Http\Controller\Web\Team\SearchTeamsController;
-use App\Presentation\Http\Controller\Api\Registry\ListEntriesApiController;
 use App\Presentation\Http\Controller\Web\User\SearchUsersController;
 use Illuminate\Support\Facades\Route;
 
@@ -30,5 +32,7 @@ Route::middleware('auth')->prefix('internal-api')->group(function (): void {
     Route::post('/notifications/mark-all-read', MarkAllNotificationsAsReadController::class)->name('internal-api.notifications.mark-all-read');
     Route::delete('/notifications/{notificationId}', DeleteNotificationController::class)->name('internal-api.notifications.destroy');
 
+    Route::get('/registry/definitions', ListDefinitionsApiController::class)->name('internal-api.registry.definitions');
+    Route::get('/registry/namespaces', ListNamespacesApiController::class)->name('internal-api.registry.namespaces');
     Route::get('/registry/{namespace}/{slug}/entries', ListEntriesApiController::class)->name('internal-api.registry.entries');
 });

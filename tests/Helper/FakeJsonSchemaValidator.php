@@ -6,7 +6,7 @@ namespace Tests\Helper;
 
 use App\Contract\Registry\JsonSchemaValidator;
 
-final class FakeJsonSchemaValidator implements JsonSchemaValidator
+final readonly class FakeJsonSchemaValidator implements JsonSchemaValidator
 {
     /** @param list<string> $errorsToReturn */
     public function __construct(private array $errorsToReturn = []) {}

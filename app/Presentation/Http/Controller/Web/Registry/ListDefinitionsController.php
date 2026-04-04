@@ -25,19 +25,19 @@ final readonly class ListDefinitionsController
         $pagination = $paginationRequest->pagination();
         $namespace = $paginationRequest->string('namespace')->toString();
 
-        /** @var PaginatedResult<Definition> $result */
-        $result = $this->queryBus->dispatch(new ListDefinitionsQuery(
+        /** @var PaginatedResult<Definition> $paginatedResult */
+        $paginatedResult = $this->queryBus->dispatch(new ListDefinitionsQuery(
             page: $pagination->page,
             perPage: $pagination->perPage,
             namespace: $namespace !== '' ? $namespace : null,
         ));
 
-        if ($result->isPageOutOfBounds()) {
+        if ($paginatedResult->isPageOutOfBounds()) {
             return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
         }
 
         return view('registry.definitions.index', [
-            'result' => $result,
+            'result' => $paginatedResult,
         ]);
     }
 }

@@ -42,7 +42,7 @@ final readonly class DeleteDefinitionHandler implements CommandHandler
 
         $this->eventCollector->collect(new DefinitionDeleted(
             definitionId: $definition->id->value,
-            occurredAt: new DateTimeImmutable(),
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

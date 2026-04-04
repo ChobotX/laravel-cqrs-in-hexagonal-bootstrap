@@ -30,7 +30,7 @@ final readonly class DeleteEntryHandler implements CommandHandler
 
         $this->eventCollector->collect(new EntryDeleted(
             entryId: $entry->id->value,
-            occurredAt: new DateTimeImmutable(),
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

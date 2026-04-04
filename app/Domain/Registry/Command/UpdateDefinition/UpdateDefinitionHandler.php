@@ -32,21 +32,21 @@ final readonly class UpdateDefinitionHandler implements CommandHandler
             throw new DefinitionNotFoundException($command->id);
         }
 
-        $name = new DefinitionName($command->name);
+        $definitionName = new DefinitionName($command->name);
 
         $updated = new Definition(
             id: $definition->id,
             namespace: $definition->namespace,
             slug: $definition->slug,
-            name: $name,
+            name: $definitionName,
         );
 
         $this->definitionRepository->update($updated);
 
         $this->eventCollector->collect(new DefinitionUpdated(
             definitionId: $definition->id->value,
-            name: $name->value,
-            occurredAt: new DateTimeImmutable(),
+            name: $definitionName->value,
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

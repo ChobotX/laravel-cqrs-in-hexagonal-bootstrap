@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry;
 
-use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Schema\Schema;
 
 final readonly class DefinitionVersion
 {

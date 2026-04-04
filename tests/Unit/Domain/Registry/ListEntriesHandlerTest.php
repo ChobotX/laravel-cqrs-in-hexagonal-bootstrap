@@ -38,25 +38,25 @@ it('returns paginated entries for a definition', function (): void {
     ]);
     $handler = new ListEntriesHandler($repo);
 
-    $result = $handler->handle(new ListEntriesQuery(
+    $paginatedResult = $handler->handle(new ListEntriesQuery(
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         page: 1,
         perPage: 15,
     ));
 
-    expect($result)->toBeInstanceOf(PaginatedResult::class)
-        ->and($result->items)->toHaveCount(2)
-        ->and($result->total)->toBe(2);
+    expect($paginatedResult)->toBeInstanceOf(PaginatedResult::class)
+        ->and($paginatedResult->items)->toHaveCount(2)
+        ->and($paginatedResult->total)->toBe(2);
 });
 
 it('returns empty result when no entries exist', function (): void {
     $repo = new FakeEntryRepository;
     $handler = new ListEntriesHandler($repo);
 
-    $result = $handler->handle(new ListEntriesQuery(
+    $paginatedResult = $handler->handle(new ListEntriesQuery(
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
     ));
 
-    expect($result->items)->toHaveCount(0)
-        ->and($result->total)->toBe(0);
+    expect($paginatedResult->items)->toHaveCount(0)
+        ->and($paginatedResult->total)->toBe(0);
 });

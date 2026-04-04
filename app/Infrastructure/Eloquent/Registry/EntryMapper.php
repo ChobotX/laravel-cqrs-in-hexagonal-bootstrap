@@ -13,15 +13,15 @@ use App\Domain\Registry\VersionNumber;
 
 final readonly class EntryMapper
 {
-    public function toDomain(EntryModel $model): Entry
+    public function toDomain(EntryModel $entryModel): Entry
     {
         return new Entry(
-            id: new EntryId($model->id),
-            definitionId: new DefinitionId($model->definition_id),
-            definitionVersion: new VersionNumber($model->definition_version),
-            namespace: new DefinitionNamespace($model->namespace),
-            title: new EntryTitle($model->title),
-            data: $model->data,
+            id: new EntryId($entryModel->id),
+            definitionId: new DefinitionId($entryModel->definition_id),
+            definitionVersion: new VersionNumber($entryModel->definition_version),
+            namespace: new DefinitionNamespace($entryModel->namespace),
+            title: new EntryTitle($entryModel->title),
+            data: $entryModel->data,
         );
     }
 }

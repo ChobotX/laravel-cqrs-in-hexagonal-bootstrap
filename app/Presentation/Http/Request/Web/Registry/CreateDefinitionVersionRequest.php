@@ -20,7 +20,9 @@ final class CreateDefinitionVersionRequest extends FormRequest
     /** @return array<string, mixed> */
     public function schema(): array
     {
-        /** @var array<string, mixed> */
-        return $this->input('schema', []);
+        /** @var array<string, mixed> $schema */
+        $schema = $this->input('schema', []);
+
+        return $schema;
     }
 }

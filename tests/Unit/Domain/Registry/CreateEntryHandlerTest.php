@@ -6,15 +6,12 @@ use App\Domain\Registry\Command\CreateEntry\CreateEntryCommand;
 use App\Domain\Registry\Command\CreateEntry\CreateEntryHandler;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
-use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\Event\EntryCreated;
 use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\DefinitionVersion;
-use App\Domain\Registry\Entry;
-use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
 use App\Domain\Registry\Exception\InvalidReferenceException;
@@ -32,7 +29,7 @@ use Tests\Helper\FakeJsonSchemaValidator;
 use Tests\Helper\FakeSchemaSerializer;
 
 /**
- * @param array{schema?: Schema, defRepo?: FakeDefinitionRepository, versionRepo?: FakeDefinitionVersionRepository, entryRepo?: FakeEntryRepository, validator?: FakeJsonSchemaValidator, serializer?: FakeSchemaSerializer} $overrides
+ * @param  array{schema?: Schema, defRepo?: FakeDefinitionRepository, versionRepo?: FakeDefinitionVersionRepository, entryRepo?: FakeEntryRepository, validator?: FakeJsonSchemaValidator, serializer?: FakeSchemaSerializer}  $overrides
  * @return array{CreateEntryHandler, FakeEntryRepository, FakeEventCollector}
  */
 function createEntryHandlerFixtures(array $overrides = []): array
@@ -152,3 +149,73 @@ it('throws on invalid reference', function (): void {
         data: ['author' => '880e8400-e29b-41d4-a716-446655440000'],
     ));
 })->throws(InvalidReferenceException::class);
+
+it('skips reference validation for empty value', function (): void {
+    $schema = new Schema([
+        new ReferenceField('author', 'Author', false, 'crm', 'employees'),
+    ]);
+
+    [$handler, $entryRepo] = createEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new CreateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440001',
+        definitionId: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Empty Ref',
+        data: ['author' => ''],
+    ));
+
+    expect($entryRepo->saved)->toHaveCount(1);
+});
+
+it('validates references inside a repeater field', function (): void {
+    $schema = new Schema([
+        new App\Domain\Registry\Schema\RepeaterField('items', 'Items', false, [
+            new ReferenceField('ref', 'Ref', false, 'crm', 'employees'),
+        ]),
+    ]);
+
+    [$handler] = createEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new CreateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440002',
+        definitionId: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Repeater Ref',
+        data: ['items' => [['ref' => '880e8400-e29b-41d4-a716-446655440000']]],
+    ));
+})->throws(InvalidReferenceException::class);
+
+it('validates references inside an object field', function (): void {
+    $schema = new Schema([
+        new App\Domain\Registry\Schema\ObjectField('details', 'Details', false, [
+            new ReferenceField('ref', 'Ref', false, 'crm', 'employees'),
+        ]),
+    ]);
+
+    [$handler] = createEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new CreateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440003',
+        definitionId: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Object Ref',
+        data: ['details' => ['ref' => '880e8400-e29b-41d4-a716-446655440000']],
+    ));
+})->throws(InvalidReferenceException::class);
+
+it('skips repeater validation when items is not an array', function (): void {
+    $schema = new Schema([
+        new App\Domain\Registry\Schema\RepeaterField('items', 'Items', false, [
+            new StringField('x', 'X'),
+        ]),
+    ]);
+
+    [$handler, $entryRepo] = createEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new CreateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440004',
+        definitionId: '550e8400-e29b-41d4-a716-446655440000',
+        title: 'Non-array repeater',
+        data: ['items' => 'not-an-array'],
+    ));
+
+    expect($entryRepo->saved)->toHaveCount(1);
+});

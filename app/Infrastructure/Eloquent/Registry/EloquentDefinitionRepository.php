@@ -17,7 +17,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 final readonly class EloquentDefinitionRepository implements DefinitionRepository
 {
     public function __construct(
-        private DefinitionMapper $mapper,
+        private DefinitionMapper $definitionMapper,
     ) {}
 
     public function findById(DefinitionId $definitionId): ?Definition
@@ -28,31 +28,31 @@ final readonly class EloquentDefinitionRepository implements DefinitionRepositor
             return null;
         }
 
-        return $this->mapper->toDomain($model);
+        return $this->definitionMapper->toDomain($model);
     }
 
-    public function findByNamespaceAndSlug(DefinitionNamespace $namespace, DefinitionSlug $slug): ?Definition
+    public function findByNamespaceAndSlug(DefinitionNamespace $definitionNamespace, DefinitionSlug $definitionSlug): ?Definition
     {
-        $model = DefinitionModel::where('namespace', $namespace->value)
-            ->where('slug', $slug->value)
+        $model = DefinitionModel::where('namespace', $definitionNamespace->value)
+            ->where('slug', $definitionSlug->value)
             ->first();
 
         if (! $model instanceof DefinitionModel) {
             return null;
         }
 
-        return $this->mapper->toDomain($model);
+        return $this->definitionMapper->toDomain($model);
     }
 
     public function create(Definition $definition): void
     {
         try {
-            $model = new DefinitionModel;
-            $model->id = $definition->id->value;
-            $model->namespace = $definition->namespace->value;
-            $model->slug = $definition->slug->value;
-            $model->name = $definition->name->value;
-            $model->save();
+            $definitionModel = new DefinitionModel;
+            $definitionModel->id = $definition->id->value;
+            $definitionModel->namespace = $definition->namespace->value;
+            $definitionModel->slug = $definition->slug->value;
+            $definitionModel->name = $definition->name->value;
+            $definitionModel->save();
         } catch (UniqueConstraintViolationException) {
             throw new DefinitionAlreadyExistsException($definition->namespace->value, $definition->slug->value);
         }
@@ -70,12 +70,12 @@ final readonly class EloquentDefinitionRepository implements DefinitionRepositor
     }
 
     /** @return PaginatedResult<Definition> */
-    public function allPaginated(Pagination $pagination, ?DefinitionNamespace $namespace = null): PaginatedResult
+    public function allPaginated(Pagination $pagination, ?DefinitionNamespace $definitionNamespace = null): PaginatedResult
     {
         $query = DefinitionModel::query();
 
-        if ($namespace instanceof DefinitionNamespace) {
-            $query->where('namespace', $namespace->value);
+        if ($definitionNamespace instanceof DefinitionNamespace) {
+            $query->where('namespace', $definitionNamespace->value);
         }
 
         $total = $query->count();
@@ -86,9 +86,22 @@ final readonly class EloquentDefinitionRepository implements DefinitionRepositor
             ->get();
 
         $items = array_values(
-            $models->map(fn (DefinitionModel $m): Definition => $this->mapper->toDomain($m))->all(),
+            $models->map(fn (DefinitionModel $definitionModel): Definition => $this->definitionMapper->toDomain($definitionModel))->all(),
         );
 
         return new PaginatedResult($items, $total, $pagination);
+    }
+
+    /** @return list<string> */
+    public function allNamespaces(): array
+    {
+        /** @var list<string> $namespaces */
+        $namespaces = DefinitionModel::query()
+            ->distinct()
+            ->orderBy('namespace')
+            ->pluck('namespace')
+            ->all();
+
+        return $namespaces;
     }
 }

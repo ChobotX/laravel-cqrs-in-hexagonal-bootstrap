@@ -33,21 +33,21 @@ it('returns paginated definitions', function (): void {
     ]);
     $handler = new ListDefinitionsHandler($repo);
 
-    $result = $handler->handle(new ListDefinitionsQuery(page: 1, perPage: 15));
+    $paginatedResult = $handler->handle(new ListDefinitionsQuery(page: 1, perPage: 15));
 
-    expect($result)->toBeInstanceOf(PaginatedResult::class)
-        ->and($result->items)->toHaveCount(2)
-        ->and($result->total)->toBe(2);
+    expect($paginatedResult)->toBeInstanceOf(PaginatedResult::class)
+        ->and($paginatedResult->items)->toHaveCount(2)
+        ->and($paginatedResult->total)->toBe(2);
 });
 
 it('returns empty result when no definitions exist', function (): void {
     $repo = new FakeDefinitionRepository;
     $handler = new ListDefinitionsHandler($repo);
 
-    $result = $handler->handle(new ListDefinitionsQuery());
+    $paginatedResult = $handler->handle(new ListDefinitionsQuery);
 
-    expect($result->items)->toHaveCount(0)
-        ->and($result->total)->toBe(0);
+    expect($paginatedResult->items)->toHaveCount(0)
+        ->and($paginatedResult->total)->toBe(0);
 });
 
 it('filters by namespace', function (): void {
@@ -71,8 +71,8 @@ it('filters by namespace', function (): void {
     ]);
     $handler = new ListDefinitionsHandler($repo);
 
-    $result = $handler->handle(new ListDefinitionsQuery(namespace: 'crm'));
+    $paginatedResult = $handler->handle(new ListDefinitionsQuery(namespace: 'crm'));
 
-    expect($result->items)->toHaveCount(1)
-        ->and($result->items[0]->namespace->value)->toBe('crm');
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->namespace->value)->toBe('crm');
 });

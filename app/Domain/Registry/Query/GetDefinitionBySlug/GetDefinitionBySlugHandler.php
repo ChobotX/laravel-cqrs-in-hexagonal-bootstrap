@@ -20,7 +20,6 @@ final readonly class GetDefinitionBySlugHandler implements QueryHandler
         private DefinitionRepository $definitionRepository,
     ) {}
 
-    /** @return ?Definition */
     public function handle(Query $query): ?Definition
     {
         return $this->definitionRepository->findByNamespaceAndSlug(

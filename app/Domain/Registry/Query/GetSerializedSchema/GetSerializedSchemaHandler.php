@@ -18,14 +18,13 @@ use App\Domain\Registry\Schema\JsonSchema;
 final readonly class GetSerializedSchemaHandler implements QueryHandler
 {
     public function __construct(
-        private DefinitionVersionRepository $versionRepository,
+        private DefinitionVersionRepository $definitionVersionRepository,
         private SchemaSerializer $schemaSerializer,
     ) {}
 
-    /** @return ?JsonSchema */
     public function handle(Query $query): ?JsonSchema
     {
-        $version = $this->versionRepository->findActiveByDefinition(new DefinitionId($query->definitionId));
+        $version = $this->definitionVersionRepository->findActiveByDefinition(new DefinitionId($query->definitionId));
 
         if (! $version instanceof DefinitionVersion) {
             return null;

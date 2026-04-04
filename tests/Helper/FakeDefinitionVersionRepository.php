@@ -25,16 +25,16 @@ final class FakeDefinitionVersionRepository implements DefinitionVersionReposito
     /** @param array<string, DefinitionVersion> $versions */
     public function __construct(private array $versions = []) {}
 
-    public function findById(DefinitionVersionId $versionId): ?DefinitionVersion
+    public function findById(DefinitionVersionId $definitionVersionId): ?DefinitionVersion
     {
-        return $this->versions[$versionId->value] ?? null;
+        return $this->versions[$definitionVersionId->value] ?? null;
     }
 
-    public function findByDefinitionAndVersion(DefinitionId $definitionId, VersionNumber $version): ?DefinitionVersion
+    public function findByDefinitionAndVersion(DefinitionId $definitionId, VersionNumber $versionNumber): ?DefinitionVersion
     {
-        foreach ($this->versions as $v) {
-            if ($v->definitionId->value === $definitionId->value && $v->version->value === $version->value) {
-                return $v;
+        foreach ($this->versions as $version) {
+            if ($version->definitionId->value === $definitionId->value && $version->version->value === $versionNumber->value) {
+                return $version;
             }
         }
 
@@ -43,33 +43,33 @@ final class FakeDefinitionVersionRepository implements DefinitionVersionReposito
 
     public function findActiveByDefinition(DefinitionId $definitionId): ?DefinitionVersion
     {
-        foreach ($this->versions as $v) {
-            if ($v->definitionId->value === $definitionId->value && $v->status === VersionStatus::Active) {
-                return $v;
+        foreach ($this->versions as $version) {
+            if ($version->definitionId->value === $definitionId->value && $version->status === VersionStatus::Active) {
+                return $version;
             }
         }
 
         return null;
     }
 
-    public function create(DefinitionVersion $version): void
+    public function create(DefinitionVersion $definitionVersion): void
     {
-        $this->saved[] = $version;
-        $this->versions[$version->id->value] = $version;
+        $this->saved[] = $definitionVersion;
+        $this->versions[$definitionVersion->id->value] = $definitionVersion;
     }
 
-    public function updateStatus(DefinitionVersionId $id, VersionStatus $status): void
+    public function updateStatus(DefinitionVersionId $definitionVersionId, VersionStatus $versionStatus): void
     {
-        $this->statusUpdates[] = ['id' => $id->value, 'status' => $status];
+        $this->statusUpdates[] = ['id' => $definitionVersionId->value, 'status' => $versionStatus];
 
-        if (isset($this->versions[$id->value])) {
-            $old = $this->versions[$id->value];
-            $this->versions[$id->value] = new DefinitionVersion(
+        if (isset($this->versions[$definitionVersionId->value])) {
+            $old = $this->versions[$definitionVersionId->value];
+            $this->versions[$definitionVersionId->value] = new DefinitionVersion(
                 id: $old->id,
                 definitionId: $old->definitionId,
                 version: $old->version,
                 schema: $old->schema,
-                status: $status,
+                status: $versionStatus,
             );
         }
     }
@@ -78,9 +78,9 @@ final class FakeDefinitionVersionRepository implements DefinitionVersionReposito
     {
         $max = 0;
 
-        foreach ($this->versions as $v) {
-            if ($v->definitionId->value === $definitionId->value && $v->version->value > $max) {
-                $max = $v->version->value;
+        foreach ($this->versions as $version) {
+            if ($version->definitionId->value === $definitionId->value && $version->version->value > $max) {
+                $max = $version->version->value;
             }
         }
 
@@ -92,7 +92,7 @@ final class FakeDefinitionVersionRepository implements DefinitionVersionReposito
     {
         return array_values(array_filter(
             $this->versions,
-            fn (DefinitionVersion $v): bool => $v->definitionId->value === $definitionId->value,
+            fn (DefinitionVersion $definitionVersion): bool => $definitionVersion->definitionId->value === $definitionId->value,
         ));
     }
 

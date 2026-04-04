@@ -16,12 +16,11 @@ use App\Domain\Registry\DefinitionVersion;
 final readonly class GetActiveDefinitionVersionHandler implements QueryHandler
 {
     public function __construct(
-        private DefinitionVersionRepository $versionRepository,
+        private DefinitionVersionRepository $definitionVersionRepository,
     ) {}
 
-    /** @return ?DefinitionVersion */
     public function handle(Query $query): ?DefinitionVersion
     {
-        return $this->versionRepository->findActiveByDefinition(new DefinitionId($query->definitionId));
+        return $this->definitionVersionRepository->findActiveByDefinition(new DefinitionId($query->definitionId));
     }
 }

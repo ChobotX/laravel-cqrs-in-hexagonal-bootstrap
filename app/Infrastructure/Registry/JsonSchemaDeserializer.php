@@ -20,19 +20,33 @@ use App\Domain\Registry\Schema\StringField;
 final readonly class JsonSchemaDeserializer
 {
     private const string TYPE_STRING = 'string';
+
     private const string TYPE_INTEGER = 'integer';
+
     private const string TYPE_NUMBER = 'number';
+
     private const string TYPE_BOOLEAN = 'boolean';
+
     private const string TYPE_OBJECT = 'object';
+
     private const string TYPE_ARRAY = 'array';
+
     private const string FORMAT_DATE = 'date';
+
     private const string FORMAT_EMAIL = 'email';
+
     private const string X_LABEL = 'x-field-label';
+
     private const string X_TYPE = 'x-field-type';
+
     private const string X_REFERENCE = 'x-reference';
+
     private const string X_MULTILINE = 'x-multiline';
+
     private const string X_FILE = 'x-file';
+
     private const string FIELD_FILE = 'file';
+
     private const string FIELD_REPEATER = 'repeater';
 
     /** @param array<string, mixed> $jsonSchema */
@@ -192,7 +206,7 @@ final readonly class JsonSchemaDeserializer
     }
 
     /**
-     * @param array<string, mixed> $s
+     * @param  array<string, mixed>  $s
      * @return list<SchemaField>
      */
     private function itemFields(array $s): array

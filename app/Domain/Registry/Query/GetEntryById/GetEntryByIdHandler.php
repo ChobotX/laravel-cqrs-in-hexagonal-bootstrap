@@ -19,7 +19,6 @@ final readonly class GetEntryByIdHandler implements QueryHandler
         private EntryRepository $entryRepository,
     ) {}
 
-    /** @return ?Entry */
     public function handle(Query $query): ?Entry
     {
         return $this->entryRepository->findById(new EntryId($query->id));

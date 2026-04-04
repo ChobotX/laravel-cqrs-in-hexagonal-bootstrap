@@ -26,14 +26,14 @@ final readonly class ListEntriesController
         abort_unless($definition !== null, HttpStatus::NOT_FOUND);
 
         $pagination = $paginationRequest->pagination();
-        $result = $this->queryBus->dispatch(new ListEntriesQuery(
+        $paginatedResult = $this->queryBus->dispatch(new ListEntriesQuery(
             definitionId: $definition->id->value,
             page: $pagination->page,
             perPage: $pagination->perPage,
         ));
 
         return view('registry.entries.index', [
-            'result' => $result,
+            'result' => $paginatedResult,
             'definition' => $definition,
         ]);
     }

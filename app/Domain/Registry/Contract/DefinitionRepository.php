@@ -14,7 +14,7 @@ interface DefinitionRepository
 {
     public function findById(DefinitionId $definitionId): ?Definition;
 
-    public function findByNamespaceAndSlug(DefinitionNamespace $namespace, DefinitionSlug $slug): ?Definition;
+    public function findByNamespaceAndSlug(DefinitionNamespace $definitionNamespace, DefinitionSlug $definitionSlug): ?Definition;
 
     public function create(Definition $definition): void;
 
@@ -23,5 +23,8 @@ interface DefinitionRepository
     public function delete(DefinitionId $definitionId): void;
 
     /** @return PaginatedResult<Definition> */
-    public function allPaginated(Pagination $pagination, ?DefinitionNamespace $namespace = null): PaginatedResult;
+    public function allPaginated(Pagination $pagination, ?DefinitionNamespace $definitionNamespace = null): PaginatedResult;
+
+    /** @return list<string> */
+    public function allNamespaces(): array;
 }

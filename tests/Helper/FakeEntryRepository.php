@@ -54,7 +54,7 @@ final class FakeEntryRepository implements EntryRepository
     {
         $items = array_values(array_filter(
             $this->entries,
-            fn (Entry $e): bool => $e->definitionId->value === $definitionId->value,
+            fn (Entry $entry): bool => $entry->definitionId->value === $definitionId->value,
         ));
 
         return $this->paginateArray($items, $pagination);
@@ -62,21 +62,15 @@ final class FakeEntryRepository implements EntryRepository
 
     public function existsByDefinition(DefinitionId $definitionId): bool
     {
-        foreach ($this->entries as $entry) {
-            if ($entry->definitionId->value === $definitionId->value) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->entries, fn ($entry): bool => $entry->definitionId->value === $definitionId->value);
     }
 
     /** @return list<Entry> */
-    public function findByDefinitionSlug(DefinitionNamespace $namespace, DefinitionSlug $slug): array
+    public function findByDefinitionSlug(DefinitionNamespace $definitionNamespace, DefinitionSlug $definitionSlug): array
     {
         return array_values(array_filter(
             $this->entries,
-            fn (Entry $e): bool => $e->namespace->value === $namespace->value,
+            fn (Entry $entry): bool => $entry->namespace->value === $definitionNamespace->value,
         ));
     }
 }

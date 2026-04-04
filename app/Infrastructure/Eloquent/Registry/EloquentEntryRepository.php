@@ -16,7 +16,7 @@ use App\Domain\Registry\Entry;
 final readonly class EloquentEntryRepository implements EntryRepository
 {
     public function __construct(
-        private EntryMapper $mapper,
+        private EntryMapper $entryMapper,
     ) {}
 
     public function findById(EntryId $entryId): ?Entry
@@ -27,19 +27,19 @@ final readonly class EloquentEntryRepository implements EntryRepository
             return null;
         }
 
-        return $this->mapper->toDomain($model);
+        return $this->entryMapper->toDomain($model);
     }
 
     public function create(Entry $entry): void
     {
-        $model = new EntryModel;
-        $model->id = $entry->id->value;
-        $model->definition_id = $entry->definitionId->value;
-        $model->definition_version = $entry->definitionVersion->value;
-        $model->namespace = $entry->namespace->value;
-        $model->title = $entry->title->value;
-        $model->data = $entry->data;
-        $model->save();
+        $entryModel = new EntryModel;
+        $entryModel->id = $entry->id->value;
+        $entryModel->definition_id = $entry->definitionId->value;
+        $entryModel->definition_version = $entry->definitionVersion->value;
+        $entryModel->namespace = $entry->namespace->value;
+        $entryModel->title = $entry->title->value;
+        $entryModel->data = $entry->data;
+        $entryModel->save();
     }
 
     public function update(Entry $entry): void
@@ -73,7 +73,7 @@ final readonly class EloquentEntryRepository implements EntryRepository
             ->get();
 
         $items = array_values(
-            $models->map(fn (EntryModel $m): Entry => $this->mapper->toDomain($m))->all(),
+            $models->map(fn (EntryModel $entryModel): Entry => $this->entryMapper->toDomain($entryModel))->all(),
         );
 
         return new PaginatedResult($items, $total, $pagination);
@@ -85,17 +85,17 @@ final readonly class EloquentEntryRepository implements EntryRepository
     }
 
     /** @return list<Entry> */
-    public function findByDefinitionSlug(DefinitionNamespace $namespace, DefinitionSlug $slug): array
+    public function findByDefinitionSlug(DefinitionNamespace $definitionNamespace, DefinitionSlug $definitionSlug): array
     {
         return array_values(
             EntryModel::query()
                 ->join('definitions', 'entries.definition_id', '=', 'definitions.id')
-                ->where('definitions.namespace', $namespace->value)
-                ->where('definitions.slug', $slug->value)
+                ->where('definitions.namespace', $definitionNamespace->value)
+                ->where('definitions.slug', $definitionSlug->value)
                 ->orderByRaw('LOWER(entries.title) ASC')
                 ->select('entries.*')
                 ->get()
-                ->map(fn (EntryModel $m): Entry => $this->mapper->toDomain($m))
+                ->map(fn (EntryModel $entryModel): Entry => $this->entryMapper->toDomain($entryModel))
                 ->all(),
         );
     }

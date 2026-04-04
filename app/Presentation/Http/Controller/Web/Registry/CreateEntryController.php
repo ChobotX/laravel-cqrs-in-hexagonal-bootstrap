@@ -23,7 +23,7 @@ final readonly class CreateEntryController
         private IdGenerator $idGenerator,
     ) {}
 
-    public function __invoke(CreateEntryRequest $request, string $namespace, string $slug): RedirectResponse
+    public function __invoke(CreateEntryRequest $createEntryRequest, string $namespace, string $slug): RedirectResponse
     {
         $definition = $this->queryBus->dispatch(new GetDefinitionBySlugQuery($namespace, $slug));
 
@@ -32,8 +32,8 @@ final readonly class CreateEntryController
         $this->commandBus->dispatch(new CreateEntryCommand(
             id: $this->idGenerator->generate(),
             definitionId: $definition->id->value,
-            title: $request->title(),
-            data: $request->entryData(),
+            title: $createEntryRequest->title(),
+            data: $createEntryRequest->entryData(),
         ));
 
         return redirect()->route('registry.entries.index', [

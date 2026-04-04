@@ -27,19 +27,19 @@ final readonly class CreateDefinitionHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
-        $namespace = new DefinitionNamespace($command->namespace);
-        $slug = new DefinitionSlug($command->slug);
-        $name = new DefinitionName($command->name);
+        $definitionNamespace = new DefinitionNamespace($command->namespace);
+        $definitionSlug = new DefinitionSlug($command->slug);
+        $definitionName = new DefinitionName($command->name);
 
-        if ($this->definitionRepository->findByNamespaceAndSlug($namespace, $slug) instanceof Definition) {
-            throw new DefinitionAlreadyExistsException($namespace->value, $slug->value);
+        if ($this->definitionRepository->findByNamespaceAndSlug($definitionNamespace, $definitionSlug) instanceof Definition) {
+            throw new DefinitionAlreadyExistsException($definitionNamespace->value, $definitionSlug->value);
         }
 
         $definition = new Definition(
             id: new DefinitionId($command->id),
-            namespace: $namespace,
-            slug: $slug,
-            name: $name,
+            namespace: $definitionNamespace,
+            slug: $definitionSlug,
+            name: $definitionName,
         );
 
         $this->definitionRepository->create($definition);
@@ -49,7 +49,7 @@ final readonly class CreateDefinitionHandler implements CommandHandler
             namespace: $definition->namespace->value,
             slug: $definition->slug->value,
             name: $definition->name->value,
-            occurredAt: new DateTimeImmutable(),
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

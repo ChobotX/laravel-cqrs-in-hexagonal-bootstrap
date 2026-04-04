@@ -14,36 +14,36 @@ final readonly class OpisJsonSchemaValidator implements JsonSchemaValidator
 {
     public function validate(array $data, array $schema): array
     {
-        $validator = new Validator();
+        $validator = new Validator;
 
         /** @var stdClass $dataObject */
         $dataObject = json_decode(json_encode($data, JSON_THROW_ON_ERROR), false, JSON_THROW_ON_ERROR);
         /** @var stdClass $schemaObject */
         $schemaObject = json_decode(json_encode($schema, JSON_THROW_ON_ERROR), false, JSON_THROW_ON_ERROR);
 
-        $result = $validator->validate($dataObject, $schemaObject);
+        $validationResult = $validator->validate($dataObject, $schemaObject);
 
-        if ($result->isValid()) {
+        if ($validationResult->isValid()) {
             return [];
         }
 
-        $error = $result->error();
+        $error = $validationResult->error();
 
         return $error instanceof ValidationError ? $this->formatErrors($error) : [];
     }
 
     /** @return list<string> */
-    private function formatErrors(ValidationError $error): array
+    private function formatErrors(ValidationError $validationError): array
     {
-        $formatter = new ErrorFormatter();
+        $errorFormatter = new ErrorFormatter;
         /** @var array<string, list<string>> $errors */
-        $errors = $formatter->format($error);
+        $errors = $errorFormatter->format($validationError);
 
         $messages = [];
 
         foreach ($errors as $path => $pathErrors) {
-            foreach ($pathErrors as $message) {
-                $messages[] = $path !== '' ? sprintf('%s: %s', $path, $message) : $message;
+            foreach ($pathErrors as $pathError) {
+                $messages[] = $path !== '' ? sprintf('%s: %s', $path, $pathError) : $pathError;
             }
         }
 

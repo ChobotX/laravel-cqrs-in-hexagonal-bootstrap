@@ -25,8 +25,8 @@ final readonly class DeprecateDefinitionVersionHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
-        $versionId = new DefinitionVersionId($command->id);
-        $version = $this->definitionVersionRepository->findById($versionId);
+        $definitionVersionId = new DefinitionVersionId($command->id);
+        $version = $this->definitionVersionRepository->findById($definitionVersionId);
 
         if (! $version instanceof DefinitionVersion) {
             throw new DefinitionVersionNotFoundException($command->id);
@@ -38,7 +38,7 @@ final readonly class DeprecateDefinitionVersionHandler implements CommandHandler
             versionId: $version->id->value,
             definitionId: $version->definitionId->value,
             version: $version->version->value,
-            occurredAt: new DateTimeImmutable(),
+            occurredAt: new DateTimeImmutable,
         ));
     }
 }

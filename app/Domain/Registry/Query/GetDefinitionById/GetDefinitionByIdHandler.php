@@ -19,7 +19,6 @@ final readonly class GetDefinitionByIdHandler implements QueryHandler
         private DefinitionRepository $definitionRepository,
     ) {}
 
-    /** @return ?Definition */
     public function handle(Query $query): ?Definition
     {
         return $this->definitionRepository->findById(new DefinitionId($query->id));

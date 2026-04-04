@@ -27,7 +27,7 @@ use Tests\Helper\FakeJsonSchemaValidator;
 use Tests\Helper\FakeSchemaSerializer;
 
 /**
- * @param array{schema?: Schema, entryRepo?: FakeEntryRepository, versionRepo?: FakeDefinitionVersionRepository, validator?: FakeJsonSchemaValidator, serializer?: FakeSchemaSerializer} $overrides
+ * @param  array{schema?: Schema, entryRepo?: FakeEntryRepository, versionRepo?: FakeDefinitionVersionRepository, validator?: FakeJsonSchemaValidator, serializer?: FakeSchemaSerializer}  $overrides
  * @return array{UpdateEntryHandler, FakeEntryRepository, FakeEventCollector}
  */
 function updateEntryHandlerFixtures(array $overrides = []): array
@@ -102,6 +102,16 @@ it('throws when entry not found', function (): void {
     ));
 })->throws(EntryNotFoundException::class);
 
+it('throws when definition version not found on update', function (): void {
+    [$handler] = updateEntryHandlerFixtures(['versionRepo' => new FakeDefinitionVersionRepository]);
+
+    $handler->handle(new UpdateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440000',
+        title: 'New Title',
+        data: ['name' => 'New Name'],
+    ));
+})->throws(App\Domain\Registry\Exception\DefinitionVersionNotFoundException::class);
+
 it('throws on validation error', function (): void {
     [$handler] = updateEntryHandlerFixtures(['validator' => new FakeJsonSchemaValidator(['name is required'])]);
 
@@ -125,3 +135,69 @@ it('throws on invalid reference', function (): void {
         data: ['author' => '880e8400-e29b-41d4-a716-446655440000'],
     ));
 })->throws(InvalidReferenceException::class);
+
+it('skips reference validation for empty value on update', function (): void {
+    $schema = new Schema([
+        new ReferenceField('author', 'Author', false, 'crm', 'employees'),
+    ]);
+
+    [$handler, $entryRepo] = updateEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new UpdateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440000',
+        title: 'Empty Ref',
+        data: ['author' => ''],
+    ));
+
+    expect($entryRepo->saved)->toHaveCount(1);
+});
+
+it('validates references inside a repeater on update', function (): void {
+    $schema = new Schema([
+        new App\Domain\Registry\Schema\RepeaterField('items', 'Items', false, [
+            new ReferenceField('ref', 'Ref', false, 'crm', 'employees'),
+        ]),
+    ]);
+
+    [$handler] = updateEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new UpdateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440000',
+        title: 'Repeater Ref',
+        data: ['items' => [['ref' => '880e8400-e29b-41d4-a716-446655440000']]],
+    ));
+})->throws(InvalidReferenceException::class);
+
+it('validates references inside an object on update', function (): void {
+    $schema = new Schema([
+        new App\Domain\Registry\Schema\ObjectField('details', 'Details', false, [
+            new ReferenceField('ref', 'Ref', false, 'crm', 'employees'),
+        ]),
+    ]);
+
+    [$handler] = updateEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new UpdateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440000',
+        title: 'Object Ref',
+        data: ['details' => ['ref' => '880e8400-e29b-41d4-a716-446655440000']],
+    ));
+})->throws(InvalidReferenceException::class);
+
+it('skips repeater validation when items is not array on update', function (): void {
+    $schema = new Schema([
+        new App\Domain\Registry\Schema\RepeaterField('items', 'Items', false, [
+            new StringField('x', 'X'),
+        ]),
+    ]);
+
+    [$handler, $entryRepo] = updateEntryHandlerFixtures(['schema' => $schema]);
+
+    $handler->handle(new UpdateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440000',
+        title: 'Non-array repeater',
+        data: ['items' => 'not-an-array'],
+    ));
+
+    expect($entryRepo->saved)->toHaveCount(1);
+});

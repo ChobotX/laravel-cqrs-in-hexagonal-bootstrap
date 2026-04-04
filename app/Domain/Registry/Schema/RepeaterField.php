@@ -7,7 +7,7 @@ namespace App\Domain\Registry\Schema;
 final readonly class RepeaterField implements SchemaField
 {
     /**
-     * @param list<SchemaField> $fields
+     * @param  list<SchemaField>  $fields
      */
     public function __construct(
         private string $name,

@@ -12,13 +12,13 @@ use App\Domain\Registry\DefinitionSlug;
 
 final readonly class DefinitionMapper
 {
-    public function toDomain(DefinitionModel $model): Definition
+    public function toDomain(DefinitionModel $definitionModel): Definition
     {
         return new Definition(
-            id: new DefinitionId($model->id),
-            namespace: new DefinitionNamespace($model->namespace),
-            slug: new DefinitionSlug($model->slug),
-            name: new DefinitionName($model->name),
+            id: new DefinitionId($definitionModel->id),
+            namespace: new DefinitionNamespace($definitionModel->namespace),
+            slug: new DefinitionSlug($definitionModel->slug),
+            name: new DefinitionName($definitionModel->name),
         );
     }
 }

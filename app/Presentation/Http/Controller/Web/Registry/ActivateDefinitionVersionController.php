@@ -8,9 +8,9 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
+use App\Domain\Registry\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
 use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionVersion;
-use App\Domain\Registry\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
 use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
 use Illuminate\Http\RedirectResponse;
@@ -37,7 +37,7 @@ final readonly class ActivateDefinitionVersionController
 
         $targetVersion = $this->findVersionByNumber($versions, $version);
 
-        if ($targetVersion === null) {
+        if (! $targetVersion instanceof DefinitionVersion) {
             abort(HttpStatus::NOT_FOUND);
         }
 
