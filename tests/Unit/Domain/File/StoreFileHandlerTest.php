@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\File\Command\StoreFile\StoreFileCommand;
 use App\Domain\File\Command\StoreFile\StoreFileHandler;
+use App\Domain\File\Contract\Command\StoreFile\StoreFileCommand;
 use App\Domain\File\Contract\Event\FileStored;
 use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileUpload;

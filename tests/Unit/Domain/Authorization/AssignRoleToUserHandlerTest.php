@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserHandler;
+use App\Domain\Authorization\Contract\Command\AssignRoleToUser\AssignRoleToUserCommand;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

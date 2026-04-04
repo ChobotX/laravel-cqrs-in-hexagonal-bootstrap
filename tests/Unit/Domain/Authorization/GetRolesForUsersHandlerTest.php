@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersHandler;
-use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeUserPermissionRepository;
 

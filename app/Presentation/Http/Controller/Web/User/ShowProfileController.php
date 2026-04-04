@@ -8,17 +8,17 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Query\GetAssignableRoles\GetAssignableRolesQuery;
+use App\Domain\Authorization\Contract\Query\GetAvailableModules\GetAvailableModulesQuery;
+use App\Domain\Authorization\Contract\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsQuery;
+use App\Domain\Authorization\Contract\Query\GetOwnOverrides\GetOwnOverridesQuery;
+use App\Domain\Authorization\Contract\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
-use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
-use App\Domain\Authorization\Query\GetOwnEffectivePermissions\GetOwnEffectivePermissionsQuery;
-use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesQuery;
-use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Notification\Contract\ChannelPreference;
 use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Query\GetNotificationPreferences\GetNotificationPreferencesQuery;
-use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
-use App\Domain\User\Query\GetOwnProfile\GetOwnProfileQuery;
+use App\Domain\Notification\Contract\Query\GetNotificationPreferences\GetNotificationPreferencesQuery;
+use App\Domain\Team\Contract\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\User\Contract\Query\GetOwnProfile\GetOwnProfileQuery;
 use Illuminate\View\View;
 
 #[SkipPermissionCheck(reason: 'Profile page is accessible to all authenticated users')]

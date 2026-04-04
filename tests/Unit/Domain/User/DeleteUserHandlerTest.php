@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Command\DeleteUser\DeleteUserCommand;
 use App\Domain\User\Command\DeleteUser\DeleteUserHandler;
+use App\Domain\User\Contract\Command\DeleteUser\DeleteUserCommand;
 use App\Domain\User\Contract\Event\UserDeleted;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\User;

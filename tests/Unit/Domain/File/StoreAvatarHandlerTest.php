@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Contract\Image\ImageProcessor;
-use App\Domain\File\Command\StoreAvatar\StoreAvatarCommand;
 use App\Domain\File\Command\StoreAvatar\StoreAvatarHandler;
+use App\Domain\File\Contract\Command\StoreAvatar\StoreAvatarCommand;
 use App\Domain\File\Contract\Event\FileStored;
 use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileUpload;

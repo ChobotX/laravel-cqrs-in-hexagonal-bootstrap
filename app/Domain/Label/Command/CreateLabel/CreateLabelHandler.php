@@ -7,6 +7,7 @@ namespace App\Domain\Label\Command\CreateLabel;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Label\Contract\Command\CreateLabel\CreateLabelCommand;
 use App\Domain\Label\Contract\Event\LabelCreated;
 use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Contract\Label;

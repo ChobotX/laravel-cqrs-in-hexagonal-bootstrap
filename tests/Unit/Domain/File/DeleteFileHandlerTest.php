@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\File\Command\DeleteFile\DeleteFileCommand;
 use App\Domain\File\Command\DeleteFile\DeleteFileHandler;
+use App\Domain\File\Contract\Command\DeleteFile\DeleteFileCommand;
 use App\Domain\File\Contract\Event\FileDeleted;
 use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;

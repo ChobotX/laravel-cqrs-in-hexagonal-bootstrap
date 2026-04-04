@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Command\UpdateRole;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\UpdateRole\UpdateRoleCommand;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

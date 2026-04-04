@@ -10,6 +10,7 @@ use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;
 use App\Domain\File\Contract\FileRepository;
 use App\Domain\File\Contract\FileStorage;
+use App\Domain\File\Contract\Query\GetFileContent\GetFileContentQuery;
 use App\Domain\File\Exception\FileNotFoundException;
 
 /** @implements QueryHandler<GetFileContentQuery, string> */

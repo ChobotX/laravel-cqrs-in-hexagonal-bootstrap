@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\File\Contract\FileId;
+use App\Domain\User\Contract\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Exception\UserNotFoundException;

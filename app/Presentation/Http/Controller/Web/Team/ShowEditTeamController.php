@@ -9,9 +9,9 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
-use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
-use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Label\Contract\Query\GetEntityLabels\GetEntityLabelsQuery;
+use App\Domain\Team\Contract\Query\GetTeamById\GetTeamByIdQuery;
+use App\Domain\Team\Contract\Query\ListTeams\ListTeamsQuery;
 use Illuminate\View\View;
 
 #[RequiresPermission('teams.management.update')]

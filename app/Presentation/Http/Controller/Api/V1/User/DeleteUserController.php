@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Api\V1\User;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\User\Command\DeleteUser\DeleteUserCommand;
+use App\Domain\User\Contract\Command\DeleteUser\DeleteUserCommand;
 use Illuminate\Http\Response;
 
 #[SkipPermissionCheck('Permission enforced by command/query bus')]

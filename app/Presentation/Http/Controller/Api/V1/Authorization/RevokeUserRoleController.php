@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
+use App\Domain\Authorization\Contract\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use Illuminate\Http\Response;
 
 #[SkipPermissionCheck('Permission enforced by command/query bus')]

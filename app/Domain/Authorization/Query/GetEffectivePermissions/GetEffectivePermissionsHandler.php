@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Query\GetEffectivePermissions;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Authorization\Contract\EffectivePermission;
+use App\Domain\Authorization\Contract\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\PermissionResolver;
 

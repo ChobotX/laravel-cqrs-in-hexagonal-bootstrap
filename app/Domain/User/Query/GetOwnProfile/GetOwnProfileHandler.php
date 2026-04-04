@@ -7,6 +7,7 @@ namespace App\Domain\User\Query\GetOwnProfile;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Query\GetOwnProfile\GetOwnProfileQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Contract\UserRepository;

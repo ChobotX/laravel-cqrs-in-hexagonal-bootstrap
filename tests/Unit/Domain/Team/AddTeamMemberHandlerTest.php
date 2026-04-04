@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
+use App\Domain\Team\Contract\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;

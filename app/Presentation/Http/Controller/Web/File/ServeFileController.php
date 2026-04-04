@@ -7,8 +7,8 @@ namespace App\Presentation\Http\Controller\Web\File;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Domain\File\Contract\File;
-use App\Domain\File\Query\GetFileById\GetFileByIdQuery;
-use App\Domain\File\Query\GetFileContent\GetFileContentQuery;
+use App\Domain\File\Contract\Query\GetFileById\GetFileByIdQuery;
+use App\Domain\File\Contract\Query\GetFileContent\GetFileContentQuery;
 use Illuminate\Http\Response;
 
 #[RequiresPermission('files.storage.read')]

@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
-use App\Domain\Authorization\Command\StopImpersonation\StopImpersonationCommand;
+use App\Domain\Authorization\Contract\Command\StopImpersonation\StopImpersonationCommand;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;
 

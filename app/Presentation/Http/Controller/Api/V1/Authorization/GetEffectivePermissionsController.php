@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
+use App\Domain\Authorization\Contract\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
 use App\Presentation\Http\Resource\EffectivePermissionResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 

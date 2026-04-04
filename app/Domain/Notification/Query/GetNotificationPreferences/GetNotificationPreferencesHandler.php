@@ -9,6 +9,7 @@ use App\Contract\Query\QueryHandler;
 use App\Domain\Notification\Contract\ChannelPreference;
 use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\Query\GetNotificationPreferences\GetNotificationPreferencesQuery;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationPreferences;
 

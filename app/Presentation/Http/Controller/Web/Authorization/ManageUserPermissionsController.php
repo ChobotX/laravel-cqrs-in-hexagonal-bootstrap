@@ -6,10 +6,10 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
-use App\Domain\Authorization\Command\AssignRoleToUser\AssignRoleToUserCommand;
-use App\Domain\Authorization\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
-use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
-use App\Domain\Authorization\Command\SetPermissionOverride\SetPermissionOverrideCommand;
+use App\Domain\Authorization\Contract\Command\AssignRoleToUser\AssignRoleToUserCommand;
+use App\Domain\Authorization\Contract\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
+use App\Domain\Authorization\Contract\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
+use App\Domain\Authorization\Contract\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Presentation\Http\Request\Web\Authorization\ManageUserPermissionsRequest;
 use App\Presentation\Http\Request\Web\Authorization\UserPermissionAction;
 use Illuminate\Http\RedirectResponse;

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Contract\Auth\PasswordManager;
-use App\Domain\User\Command\SetPassword\SetPasswordCommand;
 use App\Domain\User\Command\SetPassword\SetPasswordHandler;
+use App\Domain\User\Contract\Command\SetPassword\SetPasswordCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\User;

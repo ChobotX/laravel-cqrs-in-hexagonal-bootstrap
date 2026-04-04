@@ -8,7 +8,7 @@ use App\Application\Bus\CommandBus;
 use App\Application\Event\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
-use App\Domain\Notification\Command\SendNotification\SendNotificationCommand;
+use App\Domain\Notification\Contract\Command\SendNotification\SendNotificationCommand;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\WelcomeNotification;
 use App\Domain\User\Contract\Event\UserCreated;

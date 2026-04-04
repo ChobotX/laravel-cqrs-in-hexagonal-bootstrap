@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Image\ImageProcessor;
+use App\Domain\File\Contract\Command\StoreAvatar\StoreAvatarCommand;
 use App\Domain\File\Contract\Event\FileStored;
 use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;

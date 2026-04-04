@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Command\ShareRecord\ShareRecordCommand;
 use App\Domain\Authorization\Command\ShareRecord\ShareRecordHandler;
+use App\Domain\Authorization\Contract\Command\ShareRecord\ShareRecordCommand;
 use App\Domain\Authorization\Contract\Event\RecordShared;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRecordShareRepository;

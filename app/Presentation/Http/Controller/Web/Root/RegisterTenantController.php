@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Root;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
-use App\Domain\Tenancy\Command\CreateTenant\CreateTenantCommand;
+use App\Domain\Tenancy\Contract\Command\CreateTenant\CreateTenantCommand;
 use App\Presentation\Http\Request\Root\RegisterTenantFormRequest;
 use Illuminate\Http\RedirectResponse;
 

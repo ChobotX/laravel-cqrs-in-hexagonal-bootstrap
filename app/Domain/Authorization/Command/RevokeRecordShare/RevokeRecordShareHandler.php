@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Command\RevokeRecordShare;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\RevokeRecordShare\RevokeRecordShareCommand;
 use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
 use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\Exception\RecordShareNotFoundException;

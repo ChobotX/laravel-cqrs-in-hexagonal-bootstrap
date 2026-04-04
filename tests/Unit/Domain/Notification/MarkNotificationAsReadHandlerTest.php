@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Command\MarkNotificationAsRead\MarkNotificationAsReadCommand;
 use App\Domain\Notification\Command\MarkNotificationAsRead\MarkNotificationAsReadHandler;
+use App\Domain\Notification\Contract\Command\MarkNotificationAsRead\MarkNotificationAsReadCommand;
 use App\Domain\Notification\Contract\Event\NotificationRead;
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationChannel;

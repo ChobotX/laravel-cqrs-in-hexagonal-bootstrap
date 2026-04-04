@@ -7,11 +7,11 @@ namespace App\Presentation\Http\Controller\Web\User;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
 use App\Contract\Auth\AuthenticatedUser;
-use App\Domain\Authorization\Command\SyncUserRoles\SyncUserRolesCommand;
-use App\Domain\Notification\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
+use App\Domain\Authorization\Contract\Command\SyncUserRoles\SyncUserRolesCommand;
+use App\Domain\Notification\Contract\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
 use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Team\Command\SyncUserTeams\SyncUserTeamsCommand;
-use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
+use App\Domain\Team\Contract\Command\SyncUserTeams\SyncUserTeamsCommand;
+use App\Domain\User\Contract\Command\UpdateProfile\UpdateProfileCommand;
 use App\Presentation\Http\Request\Web\User\UpdateProfileRequest;
 use Illuminate\Http\RedirectResponse;
 

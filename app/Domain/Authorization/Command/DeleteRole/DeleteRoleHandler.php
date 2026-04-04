@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Command\DeleteRole;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\DeleteRole\DeleteRoleCommand;
 use App\Domain\Authorization\Contract\Event\RoleDeleted;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

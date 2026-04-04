@@ -6,8 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Team;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Team\Query\GetTeamById\GetTeamByIdQuery;
-use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersQuery;
+use App\Domain\Team\Contract\Query\GetTeamById\GetTeamByIdQuery;
+use App\Domain\Team\Contract\Query\ListTeamMembers\ListTeamMembersQuery;
 use Illuminate\View\View;
 
 #[RequiresPermission('teams.management.read')]

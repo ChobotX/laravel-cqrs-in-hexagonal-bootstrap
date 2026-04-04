@@ -8,6 +8,7 @@ use App\Contract\Auth\PasswordManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\User\Contract\Command\SetPassword\SetPasswordCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\User;

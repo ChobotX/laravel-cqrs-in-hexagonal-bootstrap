@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Command\RevokeRoleFromUser\RevokeRoleFromUserHandler;
+use App\Domain\Authorization\Contract\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

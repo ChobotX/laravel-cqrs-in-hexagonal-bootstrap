@@ -8,10 +8,10 @@ use App\Application\Sorting\Sorting;
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationId;
+use App\Domain\Notification\Contract\Query\ListOwnNotifications\ListOwnNotificationsQuery;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationType;
 use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsHandler;
-use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsQuery;
 use Tests\Helper\FakeNotificationRepository;
 
 function createNotificationFixture(string $id, string $recipientId, bool $isRead = false): Notification

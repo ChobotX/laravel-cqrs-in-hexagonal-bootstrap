@@ -9,6 +9,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Command\SeedDefaultRoles\SeedDefaultRolesCommand;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Contract\RolePermission;

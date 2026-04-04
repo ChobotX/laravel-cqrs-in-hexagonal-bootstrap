@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Command\SyncUserTeams\SyncUserTeamsCommand;
 use App\Domain\Team\Command\SyncUserTeams\SyncUserTeamsHandler;
+use App\Domain\Team\Contract\Command\SyncUserTeams\SyncUserTeamsCommand;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
 use App\Domain\Team\Contract\Event\TeamMemberRemoved;
 use Tests\Helper\FakeAuthorizationChecker;

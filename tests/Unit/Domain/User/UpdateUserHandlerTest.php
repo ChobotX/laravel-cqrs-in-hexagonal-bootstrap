@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserHandler;
+use App\Domain\User\Contract\Command\UpdateUser\UpdateUserCommand;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Exception\InvalidUserDataException;

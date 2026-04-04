@@ -9,6 +9,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Feature;

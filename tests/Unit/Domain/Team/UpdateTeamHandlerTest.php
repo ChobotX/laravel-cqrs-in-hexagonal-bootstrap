@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamHandler;
+use App\Domain\Team\Contract\Command\UpdateTeam\UpdateTeamCommand;
 use App\Domain\Team\Contract\Event\TeamUpdated;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;

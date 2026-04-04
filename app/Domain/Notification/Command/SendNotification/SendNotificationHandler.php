@@ -9,6 +9,7 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
 use App\Contract\Notification\NotificationChannelSenderRegistry;
+use App\Domain\Notification\Contract\Command\SendNotification\SendNotificationCommand;
 use App\Domain\Notification\Contract\Event\NotificationCreated;
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationChannel;

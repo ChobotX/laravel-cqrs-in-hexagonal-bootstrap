@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Web\Team;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Contract\Auth\AuthenticatedUser;
-use App\Domain\Label\Command\SyncEntityLabels\SyncEntityLabelsCommand;
+use App\Domain\Label\Contract\Command\SyncEntityLabels\SyncEntityLabelsCommand;
 use App\Presentation\Http\Request\Web\Team\UpdateTeamRequest;
 use Illuminate\Http\RedirectResponse;
 

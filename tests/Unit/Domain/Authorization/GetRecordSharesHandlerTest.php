@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Query\GetRecordShares\GetRecordSharesQuery;
 use App\Domain\Authorization\Query\GetRecordShares\GetRecordSharesHandler;
-use App\Domain\Authorization\Query\GetRecordShares\GetRecordSharesQuery;
 use App\Domain\Authorization\RecordShare;
 use Tests\Helper\FakeRecordShareRepository;
 

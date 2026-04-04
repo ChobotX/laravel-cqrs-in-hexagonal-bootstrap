@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use App\Application\Authorization\AccessContext;
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Team\Contract\Query\GetTeamTree\GetTeamTreeQuery;
+use App\Domain\Team\Contract\Query\GetTeamTree\TeamTreeNode;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamMember;
 use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Query\GetTeamTree\GetTeamTreeHandler;
-use App\Domain\Team\Query\GetTeamTree\GetTeamTreeQuery;
-use App\Domain\Team\Query\GetTeamTree\TeamTreeNode;
 use App\Domain\Team\TeamName;
 use Tests\Helper\FakeTeamMemberRepository;
 use Tests\Helper\FakeTeamRepository;

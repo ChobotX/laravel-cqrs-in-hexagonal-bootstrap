@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsHandler;
-use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use Tests\Helper\FakeLabelRepository;
 
 it('delegates to the repository and returns labels for the entity', function (): void {

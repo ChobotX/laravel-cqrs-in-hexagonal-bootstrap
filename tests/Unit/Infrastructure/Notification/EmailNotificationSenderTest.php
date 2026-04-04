@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\Contract\Query\GetUserById\GetUserByIdQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
-use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
 use App\Domain\User\UserName;
 use App\Infrastructure\Notification\EmailNotificationSender;
 use Tests\Helper\FakeMailer;

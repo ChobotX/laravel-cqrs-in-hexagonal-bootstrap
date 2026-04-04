@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Contract\Auth\PasswordManager;
-use App\Domain\User\Command\UpdateProfile\UpdateProfileCommand;
 use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
+use App\Domain\User\Contract\Command\UpdateProfile\UpdateProfileCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;

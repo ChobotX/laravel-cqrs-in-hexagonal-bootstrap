@@ -6,6 +6,7 @@ namespace App\Domain\Authorization\Query\GetRoleById;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Query\GetRoleById\GetRoleByIdQuery;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Contract\RoleRepository;

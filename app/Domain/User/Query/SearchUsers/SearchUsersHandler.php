@@ -6,6 +6,7 @@ namespace App\Domain\User\Query\SearchUsers;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\User\Contract\Query\SearchUsers\SearchUsersQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserRepository;
 

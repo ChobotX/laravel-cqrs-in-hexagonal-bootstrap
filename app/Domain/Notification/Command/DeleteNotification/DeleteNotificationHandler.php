@@ -7,6 +7,7 @@ namespace App\Domain\Notification\Command\DeleteNotification;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Notification\Contract\Command\DeleteNotification\DeleteNotificationCommand;
 use App\Domain\Notification\Contract\Event\NotificationDeleted;
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationId;

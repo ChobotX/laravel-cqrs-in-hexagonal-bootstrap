@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Notification\Contract\ChannelPreference;
+use App\Domain\Notification\Contract\Command\UpdateNotificationPreferences\UpdateNotificationPreferencesCommand;
 use App\Domain\Notification\Contract\Event\NotificationPreferencesUpdated;
 use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationPreferenceRepository;

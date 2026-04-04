@@ -6,6 +6,7 @@ namespace App\Domain\Authorization\Query\GetAvailableModules;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Query\GetAvailableModules\GetAvailableModulesQuery;
 
 /** @implements QueryHandler<GetAvailableModulesQuery, array<string, array{label: string, features: array<string, array{label: string, actions: list<string>}>}>> */
 final readonly class GetAvailableModulesHandler implements QueryHandler

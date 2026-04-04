@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Team\Contract\Query\ListTeamMembers\ListTeamMembersQuery;
 use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersHandler;
-use App\Domain\Team\Query\ListTeamMembers\ListTeamMembersQuery;
 use Tests\Helper\FakeTeamMemberRepository;
 
 it('lists team members', function (): void {

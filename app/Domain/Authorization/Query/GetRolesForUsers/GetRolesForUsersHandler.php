@@ -6,6 +6,7 @@ namespace App\Domain\Authorization\Query\GetRolesForUsers;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 

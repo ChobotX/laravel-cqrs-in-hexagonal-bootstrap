@@ -7,6 +7,7 @@ namespace App\Domain\Notification\Command\MarkAllNotificationsAsRead;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Notification\Contract\Command\MarkAllNotificationsAsRead\MarkAllNotificationsAsReadCommand;
 use App\Domain\Notification\Contract\Event\AllNotificationsRead;
 use App\Domain\Notification\Contract\NotificationRepository;
 use DateTimeImmutable;

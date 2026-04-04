@@ -8,9 +8,9 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Authorization\Query\CountRoles\CountRolesQuery;
-use App\Domain\Team\Query\CountTeams\CountTeamsQuery;
-use App\Domain\User\Query\CountUsers\CountUsersQuery;
+use App\Domain\Authorization\Contract\Query\CountRoles\CountRolesQuery;
+use App\Domain\Team\Contract\Query\CountTeams\CountTeamsQuery;
+use App\Domain\User\Contract\Query\CountUsers\CountUsersQuery;
 use Illuminate\View\View;
 
 #[SkipPermissionCheck(reason: 'Dashboard is accessible to all authenticated users')]

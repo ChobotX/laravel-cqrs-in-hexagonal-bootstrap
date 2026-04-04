@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Command\AssignLabel\AssignLabelHandler;
+use App\Domain\Label\Contract\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Contract\Event\LabelAssigned;
 use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;

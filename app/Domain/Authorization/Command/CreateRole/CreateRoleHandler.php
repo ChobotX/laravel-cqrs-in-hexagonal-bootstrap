@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Command\CreateRole;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\CreateRole\CreateRoleCommand;
 use App\Domain\Authorization\Contract\Event\RoleCreated;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

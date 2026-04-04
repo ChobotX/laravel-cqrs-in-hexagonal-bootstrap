@@ -5,10 +5,10 @@ declare(strict_types=1);
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationId;
+use App\Domain\Notification\Contract\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationType;
 use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsHandler;
-use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
 use Tests\Helper\FakeNotificationRepository;
 
 it('returns unread count for recipient', function (): void {

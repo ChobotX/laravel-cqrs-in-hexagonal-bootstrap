@@ -7,9 +7,9 @@ namespace App\Presentation\Console\User;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Application\Tenancy\TenantAwareCommand;
-use App\Domain\User\Command\SetPassword\SetPasswordCommand;
+use App\Domain\User\Contract\Command\SetPassword\SetPasswordCommand;
+use App\Domain\User\Contract\Query\GetUserByEmail\GetUserByEmailQuery;
 use App\Domain\User\Contract\User;
-use App\Domain\User\Query\GetUserByEmail\GetUserByEmailQuery;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 

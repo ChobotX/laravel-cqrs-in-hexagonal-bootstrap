@@ -7,6 +7,7 @@ namespace App\Domain\Tenancy\Command\MigrateTenant;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Tenancy\TenantProvisioner;
+use App\Domain\Tenancy\Contract\Command\MigrateTenant\MigrateTenantCommand;
 
 /** @implements CommandHandler<MigrateTenantCommand> */
 final readonly class MigrateTenantHandler implements CommandHandler

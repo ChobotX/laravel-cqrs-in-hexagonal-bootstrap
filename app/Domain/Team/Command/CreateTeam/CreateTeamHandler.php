@@ -7,6 +7,7 @@ namespace App\Domain\Team\Command\CreateTeam;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Team\Contract\Command\CreateTeam\CreateTeamCommand;
 use App\Domain\Team\Contract\Event\TeamCreated;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;

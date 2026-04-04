@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
-use App\Domain\Authorization\Command\DeleteRole\DeleteRoleCommand;
+use App\Domain\Authorization\Contract\Command\DeleteRole\DeleteRoleCommand;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('users.roles.update')]

@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Web\Notification;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
-use App\Domain\Notification\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
+use App\Domain\Notification\Contract\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
 use Illuminate\Http\JsonResponse;
 
 #[SkipPermissionCheck(reason: 'Notifications are accessible to all authenticated users')]

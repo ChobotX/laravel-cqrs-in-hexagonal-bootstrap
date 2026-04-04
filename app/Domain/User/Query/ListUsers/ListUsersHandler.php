@@ -10,6 +10,7 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\User\Contract\Query\ListUsers\ListUsersQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserRepository;
 

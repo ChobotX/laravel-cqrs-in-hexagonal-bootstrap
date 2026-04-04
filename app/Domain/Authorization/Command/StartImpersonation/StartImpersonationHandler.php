@@ -8,6 +8,7 @@ use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\StartImpersonation\StartImpersonationCommand;
 use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Exception\ImpersonationNotAllowedException;

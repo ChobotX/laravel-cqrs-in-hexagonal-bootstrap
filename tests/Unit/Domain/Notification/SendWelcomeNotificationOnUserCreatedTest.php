@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Command\SendNotification\SendNotificationCommand;
+use App\Domain\Notification\Contract\Command\SendNotification\SendNotificationCommand;
 use App\Domain\Notification\EventHandler\SendWelcomeNotificationOnUserCreated;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\WelcomeNotification;

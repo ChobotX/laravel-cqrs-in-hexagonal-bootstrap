@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\ImpersonationManager;
+use App\Domain\Authorization\Contract\Query\GetActiveImpersonation\GetActiveImpersonationQuery;
 use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationHandler;
-use App\Domain\Authorization\Query\GetActiveImpersonation\GetActiveImpersonationQuery;
 use Tests\Helper\FakeImpersonationManager;
 
 it('returns impersonation data when active', function (): void {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
-use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsQuery;
+use App\Domain\Notification\Contract\Query\ListOwnNotifications\ListOwnNotificationsQuery;
 
 it('can be constructed with defaults', function (): void {
     $query = new ListOwnNotificationsQuery(userId: '550e8400-e29b-41d4-a716-446655440000');

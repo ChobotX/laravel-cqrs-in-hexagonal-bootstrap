@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\User;
 
-use App\Domain\User\Command\CreateUser\CreateUserCommand;
+use App\Domain\User\Contract\Command\CreateUser\CreateUserCommand;
 use App\Presentation\Http\Request\FormRequest;
 use Illuminate\Support\Str;
 

@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Authorization\Command\SyncUserRoles\SyncUserRolesCommand;
 use App\Domain\Authorization\Command\SyncUserRoles\SyncUserRolesHandler;
+use App\Domain\Authorization\Contract\Command\SyncUserRoles\SyncUserRolesCommand;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Contract\Role;

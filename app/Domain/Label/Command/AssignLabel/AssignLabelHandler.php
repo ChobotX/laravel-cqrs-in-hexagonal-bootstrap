@@ -7,6 +7,7 @@ namespace App\Domain\Label\Command\AssignLabel;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Label\Contract\Command\AssignLabel\AssignLabelCommand;
 use App\Domain\Label\Contract\Event\LabelAssigned;
 use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;

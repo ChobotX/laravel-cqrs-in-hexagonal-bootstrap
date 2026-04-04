@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Authorization;
 
-use App\Domain\Authorization\Command\UpdateRole\UpdateRoleCommand;
+use App\Domain\Authorization\Contract\Command\UpdateRole\UpdateRoleCommand;
 use App\Presentation\Http\Request\FormRequest;
 
 final class UpdateRoleRequest extends FormRequest

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Query\GetOwnOverrides\GetOwnOverridesQuery;
 use App\Domain\Authorization\Contract\UserPermissionOverride;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\OverrideType;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesHandler;
-use App\Domain\Authorization\Query\GetOwnOverrides\GetOwnOverridesQuery;
 use Tests\Helper\FakeUserPermissionRepository;
 
 it('returns own overrides', function (): void {

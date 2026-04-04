@@ -8,11 +8,11 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Query\GetRolesForUsers\GetRolesForUsersQuery;
 use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Query\GetRolesForUsers\GetRolesForUsersQuery;
+use App\Domain\Team\Contract\Query\GetTeamTree\GetTeamTreeQuery;
+use App\Domain\Team\Contract\Query\GetTeamTree\TeamTreeNode;
 use App\Domain\Team\Contract\TeamMember;
-use App\Domain\Team\Query\GetTeamTree\GetTeamTreeQuery;
-use App\Domain\Team\Query\GetTeamTree\TeamTreeNode;
 use Illuminate\Http\JsonResponse;
 
 #[RequiresPermission('teams.management.read')]

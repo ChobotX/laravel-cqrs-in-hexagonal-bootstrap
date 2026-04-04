@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\File\Contract\FileId;
+use App\Domain\User\Contract\Command\CreateUser\CreateUserCommand;
 use App\Domain\User\Contract\Event\UserCreated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\User;

@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Command\RevokeRoleFromUser;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\RevokeRoleFromUser\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Contract\UserPermissionRepository;

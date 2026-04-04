@@ -6,6 +6,7 @@ namespace App\Domain\Authorization\Query\GetRecordShares;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Query\GetRecordShares\GetRecordSharesQuery;
 use App\Domain\Authorization\Contract\RecordShareRepository;
 use App\Domain\Authorization\RecordShare;
 

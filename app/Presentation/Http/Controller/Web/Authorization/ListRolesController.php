@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
-use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
+use App\Domain\Authorization\Contract\Query\ListRoles\ListRolesQuery;
 use App\Presentation\Http\Request\Web\PaginationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;

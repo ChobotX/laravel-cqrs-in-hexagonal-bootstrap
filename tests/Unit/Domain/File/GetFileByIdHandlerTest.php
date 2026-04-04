@@ -6,11 +6,11 @@ use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;
 use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\MimeType;
+use App\Domain\File\Contract\Query\GetFileById\GetFileByIdQuery;
 use App\Domain\File\Exception\FileNotFoundException;
 use App\Domain\File\FileNamespace;
 use App\Domain\File\FileVersion;
 use App\Domain\File\Query\GetFileById\GetFileByIdHandler;
-use App\Domain\File\Query\GetFileById\GetFileByIdQuery;
 use App\Domain\File\StoragePath;
 use Tests\Helper\FakeFileRepository;
 

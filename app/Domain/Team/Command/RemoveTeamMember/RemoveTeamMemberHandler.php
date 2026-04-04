@@ -7,6 +7,7 @@ namespace App\Domain\Team\Command\RemoveTeamMember;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Team\Contract\Command\RemoveTeamMember\RemoveTeamMemberCommand;
 use App\Domain\Team\Contract\Event\TeamMemberRemoved;
 use App\Domain\Team\Contract\TeamMemberRepository;
 use App\Domain\Team\Exception\TeamMemberNotFoundException;

@@ -7,6 +7,7 @@ namespace App\Domain\Authorization\Command\SyncUserRoles;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Command\SyncUserRoles\SyncUserRolesCommand;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Contract\Role;

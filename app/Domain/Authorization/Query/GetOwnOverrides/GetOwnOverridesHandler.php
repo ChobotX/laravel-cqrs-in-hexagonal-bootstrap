@@ -6,6 +6,7 @@ namespace App\Domain\Authorization\Query\GetOwnOverrides;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Query\GetOwnOverrides\GetOwnOverridesQuery;
 use App\Domain\Authorization\Contract\UserPermissionOverride;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 

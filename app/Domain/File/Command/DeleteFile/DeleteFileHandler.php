@@ -7,6 +7,7 @@ namespace App\Domain\File\Command\DeleteFile;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\File\Contract\Command\DeleteFile\DeleteFileCommand;
 use App\Domain\File\Contract\Event\FileDeleted;
 use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;

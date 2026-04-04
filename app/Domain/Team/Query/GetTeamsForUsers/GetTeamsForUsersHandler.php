@@ -6,6 +6,7 @@ namespace App\Domain\Team\Query\GetTeamsForUsers;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Query\GetTeamsForUsers\GetTeamsForUsersQuery;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamMemberRepository;
 use App\Domain\Team\Contract\TeamRepository;

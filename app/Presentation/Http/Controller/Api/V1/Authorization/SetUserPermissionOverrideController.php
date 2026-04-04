@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
-use App\Domain\Authorization\Command\SetPermissionOverride\SetPermissionOverrideCommand;
+use App\Domain\Authorization\Contract\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Presentation\Http\Request\Authorization\SetPermissionOverrideRequest;
 use Illuminate\Http\JsonResponse;
 

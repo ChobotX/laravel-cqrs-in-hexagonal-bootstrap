@@ -7,6 +7,7 @@ namespace App\Domain\Notification\Query\CountUnreadNotifications;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Notification\Contract\NotificationRepository;
+use App\Domain\Notification\Contract\Query\CountUnreadNotifications\CountUnreadNotificationsQuery;
 
 /** @implements QueryHandler<CountUnreadNotificationsQuery, int> */
 final readonly class CountUnreadNotificationsHandler implements QueryHandler

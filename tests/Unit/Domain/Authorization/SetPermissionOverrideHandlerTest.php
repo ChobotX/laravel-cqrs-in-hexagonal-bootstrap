@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Domain\Authorization\Command\SetPermissionOverride\SetPermissionOverrideHandler;
+use App\Domain\Authorization\Contract\Command\SetPermissionOverride\SetPermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserPermissionRepository;

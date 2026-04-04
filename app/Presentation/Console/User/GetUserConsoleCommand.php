@@ -7,7 +7,7 @@ namespace App\Presentation\Console\User;
 use App\Application\Bus\QueryBus;
 use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
-use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
+use App\Domain\User\Contract\Query\GetUserById\GetUserByIdQuery;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 

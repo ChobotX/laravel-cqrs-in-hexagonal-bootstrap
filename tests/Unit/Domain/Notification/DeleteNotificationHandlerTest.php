@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationCommand;
 use App\Domain\Notification\Command\DeleteNotification\DeleteNotificationHandler;
+use App\Domain\Notification\Contract\Command\DeleteNotification\DeleteNotificationCommand;
 use App\Domain\Notification\Contract\Event\NotificationDeleted;
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationChannel;

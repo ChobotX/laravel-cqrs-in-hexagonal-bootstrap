@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\UpdateRole\UpdateRoleCommand;
 use App\Domain\Authorization\Command\UpdateRole\UpdateRoleHandler;
+use App\Domain\Authorization\Contract\Command\UpdateRole\UpdateRoleCommand;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

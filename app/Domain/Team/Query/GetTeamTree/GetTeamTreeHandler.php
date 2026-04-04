@@ -8,6 +8,8 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Query\GetTeamTree\GetTeamTreeQuery;
+use App\Domain\Team\Contract\Query\GetTeamTree\TeamTreeNode;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamMemberRepository;
 use App\Domain\Team\Contract\TeamRepository;

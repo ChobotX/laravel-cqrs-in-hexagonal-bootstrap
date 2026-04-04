@@ -8,6 +8,7 @@ use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Label\Contract\Command\SyncEntityLabels\SyncEntityLabelsCommand;
 use App\Domain\Label\Contract\Event\LabelAssigned;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;

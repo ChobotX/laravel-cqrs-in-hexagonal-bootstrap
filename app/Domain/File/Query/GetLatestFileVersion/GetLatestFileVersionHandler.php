@@ -9,6 +9,7 @@ use App\Contract\Query\QueryHandler;
 use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileRepository;
+use App\Domain\File\Contract\Query\GetLatestFileVersion\GetLatestFileVersionQuery;
 use App\Domain\File\Exception\FileNotFoundException;
 use App\Domain\File\FileNamespace;
 

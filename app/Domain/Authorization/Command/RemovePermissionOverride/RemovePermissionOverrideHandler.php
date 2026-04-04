@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\Feature;

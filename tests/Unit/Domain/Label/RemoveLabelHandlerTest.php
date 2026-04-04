@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Command\RemoveLabel\RemoveLabelCommand;
 use App\Domain\Label\Command\RemoveLabel\RemoveLabelHandler;
+use App\Domain\Label\Contract\Command\RemoveLabel\RemoveLabelCommand;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;
 use App\Domain\Label\Contract\Label;

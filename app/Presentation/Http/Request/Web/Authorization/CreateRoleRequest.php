@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Authorization;
 
-use App\Domain\Authorization\Command\CreateRole\CreateRoleCommand;
+use App\Domain\Authorization\Contract\Command\CreateRole\CreateRoleCommand;
 use App\Presentation\Http\Request\FormRequest;
 use Illuminate\Support\Str;
 

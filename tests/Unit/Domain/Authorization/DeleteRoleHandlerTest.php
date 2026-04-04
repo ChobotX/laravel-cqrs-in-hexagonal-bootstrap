@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\DeleteRole\DeleteRoleCommand;
 use App\Domain\Authorization\Command\DeleteRole\DeleteRoleHandler;
+use App\Domain\Authorization\Contract\Command\DeleteRole\DeleteRoleCommand;
 use App\Domain\Authorization\Contract\Event\RoleDeleted;
 use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;

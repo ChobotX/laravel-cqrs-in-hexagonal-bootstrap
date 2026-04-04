@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Command\CreateLabel\CreateLabelCommand;
 use App\Domain\Label\Command\CreateLabel\CreateLabelHandler;
+use App\Domain\Label\Contract\Command\CreateLabel\CreateLabelCommand;
 use App\Domain\Label\Contract\Event\LabelCreated;
 use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Contract\Label;

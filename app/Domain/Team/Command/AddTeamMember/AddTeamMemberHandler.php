@@ -7,6 +7,7 @@ namespace App\Domain\Team\Command\AddTeamMember;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Team\Contract\Command\AddTeamMember\AddTeamMemberCommand;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;

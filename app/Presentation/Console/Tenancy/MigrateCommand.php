@@ -6,8 +6,8 @@ namespace App\Presentation\Console\Tenancy;
 
 use App\Application\Bus\CommandBus;
 use App\Application\Tenancy\TenantAgnosticCommand;
-use App\Domain\Tenancy\Command\MigrateAllTenants\MigrateAllTenantsCommand;
-use App\Domain\Tenancy\Command\MigrateTenant\MigrateTenantCommand;
+use App\Domain\Tenancy\Contract\Command\MigrateAllTenants\MigrateAllTenantsCommand;
+use App\Domain\Tenancy\Contract\Command\MigrateTenant\MigrateTenantCommand;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 

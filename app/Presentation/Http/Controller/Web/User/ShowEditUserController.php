@@ -8,16 +8,16 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Query\GetAssignableRoles\GetAssignableRolesQuery;
+use App\Domain\Authorization\Contract\Query\GetAvailableModules\GetAvailableModulesQuery;
+use App\Domain\Authorization\Contract\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
+use App\Domain\Authorization\Contract\Query\GetUserOverrides\GetUserOverridesQuery;
+use App\Domain\Authorization\Contract\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Query\GetAssignableRoles\GetAssignableRolesQuery;
-use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
-use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
-use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
-use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
 use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
-use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
-use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
+use App\Domain\Label\Contract\Query\GetEntityLabels\GetEntityLabelsQuery;
+use App\Domain\Team\Contract\Query\GetUserTeams\GetUserTeamsQuery;
+use App\Domain\User\Contract\Query\GetUserById\GetUserByIdQuery;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.list.update')]
