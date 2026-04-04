@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Helper;
 
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\VersionNumber;
 
 final class FakeDefinitionVersionRepository implements DefinitionVersionRepository

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Application\Pagination\PaginatedResult;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\Entry;
 use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Query\ListEntries\ListEntriesHandler;
 use App\Domain\Registry\Query\ListEntries\ListEntriesQuery;

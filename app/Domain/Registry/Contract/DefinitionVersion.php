@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry;
+namespace App\Domain\Registry\Contract;
 
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionVersionId;
-use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\Schema\Schema;
+use App\Domain\Registry\VersionNumber;
 
 final readonly class DefinitionVersion
 {

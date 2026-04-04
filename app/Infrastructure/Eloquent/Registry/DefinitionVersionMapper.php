@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Eloquent\Registry;
 
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\SchemaSerializer;
-use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\VersionNumber;
 
 final readonly class DefinitionVersionMapper

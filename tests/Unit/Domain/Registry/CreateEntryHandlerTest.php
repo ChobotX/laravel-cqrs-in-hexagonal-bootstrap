@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Command\CreateEntry\CreateEntryCommand;
 use App\Domain\Registry\Command\CreateEntry\CreateEntryHandler;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\Event\EntryCreated;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
-use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
 use App\Domain\Registry\Exception\InvalidReferenceException;

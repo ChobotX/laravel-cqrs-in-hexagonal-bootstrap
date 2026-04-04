@@ -7,11 +7,11 @@ namespace Tests\Helper;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\EntryRepository;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
-use App\Domain\Registry\Entry;
 
 final class FakeEntryRepository implements EntryRepository
 {

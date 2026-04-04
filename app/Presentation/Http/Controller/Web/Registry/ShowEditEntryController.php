@@ -7,10 +7,10 @@ namespace App\Presentation\Http\Controller\Web\Registry;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
+use App\Domain\Registry\Contract\JsonSchema;
 use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Query\GetEntryById\GetEntryByIdQuery;
 use App\Domain\Registry\Query\GetSerializedSchema\GetSerializedSchemaQuery;
-use App\Domain\Registry\Schema\JsonSchema;
 use Illuminate\View\View;
 
 #[RequiresPermission('registry.entries.update')]

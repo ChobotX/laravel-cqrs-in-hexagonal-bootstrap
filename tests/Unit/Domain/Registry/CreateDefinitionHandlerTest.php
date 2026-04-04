@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionCommand;
 use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionHandler;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionCreated;
-use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;

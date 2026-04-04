@@ -6,10 +6,10 @@ namespace App\Domain\Registry\Query\ListEntriesByDefinitionSlug;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryRepository;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
-use App\Domain\Registry\Entry;
 
 /**
  * @implements QueryHandler<ListEntriesByDefinitionSlugQuery, list<Entry>>

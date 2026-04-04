@@ -6,7 +6,7 @@ namespace App\Domain\Registry\Query\GetSerializedSchema;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Registry\Schema\JsonSchema;
+use App\Domain\Registry\Contract\JsonSchema;
 
 /**
  * @implements Query<?JsonSchema>

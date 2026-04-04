@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 use App\Application\Pagination\Pagination;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
-use App\Domain\Registry\DefinitionVersion;
-use App\Domain\Registry\Entry;
 use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\DefinitionAlreadyExistsException;
 use App\Domain\Registry\Schema\Schema;

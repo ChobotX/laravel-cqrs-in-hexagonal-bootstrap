@@ -7,7 +7,7 @@ namespace App\Domain\Registry\Query\ListEntries;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Pagination\PaginatedResult;
 use App\Contract\Query\Query;
-use App\Domain\Registry\Entry;
+use App\Domain\Registry\Contract\Entry;
 
 /**
  * @implements Query<PaginatedResult<Entry>>

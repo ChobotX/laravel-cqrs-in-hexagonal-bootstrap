@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
 /**
- * @implements Query<list<\App\Domain\Registry\Entry>>
+ * @implements Query<list<\App\Domain\Registry\Contract\Entry>>
  */
 #[RequiresPermission('registry.entries.read')]
 final readonly class ListEntriesByDefinitionSlugQuery implements Query

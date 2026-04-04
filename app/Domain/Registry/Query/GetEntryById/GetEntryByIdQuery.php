@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
 /**
- * @implements Query<?\App\Domain\Registry\Entry>
+ * @implements Query<?\App\Domain\Registry\Contract\Entry>
  */
 #[RequiresPermission('registry.entries.read')]
 final readonly class GetEntryByIdQuery implements Query

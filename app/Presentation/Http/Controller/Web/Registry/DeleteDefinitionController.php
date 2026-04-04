@@ -9,7 +9,7 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Registry\Command\DeleteDefinition\DeleteDefinitionCommand;
-use App\Domain\Registry\Definition;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use Illuminate\Http\RedirectResponse;
 

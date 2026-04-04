@@ -7,10 +7,10 @@ namespace App\Domain\Registry\Query\GetSerializedSchema;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\JsonSchema;
 use App\Domain\Registry\Contract\SchemaSerializer;
-use App\Domain\Registry\DefinitionVersion;
-use App\Domain\Registry\Schema\JsonSchema;
 
 /**
  * @implements QueryHandler<GetSerializedSchemaQuery, ?JsonSchema>

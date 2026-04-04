@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry;
 
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\EntryRepository;
 use App\Domain\Registry\Exception\InvalidReferenceException;

@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
 /**
- * @implements Query<?\App\Domain\Registry\Definition>
+ * @implements Query<?\App\Domain\Registry\Contract\Definition>
  */
 #[RequiresPermission('registry.definitions.read')]
 final readonly class GetDefinitionByIdQuery implements Query

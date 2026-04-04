@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Api\Registry;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Registry\Entry;
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Query\ListEntriesByDefinitionSlug\ListEntriesByDefinitionSlugQuery;
 use Illuminate\Http\JsonResponse;
 

@@ -7,15 +7,15 @@ namespace App\Domain\Registry\Command\CreateDefinitionVersion;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
 use App\Domain\Registry\Contract\SchemaSerializer;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\Definition;
-use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
 use DateTimeImmutable;
 

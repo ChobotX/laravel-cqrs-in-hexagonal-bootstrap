@@ -7,11 +7,11 @@ namespace App\Domain\Registry\Command\DeprecateDefinitionVersion;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\Event\DefinitionVersionDeprecated;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
 use DateTimeImmutable;
 

@@ -8,7 +8,6 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
-use App\Domain\Registry\Entry;
 
 interface EntryRepository
 {

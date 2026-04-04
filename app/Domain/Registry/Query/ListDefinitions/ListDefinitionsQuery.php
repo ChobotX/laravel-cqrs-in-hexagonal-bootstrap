@@ -7,7 +7,7 @@ namespace App\Domain\Registry\Query\ListDefinitions;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Pagination\PaginatedResult;
 use App\Contract\Query\Query;
-use App\Domain\Registry\Definition;
+use App\Domain\Registry\Contract\Definition;
 
 /**
  * @implements Query<PaginatedResult<Definition>>

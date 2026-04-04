@@ -7,8 +7,8 @@ namespace App\Domain\Registry\Query\ListDefinitionVersions;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
-use App\Domain\Registry\DefinitionVersion;
 
 /**
  * @implements QueryHandler<ListDefinitionVersionsQuery, list<DefinitionVersion>>

@@ -6,9 +6,9 @@ namespace App\Domain\Registry\Query\GetDefinitionById;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionRepository;
-use App\Domain\Registry\Definition;
 
 /**
  * @implements QueryHandler<GetDefinitionByIdQuery, ?Definition>

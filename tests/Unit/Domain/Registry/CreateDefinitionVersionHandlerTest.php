@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionCommand;
 use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionHandler;
+use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;

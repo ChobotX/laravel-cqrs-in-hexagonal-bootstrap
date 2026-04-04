@@ -3,9 +3,9 @@
 declare(strict_types=1);
 
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsHandler;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
 use App\Domain\Registry\Schema\Schema;

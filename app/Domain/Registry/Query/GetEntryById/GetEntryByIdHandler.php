@@ -6,9 +6,9 @@ namespace App\Domain\Registry\Query\GetEntryById;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\EntryRepository;
-use App\Domain\Registry\Entry;
 
 /**
  * @implements QueryHandler<GetEntryByIdQuery, ?Entry>
