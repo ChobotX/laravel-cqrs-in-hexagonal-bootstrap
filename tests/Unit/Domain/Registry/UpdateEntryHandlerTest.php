@@ -15,6 +15,7 @@ use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\EntryNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
 use App\Domain\Registry\Exception\InvalidReferenceException;
+use App\Domain\Registry\ReferenceValidator;
 use App\Domain\Registry\Schema\ReferenceField;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
@@ -57,7 +58,8 @@ function updateEntryHandlerFixtures(array $overrides = []): array
     $serializer = $overrides['serializer'] ?? new FakeSchemaSerializer;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateEntryHandler($entryRepo, $versionRepo, $validator, $serializer, $eventCollector);
+    $referenceValidator = new ReferenceValidator($entryRepo);
+    $handler = new UpdateEntryHandler($entryRepo, $versionRepo, $validator, $serializer, $eventCollector, $referenceValidator);
 
     return [$handler, $entryRepo, $eventCollector];
 }

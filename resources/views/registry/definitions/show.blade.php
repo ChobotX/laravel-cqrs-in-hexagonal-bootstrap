@@ -56,30 +56,18 @@
                             </thead>
                             <tbody class="divide-y divide-gray-100">
                                 @foreach ($versions as $version)
-                                    @php
-                                        $statusClasses = match ($version->status) {
-                                            \App\Domain\Registry\VersionStatus::Active => 'bg-green-50 text-green-700 ring-green-700/10',
-                                            \App\Domain\Registry\VersionStatus::Draft => 'bg-blue-50 text-blue-700 ring-blue-700/10',
-                                            \App\Domain\Registry\VersionStatus::Deprecated => 'bg-gray-50 text-gray-500 ring-gray-500/10',
-                                        };
-                                        $statusLabel = match ($version->status) {
-                                            \App\Domain\Registry\VersionStatus::Active => __('messages.registry.versions.status_active'),
-                                            \App\Domain\Registry\VersionStatus::Draft => __('messages.registry.versions.status_draft'),
-                                            \App\Domain\Registry\VersionStatus::Deprecated => __('messages.registry.versions.status_deprecated'),
-                                        };
-                                    @endphp
                                     <tr class="transition-colors hover:bg-gray-50/50">
                                         <td class="px-4 py-3 text-base font-medium text-gray-900 sm:text-sm">
-                                            v{{ $version->version->value }}
+                                            v{{ $version['version'] }}
                                         </td>
                                         <td class="px-4 py-3">
                                             <span
-                                                  class="{{ $statusClasses }} inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1">
-                                                {{ $statusLabel }}
+                                                  class="{{ $version['statusClasses'] }} inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1">
+                                                {{ $version['statusLabel'] }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-base text-gray-500 sm:text-sm">
-                                            {{ count($version->schema->fields) }}
+                                            {{ $version['fieldCount'] }}
                                         </td>
                                     </tr>
                                 @endforeach

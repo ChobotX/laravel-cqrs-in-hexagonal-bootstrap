@@ -155,6 +155,12 @@ it('returns null for non-existent definition-version pair', function (): void {
     ))->toBeNull();
 });
 
+it('returns null when no active version exists', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440c40', 'namespace' => 'test', 'slug' => 'noactive', 'name' => 'NoActive']);
+
+    expect(versionRepo()->findActiveByDefinition(new DefinitionId('550e8400-e29b-41d4-a716-446655440c40')))->toBeNull();
+});
+
 // --- Entry Repository ---
 
 it('creates and finds an entry', function (): void {

@@ -56,6 +56,10 @@ Schema objects serialize to JSON Schema 2020-12 for storage via `SchemaSerialize
 
 Selects always reference another definition's entries (no inline options). A `Car` definition's manufacturer field points to a `CarManufacturer` definition. The form fetches options via internal API, displaying each entry's `title`.
 
+### Reference Validation
+
+`ReferenceValidator` validates that reference field values in entry data point to existing entries. Shared by `CreateEntryHandler` and `UpdateEntryHandler`. Recursively walks `ReferenceField`, `RepeaterField`, and `ObjectField` nested structures.
+
 ## Commands
 
 | Command | Permission | Purpose |
@@ -83,6 +87,7 @@ Selects always reference another definition's entries (no inline options). A `Ca
 | `GetEntryByIdQuery` | `registry.entries.read` | `?Entry` |
 | `ListEntriesQuery` | `registry.entries.read` | `PaginatedResult<Entry>` |
 | `ListEntriesByDefinitionSlugQuery` | `registry.entries.read` | `list<Entry>` |
+| `ListDefinitionNamespacesQuery` | `registry.definitions.read` | `list<string>` |
 
 ## Events
 

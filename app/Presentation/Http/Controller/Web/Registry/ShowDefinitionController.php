@@ -9,9 +9,9 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionVersion;
-use App\Domain\Registry\Query\GetActiveDefinitionVersion\GetActiveDefinitionVersionQuery;
 use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
+use App\Presentation\Http\Service\VersionViewMapper;
 use Illuminate\View\View;
 
 #[RequiresPermission('registry.definitions.read')]
@@ -33,13 +33,9 @@ final readonly class ShowDefinitionController
         /** @var list<DefinitionVersion> $versions */
         $versions = $this->queryBus->dispatch(new ListDefinitionVersionsQuery($definition->id->value));
 
-        /** @var DefinitionVersion|null $activeVersion */
-        $activeVersion = $this->queryBus->dispatch(new GetActiveDefinitionVersionQuery($definition->id->value));
-
         return view('registry.definitions.show', [
             'definition' => $definition,
-            'versions' => $versions,
-            'activeVersion' => $activeVersion,
+            'versions' => VersionViewMapper::mapForView($versions, $namespace, $slug),
         ]);
     }
 }

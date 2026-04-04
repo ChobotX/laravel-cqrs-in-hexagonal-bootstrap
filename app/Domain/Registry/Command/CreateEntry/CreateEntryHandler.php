@@ -19,13 +19,8 @@ use App\Domain\Registry\Entry;
 use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
-use App\Domain\Registry\Exception\InvalidReferenceException;
 use App\Domain\Registry\Exception\NoActiveVersionException;
-use App\Domain\Registry\Schema\ObjectField;
-use App\Domain\Registry\Schema\ReferenceField;
-use App\Domain\Registry\Schema\RepeaterField;
-use App\Domain\Registry\Schema\Schema;
-use App\Domain\Registry\Schema\SchemaField;
+use App\Domain\Registry\ReferenceValidator;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<CreateEntryCommand> */
@@ -38,6 +33,7 @@ final readonly class CreateEntryHandler implements CommandHandler
         private JsonSchemaValidator $jsonSchemaValidator,
         private SchemaSerializer $schemaSerializer,
         private EventCollector $eventCollector,
+        private ReferenceValidator $referenceValidator,
     ) {}
 
     public function handle(Command $command): void
@@ -55,7 +51,7 @@ final readonly class CreateEntryHandler implements CommandHandler
             throw new EntryValidationException($errors);
         }
 
-        $this->validateReferences($version->schema, $command->data);
+        $this->referenceValidator->validate($version->schema, $command->data);
 
         $entry = new Entry(
             id: new EntryId($command->id),
@@ -76,86 +72,5 @@ final readonly class CreateEntryHandler implements CommandHandler
             title: $entry->title->value,
             occurredAt: new DateTimeImmutable,
         ));
-    }
-
-    /** @param array<string, mixed> $data */
-    private function validateReferences(Schema $schema, array $data): void
-    {
-        $this->validateFieldReferences($schema->fields, $data);
-    }
-
-    /**
-     * @param  list<SchemaField>  $fields
-     * @param  array<string, mixed>  $data
-     */
-    private function validateFieldReferences(array $fields, array $data): void
-    {
-        foreach ($fields as $field) {
-            $this->validateSingleFieldReference($field, $data);
-        }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function validateSingleFieldReference(SchemaField $schemaField, array $data): void
-    {
-        if ($schemaField instanceof ReferenceField) {
-            $this->validateReferenceValue($schemaField, $data);
-
-            return;
-        }
-
-        if ($schemaField instanceof RepeaterField) {
-            $this->validateRepeaterReferences($schemaField, $data);
-
-            return;
-        }
-
-        if ($schemaField instanceof ObjectField) {
-            $this->validateObjectReferences($schemaField, $data);
-        }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function validateReferenceValue(ReferenceField $referenceField, array $data): void
-    {
-        $value = $data[$referenceField->name()] ?? null;
-
-        if (! is_string($value) || $value === '') {
-            return;
-        }
-
-        if (! $this->entryRepository->findById(new EntryId($value)) instanceof Entry) {
-            throw new InvalidReferenceException($referenceField->name(), $value);
-        }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function validateRepeaterReferences(RepeaterField $repeaterField, array $data): void
-    {
-        $items = $data[$repeaterField->name()] ?? [];
-
-        if (! is_array($items)) {
-            return;
-        }
-
-        foreach ($items as $item) {
-            if (is_array($item)) {
-                /** @var array<string, mixed> $typedItem */
-                $typedItem = $item;
-                $this->validateFieldReferences($repeaterField->fields, $typedItem);
-            }
-        }
-    }
-
-    /** @param array<string, mixed> $data */
-    private function validateObjectReferences(ObjectField $objectField, array $data): void
-    {
-        $nested = $data[$objectField->name()] ?? [];
-
-        if (is_array($nested)) {
-            /** @var array<string, mixed> $typedNested */
-            $typedNested = $nested;
-            $this->validateFieldReferences($objectField->properties, $typedNested);
-        }
     }
 }

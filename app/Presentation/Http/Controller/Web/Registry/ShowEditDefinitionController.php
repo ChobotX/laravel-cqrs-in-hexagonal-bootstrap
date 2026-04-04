@@ -11,6 +11,7 @@ use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
+use App\Presentation\Http\Service\VersionViewMapper;
 use Illuminate\View\View;
 
 #[RequiresPermission('registry.definitions.update')]
@@ -34,7 +35,7 @@ final readonly class ShowEditDefinitionController
 
         return view('registry.definitions.edit', [
             'definition' => $definition,
-            'versions' => $versions,
+            'versions' => VersionViewMapper::mapForView($versions, $namespace, $slug),
         ]);
     }
 }
