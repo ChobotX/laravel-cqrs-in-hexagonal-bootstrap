@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\DeleteEntry\DeleteEntryCommand;
 use App\Domain\Registry\Command\DeleteEntry\DeleteEntryHandler;
+use App\Domain\Registry\Contract\Command\DeleteEntry\DeleteEntryCommand;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;

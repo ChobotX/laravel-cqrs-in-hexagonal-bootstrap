@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry\Query\GetEntryById;
+namespace App\Domain\Registry\Contract\Query\GetEntryById;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;

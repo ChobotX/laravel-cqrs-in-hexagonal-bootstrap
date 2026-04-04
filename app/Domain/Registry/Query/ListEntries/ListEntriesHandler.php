@@ -11,6 +11,7 @@ use App\Contract\Query\QueryHandler;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryRepository;
+use App\Domain\Registry\Contract\Query\ListEntries\ListEntriesQuery;
 
 /**
  * @implements QueryHandler<ListEntriesQuery, PaginatedResult<Entry>>

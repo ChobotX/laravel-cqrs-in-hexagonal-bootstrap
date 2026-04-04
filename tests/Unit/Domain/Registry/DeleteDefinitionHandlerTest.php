@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\DeleteDefinition\DeleteDefinitionCommand;
 use App\Domain\Registry\Command\DeleteDefinition\DeleteDefinitionHandler;
+use App\Domain\Registry\Contract\Command\DeleteDefinition\DeleteDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Entry;

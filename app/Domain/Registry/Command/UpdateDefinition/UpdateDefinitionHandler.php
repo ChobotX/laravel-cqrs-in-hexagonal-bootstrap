@@ -7,6 +7,7 @@ namespace App\Domain\Registry\Command\UpdateDefinition;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\Command\UpdateDefinition\UpdateDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionRepository;

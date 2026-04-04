@@ -7,6 +7,7 @@ namespace App\Domain\Registry\Command\ActivateDefinitionVersion;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
 use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;

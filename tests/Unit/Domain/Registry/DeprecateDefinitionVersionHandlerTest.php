@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\DeprecateDefinitionVersion\DeprecateDefinitionVersionCommand;
 use App\Domain\Registry\Command\DeprecateDefinitionVersion\DeprecateDefinitionVersionHandler;
+use App\Domain\Registry\Contract\Command\DeprecateDefinitionVersion\DeprecateDefinitionVersionCommand;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;

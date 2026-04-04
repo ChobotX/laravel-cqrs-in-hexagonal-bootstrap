@@ -8,6 +8,7 @@ use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 

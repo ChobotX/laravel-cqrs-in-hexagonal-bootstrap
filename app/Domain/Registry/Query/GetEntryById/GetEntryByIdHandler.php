@@ -9,6 +9,7 @@ use App\Contract\Query\QueryHandler;
 use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\EntryRepository;
+use App\Domain\Registry\Contract\Query\GetEntryById\GetEntryByIdQuery;
 
 /**
  * @implements QueryHandler<GetEntryByIdQuery, ?Entry>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry\Query\GetDefinitionBySlug;
+namespace App\Domain\Registry\Contract\Query\GetDefinitionBySlug;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;

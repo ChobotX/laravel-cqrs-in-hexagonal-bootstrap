@@ -8,8 +8,8 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Registry\Command\UpdateEntry\UpdateEntryCommand;
-use App\Domain\Registry\Query\GetEntryById\GetEntryByIdQuery;
+use App\Domain\Registry\Contract\Command\UpdateEntry\UpdateEntryCommand;
+use App\Domain\Registry\Contract\Query\GetEntryById\GetEntryByIdQuery;
 use App\Presentation\Http\Request\Web\Registry\UpdateEntryRequest;
 use Illuminate\Http\RedirectResponse;
 

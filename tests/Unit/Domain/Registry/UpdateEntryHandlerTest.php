@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\UpdateEntry\UpdateEntryCommand;
 use App\Domain\Registry\Command\UpdateEntry\UpdateEntryHandler;
+use App\Domain\Registry\Contract\Command\UpdateEntry\UpdateEntryCommand;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;

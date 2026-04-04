@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\Query\GetDefinitionById\GetDefinitionByIdQuery;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\Query\GetDefinitionById\GetDefinitionByIdHandler;
-use App\Domain\Registry\Query\GetDefinitionById\GetDefinitionByIdQuery;
 use Tests\Helper\FakeDefinitionRepository;
 
 it('returns a definition when found', function (): void {

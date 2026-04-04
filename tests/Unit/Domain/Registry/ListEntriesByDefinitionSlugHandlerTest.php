@@ -5,10 +5,10 @@ declare(strict_types=1);
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
+use App\Domain\Registry\Contract\Query\ListEntriesByDefinitionSlug\ListEntriesByDefinitionSlugQuery;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Query\ListEntriesByDefinitionSlug\ListEntriesByDefinitionSlugHandler;
-use App\Domain\Registry\Query\ListEntriesByDefinitionSlug\ListEntriesByDefinitionSlugQuery;
 use App\Domain\Registry\VersionNumber;
 use Tests\Helper\FakeEntryRepository;
 

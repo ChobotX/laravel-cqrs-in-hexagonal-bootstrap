@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry\Command\CreateDefinitionVersion;
+namespace App\Domain\Registry\Contract\Command\CreateDefinitionVersion;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Command\Command;

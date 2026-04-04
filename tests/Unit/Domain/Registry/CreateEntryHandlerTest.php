@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\CreateEntry\CreateEntryCommand;
 use App\Domain\Registry\Command\CreateEntry\CreateEntryHandler;
+use App\Domain\Registry\Contract\Command\CreateEntry\CreateEntryCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersion;

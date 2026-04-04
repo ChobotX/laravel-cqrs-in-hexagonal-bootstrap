@@ -8,6 +8,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Registry\JsonSchemaValidator;
+use App\Domain\Registry\Contract\Command\CreateEntry\CreateEntryCommand;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionRepository;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;

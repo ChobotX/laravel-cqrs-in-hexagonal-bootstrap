@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry\Query\ListDefinitionVersions;
+namespace App\Domain\Registry\Contract\Query\GetSerializedSchema;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
+use App\Domain\Registry\Contract\JsonSchema;
 
 /**
- * @implements Query<list<\App\Domain\Registry\Contract\DefinitionVersion>>
+ * @implements Query<?JsonSchema>
  */
 #[RequiresPermission('registry.definitions.read')]
-final readonly class ListDefinitionVersionsQuery implements Query
+final readonly class GetSerializedSchemaQuery implements Query
 {
     public function __construct(
         public string $definitionId,

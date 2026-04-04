@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionCommand;
 use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionHandler;
+use App\Domain\Registry\Contract\Command\CreateDefinitionVersion\CreateDefinitionVersionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;

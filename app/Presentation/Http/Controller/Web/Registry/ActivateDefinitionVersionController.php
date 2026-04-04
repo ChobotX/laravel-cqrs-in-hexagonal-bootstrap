@@ -8,11 +8,11 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Registry\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
+use App\Domain\Registry\Contract\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
-use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
+use App\Domain\Registry\Contract\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
+use App\Domain\Registry\Contract\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('registry.definitions.update')]

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\Query\ListDefinitionNamespaces\ListDefinitionNamespacesQuery;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\Query\ListDefinitionNamespaces\ListDefinitionNamespacesHandler;
-use App\Domain\Registry\Query\ListDefinitionNamespaces\ListDefinitionNamespacesQuery;
 use Tests\Helper\FakeDefinitionRepository;
 
 it('returns sorted unique namespaces', function (): void {

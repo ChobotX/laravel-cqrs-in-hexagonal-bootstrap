@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\UpdateDefinition\UpdateDefinitionCommand;
 use App\Domain\Registry\Command\UpdateDefinition\UpdateDefinitionHandler;
+use App\Domain\Registry\Contract\Command\UpdateDefinition\UpdateDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionUpdated;

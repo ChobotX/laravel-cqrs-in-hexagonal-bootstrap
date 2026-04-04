@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Application\Pagination\PaginatedResult;
 use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Query\ListDefinitions\ListDefinitionsQuery;
+use App\Domain\Registry\Contract\Query\ListDefinitions\ListDefinitionsQuery;
 use App\Presentation\Http\Request\Web\PaginationRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;

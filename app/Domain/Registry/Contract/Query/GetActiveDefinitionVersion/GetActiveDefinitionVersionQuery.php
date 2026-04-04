@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry\Query\GetActiveDefinitionVersion;
+namespace App\Domain\Registry\Contract\Query\GetActiveDefinitionVersion;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;

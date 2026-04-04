@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionCommand;
 use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionHandler;
+use App\Domain\Registry\Contract\Command\CreateDefinition\CreateDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionCreated;

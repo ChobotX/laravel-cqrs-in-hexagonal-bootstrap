@@ -10,6 +10,7 @@ use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\JsonSchema;
+use App\Domain\Registry\Contract\Query\GetSerializedSchema\GetSerializedSchemaQuery;
 use App\Domain\Registry\Contract\SchemaSerializer;
 
 /**

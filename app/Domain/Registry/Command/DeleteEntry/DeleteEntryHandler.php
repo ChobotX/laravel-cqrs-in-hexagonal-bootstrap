@@ -7,6 +7,7 @@ namespace App\Domain\Registry\Command\DeleteEntry;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Contract\Command\DeleteEntry\DeleteEntryCommand;
 use App\Domain\Registry\Contract\EntryId;
 use App\Domain\Registry\Contract\EntryRepository;
 use App\Domain\Registry\Contract\Event\EntryDeleted;

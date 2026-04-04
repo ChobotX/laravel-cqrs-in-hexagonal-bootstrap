@@ -9,6 +9,7 @@ use App\Contract\Query\QueryHandler;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\Query\GetDefinitionById\GetDefinitionByIdQuery;
 
 /**
  * @implements QueryHandler<GetDefinitionByIdQuery, ?Definition>

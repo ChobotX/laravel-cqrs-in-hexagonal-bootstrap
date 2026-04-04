@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Web\Registry;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Contract\IdGenerator;
-use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionCommand;
+use App\Domain\Registry\Contract\Command\CreateDefinition\CreateDefinitionCommand;
 use App\Presentation\Http\Request\Web\Registry\CreateDefinitionRequest;
 use Illuminate\Http\RedirectResponse;
 

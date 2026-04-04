@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry\Query\ListDefinitions;
+namespace App\Domain\Registry\Contract\Query\ListDefinitions;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Pagination\PaginatedResult;
