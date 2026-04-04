@@ -13,7 +13,7 @@ beforeEach(function (): void {
     Schema::create('optimistic_test_models', function ($table): void {
         $table->uuid('id')->primary();
         $table->string('name');
-        $table->integer('version')->default(1);
+        $table->integer('lock_version')->default(1);
         $table->timestamps();
     });
 });
@@ -32,27 +32,27 @@ function createOptimisticModel(string $id, string $name): OptimisticTestModel
     return $model;
 }
 
-function dbVersion(string $id): int
+function dbLockVersion(string $id): int
 {
-    /** @var int $version */
-    $version = DB::table('optimistic_test_models')->where('id', $id)->value('version');
+    /** @var int $lockVersion */
+    $lockVersion = DB::table('optimistic_test_models')->where('id', $id)->value('lock_version');
 
-    return $version;
+    return $lockVersion;
 }
 
-it('sets version to 1 on creation', function (): void {
+it('sets lock_version to 1 on creation', function (): void {
     $optimisticTestModel = createOptimisticModel('550e8400-e29b-41d4-a716-446655440099', 'Test');
 
-    expect(dbVersion($optimisticTestModel->getKey()))->toBe(1);
+    expect(dbLockVersion($optimisticTestModel->getKey()))->toBe(1);
 });
 
-it('increments version on update', function (): void {
+it('increments lock_version on update', function (): void {
     $optimisticTestModel = createOptimisticModel('550e8400-e29b-41d4-a716-446655440098', 'Original');
 
     $optimisticTestModel->name = 'Updated';
     $optimisticTestModel->save();
 
-    expect(dbVersion($optimisticTestModel->getKey()))->toBe(2);
+    expect(dbLockVersion($optimisticTestModel->getKey()))->toBe(2);
 });
 
 it('throws ConcurrentModificationException on stale update', function (): void {
@@ -60,7 +60,7 @@ it('throws ConcurrentModificationException on stale update', function (): void {
 
     DB::table('optimistic_test_models')
         ->where('id', $optimisticTestModel->getKey())
-        ->update(['version' => 5, 'name' => 'Changed by another']);
+        ->update(['lock_version' => 5, 'name' => 'Changed by another']);
 
     $optimisticTestModel->name = 'Stale update';
     $optimisticTestModel->save();
@@ -75,7 +75,7 @@ it('allows sequential updates', function (): void {
     $optimisticTestModel->name = 'V3';
     $optimisticTestModel->save();
 
-    expect(dbVersion($optimisticTestModel->getKey()))->toBe(3);
+    expect(dbLockVersion($optimisticTestModel->getKey()))->toBe(3);
 });
 
 it('aborts update when updating event is cancelled', function (): void {
@@ -87,7 +87,7 @@ it('aborts update when updating event is cancelled', function (): void {
     $result = $optimisticTestModel->save();
 
     expect($result)->toBeFalse()
-        ->and(dbVersion($optimisticTestModel->getKey()))->toBe(1);
+        ->and(dbLockVersion($optimisticTestModel->getKey()))->toBe(1);
 });
 
 it('exception has correct status code and user message', function (): void {
@@ -106,12 +106,12 @@ it('exception has correct status code and user message', function (): void {
         ->and($exception->modelId)->toBe('abc-123');
 });
 
-it('does not increment version when nothing changed', function (): void {
+it('does not increment lock_version when nothing changed', function (): void {
     $optimisticTestModel = createOptimisticModel('550e8400-e29b-41d4-a716-446655440095', 'Same');
 
     $optimisticTestModel->save();
 
-    expect(dbVersion($optimisticTestModel->getKey()))->toBe(1);
+    expect(dbLockVersion($optimisticTestModel->getKey()))->toBe(1);
 });
 
 final class OptimisticTestModel extends Model
@@ -124,5 +124,5 @@ final class OptimisticTestModel extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = ['id', 'name', 'version'];
+    protected $fillable = ['id', 'name', 'lock_version'];
 }

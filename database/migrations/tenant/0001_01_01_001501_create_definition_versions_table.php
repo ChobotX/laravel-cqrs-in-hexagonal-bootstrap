@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedInteger('version');
             $table->jsonb('body');
             $table->string('status');
+            $table->integer('lock_version')->default(1);
             $table->timestamps();
 
             $table->unique(['definition_id', 'version']);

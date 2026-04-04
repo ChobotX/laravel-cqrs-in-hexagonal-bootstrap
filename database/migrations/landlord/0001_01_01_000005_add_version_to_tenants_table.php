@@ -14,7 +14,7 @@ return new class extends Migration
 
         foreach ($tables as $table) {
             Schema::connection('landlord')->table($table, function (Blueprint $blueprint): void {
-                $blueprint->integer('version')->default(1);
+                $blueprint->integer('lock_version')->default(1);
             });
         }
     }
@@ -25,7 +25,7 @@ return new class extends Migration
 
         foreach ($tables as $table) {
             Schema::connection('landlord')->table($table, function (Blueprint $blueprint): void {
-                $blueprint->dropColumn('version');
+                $blueprint->dropColumn('lock_version');
             });
         }
     }

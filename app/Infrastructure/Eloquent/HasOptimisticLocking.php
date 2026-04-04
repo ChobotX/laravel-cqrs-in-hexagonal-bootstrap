@@ -10,22 +10,22 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @mixin Model
  *
- * @property int $version
+ * @property int $lock_version
  */
 trait HasOptimisticLocking
 {
     public static function bootHasOptimisticLocking(): void
     {
         static::creating(function (Model $model): void {
-            if (! isset($model->attributes['version'])) {
-                $model->setAttribute('version', 1);
+            if (! isset($model->attributes['lock_version'])) {
+                $model->setAttribute('lock_version', 1);
             }
         });
     }
 
     public function initializeHasOptimisticLocking(): void
     {
-        $this->mergeFillable(['version']);
+        $this->mergeFillable(['lock_version']);
     }
 
     /**
@@ -45,12 +45,12 @@ trait HasOptimisticLocking
 
         if ($dirty !== []) {
             /** @var int $currentVersion */
-            $currentVersion = $this->version;
+            $currentVersion = $this->lock_version;
             $newVersion = $currentVersion + 1;
-            $dirty['version'] = $newVersion;
+            $dirty['lock_version'] = $newVersion;
 
             $affected = $this->setKeysForSaveQuery($builder)
-                ->where('version', $currentVersion)
+                ->where('lock_version', $currentVersion)
                 ->update($dirty);
 
             if ($affected === 0) {
@@ -60,7 +60,7 @@ trait HasOptimisticLocking
                 throw new ConcurrentModificationException(static::class, $key);
             }
 
-            $this->version = $newVersion;
+            $this->lock_version = $newVersion;
             $this->syncChanges();
             $this->fireModelEvent('updated', false);
         }

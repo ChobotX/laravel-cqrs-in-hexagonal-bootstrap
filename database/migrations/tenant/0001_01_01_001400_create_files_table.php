@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedInteger('version_number');
             $table->uuid('uploaded_by');
             $table->timestamp('uploaded_at');
-            $table->integer('version')->default(1);
+            $table->integer('lock_version')->default(1);
             $table->timestamps();
             $table->softDeletes();
 

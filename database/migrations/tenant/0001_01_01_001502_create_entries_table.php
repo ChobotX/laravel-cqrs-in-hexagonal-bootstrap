@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('namespace');
             $table->string('title');
             $table->jsonb('data');
+            $table->integer('lock_version')->default(1);
             $table->timestamps();
 
             $table->index(['namespace', 'definition_id']);

@@ -9,6 +9,7 @@ use App\Infrastructure\Eloquent\HardDelete;
 use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @property string $id
@@ -32,6 +33,7 @@ final class DefinitionVersionModel extends Model
     protected $keyType = 'string';
 
     /** @return array<string, string> */
+    #[Override]
     protected function casts(): array
     {
         return [

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('namespace');
             $table->string('slug');
             $table->string('name');
+            $table->integer('lock_version')->default(1);
             $table->timestamps();
 
             $table->unique(['namespace', 'slug']);
