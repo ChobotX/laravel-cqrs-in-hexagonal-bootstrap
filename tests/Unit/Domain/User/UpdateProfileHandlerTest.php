@@ -3,8 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Auth\PasswordManager;
-use App\Domain\User\Command\UpdateProfile\UpdateProfileHandler;
-use App\Domain\User\Contract\Command\UpdateProfile\UpdateProfileCommand;
+use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
@@ -13,6 +12,7 @@ use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
+use App\Domain\User\Handler\Command\UpdateProfileHandler;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeAuthorizationChecker;
 use Tests\Helper\FakeEventCollector;

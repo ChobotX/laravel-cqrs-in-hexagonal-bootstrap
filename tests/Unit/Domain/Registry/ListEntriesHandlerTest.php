@@ -6,10 +6,10 @@ use App\Application\Pagination\PaginatedResult;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Entry;
 use App\Domain\Registry\Contract\EntryId;
-use App\Domain\Registry\Contract\Query\ListEntries\ListEntriesQuery;
+use App\Domain\Registry\Contract\Query\ListEntriesQuery;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\EntryTitle;
-use App\Domain\Registry\Query\ListEntries\ListEntriesHandler;
+use App\Domain\Registry\Handler\Query\ListEntriesHandler;
 use App\Domain\Registry\VersionNumber;
 use Tests\Helper\FakeEntryRepository;
 

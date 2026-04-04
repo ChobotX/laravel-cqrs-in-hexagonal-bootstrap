@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Contract\Query\GetTeamById\GetTeamByIdQuery;
+use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Exception\TeamNotFoundException;
-use App\Domain\Team\Query\GetTeamById\GetTeamByIdHandler;
+use App\Domain\Team\Handler\Query\GetTeamByIdHandler;
 use App\Domain\Team\TeamName;
 use Tests\Helper\FakeTeamRepository;
 

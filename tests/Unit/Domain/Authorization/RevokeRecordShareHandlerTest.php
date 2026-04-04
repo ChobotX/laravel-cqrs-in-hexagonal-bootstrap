@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Command\RevokeRecordShare\RevokeRecordShareHandler;
-use App\Domain\Authorization\Contract\Command\RevokeRecordShare\RevokeRecordShareCommand;
+use App\Domain\Authorization\Contract\Command\RevokeRecordShareCommand;
 use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
 use App\Domain\Authorization\Exception\RecordShareNotFoundException;
+use App\Domain\Authorization\Handler\Command\RevokeRecordShareHandler;
 use App\Domain\Authorization\RecordShare;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRecordShareRepository;

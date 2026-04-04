@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\User;
 
-use App\Domain\User\Contract\Command\UpdateUser\UpdateUserCommand;
+use App\Domain\User\Contract\Command\UpdateUserCommand;
 use App\Presentation\Http\Request\FormRequest;
 use Illuminate\Validation\Rule;
 

@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Query\GetAvailableModules\GetAvailableModulesQuery;
+use App\Domain\Authorization\Contract\Query\GetAvailableModulesQuery;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.roles.update')]

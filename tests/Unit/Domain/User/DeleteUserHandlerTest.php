@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Command\DeleteUser\DeleteUserHandler;
-use App\Domain\User\Contract\Command\DeleteUser\DeleteUserCommand;
+use App\Domain\User\Contract\Command\DeleteUserCommand;
 use App\Domain\User\Contract\Event\UserDeleted;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
+use App\Domain\User\Handler\Command\DeleteUserHandler;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;

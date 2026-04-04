@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\Contract\Query\SearchLabels\SearchLabelsQuery;
+use App\Domain\Label\Contract\Query\SearchLabelsQuery;
+use App\Domain\Label\Handler\Query\SearchLabelsHandler;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
-use App\Domain\Label\Query\SearchLabels\SearchLabelsHandler;
 use Tests\Helper\FakeLabelRepository;
 
 it('delegates search to the repository', function (): void {

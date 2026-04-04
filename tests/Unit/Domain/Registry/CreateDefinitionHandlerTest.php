@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\CreateDefinition\CreateDefinitionHandler;
-use App\Domain\Registry\Contract\Command\CreateDefinition\CreateDefinitionCommand;
+use App\Domain\Registry\Contract\Command\CreateDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionCreated;
@@ -11,6 +10,7 @@ use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\Exception\DefinitionAlreadyExistsException;
+use App\Domain\Registry\Handler\Command\CreateDefinitionHandler;
 use Tests\Helper\FakeDefinitionRepository;
 use Tests\Helper\FakeEventCollector;
 

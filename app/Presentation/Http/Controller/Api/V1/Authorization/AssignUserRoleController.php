@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Authorization\Contract\Command\AssignRoleToUser\AssignRoleToUserCommand;
+use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
 use App\Presentation\Http\Request\Authorization\AssignRoleRequest;
 use Illuminate\Http\Response;
 

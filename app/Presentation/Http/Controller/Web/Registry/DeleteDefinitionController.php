@@ -8,9 +8,9 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Registry\Contract\Command\DeleteDefinition\DeleteDefinitionCommand;
+use App\Domain\Registry\Contract\Command\DeleteDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
+use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('registry.definitions.delete')]

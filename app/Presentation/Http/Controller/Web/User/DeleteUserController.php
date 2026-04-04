@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
-use App\Domain\User\Contract\Command\DeleteUser\DeleteUserCommand;
+use App\Domain\User\Contract\Command\DeleteUserCommand;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('users.list.delete')]

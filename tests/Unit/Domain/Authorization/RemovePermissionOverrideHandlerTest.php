@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\RemovePermissionOverride\RemovePermissionOverrideHandler;
-use App\Domain\Authorization\Contract\Command\RemovePermissionOverride\RemovePermissionOverrideCommand;
+use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
+use App\Domain\Authorization\Handler\Command\RemovePermissionOverrideHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserPermissionRepository;
 

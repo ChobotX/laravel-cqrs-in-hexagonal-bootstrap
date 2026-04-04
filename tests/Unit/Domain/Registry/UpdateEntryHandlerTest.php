@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\UpdateEntry\UpdateEntryHandler;
-use App\Domain\Registry\Contract\Command\UpdateEntry\UpdateEntryCommand;
+use App\Domain\Registry\Contract\Command\UpdateEntryCommand;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
@@ -16,6 +15,7 @@ use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\EntryNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
 use App\Domain\Registry\Exception\InvalidReferenceException;
+use App\Domain\Registry\Handler\Command\UpdateEntryHandler;
 use App\Domain\Registry\ReferenceValidator;
 use App\Domain\Registry\Schema\ReferenceField;
 use App\Domain\Registry\Schema\Schema;

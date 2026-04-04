@@ -9,8 +9,8 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
-use App\Domain\Registry\Contract\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
+use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
+use App\Domain\Registry\Contract\Query\ListDefinitionVersionsQuery;
 use App\Presentation\Http\Service\VersionViewMapper;
 use Illuminate\View\View;
 

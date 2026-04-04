@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Query\SearchRoles\SearchRolesQuery;
+use App\Domain\Authorization\Contract\Query\SearchRolesQuery;
 use App\Domain\Authorization\Contract\Role;
 use App\Presentation\Http\Request\Web\Authorization\SearchRolesRequest;
 use Illuminate\Http\JsonResponse;

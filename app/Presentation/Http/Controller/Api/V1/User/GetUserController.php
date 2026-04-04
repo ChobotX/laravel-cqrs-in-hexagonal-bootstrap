@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\User;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Domain\User\Contract\Query\GetUserById\GetUserByIdQuery;
+use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Presentation\Http\Resource\UserResource;
 
 #[SkipPermissionCheck('Permission enforced by command/query bus')]

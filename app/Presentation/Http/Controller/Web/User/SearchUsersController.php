@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\User\Contract\Query\SearchUsers\SearchUsersQuery;
+use App\Domain\User\Contract\Query\SearchUsersQuery;
 use App\Presentation\Http\Request\Web\User\SearchUsersRequest;
 use App\Presentation\Http\Resource\UserResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Contract\Query\GetTeamsForUsers\GetTeamsForUsersQuery;
+use App\Domain\Team\Contract\Query\GetTeamsForUsersQuery;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamSlug;
-use App\Domain\Team\Query\GetTeamsForUsers\GetTeamsForUsersHandler;
+use App\Domain\Team\Handler\Query\GetTeamsForUsersHandler;
 use App\Domain\Team\TeamName;
 use Tests\Helper\FakeTeamMemberRepository;
 use Tests\Helper\FakeTeamRepository;

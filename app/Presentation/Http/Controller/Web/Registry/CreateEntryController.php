@@ -9,8 +9,8 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Contract\IdGenerator;
-use App\Domain\Registry\Contract\Command\CreateEntry\CreateEntryCommand;
-use App\Domain\Registry\Contract\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
+use App\Domain\Registry\Contract\Command\CreateEntryCommand;
+use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
 use App\Presentation\Http\Request\Web\Registry\CreateEntryRequest;
 use Illuminate\Http\RedirectResponse;
 

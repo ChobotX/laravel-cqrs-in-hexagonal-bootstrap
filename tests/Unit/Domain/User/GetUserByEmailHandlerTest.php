@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Contract\Query\GetUserByEmail\GetUserByEmailQuery;
+use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
-use App\Domain\User\Query\GetUserByEmail\GetUserByEmailHandler;
+use App\Domain\User\Handler\Query\GetUserByEmailHandler;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 

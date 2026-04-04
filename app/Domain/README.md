@@ -36,7 +36,7 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 
 ### Adding a command
 
-1. Create `app/Domain/{Context}/Contract/Command/{Name}/{Name}Command.php` (in Contract — it's the public API):
+1. Create `app/Domain/{Context}/Contract/Command/{Name}Command.php` (in Contract — it's the public API):
    ```php
    final readonly class {Name}Command implements \App\Contract\Command\Command
    {
@@ -46,7 +46,7 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
    }
    ```
 
-2. Create `app/Domain/{Context}/Command/{Name}/{Name}Handler.php` (handler stays in Domain internals):
+2. Create `app/Domain/{Context}/Handler/Command/{Name}Handler.php` (handler stays in Domain internals):
    ```php
    /** @implements CommandHandler<{Name}Command> */
    final readonly class {Name}Handler implements \App\Contract\Command\CommandHandler
@@ -72,7 +72,7 @@ All commands are automatically wrapped in a database transaction by the `WrapInT
 
 ### Adding a query
 
-1. Create `app/Domain/{Context}/Contract/Query/{Name}/{Name}Query.php` (in Contract — it's the public API):
+1. Create `app/Domain/{Context}/Contract/Query/{Name}Query.php` (in Contract — it's the public API):
    ```php
    /** @implements Query<ReturnType> */
    final readonly class {Name}Query implements \App\Contract\Query\Query
@@ -83,7 +83,7 @@ All commands are automatically wrapped in a database transaction by the `WrapInT
    }
    ```
 
-2. Create `app/Domain/{Context}/Query/{Name}/{Name}Handler.php`:
+2. Create `app/Domain/{Context}/Handler/Query/{Name}Handler.php`:
    ```php
    /** @implements QueryHandler<{Name}Query, ReturnType> */
    final readonly class {Name}Handler implements \App\Contract\Query\QueryHandler

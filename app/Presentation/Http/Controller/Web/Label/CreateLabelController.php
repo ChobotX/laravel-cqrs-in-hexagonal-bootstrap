@@ -9,10 +9,10 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Contract\IdGenerator;
-use App\Domain\Label\Contract\Command\CreateLabel\CreateLabelCommand;
+use App\Domain\Label\Contract\Command\CreateLabelCommand;
 use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
 use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\Query\SearchLabels\SearchLabelsQuery;
+use App\Domain\Label\Contract\Query\SearchLabelsQuery;
 use App\Presentation\Http\Request\Web\Label\CreateLabelRequest;
 use Illuminate\Http\JsonResponse;
 

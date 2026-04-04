@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Query\ListRoles\ListRolesQuery;
+use App\Domain\Authorization\Contract\Query\ListRolesQuery;
 use App\Presentation\Http\Request\PaginationRequest;
 use App\Presentation\Http\Resource\RoleResource;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;

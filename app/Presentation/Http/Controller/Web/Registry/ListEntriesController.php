@@ -7,8 +7,8 @@ namespace App\Presentation\Http\Controller\Web\Registry;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Registry\Contract\Query\GetDefinitionBySlug\GetDefinitionBySlugQuery;
-use App\Domain\Registry\Contract\Query\ListEntries\ListEntriesQuery;
+use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
+use App\Domain\Registry\Contract\Query\ListEntriesQuery;
 use App\Presentation\Http\Request\Web\PaginationRequest;
 use Illuminate\View\View;
 

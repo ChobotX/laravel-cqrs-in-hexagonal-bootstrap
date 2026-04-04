@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
-use App\Domain\Authorization\Contract\Command\StartImpersonation\StartImpersonationCommand;
+use App\Domain\Authorization\Contract\Command\StartImpersonationCommand;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\RedirectResponse;
 

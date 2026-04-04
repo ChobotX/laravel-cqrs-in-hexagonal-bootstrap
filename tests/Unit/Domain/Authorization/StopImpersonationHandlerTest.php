@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Command\StopImpersonation\StopImpersonationHandler;
-use App\Domain\Authorization\Contract\Command\StopImpersonation\StopImpersonationCommand;
+use App\Domain\Authorization\Contract\Command\StopImpersonationCommand;
 use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
+use App\Domain\Authorization\Handler\Command\StopImpersonationHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeImpersonationManager;
 

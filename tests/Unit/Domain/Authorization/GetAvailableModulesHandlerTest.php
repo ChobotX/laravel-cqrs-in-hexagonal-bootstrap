@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Contract\Query\GetAvailableModules\GetAvailableModulesQuery;
-use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesHandler;
+use App\Domain\Authorization\Contract\Query\GetAvailableModulesQuery;
+use App\Domain\Authorization\Handler\Query\GetAvailableModulesHandler;
 
 it('returns the configured modules', function (): void {
     $modules = [

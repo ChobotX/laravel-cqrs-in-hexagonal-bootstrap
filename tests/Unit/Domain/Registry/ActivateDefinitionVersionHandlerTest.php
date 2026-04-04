@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\ActivateDefinitionVersion\ActivateDefinitionVersionHandler;
-use App\Domain\Registry\Contract\Command\ActivateDefinitionVersion\ActivateDefinitionVersionCommand;
+use App\Domain\Registry\Contract\Command\ActivateDefinitionVersionCommand;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersion;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\Event\DefinitionVersionActivated;
 use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
+use App\Domain\Registry\Handler\Command\ActivateDefinitionVersionHandler;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
 use App\Domain\Registry\VersionNumber;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Command\MarkNotificationAsRead\MarkNotificationAsReadHandler;
-use App\Domain\Notification\Contract\Command\MarkNotificationAsRead\MarkNotificationAsReadCommand;
+use App\Domain\Notification\Contract\Command\MarkNotificationAsReadCommand;
 use App\Domain\Notification\Contract\Event\NotificationRead;
 use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationId;
 use App\Domain\Notification\Exception\NotificationNotFoundException;
 use App\Domain\Notification\Exception\NotificationOwnershipException;
+use App\Domain\Notification\Handler\Command\MarkNotificationAsReadHandler;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationType;
 use Tests\Helper\FakeEventCollector;

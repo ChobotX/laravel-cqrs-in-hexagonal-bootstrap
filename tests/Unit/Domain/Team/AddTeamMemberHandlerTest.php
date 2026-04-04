@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Command\AddTeamMember\AddTeamMemberHandler;
-use App\Domain\Team\Contract\Command\AddTeamMember\AddTeamMemberCommand;
+use App\Domain\Team\Contract\Command\AddTeamMemberCommand;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Exception\TeamMemberAlreadyExistsException;
 use App\Domain\Team\Exception\TeamNotFoundException;
+use App\Domain\Team\Handler\Command\AddTeamMemberHandler;
 use App\Domain\Team\TeamName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeTeamMemberRepository;

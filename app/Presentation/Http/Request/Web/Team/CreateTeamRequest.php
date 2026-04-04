@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Team;
 
-use App\Domain\Team\Contract\Command\CreateTeam\CreateTeamCommand;
+use App\Domain\Team\Contract\Command\CreateTeamCommand;
 use App\Domain\Team\Contract\TeamSlug;
 use App\Presentation\Http\Request\FormRequest;
 use Illuminate\Support\Str;

@@ -6,7 +6,7 @@ namespace App\Presentation\Console\User;
 
 use App\Application\Bus\CommandBus;
 use App\Application\Tenancy\TenantAwareCommand;
-use App\Domain\User\Contract\Command\CreateUser\CreateUserCommand;
+use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;

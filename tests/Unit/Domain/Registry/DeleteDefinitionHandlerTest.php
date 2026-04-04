@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\DeleteDefinition\DeleteDefinitionHandler;
-use App\Domain\Registry\Contract\Command\DeleteDefinition\DeleteDefinitionCommand;
+use App\Domain\Registry\Contract\Command\DeleteDefinitionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Entry;
@@ -15,6 +14,7 @@ use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\DefinitionHasEntriesException;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
+use App\Domain\Registry\Handler\Command\DeleteDefinitionHandler;
 use App\Domain\Registry\VersionNumber;
 use Tests\Helper\FakeDefinitionRepository;
 use Tests\Helper\FakeEntryRepository;

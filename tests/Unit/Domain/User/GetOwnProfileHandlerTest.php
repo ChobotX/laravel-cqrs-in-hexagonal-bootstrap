@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Domain\User\Contract\Exception\UserNotFoundException;
-use App\Domain\User\Contract\Query\GetOwnProfile\GetOwnProfileQuery;
+use App\Domain\User\Contract\Query\GetOwnProfileQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
-use App\Domain\User\Query\GetOwnProfile\GetOwnProfileHandler;
+use App\Domain\User\Handler\Query\GetOwnProfileHandler;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 

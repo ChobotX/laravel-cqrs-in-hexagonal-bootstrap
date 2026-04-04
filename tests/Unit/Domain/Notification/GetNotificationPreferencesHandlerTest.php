@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Notification\Contract\ChannelPreference;
 use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\Query\GetNotificationPreferences\GetNotificationPreferencesQuery;
+use App\Domain\Notification\Contract\Query\GetNotificationPreferencesQuery;
+use App\Domain\Notification\Handler\Query\GetNotificationPreferencesHandler;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationPreferences;
-use App\Domain\Notification\Query\GetNotificationPreferences\GetNotificationPreferencesHandler;
 use Tests\Helper\FakeNotificationPreferenceRepository;
 
 it('returns stored preferences when available', function (): void {

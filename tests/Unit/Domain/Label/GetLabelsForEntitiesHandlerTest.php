@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\Contract\Query\GetLabelsForEntities\GetLabelsForEntitiesQuery;
+use App\Domain\Label\Contract\Query\GetLabelsForEntitiesQuery;
+use App\Domain\Label\Handler\Query\GetLabelsForEntitiesHandler;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
-use App\Domain\Label\Query\GetLabelsForEntities\GetLabelsForEntitiesHandler;
 use Tests\Helper\FakeLabelRepository;
 
 it('returns labels grouped by entity id', function (): void {

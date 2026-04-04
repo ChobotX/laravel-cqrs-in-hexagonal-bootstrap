@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Command\CreateUser\CreateUserHandler;
-use App\Domain\User\Contract\Command\CreateUser\CreateUserCommand;
+use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Domain\User\Contract\Event\UserCreated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Exception\InvalidUserDataException;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
+use App\Domain\User\Handler\Command\CreateUserHandler;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserRepository;

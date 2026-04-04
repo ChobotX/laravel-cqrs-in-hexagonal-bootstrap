@@ -9,11 +9,11 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Team\Contract\Query\ListTeams\ListTeamsQuery;
+use App\Domain\Team\Contract\Query\ListTeamsQuery;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamSlug;
-use App\Domain\Team\Query\ListTeams\ListTeamsHandler;
+use App\Domain\Team\Handler\Query\ListTeamsHandler;
 use App\Domain\Team\TeamName;
 use Tests\Helper\FakeTeamRepository;
 

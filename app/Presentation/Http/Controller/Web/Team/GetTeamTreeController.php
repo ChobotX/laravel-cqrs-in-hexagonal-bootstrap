@@ -8,10 +8,10 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Authorization\Contract\Query\GetRolesForUsers\GetRolesForUsersQuery;
+use App\Domain\Authorization\Contract\Query\GetRolesForUsersQuery;
 use App\Domain\Authorization\Contract\Role;
-use App\Domain\Team\Contract\Query\GetTeamTree\GetTeamTreeQuery;
-use App\Domain\Team\Contract\Query\GetTeamTree\TeamTreeNode;
+use App\Domain\Team\Contract\Query\GetTeamTreeQuery;
+use App\Domain\Team\Contract\Query\TeamTreeNode;
 use App\Domain\Team\Contract\TeamMember;
 use Illuminate\Http\JsonResponse;
 

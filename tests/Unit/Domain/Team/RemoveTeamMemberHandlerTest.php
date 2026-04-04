@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Command\RemoveTeamMember\RemoveTeamMemberHandler;
-use App\Domain\Team\Contract\Command\RemoveTeamMember\RemoveTeamMemberCommand;
+use App\Domain\Team\Contract\Command\RemoveTeamMemberCommand;
 use App\Domain\Team\Contract\Event\TeamMemberRemoved;
 use App\Domain\Team\Exception\TeamMemberNotFoundException;
+use App\Domain\Team\Handler\Command\RemoveTeamMemberHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeTeamMemberRepository;
 

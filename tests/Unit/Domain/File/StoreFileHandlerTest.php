@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Domain\File\Command\StoreFile\StoreFileHandler;
-use App\Domain\File\Contract\Command\StoreFile\StoreFileCommand;
+use App\Domain\File\Contract\Command\StoreFileCommand;
 use App\Domain\File\Contract\Event\FileStored;
 use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileUpload;
 use App\Domain\File\Contract\MimeType;
+use App\Domain\File\Handler\Command\StoreFileHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeFileRepository;
 use Tests\Helper\FakeFileStorage;

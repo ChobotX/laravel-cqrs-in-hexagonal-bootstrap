@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Contract\Image\ImageProcessor;
-use App\Domain\File\Command\StoreAvatar\StoreAvatarHandler;
-use App\Domain\File\Contract\Command\StoreAvatar\StoreAvatarCommand;
+use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\Event\FileStored;
 use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileUpload;
 use App\Domain\File\Contract\MimeType;
+use App\Domain\File\Handler\Command\StoreAvatarHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeFileRepository;
 use Tests\Helper\FakeFileStorage;

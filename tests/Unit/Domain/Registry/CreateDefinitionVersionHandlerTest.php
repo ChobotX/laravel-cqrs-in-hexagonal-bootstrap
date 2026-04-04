@@ -2,8 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionHandler;
-use App\Domain\Registry\Contract\Command\CreateDefinitionVersion\CreateDefinitionVersionCommand;
+use App\Domain\Registry\Contract\Command\CreateDefinitionVersionCommand;
 use App\Domain\Registry\Contract\Definition;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
@@ -12,6 +11,7 @@ use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
+use App\Domain\Registry\Handler\Command\CreateDefinitionVersionHandler;
 use Tests\Helper\FakeDefinitionRepository;
 use Tests\Helper\FakeDefinitionVersionRepository;
 use Tests\Helper\FakeEventCollector;

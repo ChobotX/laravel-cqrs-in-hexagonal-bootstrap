@@ -6,8 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Query\GetAvailableModules\GetAvailableModulesQuery;
-use App\Domain\Authorization\Contract\Query\GetRoleById\GetRoleByIdQuery;
+use App\Domain\Authorization\Contract\Query\GetAvailableModulesQuery;
+use App\Domain\Authorization\Contract\Query\GetRoleByIdQuery;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.roles.read')]

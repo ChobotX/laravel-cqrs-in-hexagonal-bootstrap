@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Web\Notification;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
 use App\Contract\Auth\AuthenticatedUser;
-use App\Domain\Notification\Contract\Command\MarkAllNotificationsAsRead\MarkAllNotificationsAsReadCommand;
+use App\Domain\Notification\Contract\Command\MarkAllNotificationsAsReadCommand;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

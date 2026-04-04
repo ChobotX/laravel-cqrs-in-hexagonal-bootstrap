@@ -8,8 +8,8 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Registry\Contract\Command\DeleteEntry\DeleteEntryCommand;
-use App\Domain\Registry\Contract\Query\GetEntryById\GetEntryByIdQuery;
+use App\Domain\Registry\Contract\Command\DeleteEntryCommand;
+use App\Domain\Registry\Contract\Query\GetEntryByIdQuery;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('registry.entries.delete')]

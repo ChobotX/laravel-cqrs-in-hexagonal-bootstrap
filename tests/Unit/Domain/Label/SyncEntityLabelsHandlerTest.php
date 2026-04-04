@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Command\SyncEntityLabels\SyncEntityLabelsHandler;
-use App\Domain\Label\Contract\Command\SyncEntityLabels\SyncEntityLabelsCommand;
+use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Domain\Label\Contract\Event\LabelAssigned;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;
 use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Handler\Command\SyncEntityLabelsHandler;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 use Tests\Helper\FakeAuthorizationChecker;

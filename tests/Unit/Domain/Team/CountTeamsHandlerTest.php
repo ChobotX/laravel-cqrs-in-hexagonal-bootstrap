@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Contract\Query\CountTeams\CountTeamsQuery;
+use App\Domain\Team\Contract\Query\CountTeamsQuery;
 use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamSlug;
-use App\Domain\Team\Query\CountTeams\CountTeamsHandler;
+use App\Domain\Team\Handler\Query\CountTeamsHandler;
 use App\Domain\Team\TeamName;
 use Tests\Helper\FakeTeamRepository;
 

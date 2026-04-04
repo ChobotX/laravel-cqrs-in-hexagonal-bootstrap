@@ -6,7 +6,7 @@ namespace App\Presentation\Console\User;
 
 use App\Application\Bus\CommandBus;
 use App\Application\Tenancy\TenantAwareCommand;
-use App\Domain\User\Contract\Command\UpdateUser\UpdateUserCommand;
+use App\Domain\User\Contract\Command\UpdateUserCommand;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Exception\InvalidUserDataException;
 use App\Domain\User\Contract\Exception\UserNotFoundException;

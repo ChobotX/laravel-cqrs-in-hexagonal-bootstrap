@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Contract\Query\GetUserOverrides\GetUserOverridesQuery;
+use App\Domain\Authorization\Contract\Query\GetUserOverridesQuery;
 use App\Domain\Authorization\Contract\UserPermissionOverride;
 use App\Domain\Authorization\Feature;
+use App\Domain\Authorization\Handler\Query\GetUserOverridesHandler;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\OverrideType;
 use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesHandler;
 use Tests\Helper\FakeUserPermissionRepository;
 
 it('returns overrides for a user', function (): void {

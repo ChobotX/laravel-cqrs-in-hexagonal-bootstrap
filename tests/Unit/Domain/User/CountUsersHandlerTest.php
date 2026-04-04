@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Contract\Query\CountUsers\CountUsersQuery;
+use App\Domain\User\Contract\Query\CountUsersQuery;
 use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
-use App\Domain\User\Query\CountUsers\CountUsersHandler;
+use App\Domain\User\Handler\Query\CountUsersHandler;
 use App\Domain\User\UserName;
 use Tests\Helper\FakeUserRepository;
 

@@ -6,8 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Team;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
-use App\Domain\Team\Contract\Command\AddTeamMember\AddTeamMemberCommand;
-use App\Domain\Team\Contract\Command\RemoveTeamMember\RemoveTeamMemberCommand;
+use App\Domain\Team\Contract\Command\AddTeamMemberCommand;
+use App\Domain\Team\Contract\Command\RemoveTeamMemberCommand;
 use App\Presentation\Http\Request\Web\Team\ManageTeamMembersRequest;
 use App\Presentation\Http\Request\Web\Team\TeamMemberAction;
 use Illuminate\Http\RedirectResponse;
