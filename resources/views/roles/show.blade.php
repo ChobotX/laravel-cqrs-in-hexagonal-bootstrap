@@ -3,6 +3,12 @@
 @section('title', $role->name)
 
 @section('content')
+    <x-breadcrumb :items="[
+        ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+        ['label' => __('messages.nav.roles'), 'href' => route('roles.index')],
+        ['label' => $role->name],
+    ]" />
+
     <div class="max-w-4xl">
         <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
             <div class="border-b border-gray-200 px-6 py-4">
@@ -29,13 +35,6 @@
                         'permissions' => $role->permissions,
                         'mode' => 'readonly',
                     ])
-                </div>
-
-                <div class="flex items-center gap-3 pt-2">
-                    <x-primary-button skip-permission
-                                      variant="secondary"
-                                      :href="route('roles.index')"
-                                      :label="__('messages.roles.back')" />
                 </div>
             </div>
         </div>

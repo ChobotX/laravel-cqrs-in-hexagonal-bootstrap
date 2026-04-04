@@ -3,6 +3,12 @@
 @section('title', __('messages.roles.create'))
 
 @section('content')
+    <x-breadcrumb :items="[
+        ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+        ['label' => __('messages.nav.roles'), 'href' => route('roles.index')],
+        ['label' => __('messages.roles.create')],
+    ]" />
+
     <div class="max-w-4xl">
         <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
             <div class="border-b border-gray-200 px-6 py-4">

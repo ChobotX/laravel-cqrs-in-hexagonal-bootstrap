@@ -3,6 +3,12 @@
 @section('title', $team->name)
 
 @section('content')
+    <x-breadcrumb :items="[
+        ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+        ['label' => __('messages.nav.teams'), 'href' => route('teams.index')],
+        ['label' => $team->name],
+    ]" />
+
     <div class="max-w-4xl">
         <div class="mb-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
             <div class="border-b border-gray-200 px-6 py-4">
@@ -11,15 +17,6 @@
                 @if ($team->description)
                     <p class="mt-1 text-base text-gray-500 sm:text-sm">{{ $team->description }}</p>
                 @endif
-            </div>
-
-            <div class="px-6 py-4">
-                <div class="flex items-center gap-3">
-                    <x-primary-button skip-permission
-                                      variant="secondary"
-                                      :href="route('teams.index')"
-                                      :label="__('messages.teams.back')" />
-                </div>
             </div>
         </div>
 

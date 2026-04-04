@@ -147,6 +147,33 @@ Tooltip wrapper for any element. Uses the tooltip bridge (`resources/js/tooltip/
 
 Tooltips appear on hover and focus. The Blade bridge (`resources/js/tooltip/tooltip.ts`) also supports Escape key and scroll to dismiss. A Vue component (`resources/js/tooltip/Tooltip.vue`) is available for use inside Vue component trees with the same positioning logic — it dismisses on mouseleave and focusout.
 
+## `<x-breadcrumb>` component
+
+Hierarchical navigation breadcrumb. Renders a semantic `<nav>` with `<ol>` list. All items except the last are clickable links; the last item represents the current page (plain text with `aria-current="page"`). Renders nothing when there is only one item or no items.
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `array` | `[]` | Array of `['label' => string, 'href' => string]` — `href` is optional on the last item |
+
+**Examples:**
+```blade
+{{-- Index page --}}
+<x-breadcrumb :items="[
+    ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+    ['label' => __('messages.nav.users')],
+]" />
+
+{{-- Nested page --}}
+<x-breadcrumb :items="[
+    ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+    ['label' => __('messages.nav.registry'), 'href' => route('registry.definitions.index')],
+    ['label' => $definition->name, 'href' => route('registry.definitions.show', [$definition->namespace, $definition->slug])],
+    ['label' => __('messages.registry.entries.title')],
+]" />
+```
+
 ## `<x-badge-list>` component
 
 Renders a list of label badges with overflow. Shows up to `max` labels inline, with a "+N" tooltip for the rest.

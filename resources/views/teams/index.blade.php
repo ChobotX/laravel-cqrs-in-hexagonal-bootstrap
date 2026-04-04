@@ -3,6 +3,11 @@
 @section('title', __('messages.teams.title'))
 
 @section('content')
+    <x-breadcrumb :items="[
+        ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+        ['label' => __('messages.nav.teams')],
+    ]" />
+
     <div class="mb-6 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <span

@@ -3,6 +3,11 @@
 @section('title', __('messages.roles.title'))
 
 @section('content')
+    <x-breadcrumb :items="[
+        ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+        ['label' => __('messages.nav.roles')],
+    ]" />
+
     <div class="mb-6 flex items-center justify-between">
         <span
               class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-indigo-700/10">

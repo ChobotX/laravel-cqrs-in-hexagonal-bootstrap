@@ -3,6 +3,11 @@
 @section('title', __('messages.profile.title'))
 
 @section('content')
+    <x-breadcrumb :items="[
+        ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
+        ['label' => __('messages.profile.title')],
+    ]" />
+
     <div class="mb-6">
         <p class="text-base text-gray-500 sm:text-sm">{{ __('messages.profile.subtitle') }}</p>
     </div>

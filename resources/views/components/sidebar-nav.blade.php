@@ -24,4 +24,9 @@
                 icon="heroicon-o-user-group"
                 :label="__('messages.nav.teams')"
                 :active="request()->routeIs('teams.*')" />
+    <x-nav-link permission="registry.definitions.read"
+                :href="route('registry.definitions.index')"
+                icon="heroicon-o-rectangle-stack"
+                :label="__('messages.nav.registry')"
+                :active="request()->routeIs('registry.*')" />
 </nav>
