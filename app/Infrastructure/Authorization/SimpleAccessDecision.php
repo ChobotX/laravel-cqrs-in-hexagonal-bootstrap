@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
-use App\Contract\Authorization\AccessDecision;
+use App\Domain\Authorization\Contract\Service\AccessDecision;
 
 final readonly class SimpleAccessDecision implements AccessDecision
 {

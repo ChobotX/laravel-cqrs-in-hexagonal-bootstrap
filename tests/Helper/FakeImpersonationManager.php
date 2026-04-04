@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Authorization\ImpersonationManager;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 
 final class FakeImpersonationManager implements ImpersonationManager
 {

@@ -30,8 +30,8 @@ final class ControllerDependenciesRule implements Rule
     private const array ALLOWED_TYPES = [
         \App\Application\Bus\CommandBus::class,
         \App\Application\Bus\QueryBus::class,
-        \App\Contract\Auth\AuthenticatedUser::class,
-        \App\Contract\Authorization\AuthorizationChecker::class,
+        \App\Domain\User\Contract\Service\AuthenticatedUser::class,
+        \App\Domain\Authorization\Contract\Service\AuthorizationChecker::class,
         \App\Contract\IdGenerator::class,
         \Illuminate\Contracts\Auth\Guard::class,
     ];

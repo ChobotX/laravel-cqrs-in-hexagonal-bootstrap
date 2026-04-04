@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Notification\NotificationChannelSender;
+use App\Domain\Notification\Contract\Service\NotificationChannelSender;
 use App\Infrastructure\Notification\ChannelSenderRegistry;
 use App\Infrastructure\Notification\Exception\UnsupportedNotificationChannelException;
 

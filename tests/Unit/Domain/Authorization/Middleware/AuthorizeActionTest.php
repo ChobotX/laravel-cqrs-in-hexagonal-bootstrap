@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Application\Authorization\RequiresPermission;
-use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Authorization\AccessDecision;
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Domain\Authorization\Contract\Exception\PermissionDeniedException;
+use App\Domain\Authorization\Contract\Service\AccessDecision;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Authorization\Middleware\AuthorizeAction;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 
 function buildTestMiddleware(
     ?string $userId = 'user-1',

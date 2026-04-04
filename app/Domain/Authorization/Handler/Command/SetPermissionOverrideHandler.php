@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Handler\Command;
 
-use App\Contract\Authorization\AccessScope;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\SetPermissionOverrideCommand;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\Authorization\Enum\Action;

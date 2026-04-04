@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Handler\Command;
 
-use App\Contract\Authorization\AccessScope;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
 use App\Domain\Authorization\Constant\DefaultRole;
 use App\Domain\Authorization\Contract\Command\SeedDefaultRolesCommand;
 use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;

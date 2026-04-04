@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\EventHandler;
 
 use App\Application\Event\RetryPolicy;
-use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\Authorization\Contract\Event\RoleDeleted;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Service\AuthorizationRefresher;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 
 /** @implements DomainEventHandler<RoleDeleted> */

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Middleware;
 
-use App\Contract\Auth\AuthenticatedUser;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Contract\Repository;
 
-use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
 use App\Domain\Authorization\Enum\OverrideType;

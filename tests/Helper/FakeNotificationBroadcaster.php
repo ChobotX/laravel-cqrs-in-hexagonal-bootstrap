@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Notification\NotificationBroadcaster;
+use App\Domain\Notification\Contract\Service\NotificationBroadcaster;
 use DateTimeImmutable;
 
 final class FakeNotificationBroadcaster implements NotificationBroadcaster

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Notification;
 
 use App\Application\Bus\QueryBus;
-use App\Contract\Notification\NotificationChannelSender;
+use App\Domain\Notification\Contract\Service\NotificationChannelSender;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use Illuminate\Contracts\Mail\Mailer;

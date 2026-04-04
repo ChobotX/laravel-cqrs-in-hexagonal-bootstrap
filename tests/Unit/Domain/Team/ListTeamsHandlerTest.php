@@ -8,7 +8,7 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
-use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\ListTeamsQuery;
 use App\Domain\Team\Contract\ValueObject\TeamId;

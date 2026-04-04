@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Policy;
 
-use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
 use App\Domain\Authorization\Service\ModuleConfigExpander;
 

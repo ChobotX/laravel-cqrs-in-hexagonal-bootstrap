@@ -6,12 +6,12 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
-use App\Contract\Auth\AuthenticatedUser;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Domain\User\Contract\Command\SetPasswordCommand;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\User\CreateUserRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;

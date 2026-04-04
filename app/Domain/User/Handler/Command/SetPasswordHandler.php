@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Command;
 
-use App\Contract\Auth\PasswordManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -13,6 +12,7 @@ use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Domain\User\Contract\ValueObject\UserId;
 use DateTimeImmutable;
 

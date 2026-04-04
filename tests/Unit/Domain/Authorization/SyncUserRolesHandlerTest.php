@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;

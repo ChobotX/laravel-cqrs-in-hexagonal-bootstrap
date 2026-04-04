@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Authorization\AuthorizationRefresher;
+use App\Domain\Authorization\Contract\Service\AuthorizationRefresher;
 
 final class FakeAuthorizationRefresher implements AuthorizationRefresher
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;

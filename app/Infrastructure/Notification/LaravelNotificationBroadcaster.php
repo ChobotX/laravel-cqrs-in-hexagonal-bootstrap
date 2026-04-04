@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Notification;
 
-use App\Contract\Notification\NotificationBroadcaster;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\Notification\Contract\Service\NotificationBroadcaster;
 use App\Infrastructure\Notification\Broadcast\NewNotificationBroadcast;
 use App\Infrastructure\Notification\Broadcast\UnreadCountUpdatedBroadcast;
 use DateTimeImmutable;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Image;
 
-use App\Contract\Image\ImageProcessor;
+use App\Domain\File\Contract\Service\ImageProcessor;
 use App\Domain\File\Exception\ImageProcessingException;
 use ErrorException;
 use GdImage;

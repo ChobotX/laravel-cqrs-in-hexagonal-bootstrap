@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
-use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Authorization\AccessScope;
-use App\Contract\Authorization\AuthorizationChecker;
-use App\Contract\Authorization\AuthorizationRefresher;
-use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Service\AuthorizationRefresher;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 use App\Domain\Authorization\Handler\Command\SeedDefaultRolesHandler;
 use App\Domain\Authorization\Handler\Command\SyncUserRolesHandler;
 use App\Domain\Authorization\Handler\Query\GetAssignableRolesHandler;
@@ -20,6 +19,7 @@ use App\Domain\Authorization\Handler\Query\GetEffectivePermissionsHandler;
 use App\Domain\Authorization\Handler\Query\GetOwnEffectivePermissionsHandler;
 use App\Domain\Authorization\Service\PermissionResolver;
 use App\Domain\Team\Contract\Service\TeamMembershipChecker;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Infrastructure\Auth\RequestAuthenticatedUser;
 use App\Infrastructure\Authorization\CacheAuthorizationRefresher;
 use App\Infrastructure\Authorization\CachedAuthorizationChecker;

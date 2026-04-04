@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
-use App\Contract\Authorization\AccessDecision;
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Service\AccessDecision;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
 use App\Domain\Authorization\Enum\Action;
 use App\Domain\Authorization\Service\PermissionResolver;

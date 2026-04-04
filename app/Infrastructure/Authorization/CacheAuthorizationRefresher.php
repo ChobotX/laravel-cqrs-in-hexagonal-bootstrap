@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
-use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\Authorization\Contract\Service\AuthorizationRefresher;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 final readonly class CacheAuthorizationRefresher implements AuthorizationRefresher

@@ -7,13 +7,13 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\SkipPermissionCheck;
-use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Authorization\AccessDecision;
-use App\Contract\Authorization\AccessScope;
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
+use App\Domain\Authorization\Contract\Service\AccessDecision;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Authorization\Middleware\ResolveScopeFilter;
 use App\Domain\Team\Contract\Service\TeamMembershipChecker;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 
 /**
  * @param  list<string>|null  $teamVisibleUserIds

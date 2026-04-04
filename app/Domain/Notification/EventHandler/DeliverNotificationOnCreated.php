@@ -7,10 +7,10 @@ namespace App\Domain\Notification\EventHandler;
 use App\Application\Event\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
-use App\Contract\Notification\NotificationBroadcaster;
 use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Event\NotificationCreated;
 use App\Domain\Notification\Contract\Repository\NotificationRepository;
+use App\Domain\Notification\Contract\Service\NotificationBroadcaster;
 
 /** @implements DomainEventHandler<NotificationCreated> */
 #[RetryPolicy(tries: 3, backoff: [10, 30, 60], timeout: 30)]

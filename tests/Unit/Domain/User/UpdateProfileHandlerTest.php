@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Contract\Auth\PasswordManager;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordChanged;
@@ -10,6 +9,7 @@ use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Exception\InvalidUserDataException;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\Handler\Command\UpdateProfileHandler;
 use App\Domain\User\ValueObject\Email;

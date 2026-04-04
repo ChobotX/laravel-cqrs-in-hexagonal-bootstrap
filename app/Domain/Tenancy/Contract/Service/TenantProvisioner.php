@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Tenancy;
+namespace App\Domain\Tenancy\Contract\Service;
 
 interface TenantProvisioner
 {

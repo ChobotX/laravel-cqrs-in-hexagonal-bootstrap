@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Notification\NotificationChannelSender;
-use App\Contract\Notification\NotificationChannelSenderRegistry;
+use App\Domain\Notification\Contract\Service\NotificationChannelSender;
+use App\Domain\Notification\Contract\Service\NotificationChannelSenderRegistry;
 
 final readonly class FakeNotificationChannelSenderRegistry implements NotificationChannelSenderRegistry
 {

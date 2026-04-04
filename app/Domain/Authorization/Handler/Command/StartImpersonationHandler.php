@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Handler\Command;
 
-use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\StartImpersonationCommand;
 use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 use App\Domain\Authorization\Exception\ImpersonationNotAllowedException;
 use DateTimeImmutable;
 

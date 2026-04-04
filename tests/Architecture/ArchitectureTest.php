@@ -209,7 +209,7 @@ final class ArchitectureTest
             ->shouldNotDependOn()
             ->classes(
                 Selector::classname(\App\Application\Authorization\AccessContext::class),
-                Selector::classname(\App\Contract\Authorization\AccessScope::class),
+                Selector::classname(\App\Domain\Authorization\Contract\Enum\AccessScope::class),
             );
     }
 

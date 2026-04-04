@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Registry\JsonSchemaValidator;
+use App\Domain\Registry\Contract\Service\JsonSchemaValidator;
 
 final readonly class FakeJsonSchemaValidator implements JsonSchemaValidator
 {

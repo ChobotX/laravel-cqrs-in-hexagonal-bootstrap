@@ -6,7 +6,7 @@ namespace App\Infrastructure\Provider;
 
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
-use App\Contract\Tenancy\TenantProvisioner;
+use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
 use App\Infrastructure\Tenancy\EloquentTenantProvisioner;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;

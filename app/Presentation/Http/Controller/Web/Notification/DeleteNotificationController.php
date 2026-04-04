@@ -6,8 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Notification;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
-use App\Contract\Auth\AuthenticatedUser;
 use App\Domain\Notification\Contract\Command\DeleteNotificationCommand;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Notification\DeleteNotificationRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

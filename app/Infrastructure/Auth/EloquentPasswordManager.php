@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Auth;
 
-use App\Contract\Auth\PasswordManager;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 

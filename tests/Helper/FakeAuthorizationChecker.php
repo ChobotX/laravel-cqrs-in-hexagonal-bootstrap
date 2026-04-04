@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Authorization\AccessDecision;
-use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Service\AccessDecision;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 
 final readonly class FakeAuthorizationChecker implements AuthorizationChecker
 {

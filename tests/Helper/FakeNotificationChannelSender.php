@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Notification\NotificationChannelSender;
+use App\Domain\Notification\Contract\Service\NotificationChannelSender;
 
 final class FakeNotificationChannelSender implements NotificationChannelSender
 {

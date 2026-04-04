@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Contract\Tenancy\TenantProvisioner;
+use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 

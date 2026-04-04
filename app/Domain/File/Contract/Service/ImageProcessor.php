@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Image;
+namespace App\Domain\File\Contract\Service;
 
 use SplFileInfo;
 

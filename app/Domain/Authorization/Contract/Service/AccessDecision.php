@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Authorization;
+namespace App\Domain\Authorization\Contract\Service;
 
 interface AccessDecision
 {

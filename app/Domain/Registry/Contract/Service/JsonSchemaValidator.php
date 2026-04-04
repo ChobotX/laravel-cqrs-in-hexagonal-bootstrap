@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Registry;
+namespace App\Domain\Registry\Contract\Service;
 
 interface JsonSchemaValidator
 {

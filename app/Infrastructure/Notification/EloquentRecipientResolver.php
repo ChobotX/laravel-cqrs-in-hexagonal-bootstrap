@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Notification;
 
-use App\Contract\Notification\RecipientResolver;
+use App\Domain\Notification\Contract\Service\RecipientResolver;
 use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentRecipientResolver implements RecipientResolver

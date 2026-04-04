@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Handler\Command;
 
-use App\Contract\Authorization\ImpersonationManager;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\StopImpersonationCommand;
 use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<StopImpersonationCommand> */

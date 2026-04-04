@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Contract\Auth\PasswordManager;
 use App\Domain\User\Contract\Command\SetPasswordCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\Handler\Command\SetPasswordHandler;
 use App\Domain\User\ValueObject\Email;

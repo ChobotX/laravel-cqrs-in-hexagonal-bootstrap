@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Registry;
 
-use App\Contract\Registry\JsonSchemaValidator;
+use App\Domain\Registry\Contract\Service\JsonSchemaValidator;
 use Opis\JsonSchema\Errors\ErrorFormatter;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Validator;

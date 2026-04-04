@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Contract\Authorization\AccessDecision;
-use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Service\AccessDecision;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Infrastructure\Authorization\CachedAuthorizationChecker;
 use App\Infrastructure\Authorization\SimpleAccessDecision;
 use Illuminate\Cache\ArrayStore;

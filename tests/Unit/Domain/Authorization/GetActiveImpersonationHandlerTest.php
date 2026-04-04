@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Contract\Authorization\ImpersonationManager;
 use App\Domain\Authorization\Contract\Query\GetActiveImpersonationQuery;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 use App\Domain\Authorization\Handler\Query\GetActiveImpersonationHandler;
 use Tests\Helper\FakeImpersonationManager;
 

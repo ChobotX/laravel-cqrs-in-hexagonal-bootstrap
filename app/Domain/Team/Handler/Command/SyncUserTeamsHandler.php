@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Handler\Command;
 
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
 use App\Domain\Team\Contract\Event\TeamMemberRemoved;

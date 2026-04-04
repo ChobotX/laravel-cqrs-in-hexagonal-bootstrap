@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Auth;
 
-use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Authorization\ImpersonationManager;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Domain\User\Contract\ValueObject\UserId;
 use Illuminate\Contracts\Auth\Guard;
 

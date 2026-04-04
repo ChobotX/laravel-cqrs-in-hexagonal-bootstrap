@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Authorization\AccessContext;
-use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\GetTeamTreeQuery;
 use App\Domain\Team\Contract\ValueObject\TeamId;

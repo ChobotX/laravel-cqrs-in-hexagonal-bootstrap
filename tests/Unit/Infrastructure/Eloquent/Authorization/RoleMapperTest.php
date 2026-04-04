@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Infrastructure\Eloquent\Authorization\RoleMapper;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;

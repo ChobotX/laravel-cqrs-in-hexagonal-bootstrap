@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 
 it('all is more permissive than team', function (): void {
     expect(AccessScope::All->isMorePermissiveThan(AccessScope::Team))->toBeTrue();

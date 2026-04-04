@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Query\GetOwnOverridesQuery;
 use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
 use App\Domain\Authorization\Enum\Action;

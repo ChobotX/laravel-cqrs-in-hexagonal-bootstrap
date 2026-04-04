@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
-use App\Contract\Auth\PasswordManager;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Infrastructure\Auth\EloquentPasswordManager;
 use App\Infrastructure\Auth\SoftDeleteAwareUserProvider;
 use App\Infrastructure\Auth\UserProviderNotFoundException;

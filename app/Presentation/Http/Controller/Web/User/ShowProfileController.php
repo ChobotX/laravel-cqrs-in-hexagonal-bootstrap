@@ -6,19 +6,19 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetAssignableRolesQuery;
 use App\Domain\Authorization\Contract\Query\GetAvailableModulesQuery;
 use App\Domain\Authorization\Contract\Query\GetOwnEffectivePermissionsQuery;
 use App\Domain\Authorization\Contract\Query\GetOwnOverridesQuery;
 use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Query\GetNotificationPreferencesQuery;
 use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
 use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[SkipPermissionCheck(reason: 'Profile page is accessible to all authenticated users')]

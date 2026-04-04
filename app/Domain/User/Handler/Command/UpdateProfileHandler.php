@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Command;
 
-use App\Contract\Auth\PasswordManager;
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\File\Contract\ValueObject\FileId;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Entity\User;
@@ -17,6 +16,7 @@ use App\Domain\User\Contract\Event\UserUpdated;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;

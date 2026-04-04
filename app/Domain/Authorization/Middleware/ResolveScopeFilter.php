@@ -8,11 +8,11 @@ use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
-use App\Contract\Auth\AuthenticatedUser;
-use App\Contract\Authorization\AccessScope;
-use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Bus\Middleware;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
+use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Team\Contract\Service\TeamMembershipChecker;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use ReflectionClass;
 

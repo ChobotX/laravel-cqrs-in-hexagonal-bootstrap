@@ -6,8 +6,8 @@ namespace App\Domain\Tenancy\Handler\Command;
 
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
-use App\Contract\Tenancy\TenantProvisioner;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
+use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
 
 /** @implements CommandHandler<CreateTenantCommand> */
 final readonly class CreateTenantHandler implements CommandHandler

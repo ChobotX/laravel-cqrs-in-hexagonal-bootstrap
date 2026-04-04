@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Notification;
+namespace App\Domain\Notification\Contract\Service;
 
 interface NotificationChannelSender
 {

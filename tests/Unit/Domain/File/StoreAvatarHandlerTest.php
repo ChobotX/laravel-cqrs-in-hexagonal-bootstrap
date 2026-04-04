@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Contract\Image\ImageProcessor;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\Event\FileStored;
+use App\Domain\File\Contract\Service\ImageProcessor;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;

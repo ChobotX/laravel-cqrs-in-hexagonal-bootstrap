@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Auth;
+namespace App\Domain\User\Contract\Service;
 
 interface PasswordManager
 {

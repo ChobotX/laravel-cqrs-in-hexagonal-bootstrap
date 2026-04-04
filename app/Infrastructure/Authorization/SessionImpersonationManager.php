@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
-use App\Contract\Authorization\ImpersonationManager;
+use App\Domain\Authorization\Contract\Service\ImpersonationManager;
 use App\Infrastructure\Eloquent\Authorization\ImpersonationSessionModel;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
