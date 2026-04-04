@@ -9,8 +9,8 @@ use App\Contract\Authorization\AuthorizationRefresher;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 
 /** @implements DomainEventHandler<RoleUpdated> */
 #[RetryPolicy(tries: 3, backoff: [5, 15, 30], timeout: 10)]

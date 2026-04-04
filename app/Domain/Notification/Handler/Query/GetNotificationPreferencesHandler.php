@@ -6,12 +6,12 @@ namespace App\Domain\Notification\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Notification\Contract\ChannelPreference;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Query\GetNotificationPreferencesQuery;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationPreferences;
+use App\Domain\Notification\Contract\Repository\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationPreferences;
 
 /** @implements QueryHandler<GetNotificationPreferencesQuery, NotificationPreferences> */
 final readonly class GetNotificationPreferencesHandler implements QueryHandler

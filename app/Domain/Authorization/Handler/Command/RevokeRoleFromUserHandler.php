@@ -9,8 +9,8 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Exception\RoleNotAssignedException;
 use DateTimeImmutable;
 

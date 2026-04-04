@@ -11,7 +11,7 @@ use App\Contract\Event\EventCollector;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
 use App\Domain\Team\Contract\Event\TeamMemberRemoved;
-use App\Domain\Team\Contract\TeamMemberRepository;
+use App\Domain\Team\Contract\Repository\TeamMemberRepository;
 use DateTimeImmutable;
 
 use function array_diff;

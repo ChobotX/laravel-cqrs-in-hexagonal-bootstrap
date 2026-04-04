@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
+use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Query\ListEntriesByDefinitionSlugQuery;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\EntryTitle;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\Handler\Query\ListEntriesByDefinitionSlugHandler;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\EntryTitle;
+use App\Domain\Registry\ValueObject\VersionNumber;
 use Tests\Helper\FakeEntryRepository;
 
 it('returns entries for a definition slug', function (): void {

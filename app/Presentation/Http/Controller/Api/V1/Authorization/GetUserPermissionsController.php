@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Query\GetUserOverridesQuery;
-use App\Domain\Authorization\Contract\UserPermissionOverride;
+use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
 use Illuminate\Http\JsonResponse;
 
 #[SkipPermissionCheck('Permission enforced by command/query bus')]

@@ -10,7 +10,7 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\StartImpersonationCommand;
 use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\Authorization\Exception\ImpersonationNotAllowedException;
 use DateTimeImmutable;
 

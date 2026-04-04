@@ -6,7 +6,7 @@ namespace App\Domain\File\Contract\Query;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\File\Contract\File;
+use App\Domain\File\Contract\Entity\File;
 
 /** @implements Query<list<File>> */
 #[RequiresPermission('files.storage.read')]

@@ -6,9 +6,9 @@ namespace Tests\Helper;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Contract\Entity\User;
+use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\ValueObject\UserId;
 
 final class FakeUserRepository implements UserRepository
 {

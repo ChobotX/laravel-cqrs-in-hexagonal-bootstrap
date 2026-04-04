@@ -7,12 +7,12 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\ListUsersQuery;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Email;
+use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\Handler\Query\ListUsersHandler;
-use App\Domain\User\UserName;
+use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserName;
 use Tests\Helper\FakeUserRepository;
 
 it('returns all users from the repository sorted by name', function (): void {

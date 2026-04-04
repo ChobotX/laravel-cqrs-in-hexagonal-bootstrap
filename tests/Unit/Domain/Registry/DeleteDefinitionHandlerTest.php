@@ -3,19 +3,19 @@
 declare(strict_types=1);
 
 use App\Domain\Registry\Contract\Command\DeleteDefinitionCommand;
-use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
+use App\Domain\Registry\Contract\Entity\Definition;
+use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Event\DefinitionDeleted;
-use App\Domain\Registry\DefinitionName;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\DefinitionSlug;
-use App\Domain\Registry\EntryTitle;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\Exception\DefinitionHasEntriesException;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
 use App\Domain\Registry\Handler\Command\DeleteDefinitionHandler;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\ValueObject\DefinitionName;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
+use App\Domain\Registry\ValueObject\EntryTitle;
+use App\Domain\Registry\ValueObject\VersionNumber;
 use Tests\Helper\FakeDefinitionRepository;
 use Tests\Helper\FakeEntryRepository;
 use Tests\Helper\FakeEventCollector;

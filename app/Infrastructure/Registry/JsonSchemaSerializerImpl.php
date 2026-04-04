@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Registry;
 
-use App\Domain\Registry\Contract\SchemaSerializer;
+use App\Domain\Registry\Contract\Service\SchemaSerializer;
 use App\Domain\Registry\Schema\BooleanField;
 use App\Domain\Registry\Schema\DateField;
 use App\Domain\Registry\Schema\EmailField;

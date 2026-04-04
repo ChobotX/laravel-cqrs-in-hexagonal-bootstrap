@@ -6,12 +6,12 @@ namespace App\Domain\Registry\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\DefinitionVersionRepository;
-use App\Domain\Registry\Contract\JsonSchema;
+use App\Domain\Registry\Contract\Entity\DefinitionVersion;
 use App\Domain\Registry\Contract\Query\GetSerializedSchemaQuery;
-use App\Domain\Registry\Contract\SchemaSerializer;
+use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Service\SchemaSerializer;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\JsonSchema;
 
 /**
  * @implements QueryHandler<GetSerializedSchemaQuery, ?JsonSchema>

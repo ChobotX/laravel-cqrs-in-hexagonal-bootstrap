@@ -7,9 +7,9 @@ namespace App\Presentation\Http\Controller\Web\Registry;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Registry\Contract\JsonSchema;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Contract\Query\GetSerializedSchemaQuery;
+use App\Domain\Registry\Contract\ValueObject\JsonSchema;
 use Illuminate\View\View;
 
 #[RequiresPermission('registry.entries.create')]

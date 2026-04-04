@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\LabelName;
-use App\Domain\Label\LabelNamespace;
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamId;
-use App\Domain\Team\Contract\TeamSlug;
+use App\Domain\Label\Contract\ValueObject\LabelId;
+use App\Domain\Label\ValueObject\LabelName;
+use App\Domain\Label\ValueObject\LabelNamespace;
+use App\Domain\Team\Contract\Entity\Team;
+use App\Domain\Team\Contract\ValueObject\TeamId;
+use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
-use App\Domain\Team\TeamName;
+use App\Domain\Team\ValueObject\TeamName;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Email;
-use App\Domain\User\UserName;
+use App\Domain\User\Contract\ValueObject\UserId;
+use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserName;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\RoleMapper;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
@@ -65,12 +65,12 @@ it('throws RoleAlreadyExistsException on duplicate role name', function (): void
 
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440c07', 'name' => 'DupeRole', 'description' => 'D', 'is_system' => false]);
 
-    $role = $repo->findById(new App\Domain\Authorization\Contract\RoleId('550e8400-e29b-41d4-a716-446655440c07'));
-    assert($role instanceof App\Domain\Authorization\Contract\Role);
+    $role = $repo->findById(new App\Domain\Authorization\Contract\ValueObject\RoleId('550e8400-e29b-41d4-a716-446655440c07'));
+    assert($role instanceof App\Domain\Authorization\Contract\Entity\Role);
 
-    $dupe = new App\Domain\Authorization\Contract\Role(
-        new App\Domain\Authorization\Contract\RoleId('550e8400-e29b-41d4-a716-446655440c08'),
-        new App\Domain\Authorization\RoleName('DupeRole'),
+    $dupe = new App\Domain\Authorization\Contract\Entity\Role(
+        new App\Domain\Authorization\Contract\ValueObject\RoleId('550e8400-e29b-41d4-a716-446655440c08'),
+        new App\Domain\Authorization\ValueObject\RoleName('DupeRole'),
         'Another',
         false,
         [],

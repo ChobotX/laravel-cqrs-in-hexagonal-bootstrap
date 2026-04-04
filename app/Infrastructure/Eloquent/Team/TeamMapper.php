@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Team;
 
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamId;
-use App\Domain\Team\Contract\TeamSlug;
-use App\Domain\Team\TeamName;
+use App\Domain\Team\Contract\Entity\Team;
+use App\Domain\Team\Contract\ValueObject\TeamId;
+use App\Domain\Team\Contract\ValueObject\TeamSlug;
+use App\Domain\Team\ValueObject\TeamName;
 
 final readonly class TeamMapper
 {

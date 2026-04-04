@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Authorization;
 
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\RecordShare;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\ValueObject\RecordShare;
 
 final readonly class RecordShareMapper
 {

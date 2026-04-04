@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Label\Exception\InvalidLabelNameException;
-use App\Domain\Label\LabelName;
+use App\Domain\Label\ValueObject\LabelName;
 
 it('can be constructed with a valid name', function (): void {
     $name = new LabelName('important');

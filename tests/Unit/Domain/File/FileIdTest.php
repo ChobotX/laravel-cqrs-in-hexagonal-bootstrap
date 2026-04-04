@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\File\Contract\FileId;
+use App\Domain\File\Contract\ValueObject\FileId;
 use App\Domain\File\Exception\InvalidFileIdException;
 
 it('creates a valid file id', function (): void {

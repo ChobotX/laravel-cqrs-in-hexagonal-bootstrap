@@ -8,11 +8,11 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Registry\Contract\Command\DeprecateDefinitionVersionCommand;
-use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\DefinitionVersionId;
-use App\Domain\Registry\Contract\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Entity\DefinitionVersion;
+use App\Domain\Registry\Contract\Enum\VersionStatus;
 use App\Domain\Registry\Contract\Event\DefinitionVersionDeprecated;
-use App\Domain\Registry\Contract\VersionStatus;
+use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\ValueObject\DefinitionVersionId;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
 use DateTimeImmutable;
 

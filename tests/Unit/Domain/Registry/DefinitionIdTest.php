@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Contract\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
 use App\Domain\Registry\Exception\InvalidDefinitionIdException;
 
 it('can be constructed with a valid UUID', function (): void {

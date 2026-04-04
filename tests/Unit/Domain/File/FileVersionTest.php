@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\File\Exception\InvalidFileVersionException;
-use App\Domain\File\FileVersion;
+use App\Domain\File\ValueObject\FileVersion;
 
 it('creates a valid file version', function (): void {
     $version = new FileVersion(1);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\File\Contract\FileName;
+use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Exception\InvalidFileNameException;
 
 it('creates a valid file name', function (): void {

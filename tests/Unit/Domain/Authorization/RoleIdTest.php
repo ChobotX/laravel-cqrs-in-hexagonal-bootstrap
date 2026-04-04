@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Exception\InvalidRoleIdException;
 
 it('creates a valid role id', function (): void {

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Registry;
 
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\DefinitionVersionId;
-use App\Domain\Registry\Contract\DefinitionVersionRepository;
-use App\Domain\Registry\Contract\SchemaSerializer;
-use App\Domain\Registry\Contract\VersionStatus;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\Contract\Entity\DefinitionVersion;
+use App\Domain\Registry\Contract\Enum\VersionStatus;
+use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Service\SchemaSerializer;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\DefinitionVersionId;
+use App\Domain\Registry\ValueObject\VersionNumber;
 
 final readonly class EloquentDefinitionVersionRepository implements DefinitionVersionRepository
 {

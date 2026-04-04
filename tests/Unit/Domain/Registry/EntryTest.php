@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\EntryTitle;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\Contract\Entity\Entry;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\EntryTitle;
+use App\Domain\Registry\ValueObject\VersionNumber;
 
 it('can be constructed with value objects and data array', function (): void {
     $data = ['name' => 'John Doe', 'email' => 'john@example.com'];

@@ -9,7 +9,7 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\RevokeRecordShareCommand;
 use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
-use App\Domain\Authorization\Contract\RecordShareRepository;
+use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Exception\RecordShareNotFoundException;
 use DateTimeImmutable;
 

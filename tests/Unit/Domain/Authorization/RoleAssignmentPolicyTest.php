@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Contract\EffectivePermission;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\RolePermission;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\RoleAssignmentPolicy;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RolePermission;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\Policy\RoleAssignmentPolicy;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
+use App\Domain\Authorization\ValueObject\RoleName;
 
 /** @return array<string, array{features: array<string, array{actions: list<string>}>}> */
 function policyModules(): array

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Resource;
 
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RolePermission;
+use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Override;

@@ -10,7 +10,7 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Contract\IdGenerator;
 use App\Domain\Registry\Contract\Command\CreateDefinitionVersionCommand;
-use App\Domain\Registry\Contract\Definition;
+use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
 use App\Presentation\Http\Request\Web\Registry\CreateDefinitionVersionRequest;
 use Illuminate\Http\RedirectResponse;

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\EntryTitle;
 use App\Domain\Registry\Exception\InvalidEntryTitleException;
+use App\Domain\Registry\ValueObject\EntryTitle;
 
 it('can be constructed with a valid title', function (): void {
     $title = new EntryTitle('John Doe');

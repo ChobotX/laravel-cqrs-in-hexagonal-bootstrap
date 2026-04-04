@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Contract\TeamSlug;
+use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Domain\Team\Exception\InvalidTeamSlugException;
 
 it('creates a valid team slug', function (): void {

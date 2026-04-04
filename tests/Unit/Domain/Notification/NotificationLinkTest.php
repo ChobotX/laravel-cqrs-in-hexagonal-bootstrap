@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Notification\Exception\InvalidNotificationLinkException;
-use App\Domain\Notification\NotificationLink;
+use App\Domain\Notification\ValueObject\NotificationLink;
 
 it('can be constructed with a valid relative URL', function (): void {
     $link = new NotificationLink('/users/123');

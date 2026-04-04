@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Team\Contract\TeamMember;
-use App\Domain\Team\Contract\TeamMemberRepository;
+use App\Domain\Team\Contract\Repository\TeamMemberRepository;
+use App\Domain\Team\Contract\ValueObject\TeamMember;
 use DateTimeImmutable;
 
 final class FakeTeamMemberRepository implements TeamMemberRepository

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
 use App\Domain\Authorization\Exception\InvalidPermissionKeyException;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
 
 it('creates a module-only key', function (): void {
     $key = new PermissionKey(new Module('users'));

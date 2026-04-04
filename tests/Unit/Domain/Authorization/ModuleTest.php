@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Exception\InvalidPermissionKeyException;
-use App\Domain\Authorization\Module;
+use App\Domain\Authorization\ValueObject\Module;
 
 it('creates a valid module', function (): void {
     $module = new Module('users');

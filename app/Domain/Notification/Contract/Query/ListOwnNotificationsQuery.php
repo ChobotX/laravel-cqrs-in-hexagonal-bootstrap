@@ -11,7 +11,7 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
-use App\Domain\Notification\Contract\Notification;
+use App\Domain\Notification\Contract\Entity\Notification;
 
 /**
  * @implements Query<PaginatedResult<Notification>>

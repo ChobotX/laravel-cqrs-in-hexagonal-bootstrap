@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\GetLabelsForEntitiesQuery;
+use App\Domain\Label\Contract\ValueObject\LabelId;
 use App\Domain\Label\Handler\Query\GetLabelsForEntitiesHandler;
-use App\Domain\Label\LabelName;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\ValueObject\LabelName;
+use App\Domain\Label\ValueObject\LabelNamespace;
 use Tests\Helper\FakeLabelRepository;
 
 it('returns labels grouped by entity id', function (): void {

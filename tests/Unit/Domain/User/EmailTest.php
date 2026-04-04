@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Email;
 use App\Domain\User\Exception\InvalidEmailException;
+use App\Domain\User\ValueObject\Email;
 
 it('accepts a valid email', function (): void {
     $email = new Email('john@example.com');

@@ -7,13 +7,13 @@ namespace App\Domain\Authorization\Handler\Command;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RemovePermissionOverrideCommand> */

@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetOwnEffectivePermissionsQuery;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\RolePermission;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\Handler\Query\GetOwnEffectivePermissionsHandler;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\Service\PermissionResolver;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
+use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeUserPermissionRepository;
 
 it('resolves own effective permissions', function (): void {

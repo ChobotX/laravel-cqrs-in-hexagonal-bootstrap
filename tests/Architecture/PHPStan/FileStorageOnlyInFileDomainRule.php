@@ -18,7 +18,7 @@ use function str_starts_with;
  */
 final class FileStorageOnlyInFileDomainRule implements Rule
 {
-    private const string FILE_STORAGE_CLASS = \App\Domain\File\Contract\FileStorage::class;
+    private const string FILE_STORAGE_CLASS = \App\Domain\File\Contract\Service\FileStorage::class;
 
     public function getNodeType(): string
     {

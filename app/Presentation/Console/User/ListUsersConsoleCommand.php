@@ -6,8 +6,8 @@ namespace App\Presentation\Console\User;
 
 use App\Application\Bus\QueryBus;
 use App\Application\Tenancy\TenantAwareCommand;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\ListUsersQuery;
-use App\Domain\User\Contract\User;
 use Illuminate\Console\Command;
 
 #[TenantAwareCommand]

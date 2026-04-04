@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\ModuleConfigExpander;
-use App\Domain\Authorization\PermissionKey;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\Service\ModuleConfigExpander;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
 
 it('returns empty when feature is not in module config', function (): void {
     $expander = new ModuleConfigExpander;

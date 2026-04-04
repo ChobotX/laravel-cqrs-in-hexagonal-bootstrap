@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\File\Exception\InvalidStoragePathException;
-use App\Domain\File\StoragePath;
+use App\Domain\File\ValueObject\StoragePath;
 
 it('creates a valid storage path', function (): void {
     $path = new StoragePath('documents/abc-123.pdf');

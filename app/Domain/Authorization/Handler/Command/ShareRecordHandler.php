@@ -7,11 +7,11 @@ namespace App\Domain\Authorization\Handler\Command;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Contract\Command\ShareRecordCommand;
 use App\Domain\Authorization\Contract\Event\RecordShared;
-use App\Domain\Authorization\Contract\RecordShareRepository;
-use App\Domain\Authorization\RecordShare;
+use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\ValueObject\RecordShare;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<ShareRecordCommand> */

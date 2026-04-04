@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Contract\NotificationChannel;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 
 it('has all expected cases', function (): void {
     expect(NotificationChannel::cases())->toHaveCount(2)

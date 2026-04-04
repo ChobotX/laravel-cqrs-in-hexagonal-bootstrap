@@ -6,10 +6,10 @@ namespace App\Domain\Registry\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Entity\DefinitionVersion;
 use App\Domain\Registry\Contract\Query\GetActiveDefinitionVersionQuery;
+use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
 
 /**
  * @implements QueryHandler<GetActiveDefinitionVersionQuery, ?DefinitionVersion>

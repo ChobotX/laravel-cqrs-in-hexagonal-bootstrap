@@ -6,11 +6,11 @@ namespace App\Infrastructure\Authorization;
 
 use App\Contract\Authorization\AccessDecision;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Contract\EffectivePermission;
-use App\Domain\Authorization\Contract\RecordShareRepository;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
-use App\Domain\Authorization\PermissionResolver;
+use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Service\PermissionResolver;
 
 final readonly class ResolverAuthorizationChecker implements AuthorizationChecker
 {

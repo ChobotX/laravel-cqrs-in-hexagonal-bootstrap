@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tests\Helper;
 
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\UserPermissionOverride;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
-use App\Domain\Authorization\OverrideType;
-use App\Domain\Authorization\PermissionKey;
+use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
+use App\Domain\Authorization\Enum\OverrideType;
+use App\Domain\Authorization\ValueObject\PermissionKey;
 
 final class FakeUserPermissionRepository implements UserPermissionRepository
 {

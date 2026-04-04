@@ -7,7 +7,7 @@ namespace App\Domain\User\Handler\Query;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\User\Contract\Query\CountUsersQuery;
-use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Contract\Repository\UserRepository;
 
 /** @implements QueryHandler<CountUsersQuery, int> */
 final readonly class CountUsersHandler implements QueryHandler

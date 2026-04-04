@@ -6,10 +6,10 @@ namespace App\Domain\Team\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamId;
-use App\Domain\Team\Contract\TeamRepository;
+use App\Domain\Team\Contract\Repository\TeamRepository;
+use App\Domain\Team\Contract\ValueObject\TeamId;
 use App\Domain\Team\Exception\TeamNotFoundException;
 
 /** @implements QueryHandler<GetTeamByIdQuery, Team> */

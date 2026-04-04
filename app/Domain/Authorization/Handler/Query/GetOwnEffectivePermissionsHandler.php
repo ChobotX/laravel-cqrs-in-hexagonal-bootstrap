@@ -6,10 +6,10 @@ namespace App\Domain\Authorization\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Authorization\Contract\EffectivePermission;
 use App\Domain\Authorization\Contract\Query\GetOwnEffectivePermissionsQuery;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
-use App\Domain\Authorization\PermissionResolver;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
+use App\Domain\Authorization\Service\PermissionResolver;
 
 /** @implements QueryHandler<GetOwnEffectivePermissionsQuery, list<EffectivePermission>> */
 final readonly class GetOwnEffectivePermissionsHandler implements QueryHandler

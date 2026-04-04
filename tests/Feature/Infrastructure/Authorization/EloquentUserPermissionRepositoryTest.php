@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\OverrideType;
-use App\Domain\Authorization\PermissionKey;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\Enum\OverrideType;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
 use App\Infrastructure\Eloquent\Authorization\EloquentUserPermissionRepository;
 use App\Infrastructure\Eloquent\Authorization\RoleMapper;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;

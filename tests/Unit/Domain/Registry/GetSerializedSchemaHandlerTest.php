@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\DefinitionVersionId;
-use App\Domain\Registry\Contract\JsonSchema;
+use App\Domain\Registry\Contract\Entity\DefinitionVersion;
+use App\Domain\Registry\Contract\Enum\VersionStatus;
 use App\Domain\Registry\Contract\Query\GetSerializedSchemaQuery;
-use App\Domain\Registry\Contract\VersionStatus;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\DefinitionVersionId;
+use App\Domain\Registry\Contract\ValueObject\JsonSchema;
 use App\Domain\Registry\Handler\Query\GetSerializedSchemaHandler;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\ValueObject\VersionNumber;
 use Tests\Helper\FakeDefinitionVersionRepository;
 use Tests\Helper\FakeSchemaSerializer;
 

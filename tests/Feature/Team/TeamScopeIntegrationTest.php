@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Contract\TeamMembershipChecker;
+use App\Domain\Team\Contract\Service\TeamMembershipChecker;
 use App\Infrastructure\Eloquent\Team\EloquentTeamMemberRepository;
 use App\Infrastructure\Eloquent\Team\TeamMemberMapper;
 use App\Infrastructure\Eloquent\Team\TeamModel;

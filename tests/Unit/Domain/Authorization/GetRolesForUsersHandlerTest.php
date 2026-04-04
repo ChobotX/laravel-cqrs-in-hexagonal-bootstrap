@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetRolesForUsersQuery;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Handler\Query\GetRolesForUsersHandler;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeUserPermissionRepository;
 
 it('returns roles grouped by user id', function (): void {

@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\File;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\File\Contract\File;
+use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Query\GetFileByIdQuery;
 use App\Domain\File\Contract\Query\GetFileContentQuery;
 use Illuminate\Http\Response;

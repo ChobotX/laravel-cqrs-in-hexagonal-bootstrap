@@ -6,11 +6,11 @@ namespace Tests\Helper;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
-use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionRepository;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\DefinitionSlug;
+use App\Domain\Registry\Contract\Entity\Definition;
+use App\Domain\Registry\Contract\Repository\DefinitionRepository;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
 
 final class FakeDefinitionRepository implements DefinitionRepository
 {

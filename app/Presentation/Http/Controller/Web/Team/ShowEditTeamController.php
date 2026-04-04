@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Label\Contract\Label;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\GetEntityLabelsQuery;
 use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
 use App\Domain\Team\Contract\Query\ListTeamsQuery;

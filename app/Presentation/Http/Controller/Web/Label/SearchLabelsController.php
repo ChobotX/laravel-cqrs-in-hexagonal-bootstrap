@@ -6,7 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Label;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Label\Contract\Label;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\SearchLabelsQuery;
 use App\Presentation\Http\Request\Web\Label\SearchLabelsRequest;
 use Illuminate\Http\JsonResponse;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\LabelName;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\Contract\Entity\Label;
+use App\Domain\Label\Contract\ValueObject\LabelId;
+use App\Domain\Label\ValueObject\LabelName;
+use App\Domain\Label\ValueObject\LabelNamespace;
 use App\Infrastructure\Eloquent\Label\EloquentLabelRepository;
 use App\Infrastructure\Eloquent\Label\LabelMapper;
 use Illuminate\Support\Facades\DB;

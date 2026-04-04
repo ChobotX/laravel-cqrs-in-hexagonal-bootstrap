@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Registry\Contract\SchemaSerializer;
+use App\Domain\Registry\Contract\Service\SchemaSerializer;
 use App\Domain\Registry\Schema\Schema;
 
 final readonly class FakeSchemaSerializer implements SchemaSerializer

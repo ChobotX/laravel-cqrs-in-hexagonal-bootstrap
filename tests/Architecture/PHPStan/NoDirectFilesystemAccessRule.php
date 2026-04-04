@@ -93,7 +93,7 @@ final class NoDirectFilesystemAccessRule implements Rule
 
         return [
             RuleErrorBuilder::message(
-                'Direct Storage:: facade usage is not allowed. Inject App\Domain\File\Contract\FileStorage instead.',
+                'Direct Storage:: facade usage is not allowed. Inject App\Domain\File\Contract\Service\FileStorage instead.',
             )
                 ->identifier('app.noDirectFilesystem')
                 ->build(),
@@ -117,7 +117,7 @@ final class NoDirectFilesystemAccessRule implements Rule
 
         return [
             RuleErrorBuilder::message(sprintf(
-                'Direct %s() usage is not allowed in application code. Use App\Domain\File\Contract\FileStorage instead.',
+                'Direct %s() usage is not allowed in application code. Use App\Domain\File\Contract\Service\FileStorage instead.',
                 $name,
             ))
                 ->identifier('app.noDirectFilesystem')

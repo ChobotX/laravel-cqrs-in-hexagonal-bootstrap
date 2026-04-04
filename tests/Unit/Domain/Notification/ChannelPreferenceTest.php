@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Contract\ChannelPreference;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\NotificationLevel;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
+use App\Domain\Notification\Enum\NotificationLevel;
 
 it('can be constructed with level and channels', function (): void {
     $pref = new ChannelPreference(

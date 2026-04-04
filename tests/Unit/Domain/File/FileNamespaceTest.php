@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\File\Exception\InvalidFileNamespaceException;
-use App\Domain\File\FileNamespace;
+use App\Domain\File\ValueObject\FileNamespace;
 
 it('creates a valid file namespace', function (): void {
     $ns = new FileNamespace('user-avatars');

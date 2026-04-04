@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Label\Exception\InvalidLabelNamespaceException;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\ValueObject\LabelNamespace;
 
 it('can be constructed with a valid namespace', function (string $value): void {
     $namespace = new LabelNamespace($value);

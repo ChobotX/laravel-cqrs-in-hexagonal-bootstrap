@@ -6,8 +6,8 @@ namespace App\Infrastructure\Auth;
 
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\ImpersonationManager;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\ValueObject\UserId;
 use Illuminate\Contracts\Auth\Guard;
 
 final readonly class RequestAuthenticatedUser implements AuthenticatedUser

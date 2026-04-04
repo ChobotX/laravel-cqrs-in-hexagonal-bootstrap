@@ -6,10 +6,10 @@ namespace App\Domain\Team\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\GetTeamsForUsersQuery;
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamMemberRepository;
-use App\Domain\Team\Contract\TeamRepository;
+use App\Domain\Team\Contract\Repository\TeamMemberRepository;
+use App\Domain\Team\Contract\Repository\TeamRepository;
 
 /** @implements QueryHandler<GetTeamsForUsersQuery, array<string, list<Team>>> */
 final readonly class GetTeamsForUsersHandler implements QueryHandler

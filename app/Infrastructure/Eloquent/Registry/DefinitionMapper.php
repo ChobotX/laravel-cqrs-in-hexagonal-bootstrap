@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Registry;
 
-use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\DefinitionName;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\DefinitionSlug;
+use App\Domain\Registry\Contract\Entity\Definition;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\ValueObject\DefinitionName;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
 
 final readonly class DefinitionMapper
 {

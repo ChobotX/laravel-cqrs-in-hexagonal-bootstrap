@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Contract\ChannelPreference;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationPreferences;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationPreferences;
 
 it('can be constructed with user id and preferences', function (): void {
     $prefs = new NotificationPreferences(

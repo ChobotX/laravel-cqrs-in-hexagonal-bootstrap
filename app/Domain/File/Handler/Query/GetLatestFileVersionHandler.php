@@ -6,12 +6,12 @@ namespace App\Domain\File\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\File\Contract\File;
-use App\Domain\File\Contract\FileName;
-use App\Domain\File\Contract\FileRepository;
+use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Query\GetLatestFileVersionQuery;
+use App\Domain\File\Contract\Repository\FileRepository;
+use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Exception\FileNotFoundException;
-use App\Domain\File\FileNamespace;
+use App\Domain\File\ValueObject\FileNamespace;
 
 /** @implements QueryHandler<GetLatestFileVersionQuery, File> */
 final readonly class GetLatestFileVersionHandler implements QueryHandler

@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Contract\Query;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\Contract\UserPermissionOverride;
+use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
 
 /** @implements Query<list<UserPermissionOverride>> */
 #[SkipPermissionCheck(reason: 'Users can always view their own permission overrides')]

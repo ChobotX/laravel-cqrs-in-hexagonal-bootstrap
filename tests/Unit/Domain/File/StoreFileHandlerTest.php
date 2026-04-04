@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 use App\Domain\File\Contract\Command\StoreFileCommand;
 use App\Domain\File\Contract\Event\FileStored;
-use App\Domain\File\Contract\FileName;
-use App\Domain\File\Contract\FileUpload;
-use App\Domain\File\Contract\MimeType;
+use App\Domain\File\Contract\ValueObject\FileName;
+use App\Domain\File\Contract\ValueObject\FileUpload;
+use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Domain\File\Handler\Command\StoreFileHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeFileRepository;
@@ -53,14 +53,14 @@ it('stores a file and emits event', function (): void {
 });
 
 it('increments version for same namespace and name', function (): void {
-    $firstFile = new App\Domain\File\Contract\File(
-        id: new App\Domain\File\Contract\FileId('550e8400-e29b-41d4-a716-446655440000'),
-        namespace: new App\Domain\File\FileNamespace('documents'),
+    $firstFile = new App\Domain\File\Contract\Entity\File(
+        id: new App\Domain\File\Contract\ValueObject\FileId('550e8400-e29b-41d4-a716-446655440000'),
+        namespace: new App\Domain\File\ValueObject\FileNamespace('documents'),
         originalName: new FileName('report.pdf'),
-        storagePath: new App\Domain\File\StoragePath('documents/old.pdf'),
+        storagePath: new App\Domain\File\ValueObject\StoragePath('documents/old.pdf'),
         mimeType: new MimeType('application/pdf'),
         sizeInBytes: 512,
-        version: new App\Domain\File\FileVersion(1),
+        version: new App\Domain\File\ValueObject\FileVersion(1),
         uploadedBy: '660e8400-e29b-41d4-a716-446655440000',
         uploadedAt: new DateTimeImmutable('2025-01-01T00:00:00+00:00'),
     );

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Email;
+use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\Handler\Query\GetUserByEmailHandler;
-use App\Domain\User\UserName;
+use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserName;
 use Tests\Helper\FakeUserRepository;
 
 it('returns user when found by email', function (): void {

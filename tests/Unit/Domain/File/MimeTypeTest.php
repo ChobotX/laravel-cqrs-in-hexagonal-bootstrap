@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\File\Contract\MimeType;
+use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Domain\File\Exception\InvalidMimeTypeException;
 
 it('creates a valid mime type', function (): void {

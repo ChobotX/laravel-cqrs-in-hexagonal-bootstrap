@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Notification;
 
-use App\Domain\Notification\Contract\Notification;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationId;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationLink;
-use App\Domain\Notification\NotificationType;
+use App\Domain\Notification\Contract\Entity\Notification;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\ValueObject\NotificationId;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationLink;
+use App\Domain\Notification\ValueObject\NotificationType;
 use DateTimeImmutable;
 
 final readonly class NotificationMapper

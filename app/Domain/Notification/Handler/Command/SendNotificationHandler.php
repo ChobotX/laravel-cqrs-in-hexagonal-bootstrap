@@ -10,15 +10,15 @@ use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
 use App\Contract\Notification\NotificationChannelSenderRegistry;
 use App\Domain\Notification\Contract\Command\SendNotificationCommand;
+use App\Domain\Notification\Contract\Entity\Notification;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Event\NotificationCreated;
-use App\Domain\Notification\Contract\Notification;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationId;
-use App\Domain\Notification\Contract\NotificationPreferenceRepository;
-use App\Domain\Notification\Contract\NotificationRepository;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationLink;
-use App\Domain\Notification\NotificationType;
+use App\Domain\Notification\Contract\Repository\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\Repository\NotificationRepository;
+use App\Domain\Notification\Contract\ValueObject\NotificationId;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationLink;
+use App\Domain\Notification\ValueObject\NotificationType;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<SendNotificationCommand> */
@@ -74,7 +74,7 @@ final readonly class SendNotificationHandler implements CommandHandler
     {
         $preferences = $this->notificationPreferenceRepository->findByUserId($recipientId);
 
-        if ($preferences instanceof \App\Domain\Notification\NotificationPreferences) {
+        if ($preferences instanceof \App\Domain\Notification\ValueObject\NotificationPreferences) {
             foreach ($preferences->preferences as $pref) {
                 if ($pref->level === $notificationLevel) {
                     return $pref->channels;

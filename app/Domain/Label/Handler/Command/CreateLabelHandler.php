@@ -8,13 +8,13 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Label\Contract\Command\CreateLabelCommand;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Event\LabelCreated;
 use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\Contract\LabelRepository;
-use App\Domain\Label\LabelName;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\Contract\Repository\LabelRepository;
+use App\Domain\Label\Contract\ValueObject\LabelId;
+use App\Domain\Label\ValueObject\LabelName;
+use App\Domain\Label\ValueObject\LabelNamespace;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<CreateLabelCommand> */

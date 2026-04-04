@@ -6,10 +6,10 @@ namespace App\Domain\Label\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelRepository;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\SearchLabelsQuery;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\Contract\Repository\LabelRepository;
+use App\Domain\Label\ValueObject\LabelNamespace;
 
 /**
  * @implements QueryHandler<SearchLabelsQuery, list<Label>>

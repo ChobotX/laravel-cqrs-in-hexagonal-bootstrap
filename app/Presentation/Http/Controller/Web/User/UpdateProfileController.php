@@ -9,7 +9,7 @@ use App\Application\Bus\CommandBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\Notification\Contract\Command\UpdateNotificationPreferencesCommand;
-use App\Domain\Notification\Contract\NotificationChannel;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Presentation\Http\Request\Web\User\UpdateProfileRequest;

@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use App\Domain\Label\Contract\Command\RemoveLabelCommand;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\ValueObject\LabelId;
 use App\Domain\Label\Handler\Command\RemoveLabelHandler;
-use App\Domain\Label\LabelName;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\ValueObject\LabelName;
+use App\Domain\Label\ValueObject\LabelNamespace;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeLabelRepository;
 

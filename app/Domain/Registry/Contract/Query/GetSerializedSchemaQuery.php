@@ -6,7 +6,7 @@ namespace App\Domain\Registry\Contract\Query;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Registry\Contract\JsonSchema;
+use App\Domain\Registry\Contract\ValueObject\JsonSchema;
 
 /**
  * @implements Query<?JsonSchema>

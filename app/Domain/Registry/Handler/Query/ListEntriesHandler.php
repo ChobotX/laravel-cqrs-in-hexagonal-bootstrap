@@ -8,10 +8,10 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryRepository;
+use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Query\ListEntriesQuery;
+use App\Domain\Registry\Contract\Repository\EntryRepository;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
 
 /**
  * @implements QueryHandler<ListEntriesQuery, PaginatedResult<Entry>>

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\Exception\InvalidDefinitionNameException;
+use App\Domain\Registry\ValueObject\DefinitionName;
 
 it('can be constructed with a valid name', function (): void {
     $name = new DefinitionName('Employee Directory');

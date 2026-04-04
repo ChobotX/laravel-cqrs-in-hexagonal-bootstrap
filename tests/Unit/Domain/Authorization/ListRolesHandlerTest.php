@@ -7,16 +7,16 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\ListRolesQuery;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\RolePermission;
-use App\Domain\Authorization\Feature;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RolePermission;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
 use App\Domain\Authorization\Handler\Query\ListRolesHandler;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
+use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeRoleRepository;
 
 it('returns all roles', function (): void {

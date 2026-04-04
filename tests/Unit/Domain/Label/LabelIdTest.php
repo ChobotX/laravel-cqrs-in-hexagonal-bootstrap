@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\ValueObject\LabelId;
 use App\Domain\Label\Exception\InvalidLabelIdException;
 
 it('can be constructed with a valid UUID', function (): void {

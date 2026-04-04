@@ -43,7 +43,7 @@ final class NoDirectFilesystemImportRule implements Rule
 
         return [
             RuleErrorBuilder::message(sprintf(
-                'Direct use of %s is not allowed outside Infrastructure\Filesystem. Inject App\Domain\File\Contract\FileStorage instead.',
+                'Direct use of %s is not allowed outside Infrastructure\Filesystem. Inject App\Domain\File\Contract\Service\FileStorage instead.',
                 $name,
             ))
                 ->identifier('app.noDirectFilesystemImport')

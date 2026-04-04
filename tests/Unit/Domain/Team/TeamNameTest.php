@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Team\Exception\InvalidTeamNameException;
-use App\Domain\Team\TeamName;
+use App\Domain\Team\ValueObject\TeamName;
 
 it('creates a valid team name', function (): void {
     $name = new TeamName('Engineering');

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Action;
 use App\Domain\Authorization\Contract\Command\RevokeRecordShareCommand;
 use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
+use App\Domain\Authorization\Enum\Action;
 use App\Domain\Authorization\Exception\RecordShareNotFoundException;
 use App\Domain\Authorization\Handler\Command\RevokeRecordShareHandler;
-use App\Domain\Authorization\RecordShare;
+use App\Domain\Authorization\ValueObject\RecordShare;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRecordShareRepository;
 

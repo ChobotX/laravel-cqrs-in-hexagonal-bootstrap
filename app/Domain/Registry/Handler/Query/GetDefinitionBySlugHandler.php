@@ -6,11 +6,11 @@ namespace App\Domain\Registry\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\DefinitionSlug;
+use App\Domain\Registry\Contract\Repository\DefinitionRepository;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
 
 /**
  * @implements QueryHandler<GetDefinitionBySlugQuery, ?Definition>

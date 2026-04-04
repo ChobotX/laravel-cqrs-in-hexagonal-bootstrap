@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Contract\NotificationId;
+use App\Domain\Notification\Contract\ValueObject\NotificationId;
 use App\Domain\Notification\Exception\InvalidNotificationIdException;
 
 it('can be constructed with a valid UUID', function (): void {

@@ -9,12 +9,12 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
+use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Event\LabelAssigned;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\Contract\LabelRepository;
+use App\Domain\Label\Contract\Repository\LabelRepository;
+use App\Domain\Label\Contract\ValueObject\LabelId;
 use DateTimeImmutable;
 
 use function array_diff;

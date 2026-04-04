@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Email;
-use App\Domain\User\UserName;
+use App\Domain\User\Contract\Entity\User;
+use App\Domain\User\Contract\ValueObject\UserId;
+use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserName;
 use App\Infrastructure\Auth\RequestAuthenticatedUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;

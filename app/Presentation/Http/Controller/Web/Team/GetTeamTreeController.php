@@ -8,11 +8,11 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetRolesForUsersQuery;
-use App\Domain\Authorization\Contract\Role;
 use App\Domain\Team\Contract\Query\GetTeamTreeQuery;
-use App\Domain\Team\Contract\Query\TeamTreeNode;
-use App\Domain\Team\Contract\TeamMember;
+use App\Domain\Team\Contract\ValueObject\TeamMember;
+use App\Domain\Team\Contract\ValueObject\TeamTreeNode;
 use Illuminate\Http\JsonResponse;
 
 #[RequiresPermission('teams.management.read')]
@@ -91,7 +91,7 @@ final readonly class GetTeamTreeController
      */
     private function mapNode(TeamTreeNode $teamTreeNode, array $visibleTeamIds, array $roleMap): array
     {
-        $parentId = $teamTreeNode->team->parentTeamId instanceof \App\Domain\Team\Contract\TeamId
+        $parentId = $teamTreeNode->team->parentTeamId instanceof \App\Domain\Team\Contract\ValueObject\TeamId
             ? $teamTreeNode->team->parentTeamId->value
             : '';
 

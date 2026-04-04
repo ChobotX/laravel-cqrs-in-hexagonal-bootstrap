@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Notification;
 
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationPreferenceRepository;
-use App\Domain\Notification\NotificationPreferences;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\Repository\NotificationPreferenceRepository;
+use App\Domain\Notification\ValueObject\NotificationPreferences;
 
 final readonly class EloquentNotificationPreferenceRepository implements NotificationPreferenceRepository
 {

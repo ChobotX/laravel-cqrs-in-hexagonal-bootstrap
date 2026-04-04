@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\Exception\InvalidDefinitionSlugException;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
 
 it('can be constructed with a valid slug', function (string $value): void {
     $slug = new DefinitionSlug($value);

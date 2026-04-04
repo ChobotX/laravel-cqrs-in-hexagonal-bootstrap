@@ -10,9 +10,9 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\ListRolesQuery;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleRepository;
+use App\Domain\Authorization\Contract\Repository\RoleRepository;
 
 /** @implements QueryHandler<ListRolesQuery, PaginatedResult<Role>> */
 final readonly class ListRolesHandler implements QueryHandler

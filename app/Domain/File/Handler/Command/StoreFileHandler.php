@@ -8,13 +8,13 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\File\Contract\Command\StoreFileCommand;
+use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Event\FileStored;
-use App\Domain\File\Contract\File;
-use App\Domain\File\Contract\FileId;
-use App\Domain\File\Contract\FileRepository;
-use App\Domain\File\Contract\FileStorage;
-use App\Domain\File\FileNamespace;
-use App\Domain\File\FileVersion;
+use App\Domain\File\Contract\Repository\FileRepository;
+use App\Domain\File\Contract\Service\FileStorage;
+use App\Domain\File\Contract\ValueObject\FileId;
+use App\Domain\File\ValueObject\FileNamespace;
+use App\Domain\File\ValueObject\FileVersion;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<StoreFileCommand> */

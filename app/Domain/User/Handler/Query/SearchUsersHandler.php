@@ -6,9 +6,9 @@ namespace App\Domain\User\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\SearchUsersQuery;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Contract\Repository\UserRepository;
 
 /** @implements QueryHandler<SearchUsersQuery, list<User>> */
 final readonly class SearchUsersHandler implements QueryHandler

@@ -6,7 +6,7 @@ namespace App\Domain\Notification\Contract\Query;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Notification\NotificationPreferences;
+use App\Domain\Notification\ValueObject\NotificationPreferences;
 
 /** @implements Query<NotificationPreferences> */
 #[SkipPermissionCheck(reason: 'Users view only their own notification preferences')]

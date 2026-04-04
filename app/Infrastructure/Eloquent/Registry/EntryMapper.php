@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Registry;
 
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\EntryTitle;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\Contract\Entity\Entry;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\EntryTitle;
+use App\Domain\Registry\ValueObject\VersionNumber;
 
 final readonly class EntryMapper
 {

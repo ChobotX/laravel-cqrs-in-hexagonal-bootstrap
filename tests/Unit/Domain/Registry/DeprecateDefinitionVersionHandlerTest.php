@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 use App\Domain\Registry\Contract\Command\DeprecateDefinitionVersionCommand;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionVersion;
-use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\Entity\DefinitionVersion;
+use App\Domain\Registry\Contract\Enum\VersionStatus;
 use App\Domain\Registry\Contract\Event\DefinitionVersionDeprecated;
-use App\Domain\Registry\Contract\VersionStatus;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\DefinitionVersionId;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
 use App\Domain\Registry\Handler\Command\DeprecateDefinitionVersionHandler;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\ValueObject\VersionNumber;
 use Tests\Helper\FakeDefinitionVersionRepository;
 use Tests\Helper\FakeEventCollector;
 

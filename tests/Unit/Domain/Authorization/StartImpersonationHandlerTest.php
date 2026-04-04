@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Contract\Command\StartImpersonationCommand;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Exception\ImpersonationNotAllowedException;
 use App\Domain\Authorization\Handler\Command\StartImpersonationHandler;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeImpersonationManager;
 use Tests\Helper\FakeUserPermissionRepository;

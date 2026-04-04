@@ -14,7 +14,7 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
-use App\Domain\Team\Contract\Team;
+use App\Domain\Team\Contract\Entity\Team;
 
 /**
  * @implements Query<PaginatedResult<Team>>

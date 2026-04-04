@@ -3,16 +3,16 @@
 declare(strict_types=1);
 
 use App\Domain\File\Contract\Command\DeleteFileCommand;
+use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Event\FileDeleted;
-use App\Domain\File\Contract\File;
-use App\Domain\File\Contract\FileId;
-use App\Domain\File\Contract\FileName;
-use App\Domain\File\Contract\MimeType;
+use App\Domain\File\Contract\ValueObject\FileId;
+use App\Domain\File\Contract\ValueObject\FileName;
+use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Domain\File\Exception\FileNotFoundException;
-use App\Domain\File\FileNamespace;
-use App\Domain\File\FileVersion;
 use App\Domain\File\Handler\Command\DeleteFileHandler;
-use App\Domain\File\StoragePath;
+use App\Domain\File\ValueObject\FileNamespace;
+use App\Domain\File\ValueObject\FileVersion;
+use App\Domain\File\ValueObject\StoragePath;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeFileRepository;
 use Tests\Helper\FakeFileStorage;

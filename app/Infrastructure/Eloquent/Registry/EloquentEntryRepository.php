@@ -6,12 +6,12 @@ namespace App\Infrastructure\Eloquent\Registry;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
-use App\Domain\Registry\Contract\EntryRepository;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\DefinitionSlug;
+use App\Domain\Registry\Contract\Entity\Entry;
+use App\Domain\Registry\Contract\Repository\EntryRepository;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
 
 final readonly class EloquentEntryRepository implements EntryRepository
 {

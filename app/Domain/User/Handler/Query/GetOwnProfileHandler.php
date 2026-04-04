@@ -6,11 +6,11 @@ namespace App\Domain\User\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\ValueObject\UserId;
 
 /** @implements QueryHandler<GetOwnProfileQuery, User> */
 final readonly class GetOwnProfileHandler implements QueryHandler

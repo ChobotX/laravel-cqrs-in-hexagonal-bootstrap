@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Filesystem;
 
-use App\Domain\File\Contract\FileStorage;
-use App\Domain\File\Contract\FileUpload;
+use App\Domain\File\Contract\Service\FileStorage;
+use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Exception\FileStorageException;
-use App\Domain\File\FileNamespace;
-use App\Domain\File\StoragePath;
+use App\Domain\File\ValueObject\FileNamespace;
+use App\Domain\File\ValueObject\StoragePath;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\File;
 use Illuminate\Support\Str;

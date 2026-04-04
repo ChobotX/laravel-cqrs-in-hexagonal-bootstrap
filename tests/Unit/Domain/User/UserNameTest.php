@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\User\Contract\Exception\InvalidUserDataException;
-use App\Domain\User\UserName;
+use App\Domain\User\ValueObject\UserName;
 
 it('can be constructed with a valid name', function (): void {
     $userName = new UserName('John Doe');

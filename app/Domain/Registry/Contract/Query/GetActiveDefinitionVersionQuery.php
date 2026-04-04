@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
 /**
- * @implements Query<?\App\Domain\Registry\Contract\DefinitionVersion>
+ * @implements Query<?\App\Domain\Registry\Contract\Entity\DefinitionVersion>
  */
 #[RequiresPermission('registry.definitions.read')]
 final readonly class GetActiveDefinitionVersionQuery implements Query

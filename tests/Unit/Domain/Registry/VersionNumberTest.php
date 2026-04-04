@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Registry\Exception\InvalidVersionNumberException;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\ValueObject\VersionNumber;
 
 it('can be constructed with a valid number', function (int $value): void {
     $version = new VersionNumber($value);

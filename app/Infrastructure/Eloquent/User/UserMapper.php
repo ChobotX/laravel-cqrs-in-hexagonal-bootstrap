@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\User;
 
-use App\Domain\File\Contract\FileId;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Email;
-use App\Domain\User\UserName;
+use App\Domain\File\Contract\ValueObject\FileId;
+use App\Domain\User\Contract\Entity\User;
+use App\Domain\User\Contract\ValueObject\UserId;
+use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserName;
 
 final readonly class UserMapper
 {

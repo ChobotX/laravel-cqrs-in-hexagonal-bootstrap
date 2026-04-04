@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 use App\Application\Pagination\Pagination;
-use App\Domain\Notification\Contract\Notification;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationId;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationLink;
-use App\Domain\Notification\NotificationType;
+use App\Domain\Notification\Contract\Entity\Notification;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\ValueObject\NotificationId;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationLink;
+use App\Domain\Notification\ValueObject\NotificationType;
 use App\Infrastructure\Eloquent\Notification\EloquentNotificationRepository;
 use App\Infrastructure\Eloquent\Notification\NotificationMapper;
 use App\Infrastructure\Eloquent\Notification\NotificationModel;

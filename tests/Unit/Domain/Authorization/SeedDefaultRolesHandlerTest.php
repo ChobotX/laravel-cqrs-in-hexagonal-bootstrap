@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Contract\Command\SeedDefaultRolesCommand;
-use App\Domain\Authorization\Contract\Role;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Handler\Command\SeedDefaultRolesHandler;
 use Tests\Helper\FakeIdGenerator;
 use Tests\Helper\FakeRoleRepository;

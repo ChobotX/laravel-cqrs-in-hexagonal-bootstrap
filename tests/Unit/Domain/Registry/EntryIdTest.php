@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Contract\EntryId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\Exception\InvalidEntryIdException;
 
 it('can be constructed with a valid UUID', function (): void {

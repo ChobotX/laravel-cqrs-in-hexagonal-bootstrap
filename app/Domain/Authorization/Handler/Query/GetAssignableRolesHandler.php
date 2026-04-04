@@ -6,12 +6,12 @@ namespace App\Domain\Authorization\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetAssignableRolesQuery;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleRepository;
-use App\Domain\Authorization\Contract\UserPermissionRepository;
-use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\RoleAssignmentPolicy;
+use App\Domain\Authorization\Contract\Repository\RoleRepository;
+use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
+use App\Domain\Authorization\Policy\RoleAssignmentPolicy;
+use App\Domain\Authorization\Service\PermissionResolver;
 
 /** @implements QueryHandler<GetAssignableRolesQuery, list<Role>> */
 final readonly class GetAssignableRolesHandler implements QueryHandler

@@ -9,19 +9,19 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Registry\JsonSchemaValidator;
 use App\Domain\Registry\Contract\Command\CreateEntryCommand;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionRepository;
-use App\Domain\Registry\Contract\DefinitionVersionRepository;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
-use App\Domain\Registry\Contract\EntryRepository;
+use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Event\EntryCreated;
-use App\Domain\Registry\Contract\SchemaSerializer;
-use App\Domain\Registry\EntryTitle;
+use App\Domain\Registry\Contract\Repository\DefinitionRepository;
+use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Repository\EntryRepository;
+use App\Domain\Registry\Contract\Service\SchemaSerializer;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
 use App\Domain\Registry\Exception\NoActiveVersionException;
-use App\Domain\Registry\ReferenceValidator;
+use App\Domain\Registry\Service\ReferenceValidator;
+use App\Domain\Registry\ValueObject\EntryTitle;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<CreateEntryCommand> */

@@ -11,7 +11,7 @@ use App\Contract\Notification\NotificationBroadcaster;
 use App\Domain\Notification\Contract\Event\AllNotificationsRead;
 use App\Domain\Notification\Contract\Event\NotificationDeleted;
 use App\Domain\Notification\Contract\Event\NotificationRead;
-use App\Domain\Notification\Contract\NotificationRepository;
+use App\Domain\Notification\Contract\Repository\NotificationRepository;
 
 /** @implements DomainEventHandler<DomainEvent> */
 #[RetryPolicy(tries: 3, backoff: [10, 30, 60], timeout: 30)]

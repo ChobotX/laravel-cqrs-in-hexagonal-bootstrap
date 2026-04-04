@@ -13,7 +13,7 @@ use App\Contract\Authorization\AccessScope;
 use App\Contract\Authorization\AuthorizationChecker;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Middleware\ResolveScopeFilter;
-use App\Domain\Team\Contract\TeamMembershipChecker;
+use App\Domain\Team\Contract\Service\TeamMembershipChecker;
 
 /**
  * @param  list<string>|null  $teamVisibleUserIds

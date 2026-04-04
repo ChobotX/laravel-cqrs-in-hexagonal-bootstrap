@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Contract\Notification;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationId;
+use App\Domain\Notification\Contract\Entity\Notification;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Query\CountUnreadNotificationsQuery;
+use App\Domain\Notification\Contract\ValueObject\NotificationId;
+use App\Domain\Notification\Enum\NotificationLevel;
 use App\Domain\Notification\Handler\Query\CountUnreadNotificationsHandler;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationType;
+use App\Domain\Notification\ValueObject\NotificationType;
 use Tests\Helper\FakeNotificationRepository;
 
 it('returns unread count for recipient', function (): void {

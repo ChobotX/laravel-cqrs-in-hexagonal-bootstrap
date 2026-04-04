@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\ValueObject\TeamId;
 use App\Domain\Team\Exception\InvalidTeamIdException;
 
 it('creates a valid team id', function (): void {

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\File\Contract\File;
-use App\Domain\File\Contract\FileId;
-use App\Domain\File\Contract\FileName;
-use App\Domain\File\Contract\FileRepository;
-use App\Domain\File\FileNamespace;
+use App\Domain\File\Contract\Entity\File;
+use App\Domain\File\Contract\Repository\FileRepository;
+use App\Domain\File\Contract\ValueObject\FileId;
+use App\Domain\File\Contract\ValueObject\FileName;
+use App\Domain\File\ValueObject\FileNamespace;
 
 final class FakeFileRepository implements FileRepository
 {

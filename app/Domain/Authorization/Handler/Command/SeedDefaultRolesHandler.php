@@ -8,17 +8,17 @@ use App\Contract\Authorization\AccessScope;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
-use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Constant\DefaultRole;
 use App\Domain\Authorization\Contract\Command\SeedDefaultRolesCommand;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\RolePermission;
-use App\Domain\Authorization\Contract\RoleRepository;
-use App\Domain\Authorization\DefaultRole;
-use App\Domain\Authorization\Feature;
-use App\Domain\Authorization\Module;
-use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\Contract\Entity\Role;
+use App\Domain\Authorization\Contract\Repository\RoleRepository;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RolePermission;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\ValueObject\Module;
+use App\Domain\Authorization\ValueObject\PermissionKey;
+use App\Domain\Authorization\ValueObject\RoleName;
 
 /** @implements CommandHandler<SeedDefaultRolesCommand> */
 final readonly class SeedDefaultRolesHandler implements CommandHandler

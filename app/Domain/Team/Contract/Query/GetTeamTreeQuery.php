@@ -9,6 +9,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Contract\Query\Query;
+use App\Domain\Team\Contract\ValueObject\TeamTreeNode;
 
 /** @implements Query<list<TeamTreeNode>> */
 #[RequiresPermission('teams.management.read')]

@@ -9,16 +9,16 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Image\ImageProcessor;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
+use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Event\FileStored;
-use App\Domain\File\Contract\File;
-use App\Domain\File\Contract\FileId;
-use App\Domain\File\Contract\FileName;
-use App\Domain\File\Contract\FileRepository;
-use App\Domain\File\Contract\FileStorage;
-use App\Domain\File\Contract\FileUpload;
-use App\Domain\File\Contract\MimeType;
-use App\Domain\File\FileNamespace;
-use App\Domain\File\FileVersion;
+use App\Domain\File\Contract\Repository\FileRepository;
+use App\Domain\File\Contract\Service\FileStorage;
+use App\Domain\File\Contract\ValueObject\FileId;
+use App\Domain\File\Contract\ValueObject\FileName;
+use App\Domain\File\Contract\ValueObject\FileUpload;
+use App\Domain\File\Contract\ValueObject\MimeType;
+use App\Domain\File\ValueObject\FileNamespace;
+use App\Domain\File\ValueObject\FileVersion;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<StoreAvatarCommand> */

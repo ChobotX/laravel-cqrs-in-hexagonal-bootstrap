@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\NotificationLevel;
+use App\Domain\Notification\Enum\NotificationLevel;
 
 it('has all expected cases', function (): void {
     expect(NotificationLevel::cases())->toHaveCount(4)

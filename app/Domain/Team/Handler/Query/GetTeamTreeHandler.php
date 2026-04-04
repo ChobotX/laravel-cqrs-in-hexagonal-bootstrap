@@ -8,11 +8,11 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\GetTeamTreeQuery;
-use App\Domain\Team\Contract\Query\TeamTreeNode;
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamMemberRepository;
-use App\Domain\Team\Contract\TeamRepository;
+use App\Domain\Team\Contract\Repository\TeamMemberRepository;
+use App\Domain\Team\Contract\Repository\TeamRepository;
+use App\Domain\Team\Contract\ValueObject\TeamTreeNode;
 
 /** @implements QueryHandler<GetTeamTreeQuery, list<TeamTreeNode>> */
 final readonly class GetTeamTreeHandler implements QueryHandler

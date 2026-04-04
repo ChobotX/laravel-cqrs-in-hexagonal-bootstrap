@@ -7,13 +7,13 @@ namespace App\Domain\Notification\Handler\Command;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Notification\Contract\ChannelPreference;
 use App\Domain\Notification\Contract\Command\UpdateNotificationPreferencesCommand;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Event\NotificationPreferencesUpdated;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationPreferenceRepository;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationPreferences;
+use App\Domain\Notification\Contract\Repository\NotificationPreferenceRepository;
+use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationPreferences;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<UpdateNotificationPreferencesCommand> */

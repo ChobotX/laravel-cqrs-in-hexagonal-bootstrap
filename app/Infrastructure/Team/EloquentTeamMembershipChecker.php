@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Team;
 
-use App\Domain\Team\Contract\TeamMemberRepository;
-use App\Domain\Team\Contract\TeamMembershipChecker;
+use App\Domain\Team\Contract\Repository\TeamMemberRepository;
+use App\Domain\Team\Contract\Service\TeamMembershipChecker;
 
 final readonly class EloquentTeamMembershipChecker implements TeamMembershipChecker
 {

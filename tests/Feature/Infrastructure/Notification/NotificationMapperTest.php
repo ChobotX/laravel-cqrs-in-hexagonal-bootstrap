@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\NotificationLevel;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Enum\NotificationLevel;
 use App\Infrastructure\Eloquent\Notification\NotificationMapper;
 use App\Infrastructure\Eloquent\Notification\NotificationModel;
 use Carbon\CarbonImmutable;

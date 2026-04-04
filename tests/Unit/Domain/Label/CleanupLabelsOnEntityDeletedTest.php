@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EntityDeleted;
-use App\Domain\Label\Contract\Label;
-use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\Contract\Entity\Label;
+use App\Domain\Label\Contract\ValueObject\LabelId;
 use App\Domain\Label\EventHandler\CleanupLabelsOnEntityDeleted;
-use App\Domain\Label\LabelName;
-use App\Domain\Label\LabelNamespace;
+use App\Domain\Label\ValueObject\LabelName;
+use App\Domain\Label\ValueObject\LabelNamespace;
 use Tests\Helper\FakeLabelRepository;
 
 it('removes assignments and deletes orphaned labels', function (): void {

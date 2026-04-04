@@ -10,8 +10,8 @@ use App\Contract\Event\EventCollector;
 use App\Domain\Label\Contract\Command\RemoveLabelCommand;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;
-use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\Contract\LabelRepository;
+use App\Domain\Label\Contract\Repository\LabelRepository;
+use App\Domain\Label\Contract\ValueObject\LabelId;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<RemoveLabelCommand> */

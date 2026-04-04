@@ -8,10 +8,10 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Query\ListDefinitionsQuery;
-use App\Domain\Registry\DefinitionNamespace;
+use App\Domain\Registry\Contract\Repository\DefinitionRepository;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
 
 /**
  * @implements QueryHandler<ListDefinitionsQuery, PaginatedResult<Definition>>

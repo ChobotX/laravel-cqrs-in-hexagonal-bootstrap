@@ -6,10 +6,10 @@ namespace App\Infrastructure\Eloquent\Notification;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
-use App\Domain\Notification\Contract\Notification;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\Contract\NotificationId;
-use App\Domain\Notification\Contract\NotificationRepository;
+use App\Domain\Notification\Contract\Entity\Notification;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\Repository\NotificationRepository;
+use App\Domain\Notification\Contract\ValueObject\NotificationId;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use DateTimeImmutable;

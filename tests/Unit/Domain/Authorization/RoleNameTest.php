@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Exception\InvalidRoleNameException;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\ValueObject\RoleName;
 
 it('creates a valid role name', function (): void {
     $name = new RoleName('Admin');

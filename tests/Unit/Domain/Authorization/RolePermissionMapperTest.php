@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\RolePermissionMapper;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Service\RolePermissionMapper;
 
 it('maps full permission data with module, feature and action', function (): void {
     $mapper = new RolePermissionMapper;

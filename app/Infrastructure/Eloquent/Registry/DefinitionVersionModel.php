@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Registry;
 
-use App\Domain\Registry\Contract\VersionStatus;
+use App\Domain\Registry\Contract\Enum\VersionStatus;
 use App\Infrastructure\Eloquent\HardDelete;
 use App\Infrastructure\Eloquent\HasOptimisticLocking;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;

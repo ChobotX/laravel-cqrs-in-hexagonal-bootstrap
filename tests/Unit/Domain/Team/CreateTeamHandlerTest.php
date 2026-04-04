@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 use App\Domain\Team\Contract\Command\CreateTeamCommand;
+use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Event\TeamCreated;
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamId;
-use App\Domain\Team\Contract\TeamSlug;
+use App\Domain\Team\Contract\ValueObject\TeamId;
+use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Domain\Team\Exception\TeamNotFoundException;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
 use App\Domain\Team\Handler\Command\CreateTeamHandler;
-use App\Domain\Team\TeamName;
+use App\Domain\Team\ValueObject\TeamName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeTeamRepository;
 

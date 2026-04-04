@@ -10,9 +10,9 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\ListTeamsQuery;
-use App\Domain\Team\Contract\Team;
-use App\Domain\Team\Contract\TeamRepository;
+use App\Domain\Team\Contract\Repository\TeamRepository;
 
 /** @implements QueryHandler<ListTeamsQuery, PaginatedResult<Team>> */
 final readonly class ListTeamsHandler implements QueryHandler

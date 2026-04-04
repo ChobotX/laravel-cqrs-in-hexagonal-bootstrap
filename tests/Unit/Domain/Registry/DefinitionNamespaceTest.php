@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\Exception\InvalidDefinitionNamespaceException;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
 
 it('can be constructed with a valid namespace', function (string $value): void {
     $namespace = new DefinitionNamespace($value);

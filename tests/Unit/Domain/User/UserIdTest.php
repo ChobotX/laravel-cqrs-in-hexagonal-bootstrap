@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Contract\UserId;
+use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\Exception\InvalidUserIdException;
 
 it('can be constructed with a valid UUID', function (): void {

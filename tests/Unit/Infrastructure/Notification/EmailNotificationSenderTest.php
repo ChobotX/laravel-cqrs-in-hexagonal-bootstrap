@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserId;
-use App\Domain\User\Email;
-use App\Domain\User\UserName;
+use App\Domain\User\Contract\ValueObject\UserId;
+use App\Domain\User\ValueObject\Email;
+use App\Domain\User\ValueObject\UserName;
 use App\Infrastructure\Notification\EmailNotificationSender;
 use Tests\Helper\FakeMailer;
 use Tests\Helper\FakeQueryBus;

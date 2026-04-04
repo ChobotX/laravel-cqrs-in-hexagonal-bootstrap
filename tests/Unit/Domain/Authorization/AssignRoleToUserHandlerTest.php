@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Exception\DuplicateRoleAssignmentException;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Handler\Command\AssignRoleToUserHandler;
-use App\Domain\Authorization\RoleName;
+use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRoleRepository;
 use Tests\Helper\FakeUserPermissionRepository;

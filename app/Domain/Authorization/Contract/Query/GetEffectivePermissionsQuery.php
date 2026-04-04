@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Contract\Query;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\Contract\EffectivePermission;
+use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
 
 /** @implements Query<list<EffectivePermission>> */
 #[RequiresPermission('users.roles.read')]

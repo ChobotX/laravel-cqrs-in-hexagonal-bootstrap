@@ -10,9 +10,9 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\ListUsersQuery;
-use App\Domain\User\Contract\User;
-use App\Domain\User\Contract\UserRepository;
+use App\Domain\User\Contract\Repository\UserRepository;
 
 /** @implements QueryHandler<ListUsersQuery, PaginatedResult<User>> */
 final readonly class ListUsersHandler implements QueryHandler

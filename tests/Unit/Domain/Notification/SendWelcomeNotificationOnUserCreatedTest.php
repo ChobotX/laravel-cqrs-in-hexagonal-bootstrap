@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Notification\Constant\WelcomeNotification;
 use App\Domain\Notification\Contract\Command\SendNotificationCommand;
+use App\Domain\Notification\Enum\NotificationLevel;
 use App\Domain\Notification\EventHandler\SendWelcomeNotificationOnUserCreated;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\WelcomeNotification;
 use App\Domain\User\Contract\Event\UserCreated;
 use Tests\Helper\FakeCommandBus;
 

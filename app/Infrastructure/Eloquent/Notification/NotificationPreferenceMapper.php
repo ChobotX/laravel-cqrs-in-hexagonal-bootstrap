@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Notification;
 
-use App\Domain\Notification\Contract\ChannelPreference;
-use App\Domain\Notification\Contract\NotificationChannel;
-use App\Domain\Notification\NotificationLevel;
-use App\Domain\Notification\NotificationPreferences;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
+use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
+use App\Domain\Notification\Enum\NotificationLevel;
+use App\Domain\Notification\ValueObject\NotificationPreferences;
 use Illuminate\Support\Collection;
 
 final readonly class NotificationPreferenceMapper

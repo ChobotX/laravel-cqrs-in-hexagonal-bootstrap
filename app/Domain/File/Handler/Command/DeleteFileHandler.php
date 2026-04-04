@@ -8,11 +8,11 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\File\Contract\Command\DeleteFileCommand;
+use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Event\FileDeleted;
-use App\Domain\File\Contract\File;
-use App\Domain\File\Contract\FileId;
-use App\Domain\File\Contract\FileRepository;
-use App\Domain\File\Contract\FileStorage;
+use App\Domain\File\Contract\Repository\FileRepository;
+use App\Domain\File\Contract\Service\FileStorage;
+use App\Domain\File\Contract\ValueObject\FileId;
 use App\Domain\File\Exception\FileNotFoundException;
 use DateTimeImmutable;
 

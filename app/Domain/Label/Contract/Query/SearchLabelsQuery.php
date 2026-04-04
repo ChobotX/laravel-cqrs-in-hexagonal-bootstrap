@@ -8,7 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
 /**
- * @implements Query<list<\App\Domain\Label\Contract\Label>>
+ * @implements Query<list<\App\Domain\Label\Contract\Entity\Label>>
  */
 #[RequiresPermission('labels.management.read')]
 final readonly class SearchLabelsQuery implements Query

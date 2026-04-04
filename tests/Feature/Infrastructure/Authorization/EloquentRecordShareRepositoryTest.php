@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\RecordShare;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\ValueObject\RecordShare;
 use App\Infrastructure\Eloquent\Authorization\EloquentRecordShareRepository;
 use App\Infrastructure\Eloquent\Authorization\RecordShareMapper;
 use App\Infrastructure\Eloquent\User\UserModel;

@@ -6,7 +6,7 @@ namespace App\Domain\Label\Contract\Query;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Label\Contract\Label;
+use App\Domain\Label\Contract\Entity\Label;
 
 /** @implements Query<array<string, list<Label>>> */
 #[SkipPermissionCheck(reason: 'Entity label loading is gated by the parent entity read permission')]

@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Controller\Web\Registry;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Application\Pagination\PaginatedResult;
-use App\Domain\Registry\Contract\Definition;
+use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Query\ListDefinitionsQuery;
 use App\Presentation\Http\Request\Web\PaginationRequest;
 use Illuminate\Http\RedirectResponse;

@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Contract\Query;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\RecordShare;
+use App\Domain\Authorization\ValueObject\RecordShare;
 
 /** @implements Query<list<RecordShare>> */
 #[SkipPermissionCheck(reason: 'Record shares are queried per-resource, not globally gated')]

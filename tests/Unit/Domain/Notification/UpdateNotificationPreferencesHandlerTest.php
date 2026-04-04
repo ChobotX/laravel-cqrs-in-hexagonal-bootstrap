@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use App\Domain\Notification\Contract\Command\UpdateNotificationPreferencesCommand;
+use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Event\NotificationPreferencesUpdated;
-use App\Domain\Notification\Contract\NotificationChannel;
+use App\Domain\Notification\Enum\NotificationLevel;
 use App\Domain\Notification\Handler\Command\UpdateNotificationPreferencesHandler;
-use App\Domain\Notification\NotificationLevel;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeNotificationPreferenceRepository;
 

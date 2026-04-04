@@ -9,17 +9,17 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Registry\JsonSchemaValidator;
 use App\Domain\Registry\Contract\Command\UpdateEntryCommand;
-use App\Domain\Registry\Contract\DefinitionVersionRepository;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
-use App\Domain\Registry\Contract\EntryRepository;
+use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Event\EntryUpdated;
-use App\Domain\Registry\Contract\SchemaSerializer;
-use App\Domain\Registry\EntryTitle;
+use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\Repository\EntryRepository;
+use App\Domain\Registry\Contract\Service\SchemaSerializer;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
 use App\Domain\Registry\Exception\EntryNotFoundException;
 use App\Domain\Registry\Exception\EntryValidationException;
-use App\Domain\Registry\ReferenceValidator;
+use App\Domain\Registry\Service\ReferenceValidator;
+use App\Domain\Registry\ValueObject\EntryTitle;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<UpdateEntryCommand> */

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Action;
-use App\Domain\Authorization\RecordShare;
+use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\ValueObject\RecordShare;
 
 it('can be constructed with all properties', function (): void {
     $recordShare = new RecordShare(

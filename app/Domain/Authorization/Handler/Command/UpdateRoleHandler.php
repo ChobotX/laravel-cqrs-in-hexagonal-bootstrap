@@ -8,13 +8,13 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\UpdateRoleCommand;
+use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
-use App\Domain\Authorization\Contract\Role;
-use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\Contract\RoleRepository;
+use App\Domain\Authorization\Contract\Repository\RoleRepository;
+use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
-use App\Domain\Authorization\RoleName;
-use App\Domain\Authorization\RolePermissionMapper;
+use App\Domain\Authorization\Service\RolePermissionMapper;
+use App\Domain\Authorization\ValueObject\RoleName;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<UpdateRoleCommand> */

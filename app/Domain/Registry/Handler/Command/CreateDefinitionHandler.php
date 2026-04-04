@@ -8,14 +8,14 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Registry\Contract\Command\CreateDefinitionCommand;
-use App\Domain\Registry\Contract\Definition;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\DefinitionRepository;
+use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Event\DefinitionCreated;
-use App\Domain\Registry\DefinitionName;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\DefinitionSlug;
+use App\Domain\Registry\Contract\Repository\DefinitionRepository;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
 use App\Domain\Registry\Exception\DefinitionAlreadyExistsException;
+use App\Domain\Registry\ValueObject\DefinitionName;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\DefinitionSlug;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<CreateDefinitionCommand> */

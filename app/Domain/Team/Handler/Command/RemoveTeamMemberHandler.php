@@ -9,7 +9,7 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Team\Contract\Command\RemoveTeamMemberCommand;
 use App\Domain\Team\Contract\Event\TeamMemberRemoved;
-use App\Domain\Team\Contract\TeamMemberRepository;
+use App\Domain\Team\Contract\Repository\TeamMemberRepository;
 use App\Domain\Team\Exception\TeamMemberNotFoundException;
 use DateTimeImmutable;
 

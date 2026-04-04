@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\Notification\Exception\InvalidNotificationTypeException;
-use App\Domain\Notification\NotificationType;
+use App\Domain\Notification\ValueObject\NotificationType;
 
 it('can be constructed with a valid slug', function (): void {
     $type = new NotificationType('user.welcome');

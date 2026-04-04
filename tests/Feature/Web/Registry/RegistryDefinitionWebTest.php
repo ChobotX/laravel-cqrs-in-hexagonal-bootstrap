@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\Contract\VersionStatus;
+use App\Domain\Registry\Contract\Enum\VersionStatus;
 use App\Infrastructure\Eloquent\Registry\DefinitionModel;
 use App\Infrastructure\Eloquent\Registry\DefinitionVersionModel;
 use App\Infrastructure\Eloquent\User\UserModel;

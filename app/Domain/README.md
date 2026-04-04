@@ -152,12 +152,14 @@ List queries that support sorting implement `SortableQuery` alongside `Query`. W
 
 Each bounded context exposes a `Contract` sub-namespace containing types that other domains may import:
 
-- **Value object IDs**: `UserId`, `TeamId`, `RoleId`, `LabelId`, `NotificationId`, `FileId` — in `Domain/{Context}/Contract/`
-- **Repository interfaces**: `UserRepository`, `TeamRepository`, `FileRepository`, etc. — in `Domain/{Context}/Contract/`
-- **Service contracts**: `FileStorage` — in `Domain/File/Contract/`, `TeamMembershipChecker` — in `Domain/Team/Contract/`
+- **Entities**: `User`, `Team`, `Role`, `File`, `Label`, `Notification`, `Definition`, `Entry` — in `Domain/{Context}/Contract/Entity/`
+- **Value objects**: `UserId`, `TeamId`, `RoleId`, `LabelId`, `FileId`, `NotificationId`, etc. — in `Domain/{Context}/Contract/ValueObject/`
+- **Repository interfaces**: `UserRepository`, `TeamRepository`, `FileRepository`, etc. — in `Domain/{Context}/Contract/Repository/`
+- **Service contracts**: `FileStorage` — in `Domain/File/Contract/Service/`, `TeamMembershipChecker` — in `Domain/Team/Contract/Service/`
+- **Enums**: `NotificationChannel`, `VersionStatus`, `AccessScope` — in `Domain/{Context}/Contract/Enum/`
 - **Domain events**: `UserCreated`, `RoleDeleted`, `FileStored`, `FileDeleted`, etc. — in `Domain/{Context}/Contract/Event/`
 
-Internal types (handlers, exceptions, entity classes, non-ID value objects) stay in `Domain/{Context}/` and are not importable cross-domain.
+Internal types (handlers, exceptions, domain-internal value objects, enums, services) stay in `Domain/{Context}/` organized by type (`ValueObject/`, `Enum/`, `Service/`, `Policy/`, `Constant/`) and are not importable cross-domain.
 
 ## Cross-domain communication
 

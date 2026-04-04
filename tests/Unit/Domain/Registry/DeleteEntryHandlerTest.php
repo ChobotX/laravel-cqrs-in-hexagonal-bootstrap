@@ -3,15 +3,15 @@
 declare(strict_types=1);
 
 use App\Domain\Registry\Contract\Command\DeleteEntryCommand;
-use App\Domain\Registry\Contract\DefinitionId;
-use App\Domain\Registry\Contract\Entry;
-use App\Domain\Registry\Contract\EntryId;
+use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Event\EntryDeleted;
-use App\Domain\Registry\DefinitionNamespace;
-use App\Domain\Registry\EntryTitle;
+use App\Domain\Registry\Contract\ValueObject\DefinitionId;
+use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\Exception\EntryNotFoundException;
 use App\Domain\Registry\Handler\Command\DeleteEntryHandler;
-use App\Domain\Registry\VersionNumber;
+use App\Domain\Registry\ValueObject\DefinitionNamespace;
+use App\Domain\Registry\ValueObject\EntryTitle;
+use App\Domain\Registry\ValueObject\VersionNumber;
 use Tests\Helper\FakeEntryRepository;
 use Tests\Helper\FakeEventCollector;
 

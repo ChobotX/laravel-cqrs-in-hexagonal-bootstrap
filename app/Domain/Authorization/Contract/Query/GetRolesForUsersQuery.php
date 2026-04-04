@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Contract\Query;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\Contract\Role;
+use App\Domain\Authorization\Contract\Entity\Role;
 
 /** @implements Query<array<string, list<Role>>> */
 #[RequiresPermission('users.roles.read')]
