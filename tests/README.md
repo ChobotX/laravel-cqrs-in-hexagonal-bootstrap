@@ -2,7 +2,7 @@
 
 ## Directory structure
 
-- `tests/Architecture/` — PHPat layer dependency tests (`ArchitectureTest.php`)
+- `tests/Architecture/` — PHPat layer dependency tests (`ArchitectureTest.php`), including `testPresentationOnlyImportsDomainContractsAndBusMessages` which enforces that Presentation only imports from `Domain\*\Contract`, `Domain\*\Command`, and `Domain\*\Query`
 - `tests/Architecture/PHPStan/` — custom PHPStan rules
 - `tests/Unit/Domain/` — domain unit tests (100% coverage required)
 - `tests/Unit/Infrastructure/` — infrastructure unit tests

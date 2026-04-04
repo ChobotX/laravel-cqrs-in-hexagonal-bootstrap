@@ -8,6 +8,12 @@ Contract ← Domain ← Application ← Infrastructure/Presentation. No layer ma
 **Why:** Keeps domain logic free from framework and I/O concerns. Enables testing without infrastructure.
 **Enforced by:** PHPat rules in `tests/Architecture/ArchitectureTest.php`.
 
+### Presentation imports only Domain Contracts, Commands, and Queries
+
+Presentation may import from `App\Domain\{Module}\Contract\*`, `App\Domain\{Module}\Command\*`, and `App\Domain\{Module}\Query\*`. It must not import domain internals (handlers, services, internal VOs, or exceptions not in Contract). Shared types (entities, enums, exceptions caught outside Domain) live in `App\Domain\{Module}\Contract\`.
+**Why:** Prevents Presentation from coupling to domain internals. Contract types are the public API of each domain module.
+**Enforced by:** `testPresentationOnlyImportsDomainContractsAndBusMessages` PHPat rule.
+
 ### Handlers are domain logic, not orchestrators
 
 Domain handlers contain business rules directly. They are not thin orchestrators delegating to services.

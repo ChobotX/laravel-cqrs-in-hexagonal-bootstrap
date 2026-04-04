@@ -73,6 +73,46 @@ final class ArchitectureTest
             ->classes(Selector::inNamespace('App\Infrastructure'));
     }
 
+    public function testPresentationOnlyImportsDomainContractsAndBusMessages(): Rule
+    {
+        // Presentation may depend on Domain Contract (shared types), Commands, and Queries.
+        // It must NOT import domain internals: handlers, services, internal VOs, or exceptions
+        // not in Contract. This ensures domain internals stay isolated from outer layers.
+        return PHPat::rule()
+            ->classes(Selector::inNamespace('App\Presentation'))
+            ->shouldNotDependOn()
+            ->classes(Selector::inNamespace('App\Domain'))
+            ->excluding(
+                // Per-module Contract namespaces (shared types, events, exceptions)
+                Selector::inNamespace('App\Domain\Authorization\Contract'),
+                Selector::inNamespace('App\Domain\File\Contract'),
+                Selector::inNamespace('App\Domain\Label\Contract'),
+                Selector::inNamespace('App\Domain\Notification\Contract'),
+                Selector::inNamespace('App\Domain\Registry\Contract'),
+                Selector::inNamespace('App\Domain\Team\Contract'),
+                Selector::inNamespace('App\Domain\Tenancy\Contract'),
+                Selector::inNamespace('App\Domain\User\Contract'),
+                // Per-module Command namespaces (bus messages)
+                Selector::inNamespace('App\Domain\Authorization\Command'),
+                Selector::inNamespace('App\Domain\File\Command'),
+                Selector::inNamespace('App\Domain\Label\Command'),
+                Selector::inNamespace('App\Domain\Notification\Command'),
+                Selector::inNamespace('App\Domain\Registry\Command'),
+                Selector::inNamespace('App\Domain\Team\Command'),
+                Selector::inNamespace('App\Domain\Tenancy\Command'),
+                Selector::inNamespace('App\Domain\User\Command'),
+                // Per-module Query namespaces (bus messages)
+                Selector::inNamespace('App\Domain\Authorization\Query'),
+                Selector::inNamespace('App\Domain\File\Query'),
+                Selector::inNamespace('App\Domain\Label\Query'),
+                Selector::inNamespace('App\Domain\Notification\Query'),
+                Selector::inNamespace('App\Domain\Registry\Query'),
+                Selector::inNamespace('App\Domain\Team\Query'),
+                Selector::inNamespace('App\Domain\Tenancy\Query'),
+                Selector::inNamespace('App\Domain\User\Query'),
+            );
+    }
+
     public function testNonTenancyDomainDoesNotDependOnTenancy(): Rule
     {
         return PHPat::rule()
