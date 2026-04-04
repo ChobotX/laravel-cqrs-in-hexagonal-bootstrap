@@ -11,7 +11,7 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\Role;
+use App\Domain\Authorization\Contract\Role;
 
 /**
  * @implements Query<PaginatedResult<Role>>

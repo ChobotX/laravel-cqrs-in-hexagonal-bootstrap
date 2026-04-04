@@ -8,10 +8,10 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Event\RoleDeleted;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Contract\RoleRepository;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
-use App\Domain\Authorization\Role;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<DeleteRoleCommand> */

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Authorization;
 
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\RolePermission;
 
 final readonly class RolePermissionMapper
 {

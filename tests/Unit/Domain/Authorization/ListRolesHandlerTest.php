@@ -8,15 +8,15 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RolePermission;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\Query\ListRoles\ListRolesHandler;
 use App\Domain\Authorization\Query\ListRoles\ListRolesQuery;
-use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleName;
-use App\Domain\Authorization\RolePermission;
 use Tests\Helper\FakeRoleRepository;
 
 it('returns all roles', function (): void {

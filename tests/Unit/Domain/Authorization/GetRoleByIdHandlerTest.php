@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Query\GetRoleById\GetRoleByIdHandler;
 use App\Domain\Authorization\Query\GetRoleById\GetRoleByIdQuery;
-use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleName;
 use Tests\Helper\FakeRoleRepository;
 

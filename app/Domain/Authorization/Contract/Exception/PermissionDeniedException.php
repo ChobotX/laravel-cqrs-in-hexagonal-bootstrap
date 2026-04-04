@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization\Exception;
+namespace App\Domain\Authorization\Contract\Exception;
 
 use App\Contract\Exception\DomainException;
 use App\Contract\Http\HttpStatus;

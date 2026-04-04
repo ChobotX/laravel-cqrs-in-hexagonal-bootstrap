@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\EffectivePermission;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
-use App\Domain\Authorization\EffectivePermission;
+use App\Domain\Authorization\Contract\RolePermission;
+use App\Domain\Authorization\Contract\UserPermissionOverride;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\OverrideType;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleName;
-use App\Domain\Authorization\RolePermission;
-use App\Domain\Authorization\UserPermissionOverride;
 
 /** @return array<string, array{features: array<string, array{actions: list<string>}>}> */
 function modules(): array

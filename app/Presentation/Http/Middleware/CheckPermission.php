@@ -7,7 +7,7 @@ namespace App\Presentation\Http\Middleware;
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Authorization\AuthorizationChecker;
-use App\Domain\Authorization\Exception\PermissionDeniedException;
+use App\Domain\Authorization\Contract\Exception\PermissionDeniedException;
 use Closure;
 use Illuminate\Http\Request;
 use ReflectionClass;

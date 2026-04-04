@@ -7,10 +7,10 @@ namespace Tests\Helper;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RolePermission;
 use App\Domain\Authorization\Contract\RoleRepository;
-use App\Domain\Authorization\Role;
-use App\Domain\Authorization\RolePermission;
 
 final class FakeRoleRepository implements RoleRepository
 {

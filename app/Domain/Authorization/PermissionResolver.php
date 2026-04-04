@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\Authorization;
 
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\EffectivePermission;
+use App\Domain\Authorization\Contract\Role;
+use App\Domain\Authorization\Contract\UserPermissionOverride;
 
 final readonly class PermissionResolver
 {

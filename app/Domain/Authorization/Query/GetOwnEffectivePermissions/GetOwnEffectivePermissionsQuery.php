@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Query\GetOwnEffectivePermissions;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\EffectivePermission;
+use App\Domain\Authorization\Contract\EffectivePermission;
 
 /** @implements Query<list<EffectivePermission>> */
 #[SkipPermissionCheck(reason: 'Users can always view their own effective permissions')]

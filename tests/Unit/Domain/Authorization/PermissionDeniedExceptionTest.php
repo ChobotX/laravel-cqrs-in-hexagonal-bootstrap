@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Translation\Translator;
-use App\Domain\Authorization\Exception\PermissionDeniedException;
+use App\Domain\Authorization\Contract\Exception\PermissionDeniedException;
 
 it('has correct status code', function (): void {
     $exception = new PermissionDeniedException;

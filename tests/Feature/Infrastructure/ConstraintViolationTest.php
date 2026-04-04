@@ -66,9 +66,9 @@ it('throws RoleAlreadyExistsException on duplicate role name', function (): void
     RoleModel::create(['id' => '550e8400-e29b-41d4-a716-446655440c07', 'name' => 'DupeRole', 'description' => 'D', 'is_system' => false]);
 
     $role = $repo->findById(new App\Domain\Authorization\Contract\RoleId('550e8400-e29b-41d4-a716-446655440c07'));
-    assert($role instanceof App\Domain\Authorization\Role);
+    assert($role instanceof App\Domain\Authorization\Contract\Role);
 
-    $dupe = new App\Domain\Authorization\Role(
+    $dupe = new App\Domain\Authorization\Contract\Role(
         new App\Domain\Authorization\Contract\RoleId('550e8400-e29b-41d4-a716-446655440c08'),
         new App\Domain\Authorization\RoleName('DupeRole'),
         'Another',

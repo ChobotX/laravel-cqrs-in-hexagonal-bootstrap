@@ -7,7 +7,6 @@ namespace App\Domain\Authorization\Contract;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
-use App\Domain\Authorization\Role;
 
 interface RoleRepository
 {

@@ -6,13 +6,13 @@ namespace App\Infrastructure\Eloquent\Authorization;
 
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\Action;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RolePermission;
 use App\Domain\Authorization\Feature;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleName;
-use App\Domain\Authorization\RolePermission;
 
 final readonly class RoleMapper
 {

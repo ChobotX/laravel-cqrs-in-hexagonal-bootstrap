@@ -7,8 +7,6 @@ namespace App\Domain\Authorization\Contract;
 use App\Contract\Authorization\AccessScope;
 use App\Domain\Authorization\OverrideType;
 use App\Domain\Authorization\PermissionKey;
-use App\Domain\Authorization\Role;
-use App\Domain\Authorization\UserPermissionOverride;
 
 interface UserPermissionRepository
 {

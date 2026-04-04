@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization;
+namespace App\Domain\Authorization\Contract;
 
-use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\RoleName;
 
 final readonly class Role
 {

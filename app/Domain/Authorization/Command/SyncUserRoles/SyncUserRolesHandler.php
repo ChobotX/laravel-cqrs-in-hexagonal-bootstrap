@@ -9,11 +9,11 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
 use App\Domain\Authorization\Contract\RoleRepository;
 use App\Domain\Authorization\Contract\UserPermissionRepository;
 use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleAssignmentPolicy;
 use DateTimeImmutable;
 

@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Query\GetUserOverrides;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\UserPermissionOverride;
+use App\Domain\Authorization\Contract\UserPermissionOverride;
 
 /** @implements Query<list<UserPermissionOverride>> */
 #[RequiresPermission('users.roles.read')]

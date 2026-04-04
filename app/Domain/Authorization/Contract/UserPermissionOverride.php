@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization;
+namespace App\Domain\Authorization\Contract;
 
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\OverrideType;
+use App\Domain\Authorization\PermissionKey;
 
 final readonly class UserPermissionOverride
 {

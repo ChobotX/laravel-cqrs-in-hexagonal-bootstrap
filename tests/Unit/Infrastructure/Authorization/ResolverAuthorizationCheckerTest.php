@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Authorization\Contract\Role;
 use App\Domain\Authorization\Contract\RoleId;
+use App\Domain\Authorization\Contract\RolePermission;
 use App\Domain\Authorization\Module;
 use App\Domain\Authorization\PermissionKey;
 use App\Domain\Authorization\PermissionResolver;
-use App\Domain\Authorization\Role;
 use App\Domain\Authorization\RoleName;
-use App\Domain\Authorization\RolePermission;
 use App\Infrastructure\Authorization\ResolverAuthorizationChecker;
 use Tests\Helper\FakeRecordShareRepository;
 use Tests\Helper\FakeUserPermissionRepository;
