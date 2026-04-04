@@ -64,6 +64,7 @@ final class TenantSeeder extends Seeder
         $this->seedAvatars();
         $this->seedLabels();
         $this->call(NotificationSeeder::class);
+        $this->call(RegistrySeeder::class);
     }
 
     private function seedTeams(): void

@@ -66,6 +66,8 @@ export default defineConfig({
                 'resources/js/notification/notification-bell-app.ts',
                 'resources/js/notification/notification-list-app.ts',
                 'resources/js/notification/notification-preferences-app.ts',
+                'resources/js/schema-form/schema-form-app.ts',
+                'resources/js/schema-builder/schema-builder-app.ts',
             ],
             thresholds: {
                 autoUpdate: true,

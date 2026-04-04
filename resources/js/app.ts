@@ -17,3 +17,5 @@ import './avatar-remove';
 import './notification/notification-bell-app';
 import './notification/notification-list-app';
 import './notification/notification-preferences-app';
+import './schema-form/schema-form-app';
+import './schema-builder/schema-builder-app';
