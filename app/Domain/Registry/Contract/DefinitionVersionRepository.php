@@ -6,7 +6,6 @@ namespace App\Domain\Registry\Contract;
 
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\VersionNumber;
-use App\Domain\Registry\VersionStatus;
 
 interface DefinitionVersionRepository
 {

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsHandler;
 use App\Domain\Registry\Query\ListDefinitionVersions\ListDefinitionVersionsQuery;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
 use App\Domain\Registry\VersionNumber;
-use App\Domain\Registry\VersionStatus;
 use Tests\Helper\FakeDefinitionVersionRepository;
 
 it('returns versions for a definition', function (): void {

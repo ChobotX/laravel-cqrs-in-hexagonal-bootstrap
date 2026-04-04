@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Registry;
+namespace App\Domain\Registry\Contract;
 
 enum VersionStatus: string
 {

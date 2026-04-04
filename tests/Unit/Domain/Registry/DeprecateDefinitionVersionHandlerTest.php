@@ -7,12 +7,12 @@ use App\Domain\Registry\Command\DeprecateDefinitionVersion\DeprecateDefinitionVe
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\Event\DefinitionVersionDeprecated;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
 use App\Domain\Registry\VersionNumber;
-use App\Domain\Registry\VersionStatus;
 use Tests\Helper\FakeDefinitionVersionRepository;
 use Tests\Helper\FakeEventCollector;
 

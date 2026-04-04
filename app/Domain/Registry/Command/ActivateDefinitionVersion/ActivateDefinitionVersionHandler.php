@@ -10,9 +10,9 @@ use App\Contract\Event\EventCollector;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\Event\DefinitionVersionActivated;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Exception\DefinitionVersionNotFoundException;
-use App\Domain\Registry\VersionStatus;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<ActivateDefinitionVersionCommand> */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Query\GetSerializedSchema\GetSerializedSchemaHandler;
 use App\Domain\Registry\Query\GetSerializedSchema\GetSerializedSchemaQuery;
@@ -11,7 +12,6 @@ use App\Domain\Registry\Schema\JsonSchema;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
 use App\Domain\Registry\VersionNumber;
-use App\Domain\Registry\VersionStatus;
 use Tests\Helper\FakeDefinitionVersionRepository;
 use Tests\Helper\FakeSchemaSerializer;
 

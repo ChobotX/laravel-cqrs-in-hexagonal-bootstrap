@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\Schema\Schema;
 use App\Domain\Registry\Schema\StringField;
 use App\Domain\Registry\VersionNumber;
-use App\Domain\Registry\VersionStatus;
 
 it('can be constructed with value objects and schema', function (): void {
     $schema = new Schema([new StringField('name', 'Name', true)]);

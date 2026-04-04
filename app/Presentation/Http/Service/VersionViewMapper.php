@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Service;
 
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
-use App\Domain\Registry\VersionStatus;
 
 final readonly class VersionViewMapper
 {

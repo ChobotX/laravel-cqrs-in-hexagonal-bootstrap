@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Registry\VersionStatus;
+use App\Domain\Registry\Contract\VersionStatus;
 
 it('has a Draft case with correct value', function (): void {
     expect(VersionStatus::Draft->value)->toBe('draft');

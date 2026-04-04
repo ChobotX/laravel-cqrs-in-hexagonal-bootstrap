@@ -6,12 +6,12 @@ use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionC
 use App\Domain\Registry\Command\CreateDefinitionVersion\CreateDefinitionVersionHandler;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\Event\DefinitionVersionCreated;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\Definition;
 use App\Domain\Registry\DefinitionName;
 use App\Domain\Registry\DefinitionNamespace;
 use App\Domain\Registry\DefinitionSlug;
 use App\Domain\Registry\Exception\DefinitionNotFoundException;
-use App\Domain\Registry\VersionStatus;
 use Tests\Helper\FakeDefinitionRepository;
 use Tests\Helper\FakeDefinitionVersionRepository;
 use Tests\Helper\FakeEventCollector;

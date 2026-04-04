@@ -7,9 +7,9 @@ namespace Tests\Helper;
 use App\Domain\Registry\Contract\DefinitionId;
 use App\Domain\Registry\Contract\DefinitionVersionId;
 use App\Domain\Registry\Contract\DefinitionVersionRepository;
+use App\Domain\Registry\Contract\VersionStatus;
 use App\Domain\Registry\DefinitionVersion;
 use App\Domain\Registry\VersionNumber;
-use App\Domain\Registry\VersionStatus;
 
 final class FakeDefinitionVersionRepository implements DefinitionVersionRepository
 {
