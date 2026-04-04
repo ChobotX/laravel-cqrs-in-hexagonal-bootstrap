@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\File;
 
+use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;
-use App\Domain\File\File;
-use App\Domain\File\FileName;
+use App\Domain\File\Contract\FileName;
+use App\Domain\File\Contract\MimeType;
 use App\Domain\File\FileNamespace;
 use App\Domain\File\FileVersion;
-use App\Domain\File\MimeType;
 use App\Domain\File\StoragePath;
 
 final readonly class FileMapper

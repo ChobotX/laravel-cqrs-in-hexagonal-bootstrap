@@ -6,7 +6,7 @@ namespace App\Domain\User\Query\GetUserByEmail;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\User\User;
+use App\Domain\User\Contract\User;
 
 /** @implements Query<?User> */
 #[SkipPermissionCheck(reason: 'Used internally for login/authentication')]

@@ -6,10 +6,10 @@ namespace App\Domain\File\Query\GetFileById;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;
 use App\Domain\File\Contract\FileRepository;
 use App\Domain\File\Exception\FileNotFoundException;
-use App\Domain\File\File;
 
 /** @implements QueryHandler<GetFileByIdQuery, File> */
 final readonly class GetFileByIdHandler implements QueryHandler

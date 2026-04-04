@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User;
 
-use App\Domain\User\Exception\InvalidUserDataException;
+use App\Domain\User\Contract\Exception\InvalidUserDataException;
 use Stringable;
 
 final readonly class UserName implements Stringable

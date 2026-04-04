@@ -6,8 +6,8 @@ namespace App\Infrastructure\Notification;
 
 use App\Application\Bus\QueryBus;
 use App\Contract\Notification\NotificationChannelSender;
+use App\Domain\User\Contract\User;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;
-use App\Domain\User\User;
 use Illuminate\Contracts\Mail\Mailer;
 use Illuminate\Mail\Message;
 

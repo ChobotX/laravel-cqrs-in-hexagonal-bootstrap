@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Contract\LabelRepository;
-use App\Domain\Label\Label;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
 

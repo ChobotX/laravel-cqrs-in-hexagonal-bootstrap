@@ -8,7 +8,7 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
 
 /**
- * @implements Query<list<\App\Domain\Label\Label>>
+ * @implements Query<list<\App\Domain\Label\Contract\Label>>
  */
 #[SkipPermissionCheck(reason: 'Entity label loading is gated by the parent entity read permission')]
 final readonly class GetEntityLabelsQuery implements Query

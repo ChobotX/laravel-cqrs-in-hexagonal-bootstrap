@@ -6,7 +6,7 @@ namespace App\Domain\Team\Query\GetTeamById;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Team\Team;
+use App\Domain\Team\Contract\Team;
 
 /** @implements Query<Team> */
 #[RequiresPermission('teams.management.read')]

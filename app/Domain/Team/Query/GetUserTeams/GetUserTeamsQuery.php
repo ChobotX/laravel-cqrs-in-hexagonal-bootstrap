@@ -6,7 +6,7 @@ namespace App\Domain\Team\Query\GetUserTeams;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Team\Team;
+use App\Domain\Team\Contract\Team;
 
 /** @implements Query<list<Team>> */
 #[SkipPermissionCheck(reason: 'Used for team membership management on user edit form')]

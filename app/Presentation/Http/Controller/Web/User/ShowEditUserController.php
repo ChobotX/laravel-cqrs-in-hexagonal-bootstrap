@@ -14,7 +14,7 @@ use App\Domain\Authorization\Query\GetAvailableModules\GetAvailableModulesQuery;
 use App\Domain\Authorization\Query\GetEffectivePermissions\GetEffectivePermissionsQuery;
 use App\Domain\Authorization\Query\GetUserOverrides\GetUserOverridesQuery;
 use App\Domain\Authorization\Query\GetUserRoles\GetUserRolesQuery;
-use App\Domain\Label\Label;
+use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Query\GetEntityLabels\GetEntityLabelsQuery;
 use App\Domain\Team\Query\GetUserTeams\GetUserTeamsQuery;
 use App\Domain\User\Query\GetUserById\GetUserByIdQuery;

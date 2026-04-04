@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\User;
+namespace App\Domain\User\Contract;
 
 use App\Domain\File\Contract\FileId;
-use App\Domain\User\Contract\UserId;
+use App\Domain\User\Email;
+use App\Domain\User\UserName;
 
 final readonly class User
 {

@@ -9,8 +9,8 @@ use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Notification\NotificationBroadcaster;
 use App\Domain\Notification\Contract\Event\NotificationCreated;
+use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationRepository;
-use App\Domain\Notification\NotificationChannel;
 
 /** @implements DomainEventHandler<NotificationCreated> */
 #[RetryPolicy(tries: 3, backoff: [10, 30, 60], timeout: 30)]

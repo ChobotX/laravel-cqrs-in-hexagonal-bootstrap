@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Query\GetTeamTree;
 
-use App\Domain\Team\Team;
-use App\Domain\Team\TeamMember;
+use App\Domain\Team\Contract\Team;
+use App\Domain\Team\Contract\TeamMember;
 
 final readonly class TeamTreeNode
 {

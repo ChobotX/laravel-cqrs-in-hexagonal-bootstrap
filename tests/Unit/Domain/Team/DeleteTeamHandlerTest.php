@@ -5,11 +5,11 @@ declare(strict_types=1);
 use App\Domain\Team\Command\DeleteTeam\DeleteTeamCommand;
 use App\Domain\Team\Command\DeleteTeam\DeleteTeamHandler;
 use App\Domain\Team\Contract\Event\TeamDeleted;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Exception\TeamNotFoundException;
-use App\Domain\Team\Team;
 use App\Domain\Team\TeamName;
-use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeTeamRepository;
 

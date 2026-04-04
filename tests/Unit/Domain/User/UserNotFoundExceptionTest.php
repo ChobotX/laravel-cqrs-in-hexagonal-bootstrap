@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Translation\Translator;
-use App\Domain\User\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
 
 it('exposes the id', function (): void {
     $exception = new UserNotFoundException('550e8400-e29b-41d4-a716-446655440000');

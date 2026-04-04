@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\File;
+namespace App\Domain\File\Contract;
 
 use App\Domain\File\Exception\InvalidFileNameException;
 use Stringable;

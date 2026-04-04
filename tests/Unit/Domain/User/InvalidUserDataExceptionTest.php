@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Exception\InvalidUserDataException;
+use App\Domain\User\Contract\Exception\InvalidUserDataException;
 
 it('has a technical message for empty name', function (): void {
     $invalidUserDataException = new InvalidUserDataException('User name must not be empty.');

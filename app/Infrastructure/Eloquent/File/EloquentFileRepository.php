@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\File;
 
+use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;
+use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileRepository;
-use App\Domain\File\File;
-use App\Domain\File\FileName;
 use App\Domain\File\FileNamespace;
 
 final readonly class EloquentFileRepository implements FileRepository

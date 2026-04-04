@@ -6,7 +6,7 @@ namespace App\Domain\File\Command\StoreAvatar;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Command\Command;
-use App\Domain\File\FileUpload;
+use App\Domain\File\Contract\FileUpload;
 
 #[RequiresPermission('files.storage.upload')]
 final readonly class StoreAvatarCommand implements Command

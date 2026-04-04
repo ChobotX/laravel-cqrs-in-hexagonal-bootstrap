@@ -6,7 +6,7 @@ namespace App\Domain\User\Query\GetOwnProfile;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\User\User;
+use App\Domain\User\Contract\User;
 
 /** @implements Query<User> */
 #[SkipPermissionCheck(reason: 'Users can always view their own profile')]

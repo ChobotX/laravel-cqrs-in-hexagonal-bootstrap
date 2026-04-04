@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Translation\Translator;
-use App\Domain\Tenancy\Exception\InactiveTenantException;
+use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
 
 it('exposes the identifier', function (): void {
     $exception = new InactiveTenantException('test-slug');

@@ -6,9 +6,9 @@ namespace App\Domain\Team\Query\GetTeamsForUsers;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamMemberRepository;
 use App\Domain\Team\Contract\TeamRepository;
-use App\Domain\Team\Team;
 
 /** @implements QueryHandler<GetTeamsForUsersQuery, array<string, list<Team>>> */
 final readonly class GetTeamsForUsersHandler implements QueryHandler

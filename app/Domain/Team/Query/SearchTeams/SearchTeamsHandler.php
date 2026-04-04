@@ -6,8 +6,8 @@ namespace App\Domain\Team\Query\SearchTeams;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamRepository;
-use App\Domain\Team\Team;
 
 /** @implements QueryHandler<SearchTeamsQuery, list<Team>> */
 final readonly class SearchTeamsHandler implements QueryHandler

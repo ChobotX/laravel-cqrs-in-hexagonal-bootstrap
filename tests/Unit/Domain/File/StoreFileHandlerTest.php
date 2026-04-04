@@ -5,9 +5,9 @@ declare(strict_types=1);
 use App\Domain\File\Command\StoreFile\StoreFileCommand;
 use App\Domain\File\Command\StoreFile\StoreFileHandler;
 use App\Domain\File\Contract\Event\FileStored;
-use App\Domain\File\FileName;
-use App\Domain\File\FileUpload;
-use App\Domain\File\MimeType;
+use App\Domain\File\Contract\FileName;
+use App\Domain\File\Contract\FileUpload;
+use App\Domain\File\Contract\MimeType;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeFileRepository;
 use Tests\Helper\FakeFileStorage;
@@ -53,7 +53,7 @@ it('stores a file and emits event', function (): void {
 });
 
 it('increments version for same namespace and name', function (): void {
-    $firstFile = new App\Domain\File\File(
+    $firstFile = new App\Domain\File\Contract\File(
         id: new App\Domain\File\Contract\FileId('550e8400-e29b-41d4-a716-446655440000'),
         namespace: new App\Domain\File\FileNamespace('documents'),
         originalName: new FileName('report.pdf'),

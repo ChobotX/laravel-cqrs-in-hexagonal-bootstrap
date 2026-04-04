@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\ChannelPreference;
-use App\Domain\Notification\NotificationChannel;
+use App\Domain\Notification\Contract\ChannelPreference;
+use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
 
 it('can be constructed with level and channels', function (): void {

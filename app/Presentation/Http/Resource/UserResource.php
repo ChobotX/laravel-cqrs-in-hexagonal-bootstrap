@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Resource;
 
-use App\Domain\User\User;
+use App\Domain\User\Contract\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Override;

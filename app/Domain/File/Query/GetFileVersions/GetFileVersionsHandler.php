@@ -6,9 +6,9 @@ namespace App\Domain\File\Query\GetFileVersions;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\File\Contract\File;
+use App\Domain\File\Contract\FileName;
 use App\Domain\File\Contract\FileRepository;
-use App\Domain\File\File;
-use App\Domain\File\FileName;
 use App\Domain\File\FileNamespace;
 
 /** @implements QueryHandler<GetFileVersionsQuery, list<File>> */

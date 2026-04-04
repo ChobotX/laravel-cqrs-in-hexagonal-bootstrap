@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\User\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 
 it('has a technical message', function (): void {
     $emailAlreadyExistsException = new EmailAlreadyExistsException('john@example.com');

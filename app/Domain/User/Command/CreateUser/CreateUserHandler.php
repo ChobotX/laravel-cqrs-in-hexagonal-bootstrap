@@ -9,11 +9,11 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\File\Contract\FileId;
 use App\Domain\User\Contract\Event\UserCreated;
+use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Contract\UserRepository;
 use App\Domain\User\Email;
-use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\User;
 use App\Domain\User\UserName;
 use DateTimeImmutable;
 

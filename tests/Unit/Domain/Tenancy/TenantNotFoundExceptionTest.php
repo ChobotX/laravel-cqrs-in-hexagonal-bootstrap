@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Contract\Translation\Translator;
-use App\Domain\Tenancy\Exception\TenantNotFoundException;
+use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
 
 it('exposes the identifier', function (): void {
     $exception = new TenantNotFoundException('test-slug');

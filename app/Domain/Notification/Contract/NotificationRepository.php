@@ -7,7 +7,6 @@ namespace App\Domain\Notification\Contract;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
-use App\Domain\Notification\Notification;
 use DateTimeImmutable;
 
 interface NotificationRepository

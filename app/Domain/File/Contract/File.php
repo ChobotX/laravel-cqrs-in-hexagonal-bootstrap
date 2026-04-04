@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\File;
+namespace App\Domain\File\Contract;
 
-use App\Domain\File\Contract\FileId;
+use App\Domain\File\FileNamespace;
+use App\Domain\File\FileVersion;
+use App\Domain\File\StoragePath;
 use DateTimeImmutable;
 
 final readonly class File

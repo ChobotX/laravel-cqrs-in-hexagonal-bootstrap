@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\File\Contract;
 
-use App\Domain\File\File;
-use App\Domain\File\FileName;
 use App\Domain\File\FileNamespace;
 
 interface FileRepository

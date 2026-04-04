@@ -6,11 +6,11 @@ namespace App\Domain\File\Query\GetFileContent;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\File\Contract\File;
 use App\Domain\File\Contract\FileId;
 use App\Domain\File\Contract\FileRepository;
 use App\Domain\File\Contract\FileStorage;
 use App\Domain\File\Exception\FileNotFoundException;
-use App\Domain\File\File;
 
 /** @implements QueryHandler<GetFileContentQuery, string> */
 final readonly class GetFileContentHandler implements QueryHandler

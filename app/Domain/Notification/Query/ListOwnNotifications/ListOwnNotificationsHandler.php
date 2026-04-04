@@ -10,8 +10,8 @@ use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationRepository;
-use App\Domain\Notification\Notification;
 
 /** @implements QueryHandler<ListOwnNotificationsQuery, PaginatedResult<Notification>> */
 final readonly class ListOwnNotificationsHandler implements QueryHandler

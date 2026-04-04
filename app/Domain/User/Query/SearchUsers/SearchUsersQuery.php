@@ -9,7 +9,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Contract\Query\Query;
-use App\Domain\User\User;
+use App\Domain\User\Contract\User;
 
 /**
  * @implements Query<list<User>>

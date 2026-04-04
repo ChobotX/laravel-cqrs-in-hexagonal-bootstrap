@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Domain\Tenancy\Exception\InactiveTenantException;
-use App\Domain\Tenancy\Exception\TenantNotFoundException;
+use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
+use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 

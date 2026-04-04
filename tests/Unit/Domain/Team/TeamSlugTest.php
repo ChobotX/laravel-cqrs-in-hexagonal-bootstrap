@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Exception\InvalidTeamSlugException;
-use App\Domain\Team\TeamSlug;
 
 it('creates a valid team slug', function (): void {
     $slug = new TeamSlug('engineering');

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
-use App\Domain\Tenancy\Exception\InactiveTenantException;
-use App\Domain\Tenancy\Exception\TenantNotFoundException;
+use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
+use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 
 it('resolves tenant from subdomain', function (): void {

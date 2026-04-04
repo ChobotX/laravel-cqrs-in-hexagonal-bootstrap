@@ -8,7 +8,7 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
 use App\Application\Pagination\Pagination;
 use App\Contract\Auth\AuthenticatedUser;
-use App\Domain\Notification\Notification;
+use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Query\ListOwnNotifications\ListOwnNotificationsQuery;
 use App\Presentation\Http\Request\Web\Notification\ListNotificationsRequest;
 use App\Presentation\Http\Request\Web\Notification\NotificationFilter;

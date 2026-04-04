@@ -6,9 +6,9 @@ namespace App\Domain\Notification\Query\GetNotificationPreferences;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
-use App\Domain\Notification\ChannelPreference;
+use App\Domain\Notification\Contract\ChannelPreference;
+use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\Contract\NotificationPreferenceRepository;
-use App\Domain\Notification\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationPreferences;
 

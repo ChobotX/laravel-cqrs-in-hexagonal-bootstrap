@@ -8,10 +8,10 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Team\Contract\Event\TeamDeleted;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
 use App\Domain\Team\Contract\TeamRepository;
 use App\Domain\Team\Exception\TeamNotFoundException;
-use App\Domain\Team\Team;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<DeleteTeamCommand> */

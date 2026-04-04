@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
+use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
+use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
-use App\Domain\Label\Exception\LabelAlreadyExistsException;
-use App\Domain\Label\Label;
 use App\Domain\Label\LabelName;
 use App\Domain\Label\LabelNamespace;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
-use App\Domain\Team\Team;
 use App\Domain\Team\TeamName;
-use App\Domain\Team\TeamSlug;
+use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Contract\User;
 use App\Domain\User\Contract\UserId;
 use App\Domain\User\Email;
-use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\User;
 use App\Domain\User\UserName;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\RoleMapper;

@@ -7,8 +7,6 @@ namespace App\Domain\Team\Contract;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
-use App\Domain\Team\Team;
-use App\Domain\Team\TeamSlug;
 
 interface TeamRepository
 {

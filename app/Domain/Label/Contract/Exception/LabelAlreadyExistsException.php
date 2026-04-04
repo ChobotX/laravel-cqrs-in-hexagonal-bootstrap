@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Label\Exception;
+namespace App\Domain\Label\Contract\Exception;
 
 use App\Contract\Exception\DomainException;
 use App\Contract\Http\HttpStatus;

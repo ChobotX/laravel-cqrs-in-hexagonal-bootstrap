@@ -6,8 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Team;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Query\SearchTeams\SearchTeamsQuery;
-use App\Domain\Team\Team;
 use App\Presentation\Http\Request\Web\Team\SearchTeamsRequest;
 use Illuminate\Http\JsonResponse;
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Team\Contract;
 
 use App\Application\Sorting\Sorting;
-use App\Domain\Team\TeamMember;
 
 interface TeamMemberRepository
 {

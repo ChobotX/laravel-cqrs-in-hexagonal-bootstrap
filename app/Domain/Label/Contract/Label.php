@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Label;
+namespace App\Domain\Label\Contract;
 
-use App\Domain\Label\Contract\LabelId;
+use App\Domain\Label\LabelName;
+use App\Domain\Label\LabelNamespace;
 
 final readonly class Label
 {

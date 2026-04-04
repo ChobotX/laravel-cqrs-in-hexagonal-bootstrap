@@ -6,7 +6,7 @@ namespace App\Domain\Team\Query\ListTeamMembers;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\Team\TeamMember;
+use App\Domain\Team\Contract\TeamMember;
 
 /** @implements Query<list<TeamMember>> */
 #[RequiresPermission('teams.members.read')]

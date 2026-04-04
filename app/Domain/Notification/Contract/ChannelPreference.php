@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Notification;
+namespace App\Domain\Notification\Contract;
+
+use App\Domain\Notification\NotificationLevel;
 
 final readonly class ChannelPreference
 {

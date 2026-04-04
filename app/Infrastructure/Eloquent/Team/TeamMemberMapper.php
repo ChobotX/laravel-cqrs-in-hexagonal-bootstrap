@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Team;
 
-use App\Domain\Team\TeamMember;
+use App\Domain\Team\Contract\TeamMember;
 use DateTimeImmutable;
 
 final readonly class TeamMemberMapper

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Query\CountTeams\CountTeamsHandler;
 use App\Domain\Team\Query\CountTeams\CountTeamsQuery;
-use App\Domain\Team\Team;
 use App\Domain\Team\TeamName;
-use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeTeamRepository;
 
 it('returns the team count from the repository', function (): void {

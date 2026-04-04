@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
-use App\Domain\Team\Team;
+use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\TeamName;
-use App\Domain\Team\TeamSlug;
 use App\Infrastructure\Eloquent\Team\EloquentTeamRepository;
 use App\Infrastructure\Eloquent\Team\TeamMapper;
 

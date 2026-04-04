@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\ChannelPreference;
 use App\Domain\Notification\Command\SendNotification\SendNotificationCommand;
 use App\Domain\Notification\Command\SendNotification\SendNotificationHandler;
+use App\Domain\Notification\Contract\ChannelPreference;
 use App\Domain\Notification\Contract\Event\NotificationCreated;
-use App\Domain\Notification\NotificationChannel;
+use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
 use App\Domain\Notification\NotificationPreferences;
 use Tests\Helper\FakeEventCollector;

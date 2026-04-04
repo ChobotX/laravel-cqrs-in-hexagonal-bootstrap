@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Domain\File\Contract\FileName;
+use App\Domain\File\Contract\FileUpload;
+use App\Domain\File\Contract\MimeType;
 use App\Domain\File\Exception\FileStorageException;
-use App\Domain\File\FileName;
 use App\Domain\File\FileNamespace;
-use App\Domain\File\FileUpload;
-use App\Domain\File\MimeType;
 use App\Domain\File\StoragePath;
 use App\Infrastructure\Filesystem\LaravelFileStorage;
 use Illuminate\Support\Facades\Storage;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Team;
+namespace App\Domain\Team\Contract;
 
 use DateTimeImmutable;
 

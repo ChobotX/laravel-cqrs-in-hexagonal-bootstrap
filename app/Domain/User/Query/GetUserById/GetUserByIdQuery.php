@@ -6,7 +6,7 @@ namespace App\Domain\User\Query\GetUserById;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\User\User;
+use App\Domain\User\Contract\User;
 
 /** @implements Query<User> */
 #[RequiresPermission('users.list.read')]

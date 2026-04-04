@@ -14,7 +14,7 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
 use App\Contract\Query\Query;
-use App\Domain\User\User;
+use App\Domain\User\Contract\User;
 
 /**
  * @implements Query<PaginatedResult<User>>

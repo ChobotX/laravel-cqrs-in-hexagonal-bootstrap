@@ -7,9 +7,9 @@ namespace App\Presentation\Console\User;
 use App\Application\Bus\CommandBus;
 use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Command\UpdateUser\UpdateUserCommand;
-use App\Domain\User\Exception\EmailAlreadyExistsException;
-use App\Domain\User\Exception\InvalidUserDataException;
-use App\Domain\User\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
+use App\Domain\User\Contract\Exception\InvalidUserDataException;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 

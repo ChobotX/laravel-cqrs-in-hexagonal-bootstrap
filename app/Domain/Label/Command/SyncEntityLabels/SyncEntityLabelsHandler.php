@@ -11,9 +11,9 @@ use App\Contract\Event\EventCollector;
 use App\Domain\Label\Contract\Event\LabelAssigned;
 use App\Domain\Label\Contract\Event\LabelDeleted;
 use App\Domain\Label\Contract\Event\LabelRemoved;
+use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelId;
 use App\Domain\Label\Contract\LabelRepository;
-use App\Domain\Label\Label;
 use DateTimeImmutable;
 
 use function array_diff;

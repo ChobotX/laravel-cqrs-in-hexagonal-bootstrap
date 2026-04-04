@@ -8,11 +8,11 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Notification\Contract\Event\NotificationRead;
+use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationId;
 use App\Domain\Notification\Contract\NotificationRepository;
 use App\Domain\Notification\Exception\NotificationNotFoundException;
 use App\Domain\Notification\Exception\NotificationOwnershipException;
-use App\Domain\Notification\Notification;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<MarkNotificationAsReadCommand> */

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Eloquent\Team;
 
 use App\Application\Sorting\Sorting;
+use App\Domain\Team\Contract\TeamMember;
 use App\Domain\Team\Contract\TeamMemberRepository;
-use App\Domain\Team\TeamMember;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 

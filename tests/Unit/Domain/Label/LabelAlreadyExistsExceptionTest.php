@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Label\Exception\LabelAlreadyExistsException;
+use App\Domain\Label\Contract\Exception\LabelAlreadyExistsException;
 
 it('has a technical message', function (): void {
     $exception = new LabelAlreadyExistsException('users', 'important');

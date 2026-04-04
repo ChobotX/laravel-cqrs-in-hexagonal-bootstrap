@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Request\Web\Team;
 
 use App\Domain\Team\Command\UpdateTeam\UpdateTeamCommand;
-use App\Domain\Team\TeamSlug;
+use App\Domain\Team\Contract\TeamSlug;
 use App\Presentation\Http\Request\FormRequest;
 
 final class UpdateTeamRequest extends FormRequest

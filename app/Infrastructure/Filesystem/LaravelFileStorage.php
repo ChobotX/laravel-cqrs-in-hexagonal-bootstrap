@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Infrastructure\Filesystem;
 
 use App\Domain\File\Contract\FileStorage;
+use App\Domain\File\Contract\FileUpload;
 use App\Domain\File\Exception\FileStorageException;
 use App\Domain\File\FileNamespace;
-use App\Domain\File\FileUpload;
 use App\Domain\File\StoragePath;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\File;

@@ -9,12 +9,12 @@ use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Authorization\AccessScope;
+use App\Domain\Team\Contract\Team;
 use App\Domain\Team\Contract\TeamId;
+use App\Domain\Team\Contract\TeamSlug;
 use App\Domain\Team\Query\ListTeams\ListTeamsHandler;
 use App\Domain\Team\Query\ListTeams\ListTeamsQuery;
-use App\Domain\Team\Team;
 use App\Domain\Team\TeamName;
-use App\Domain\Team\TeamSlug;
 use Tests\Helper\FakeTeamRepository;
 
 it('lists all teams when visibleIds is null (All scope)', function (): void {

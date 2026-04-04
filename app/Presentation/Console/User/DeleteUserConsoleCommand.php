@@ -7,7 +7,7 @@ namespace App\Presentation\Console\User;
 use App\Application\Bus\CommandBus;
 use App\Application\Tenancy\TenantAwareCommand;
 use App\Domain\User\Command\DeleteUser\DeleteUserCommand;
-use App\Domain\User\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 

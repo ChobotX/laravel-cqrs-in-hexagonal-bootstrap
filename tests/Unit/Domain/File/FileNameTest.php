@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\File\Contract\FileName;
 use App\Domain\File\Exception\InvalidFileNameException;
-use App\Domain\File\FileName;
 
 it('creates a valid file name', function (): void {
     $name = new FileName('document.pdf');

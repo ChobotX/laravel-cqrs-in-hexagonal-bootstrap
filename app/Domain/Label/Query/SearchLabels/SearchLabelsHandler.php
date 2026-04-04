@@ -6,8 +6,8 @@ namespace App\Domain\Label\Query\SearchLabels;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Domain\Label\Contract\Label;
 use App\Domain\Label\Contract\LabelRepository;
-use App\Domain\Label\Label;
 use App\Domain\Label\LabelNamespace;
 
 /**

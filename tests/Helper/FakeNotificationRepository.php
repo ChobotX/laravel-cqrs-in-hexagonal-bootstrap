@@ -6,9 +6,9 @@ namespace Tests\Helper;
 
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Domain\Notification\Contract\Notification;
 use App\Domain\Notification\Contract\NotificationId;
 use App\Domain\Notification\Contract\NotificationRepository;
-use App\Domain\Notification\Notification;
 use DateTimeImmutable;
 
 final class FakeNotificationRepository implements NotificationRepository

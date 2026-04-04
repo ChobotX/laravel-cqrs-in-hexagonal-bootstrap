@@ -6,7 +6,7 @@ namespace App\Domain\File\Query\GetFileById;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
-use App\Domain\File\File;
+use App\Domain\File\Contract\File;
 
 /** @implements Query<File> */
 #[RequiresPermission('files.storage.read')]

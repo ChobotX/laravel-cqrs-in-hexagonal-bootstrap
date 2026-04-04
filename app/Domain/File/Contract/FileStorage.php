@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\File\Contract;
 
 use App\Domain\File\FileNamespace;
-use App\Domain\File\FileUpload;
 use App\Domain\File\StoragePath;
 
 interface FileStorage

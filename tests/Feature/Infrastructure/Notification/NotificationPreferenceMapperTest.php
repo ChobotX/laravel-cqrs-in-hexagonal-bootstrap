@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Notification\NotificationChannel;
+use App\Domain\Notification\Contract\NotificationChannel;
 use App\Domain\Notification\NotificationLevel;
 use App\Infrastructure\Eloquent\Notification\NotificationPreferenceMapper;
 use App\Infrastructure\Eloquent\Notification\NotificationPreferenceModel;

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Domain\File\Contract\MimeType;
 use App\Domain\File\Exception\InvalidMimeTypeException;
-use App\Domain\File\MimeType;
 
 it('creates a valid mime type', function (): void {
     $mime = new MimeType('application/pdf');
