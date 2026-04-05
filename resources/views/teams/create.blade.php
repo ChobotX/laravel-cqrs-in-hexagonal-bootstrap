@@ -9,13 +9,13 @@
         ['label' => __('messages.teams.create')],
     ]" />
 
-    <div class="max-w-4xl">
+    <div>
         <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
             <div class="border-b border-gray-200 px-6 py-4">
                 <p class="text-base text-gray-500 sm:text-sm">{{ __('messages.teams.create_subtitle') }}</p>
             </div>
 
-            <form class="space-y-5 p-6"
+            <form class="grid grid-cols-1 gap-x-6 gap-y-5 p-6 md:grid-cols-2 xl:grid-cols-4"
                   method="POST"
                   action="{{ route('teams.store') }}">
                 @csrf
@@ -74,7 +74,7 @@
                     @enderror
                 </div>
 
-                <div>
+                <div class="md:col-span-2">
                     <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
                            for="description">{{ __('messages.teams.description') }}</label>
                     <textarea class="block w-full max-w-md rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
@@ -88,7 +88,7 @@
                     @enderror
                 </div>
 
-                <div class="flex items-center gap-3 pt-2">
+                <div class="col-span-full flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
                                       :label="__('messages.teams.create_action')" />
                     <x-primary-button skip-permission
