@@ -171,10 +171,16 @@ it('omits roles when user lacks users.roles.read permission', function (): void 
         'joined_at' => '2024-01-01 00:00:00',
     ]);
 
-    $this->actingAs($user)
+    $response = $this->actingAs($user)
         ->getJson('/internal-api/teams/tree')
-        ->assertOk()
-        ->assertJsonPath('data.0.members.0.roles', []);
+        ->assertOk();
+
+    /** @var list<array{id: string, members: list<array{roles: list<mixed>}>}> $data */
+    $data = $response->json('data');
+    $companyNode = collect($data)->firstWhere('id', '550e8400-e29b-41d4-a716-446655440f10');
+    expect($companyNode)->not->toBeNull();
+    assert(is_array($companyNode));
+    expect($companyNode['members'][0]['roles'])->toBe([]);
 });
 
 it('sets parentId to empty when parent is filtered out by scope', function (): void {
