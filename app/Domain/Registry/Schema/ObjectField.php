@@ -12,6 +12,7 @@ final readonly class ObjectField implements SchemaField
         private string $label,
         private bool $required = false,
         public array $properties = [],
+        public ?string $helpText = null,
     ) {}
 
     public function name(): string

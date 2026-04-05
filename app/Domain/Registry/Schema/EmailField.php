@@ -10,6 +10,8 @@ final readonly class EmailField implements SchemaField
         private string $name,
         private string $label,
         private bool $required = false,
+        public ?string $placeholder = null,
+        public ?string $helpText = null,
     ) {}
 
     public function name(): string

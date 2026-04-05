@@ -12,6 +12,10 @@ final readonly class NumberField implements SchemaField
         private bool $required = false,
         public ?float $min = null,
         public ?float $max = null,
+        public ?float $step = null,
+        public ?string $placeholder = null,
+        public ?string $helpText = null,
+        public ?float $defaultValue = null,
     ) {}
 
     public function name(): string

@@ -110,7 +110,7 @@ it('creates a RepeaterField', function (): void {
 });
 
 it('creates a StringField with all options', function (): void {
-    $field = new StringField('bio', 'Bio', true, true, 10, 500);
+    $field = new StringField('bio', 'Bio', true, true, 10, 500, '^[A-Z]', 'Enter bio', 'Short biography', 'Default bio');
 
     expect($field->name())->toBe('bio')
         ->and($field->label())->toBe('Bio')
@@ -118,5 +118,80 @@ it('creates a StringField with all options', function (): void {
         ->and($field->isRequired())->toBeTrue()
         ->and($field->multiline)->toBeTrue()
         ->and($field->minLength)->toBe(10)
-        ->and($field->maxLength)->toBe(500);
+        ->and($field->maxLength)->toBe(500)
+        ->and($field->pattern)->toBe('^[A-Z]')
+        ->and($field->placeholder)->toBe('Enter bio')
+        ->and($field->helpText)->toBe('Short biography')
+        ->and($field->defaultValue)->toBe('Default bio');
+});
+
+it('creates an IntegerField with all options', function (): void {
+    $field = new IntegerField('age', 'Age', true, 0, 150, 1, 'Enter age', 'Years', 25);
+
+    expect($field->min)->toBe(0)
+        ->and($field->max)->toBe(150)
+        ->and($field->step)->toBe(1)
+        ->and($field->placeholder)->toBe('Enter age')
+        ->and($field->helpText)->toBe('Years')
+        ->and($field->defaultValue)->toBe(25);
+});
+
+it('creates a NumberField with all options', function (): void {
+    $field = new NumberField('price', 'Price', false, 0.01, 9999.99, 0.01, 'Enter price', 'In CZK', 100.0);
+
+    expect($field->step)->toBe(0.01)
+        ->and($field->placeholder)->toBe('Enter price')
+        ->and($field->helpText)->toBe('In CZK')
+        ->and($field->defaultValue)->toBe(100.0);
+});
+
+it('creates a DateField with all options', function (): void {
+    $field = new DateField('born', 'Born', false, '2000-01-01', '2025-12-31', 'Select date', 'Date of birth', '2000-06-15');
+
+    expect($field->minDate)->toBe('2000-01-01')
+        ->and($field->maxDate)->toBe('2025-12-31')
+        ->and($field->placeholder)->toBe('Select date')
+        ->and($field->helpText)->toBe('Date of birth')
+        ->and($field->defaultValue)->toBe('2000-06-15');
+});
+
+it('creates a BooleanField with all options', function (): void {
+    $field = new BooleanField('active', 'Active', false, 'Toggle status', true);
+
+    expect($field->helpText)->toBe('Toggle status')
+        ->and($field->defaultValue)->toBeTrue();
+});
+
+it('creates an EmailField with all options', function (): void {
+    $field = new EmailField('email', 'Email', true, 'user@example.com', 'Work email');
+
+    expect($field->placeholder)->toBe('user@example.com')
+        ->and($field->helpText)->toBe('Work email');
+});
+
+it('creates a FileField with helpText', function (): void {
+    $field = new FileField('doc', 'Document', false, null, null, null, 'Upload a PDF');
+
+    expect($field->helpText)->toBe('Upload a PDF');
+});
+
+it('creates a ReferenceField with all options', function (): void {
+    $field = new ReferenceField('brand', 'Brand', true, 'enumerations', 'car_brand', 'Select brand', 'Pick one');
+
+    expect($field->placeholder)->toBe('Select brand')
+        ->and($field->helpText)->toBe('Pick one');
+});
+
+it('creates a RepeaterField with helpText', function (): void {
+    $inner = new StringField('key', 'Key', true);
+    $field = new RepeaterField('meta', 'Meta', true, [$inner], 0, null, 'Key-value pairs');
+
+    expect($field->helpText)->toBe('Key-value pairs');
+});
+
+it('creates an ObjectField with helpText', function (): void {
+    $inner = new StringField('street', 'Street');
+    $field = new ObjectField('address', 'Address', false, [$inner], 'Full address');
+
+    expect($field->helpText)->toBe('Full address');
 });

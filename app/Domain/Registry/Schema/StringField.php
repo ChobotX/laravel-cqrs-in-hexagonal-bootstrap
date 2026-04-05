@@ -13,6 +13,10 @@ final readonly class StringField implements SchemaField
         public bool $multiline = false,
         public ?int $minLength = null,
         public ?int $maxLength = null,
+        public ?string $pattern = null,
+        public ?string $placeholder = null,
+        public ?string $helpText = null,
+        public ?string $defaultValue = null,
     ) {}
 
     public function name(): string

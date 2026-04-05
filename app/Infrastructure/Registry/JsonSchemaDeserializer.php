@@ -45,6 +45,14 @@ final readonly class JsonSchemaDeserializer
 
     private const string X_FILE = 'x-file';
 
+    private const string X_PLACEHOLDER = 'x-placeholder';
+
+    private const string X_HELP_TEXT = 'x-help-text';
+
+    private const string X_MIN_DATE = 'x-min-date';
+
+    private const string X_MAX_DATE = 'x-max-date';
+
     private const string FIELD_FILE = 'file';
 
     private const string FIELD_REPEATER = 'repeater';
@@ -80,7 +88,7 @@ final readonly class JsonSchemaDeserializer
         }
 
         if ($xType === self::FIELD_REPEATER) {
-            return $this->toRepeater($name, $s, $required);
+            return $this->toRepeaterField($name, $s, $required);
         }
 
         return $this->toStandard($name, $s, $required);
@@ -98,6 +106,8 @@ final readonly class JsonSchemaDeserializer
             required: $required,
             referenceNamespace: $ref['namespace'] ?? '',
             referenceSlug: $ref['slug'] ?? '',
+            placeholder: $this->nullableStr($s, self::X_PLACEHOLDER),
+            helpText: $this->nullableStr($s, self::X_HELP_TEXT),
         );
     }
 
@@ -114,11 +124,12 @@ final readonly class JsonSchemaDeserializer
             allowedMimeTypes: $fc['allowedMimeTypes'] ?? null,
             maxSizeBytes: $fc['maxSizeBytes'] ?? null,
             fileNamespace: $fc['namespace'] ?? null,
+            helpText: $this->nullableStr($s, self::X_HELP_TEXT),
         );
     }
 
     /** @param array<string, mixed> $s */
-    private function toRepeater(string $name, array $s, bool $required): RepeaterField
+    private function toRepeaterField(string $name, array $s, bool $required): RepeaterField
     {
         return new RepeaterField(
             name: $name,
@@ -126,7 +137,8 @@ final readonly class JsonSchemaDeserializer
             required: $required,
             fields: $this->itemFields($s),
             minItems: $this->int($s, 'minItems', 0),
-            maxItems: isset($s['maxItems']) && is_int($s['maxItems']) ? $s['maxItems'] : null,
+            maxItems: $this->nullableInt($s, 'maxItems'),
+            helpText: $this->nullableStr($s, self::X_HELP_TEXT),
         );
     }
 
@@ -141,11 +153,37 @@ final readonly class JsonSchemaDeserializer
         }
 
         return match ($type) {
-            self::TYPE_INTEGER => new IntegerField($name, $label, $required, $this->nullableInt($s, 'minimum'), $this->nullableInt($s, 'maximum')),
-            self::TYPE_NUMBER => new NumberField($name, $label, $required, $this->nullableFloat($s, 'minimum'), $this->nullableFloat($s, 'maximum')),
-            self::TYPE_BOOLEAN => new BooleanField($name, $label, $required),
+            self::TYPE_INTEGER => new IntegerField(
+                $name,
+                $label,
+                $required,
+                $this->nullableInt($s, 'minimum'),
+                $this->nullableInt($s, 'maximum'),
+                $this->nullableInt($s, 'multipleOf'),
+                $this->nullableStr($s, self::X_PLACEHOLDER),
+                $this->nullableStr($s, self::X_HELP_TEXT),
+                $this->nullableInt($s, 'default'),
+            ),
+            self::TYPE_NUMBER => new NumberField(
+                $name,
+                $label,
+                $required,
+                $this->nullableFloat($s, 'minimum'),
+                $this->nullableFloat($s, 'maximum'),
+                $this->nullableFloat($s, 'multipleOf'),
+                $this->nullableStr($s, self::X_PLACEHOLDER),
+                $this->nullableStr($s, self::X_HELP_TEXT),
+                $this->nullableFloat($s, 'default'),
+            ),
+            self::TYPE_BOOLEAN => new BooleanField(
+                $name,
+                $label,
+                $required,
+                $this->nullableStr($s, self::X_HELP_TEXT),
+                $this->nullableBool($s, 'default'),
+            ),
             self::TYPE_OBJECT => $this->toObject($name, $s, $required),
-            self::TYPE_ARRAY => $this->toArrayRepeater($name, $s, $required),
+            self::TYPE_ARRAY => $this->toRepeaterField($name, $s, $required),
             default => new StringField($name, $label, $required),
         };
     }
@@ -156,8 +194,23 @@ final readonly class JsonSchemaDeserializer
         $format = isset($s['format']) && is_string($s['format']) ? $s['format'] : null;
 
         return match ($format) {
-            self::FORMAT_DATE => new DateField($name, $label, $required),
-            self::FORMAT_EMAIL => new EmailField($name, $label, $required),
+            self::FORMAT_DATE => new DateField(
+                $name,
+                $label,
+                $required,
+                $this->nullableStr($s, self::X_MIN_DATE),
+                $this->nullableStr($s, self::X_MAX_DATE),
+                $this->nullableStr($s, self::X_PLACEHOLDER),
+                $this->nullableStr($s, self::X_HELP_TEXT),
+                $this->nullableStr($s, 'default'),
+            ),
+            self::FORMAT_EMAIL => new EmailField(
+                $name,
+                $label,
+                $required,
+                $this->nullableStr($s, self::X_PLACEHOLDER),
+                $this->nullableStr($s, self::X_HELP_TEXT),
+            ),
             default => $this->toStringField($name, $label, $s, $required),
         };
     }
@@ -172,37 +225,17 @@ final readonly class JsonSchemaDeserializer
             multiline: isset($s[self::X_MULTILINE]) && $s[self::X_MULTILINE] === true,
             minLength: $this->nullableInt($s, 'minLength'),
             maxLength: $this->nullableInt($s, 'maxLength'),
+            pattern: $this->nullableStr($s, 'pattern'),
+            placeholder: $this->nullableStr($s, self::X_PLACEHOLDER),
+            helpText: $this->nullableStr($s, self::X_HELP_TEXT),
+            defaultValue: $this->nullableStr($s, 'default'),
         );
     }
 
     /** @param array<string, mixed> $s */
     private function toObject(string $name, array $s, bool $required): ObjectField
     {
-        /** @var array<string, array<string, mixed>> $props */
-        $props = isset($s['properties']) && is_array($s['properties']) ? $s['properties'] : [];
-        /** @var list<string> $req */
-        $req = isset($s['required']) && is_array($s['required']) ? $s['required'] : [];
-
-        $fields = [];
-
-        foreach ($props as $subName => $subSchema) {
-            $fields[] = $this->toField($subName, $subSchema, in_array($subName, $req, true));
-        }
-
-        return new ObjectField($name, $this->str($s, self::X_LABEL, $name), $required, $fields);
-    }
-
-    /** @param array<string, mixed> $s */
-    private function toArrayRepeater(string $name, array $s, bool $required): RepeaterField
-    {
-        return new RepeaterField(
-            name: $name,
-            label: $this->str($s, self::X_LABEL, $name),
-            required: $required,
-            fields: $this->itemFields($s),
-            minItems: $this->int($s, 'minItems', 0),
-            maxItems: isset($s['maxItems']) && is_int($s['maxItems']) ? $s['maxItems'] : null,
-        );
+        return new ObjectField($name, $this->str($s, self::X_LABEL, $name), $required, $this->parseObjectFields($s), $this->nullableStr($s, self::X_HELP_TEXT));
     }
 
     /**
@@ -213,10 +246,20 @@ final readonly class JsonSchemaDeserializer
     {
         /** @var array<string, mixed> $items */
         $items = is_array($s['items'] ?? null) ? $s['items'] : [];
+
+        return $this->parseObjectFields($items);
+    }
+
+    /**
+     * @param  array<string, mixed>  $s
+     * @return list<SchemaField>
+     */
+    private function parseObjectFields(array $s): array
+    {
         /** @var array<string, array<string, mixed>> $props */
-        $props = isset($items['properties']) && is_array($items['properties']) ? $items['properties'] : [];
+        $props = isset($s['properties']) && is_array($s['properties']) ? $s['properties'] : [];
         /** @var list<string> $req */
-        $req = isset($items['required']) && is_array($items['required']) ? $items['required'] : [];
+        $req = isset($s['required']) && is_array($s['required']) ? $s['required'] : [];
 
         $fields = [];
 
@@ -257,5 +300,21 @@ final readonly class JsonSchemaDeserializer
         $v = $s[$key] ?? null;
 
         return is_float($v) || is_int($v) ? (float) $v : null;
+    }
+
+    /** @param array<string, mixed> $s */
+    private function nullableStr(array $s, string $key): ?string
+    {
+        $v = $s[$key] ?? null;
+
+        return is_string($v) ? $v : null;
+    }
+
+    /** @param array<string, mixed> $s */
+    private function nullableBool(array $s, string $key): ?bool
+    {
+        $v = $s[$key] ?? null;
+
+        return is_bool($v) ? $v : null;
     }
 }

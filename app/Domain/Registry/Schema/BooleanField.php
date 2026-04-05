@@ -10,6 +10,8 @@ final readonly class BooleanField implements SchemaField
         private string $name,
         private string $label,
         private bool $required = false,
+        public ?string $helpText = null,
+        public ?bool $defaultValue = null,
     ) {}
 
     public function name(): string

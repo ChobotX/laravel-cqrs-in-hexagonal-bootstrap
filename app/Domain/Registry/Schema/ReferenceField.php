@@ -12,6 +12,8 @@ final readonly class ReferenceField implements SchemaField
         private bool $required,
         public string $referenceNamespace,
         public string $referenceSlug,
+        public ?string $placeholder = null,
+        public ?string $helpText = null,
     ) {}
 
     public function name(): string

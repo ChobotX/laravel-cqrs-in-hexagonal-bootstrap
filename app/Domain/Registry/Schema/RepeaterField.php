@@ -16,6 +16,7 @@ final readonly class RepeaterField implements SchemaField
         public array $fields,
         public int $minItems = 0,
         public ?int $maxItems = null,
+        public ?string $helpText = null,
     ) {}
 
     public function name(): string

@@ -12,6 +12,10 @@ final readonly class IntegerField implements SchemaField
         private bool $required = false,
         public ?int $min = null,
         public ?int $max = null,
+        public ?int $step = null,
+        public ?string $placeholder = null,
+        public ?string $helpText = null,
+        public ?int $defaultValue = null,
     ) {}
 
     public function name(): string

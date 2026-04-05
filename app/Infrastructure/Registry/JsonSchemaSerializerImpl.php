@@ -48,6 +48,14 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
 
     private const string X_FILE = 'x-file';
 
+    private const string X_PLACEHOLDER = 'x-placeholder';
+
+    private const string X_HELP_TEXT = 'x-help-text';
+
+    private const string X_MIN_DATE = 'x-min-date';
+
+    private const string X_MAX_DATE = 'x-max-date';
+
     private const string FIELD_FILE = 'file';
 
     private const string FIELD_REPEATER = 'repeater';
@@ -94,9 +102,9 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
             $schemaField instanceof StringField => $this->stringToJson($schemaField),
             $schemaField instanceof IntegerField => $this->integerToJson($schemaField),
             $schemaField instanceof NumberField => $this->numberToJson($schemaField),
-            $schemaField instanceof BooleanField => ['type' => self::TYPE_BOOLEAN, self::X_LABEL => $schemaField->label()],
-            $schemaField instanceof DateField => ['type' => self::TYPE_STRING, 'format' => self::FORMAT_DATE, self::X_LABEL => $schemaField->label()],
-            $schemaField instanceof EmailField => ['type' => self::TYPE_STRING, 'format' => self::FORMAT_EMAIL, self::X_LABEL => $schemaField->label()],
+            $schemaField instanceof BooleanField => $this->booleanToJson($schemaField),
+            $schemaField instanceof DateField => $this->dateToJson($schemaField),
+            $schemaField instanceof EmailField => $this->emailToJson($schemaField),
             $schemaField instanceof ReferenceField => $this->referenceToJson($schemaField),
             $schemaField instanceof FileField => $this->fileToJson($schemaField),
             $schemaField instanceof RepeaterField => $this->repeaterToJson($schemaField),
@@ -114,100 +122,116 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
             $s[self::X_MULTILINE] = true;
         }
 
-        if ($stringField->minLength !== null) {
-            $s['minLength'] = $stringField->minLength;
-        }
-
-        if ($stringField->maxLength !== null) {
-            $s['maxLength'] = $stringField->maxLength;
-        }
-
-        return $s;
+        return $this->addOptional($s, [
+            'minLength' => $stringField->minLength,
+            'maxLength' => $stringField->maxLength,
+            'pattern' => $stringField->pattern,
+            'default' => $stringField->defaultValue,
+            self::X_PLACEHOLDER => $stringField->placeholder,
+            self::X_HELP_TEXT => $stringField->helpText,
+        ]);
     }
 
     /** @return array<string, mixed> */
     private function integerToJson(IntegerField $integerField): array
     {
-        $s = ['type' => self::TYPE_INTEGER, self::X_LABEL => $integerField->label()];
-
-        if ($integerField->min !== null) {
-            $s['minimum'] = $integerField->min;
-        }
-
-        if ($integerField->max !== null) {
-            $s['maximum'] = $integerField->max;
-        }
-
-        return $s;
+        return $this->addOptional(['type' => self::TYPE_INTEGER, self::X_LABEL => $integerField->label()], [
+            'minimum' => $integerField->min,
+            'maximum' => $integerField->max,
+            'multipleOf' => $integerField->step,
+            'default' => $integerField->defaultValue,
+            self::X_PLACEHOLDER => $integerField->placeholder,
+            self::X_HELP_TEXT => $integerField->helpText,
+        ]);
     }
 
     /** @return array<string, mixed> */
     private function numberToJson(NumberField $numberField): array
     {
-        $s = ['type' => self::TYPE_NUMBER, self::X_LABEL => $numberField->label()];
+        return $this->addOptional(['type' => self::TYPE_NUMBER, self::X_LABEL => $numberField->label()], [
+            'minimum' => $numberField->min,
+            'maximum' => $numberField->max,
+            'multipleOf' => $numberField->step,
+            'default' => $numberField->defaultValue,
+            self::X_PLACEHOLDER => $numberField->placeholder,
+            self::X_HELP_TEXT => $numberField->helpText,
+        ]);
+    }
 
-        if ($numberField->min !== null) {
-            $s['minimum'] = $numberField->min;
-        }
+    /** @return array<string, mixed> */
+    private function booleanToJson(BooleanField $booleanField): array
+    {
+        return $this->addOptional(['type' => self::TYPE_BOOLEAN, self::X_LABEL => $booleanField->label()], [
+            'default' => $booleanField->defaultValue,
+            self::X_HELP_TEXT => $booleanField->helpText,
+        ]);
+    }
 
-        if ($numberField->max !== null) {
-            $s['maximum'] = $numberField->max;
-        }
+    /** @return array<string, mixed> */
+    private function dateToJson(DateField $dateField): array
+    {
+        return $this->addOptional(
+            ['type' => self::TYPE_STRING, 'format' => self::FORMAT_DATE, self::X_LABEL => $dateField->label()],
+            [
+                self::X_MIN_DATE => $dateField->minDate,
+                self::X_MAX_DATE => $dateField->maxDate,
+                'default' => $dateField->defaultValue,
+                self::X_PLACEHOLDER => $dateField->placeholder,
+                self::X_HELP_TEXT => $dateField->helpText,
+            ],
+        );
+    }
 
-        return $s;
+    /** @return array<string, mixed> */
+    private function emailToJson(EmailField $emailField): array
+    {
+        return $this->addOptional(
+            ['type' => self::TYPE_STRING, 'format' => self::FORMAT_EMAIL, self::X_LABEL => $emailField->label()],
+            [self::X_PLACEHOLDER => $emailField->placeholder, self::X_HELP_TEXT => $emailField->helpText],
+        );
     }
 
     /** @return array<string, mixed> */
     private function referenceToJson(ReferenceField $referenceField): array
     {
-        return [
+        return $this->addOptional([
             'type' => self::TYPE_STRING,
             'format' => self::FORMAT_UUID,
             self::X_LABEL => $referenceField->label(),
             self::X_REFERENCE => ['namespace' => $referenceField->referenceNamespace, 'slug' => $referenceField->referenceSlug],
-        ];
+        ], [self::X_PLACEHOLDER => $referenceField->placeholder, self::X_HELP_TEXT => $referenceField->helpText]);
     }
 
     /** @return array<string, mixed> */
     private function fileToJson(FileField $fileField): array
     {
         $s = ['type' => self::TYPE_STRING, 'format' => self::FORMAT_UUID, self::X_LABEL => $fileField->label(), self::X_TYPE => self::FIELD_FILE];
-        $fc = [];
-
-        if ($fileField->allowedMimeTypes !== null) {
-            $fc['allowedMimeTypes'] = $fileField->allowedMimeTypes;
-        }
-
-        if ($fileField->maxSizeBytes !== null) {
-            $fc['maxSizeBytes'] = $fileField->maxSizeBytes;
-        }
-
-        if ($fileField->fileNamespace !== null) {
-            $fc['namespace'] = $fileField->fileNamespace;
-        }
+        $fc = array_filter([
+            'allowedMimeTypes' => $fileField->allowedMimeTypes,
+            'maxSizeBytes' => $fileField->maxSizeBytes,
+            'namespace' => $fileField->fileNamespace,
+        ], static fn (mixed $v): bool => $v !== null);
 
         if ($fc !== []) {
             $s[self::X_FILE] = $fc;
         }
 
-        return $s;
+        return $this->addOptional($s, [self::X_HELP_TEXT => $fileField->helpText]);
     }
 
     /** @return array<string, mixed> */
     private function repeaterToJson(RepeaterField $repeaterField): array
     {
-        $items = $this->fieldsToObjectSchema($repeaterField->fields);
-        $s = ['type' => self::TYPE_ARRAY, 'items' => $items, self::X_LABEL => $repeaterField->label(), self::X_TYPE => self::FIELD_REPEATER];
+        $s = ['type' => self::TYPE_ARRAY, 'items' => $this->fieldsToObjectSchema($repeaterField->fields), self::X_LABEL => $repeaterField->label(), self::X_TYPE => self::FIELD_REPEATER];
 
         if ($repeaterField->minItems > 0) {
             $s['minItems'] = $repeaterField->minItems;
         }
 
-        if ($repeaterField->maxItems !== null) {
-            $s['maxItems'] = $repeaterField->maxItems;
-        }
-
-        return $s;
+        return $this->addOptional($s, [
+            'maxItems' => $repeaterField->maxItems,
+            self::X_HELP_TEXT => $repeaterField->helpText,
+        ]);
     }
 
     /** @return array<string, mixed> */
@@ -216,7 +240,23 @@ final readonly class JsonSchemaSerializerImpl implements SchemaSerializer
         $inner = $this->fieldsToObjectSchema($objectField->properties);
         $inner[self::X_LABEL] = $objectField->label();
 
-        return $inner;
+        return $this->addOptional($inner, [self::X_HELP_TEXT => $objectField->helpText]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $s
+     * @param  array<string, mixed>  $optional
+     * @return array<string, mixed>
+     */
+    private function addOptional(array $s, array $optional): array
+    {
+        foreach ($optional as $key => $value) {
+            if ($value !== null) {
+                $s[$key] = $value;
+            }
+        }
+
+        return $s;
     }
 
     /**

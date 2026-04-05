@@ -10,6 +10,11 @@ final readonly class DateField implements SchemaField
         private string $name,
         private string $label,
         private bool $required = false,
+        public ?string $minDate = null,
+        public ?string $maxDate = null,
+        public ?string $placeholder = null,
+        public ?string $helpText = null,
+        public ?string $defaultValue = null,
     ) {}
 
     public function name(): string

@@ -14,6 +14,7 @@ final readonly class FileField implements SchemaField
         public ?array $allowedMimeTypes = null,
         public ?int $maxSizeBytes = null,
         public ?string $fileNamespace = null,
+        public ?string $helpText = null,
     ) {}
 
     public function name(): string
