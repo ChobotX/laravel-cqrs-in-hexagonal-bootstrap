@@ -15,8 +15,7 @@ final class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->routeString('userId'))],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->routeString('userId'))],
             'roles' => ['sometimes', 'array'],
             'roles.*' => ['string', 'uuid'],
             'teams' => ['sometimes', 'array'],
@@ -28,12 +27,12 @@ final class UpdateUserRequest extends FormRequest
         ];
     }
 
-    public function toCommand(?string $avatarFileId = null): UpdateUserCommand
+    public function toCommand(string $email, ?string $avatarFileId = null): UpdateUserCommand
     {
         return new UpdateUserCommand(
             id: $this->routeString('userId'),
             name: $this->string('name')->toString(),
-            email: $this->string('email')->toString(),
+            email: $email,
             avatarFileId: $avatarFileId,
         );
     }

@@ -240,6 +240,44 @@ it('ignores email when email is null', function (): void {
         ->and($repository->saved[0]->email->value)->toBe('john@example.com');
 });
 
+it('sets avatar when avatarFileId is provided', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        avatarFileId: '00000000-0000-0000-0000-000000000001',
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->avatarFileId?->value)->toBe('00000000-0000-0000-0000-000000000001');
+});
+
+it('removes avatar when avatarFileId is null', function (): void {
+    $userWithAvatar = new User(
+        new UserId('550e8400-e29b-41d4-a716-446655440000'),
+        new UserName('John Doe'),
+        new Email('john@example.com'),
+        new App\Domain\File\Contract\ValueObject\FileId('00000000-0000-0000-0000-000000000002'),
+    );
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $userWithAvatar]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        avatarFileId: null,
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->avatarFileId)->toBeNull();
+});
+
 it('throws EmailAlreadyExistsException when email is taken', function (): void {
     $user = existingUser();
     $otherUser = new User(

@@ -71,45 +71,7 @@ it('updates name and email', function (): void {
         ->assertSee('data-success');
 });
 
-it('rejects update when browser autofills short password', function (): void {
-    $this->seedSuperAdminRole();
-    $admin = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440050',
-        'name' => 'Admin',
-        'email' => 'admin-autofill@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($admin->id);
-
-    UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440051',
-        'name' => 'Target User',
-        'email' => 'target@example.com',
-    ]);
-
-    $this->actingAs($admin)
-        ->from('/users/550e8400-e29b-41d4-a716-446655440051/edit')
-        ->put('/users/550e8400-e29b-41d4-a716-446655440051', [
-            'name' => 'Updated Name',
-            'email' => 'target@example.com',
-            'password' => 'short',
-            'password_confirmation' => '',
-        ])
-        ->assertRedirect('/users/550e8400-e29b-41d4-a716-446655440051/edit')
-        ->assertSessionHasErrors('password');
-
-    $this->assertDatabaseHas('users', [
-        'id' => '550e8400-e29b-41d4-a716-446655440051',
-        'name' => 'Target User',
-    ]);
-
-    $this->get('/users/550e8400-e29b-41d4-a716-446655440051/edit')
-        ->assertOk()
-        ->assertSee('app-flash-data')
-        ->assertSee('data-error');
-});
-
-it('updates password when provided', function (): void {
+it('preserves email when not submitted', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440044',
@@ -121,48 +83,46 @@ it('updates password when provided', function (): void {
 
     UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440045',
-        'name' => 'Target User',
-        'email' => 'target@example.com',
-        'password' => Hash::make('oldpassword'),
+        'name' => 'Keep Email User',
+        'email' => 'keep-email@example.com',
     ]);
 
     $this->actingAs($admin)
         ->put('/users/550e8400-e29b-41d4-a716-446655440045', [
-            'name' => 'Target User',
-            'email' => 'target@example.com',
-            'password' => 'newpassword1',
-            'password_confirmation' => 'newpassword1',
+            'name' => 'Updated Name',
         ])->assertRedirect();
 
-    $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440045');
-    expect(Hash::check('newpassword1', $updated->password))->toBeTrue();
+    $this->assertDatabaseHas('users', [
+        'id' => '550e8400-e29b-41d4-a716-446655440045',
+        'name' => 'Updated Name',
+        'email' => 'keep-email@example.com',
+    ]);
 });
 
-it('keeps existing password when blank', function (): void {
+it('does not show password fields on user edit', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440046',
-        'name' => 'Admin User',
-        'email' => 'admin@example.com',
+        'id' => '550e8400-e29b-41d4-a716-446655440050',
+        'name' => 'Admin',
+        'email' => 'admin-nopass@example.com',
         'password' => Hash::make('password123'),
     ]);
     $this->assignSuperAdmin($admin->id);
 
     UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440047',
+        'id' => '550e8400-e29b-41d4-a716-446655440051',
         'name' => 'Target User',
-        'email' => 'target@example.com',
-        'password' => Hash::make('keepme'),
+        'email' => 'target-nopass@example.com',
     ]);
 
-    $this->actingAs($admin)
-        ->put('/users/550e8400-e29b-41d4-a716-446655440047', [
-            'name' => 'Updated Name',
-            'email' => 'target@example.com',
-        ])->assertRedirect();
+    $response = $this->actingAs($admin)
+        ->get('/users/550e8400-e29b-41d4-a716-446655440051/edit')
+        ->assertOk();
 
-    $updated = UserModel::find('550e8400-e29b-41d4-a716-446655440047');
-    expect(Hash::check('keepme', $updated->password))->toBeTrue();
+    $content = $response->getContent();
+    expect($content)
+        ->not->toContain('id="password"')
+        ->not->toContain('id="password_confirmation"');
 });
 
 it('returns 404 for missing user', function (): void {

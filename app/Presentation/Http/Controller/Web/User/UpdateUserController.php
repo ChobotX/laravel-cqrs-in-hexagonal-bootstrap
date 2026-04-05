@@ -14,7 +14,6 @@ use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
-use App\Domain\User\Contract\Command\SetPasswordCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
@@ -36,17 +35,20 @@ final readonly class UpdateUserController
 
     public function __invoke(UpdateUserRequest $updateUserRequest): RedirectResponse
     {
-        $avatarFileId = $this->resolveAvatarFileId($updateUserRequest);
-        $updateUserCommand = $updateUserRequest->toCommand($avatarFileId);
+        $userId = $updateUserRequest->routeString('userId');
         $currentUserId = $this->authenticatedUser->id() ?? '';
 
+        /** @var User $existingUser */
+        $existingUser = $this->queryBus->dispatch(new GetUserByIdQuery($userId));
+
+        $avatarFileId = $this->resolveAvatarFileId($updateUserRequest, $existingUser);
+        $email = $updateUserRequest->has('email')
+            ? $updateUserRequest->string('email')->toString()
+            : $existingUser->email->value;
+
+        $updateUserCommand = $updateUserRequest->toCommand($email, $avatarFileId);
+
         $this->commandBus->dispatch($updateUserCommand);
-
-        $password = $updateUserRequest->string('password')->toString();
-
-        if ($password !== '') {
-            $this->commandBus->dispatch(new SetPasswordCommand($updateUserCommand->id, $password));
-        }
 
         /** @var list<string>|null $submittedRoleIds */
         $submittedRoleIds = $updateUserRequest->has('roles') ? $updateUserRequest->input('roles', []) : null;
@@ -63,7 +65,7 @@ final readonly class UpdateUserController
         return redirect()->route('users.edit', $updateUserCommand->id)->with('success', __('messages.users.updated'));
     }
 
-    private function resolveAvatarFileId(UpdateUserRequest $updateUserRequest): ?string
+    private function resolveAvatarFileId(UpdateUserRequest $updateUserRequest, User $existingUser): ?string
     {
         if ($updateUserRequest->boolean('remove_avatar')) {
             return null;
@@ -89,9 +91,6 @@ final readonly class UpdateUserController
             return $fileId;
         }
 
-        /** @var User $currentUser */
-        $currentUser = $this->queryBus->dispatch(new GetUserByIdQuery($updateUserRequest->routeString('userId')));
-
-        return $currentUser->avatarFileId?->value;
+        return $existingUser->avatarFileId?->value;
     }
 }

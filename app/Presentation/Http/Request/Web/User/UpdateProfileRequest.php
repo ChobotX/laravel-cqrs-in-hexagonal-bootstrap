@@ -17,10 +17,8 @@ final class UpdateProfileRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore(Auth::id())],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'roles' => ['sometimes', 'array'],
-            'roles.*' => ['string', 'uuid'],
-            'teams' => ['sometimes', 'array'],
-            'teams.*' => ['string', 'uuid'],
+            'avatar' => ['nullable', 'image', 'max:10240'],
+            'remove_avatar' => ['sometimes', 'boolean'],
         ];
     }
 }

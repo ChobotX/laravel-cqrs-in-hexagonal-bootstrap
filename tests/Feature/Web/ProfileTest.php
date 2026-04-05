@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Eloquent\Authorization\RoleModel;
-use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
-use App\Infrastructure\Eloquent\Team\TeamModel;
+use App\Infrastructure\Eloquent\File\FileModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 it('shows profile page for authenticated user', function (): void {
@@ -124,70 +124,6 @@ it('shows email field with users.list.update', function (): void {
     expect($content)->toContain('id="email"');
 });
 
-it('shows effective permissions for all users', function (): void {
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d06',
-        'name' => 'Perm Viewer',
-        'email' => 'permview@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-
-    $this->actingAs($user)
-        ->get('/profile')
-        ->assertOk()
-        ->assertSee(__('messages.permissions.effective_permissions'));
-});
-
-it('hides override controls without users.roles.update', function (): void {
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d07',
-        'name' => 'No Override',
-        'email' => 'nooverride@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-
-    $response = $this->actingAs($user)
-        ->get('/profile')
-        ->assertOk();
-
-    $content = $response->getContent();
-    expect($content)->not->toContain('id="override-permission"');
-});
-
-it('shows override controls with users.roles.update', function (): void {
-    $this->seedSuperAdminRole();
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d08',
-        'name' => 'Override Admin',
-        'email' => 'overrideadmin@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($user->id);
-
-    $response = $this->actingAs($user)
-        ->get('/profile')
-        ->assertOk();
-
-    $content = $response->getContent();
-    expect($content)->toContain('id="override-permission"');
-});
-
-it('hides role selector without users.roles.read', function (): void {
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d09',
-        'name' => 'No Roles',
-        'email' => 'noroles@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-
-    $response = $this->actingAs($user)
-        ->get('/profile')
-        ->assertOk();
-
-    $content = $response->getContent();
-    expect($content)->not->toContain('data-chip-selector');
-});
-
 it('admin changes password via profile', function (): void {
     $this->seedSuperAdminRole();
     $user = UserModel::create([
@@ -211,111 +147,12 @@ it('admin changes password via profile', function (): void {
     expect(Hash::check('new-secure-pass', $user->password))->toBeTrue();
 });
 
-it('syncs roles via profile when user has roles permission', function (): void {
+it('does not show roles teams or permissions on profile', function (): void {
     $this->seedSuperAdminRole();
     $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d21',
-        'name' => 'Role Sync',
-        'email' => 'rolesync@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($user->id);
-
-    $role = RoleModel::create([
-        'id' => Str::uuid()->toString(),
-        'name' => 'Profile Role',
-        'description' => 'Test',
-        'is_system' => false,
-    ]);
-    RolePermissionModel::create([
-        'id' => Str::uuid()->toString(),
-        'role_id' => $role->id,
-        'module' => 'teams',
-        'feature' => 'management',
-        'action' => 'read',
-        'scope' => 'all',
-    ]);
-
-    $this->actingAs($user)
-        ->put('/profile', [
-            'name' => 'Role Sync',
-            'email' => 'rolesync@example.com',
-            'roles' => [$role->id],
-        ])
-        ->assertRedirect('/profile');
-
-    $this->assertDatabaseHas('user_roles', [
-        'user_id' => $user->id,
-        'role_id' => $role->id,
-    ]);
-});
-
-it('syncs teams via profile when user has teams permission', function (): void {
-    $superAdminRole = $this->seedSuperAdminRole();
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d22',
-        'name' => 'Team Sync',
-        'email' => 'teamsync@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($user->id);
-
-    TeamModel::create([
-        'id' => '00000000-0000-0000-0000-000000000d01',
-        'name' => 'Profile Team',
-        'slug' => 'profile-team',
-        'description' => '',
-    ]);
-
-    $this->actingAs($user)
-        ->put('/profile', [
-            'name' => 'Team Sync',
-            'email' => 'teamsync@example.com',
-            'roles' => [$superAdminRole->id],
-            'teams' => ['00000000-0000-0000-0000-000000000d01'],
-        ])
-        ->assertRedirect('/profile');
-
-    $this->assertDatabaseHas('team_members', [
-        'user_id' => $user->id,
-        'team_id' => '00000000-0000-0000-0000-000000000d01',
-    ]);
-});
-
-it('removes team membership via profile', function (): void {
-    $superAdminRole = $this->seedSuperAdminRole();
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d23',
-        'name' => 'Team Remove',
-        'email' => 'teamremove@example.com',
-        'password' => Hash::make('password123'),
-    ]);
-    $this->assignSuperAdmin($user->id);
-
-    TeamModel::create(['id' => '00000000-0000-0000-0000-000000000d02', 'name' => 'RemoveMe', 'slug' => 'remove-me', 'description' => '']);
-    App\Infrastructure\Eloquent\Team\TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-000000000d02', 'user_id' => $user->id, 'joined_at' => now()]);
-
-    $this->actingAs($user)
-        ->put('/profile', [
-            'name' => 'Team Remove',
-            'email' => 'teamremove@example.com',
-            'roles' => [$superAdminRole->id],
-            'teams' => [],
-        ])
-        ->assertRedirect('/profile');
-
-    $this->assertDatabaseMissing('team_members', [
-        'user_id' => $user->id,
-        'team_id' => '00000000-0000-0000-0000-000000000d02',
-    ]);
-});
-
-it('shows role selector with users.roles.read', function (): void {
-    $this->seedSuperAdminRole();
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440d10',
-        'name' => 'Has Roles',
-        'email' => 'hasroles@example.com',
+        'id' => '550e8400-e29b-41d4-a716-446655440d30',
+        'name' => 'No Admin Fields',
+        'email' => 'noadminfields@example.com',
         'password' => Hash::make('password123'),
     ]);
     $this->assignSuperAdmin($user->id);
@@ -325,5 +162,104 @@ it('shows role selector with users.roles.read', function (): void {
         ->assertOk();
 
     $content = $response->getContent();
-    expect($content)->toContain('data-chip-selector');
+    expect($content)
+        ->not->toContain('data-chip-selector')
+        ->not->toContain('data-input-name="roles[]"')
+        ->not->toContain('data-input-name="teams[]"')
+        ->not->toContain(__('messages.permissions.effective_permissions'));
+});
+
+it('uploads avatar via profile', function (): void {
+    Storage::fake('files');
+
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d31',
+        'name' => 'Avatar Upload',
+        'email' => 'avatar-upload@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+
+    $file = UploadedFile::fake()->image('avatar.png', 100, 100);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Avatar Upload',
+            'avatar' => $file,
+        ])
+        ->assertRedirect('/profile');
+
+    $user->refresh();
+    expect($user->avatar_file_id)->not->toBeNull();
+
+    $this->assertDatabaseHas('files', [
+        'id' => $user->avatar_file_id,
+        'namespace' => 'user-avatars',
+    ]);
+});
+
+it('removes avatar via profile', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d32',
+        'name' => 'Avatar Remove',
+        'email' => 'avatar-remove@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+
+    $fileId = Str::uuid()->toString();
+    FileModel::create([
+        'id' => $fileId,
+        'namespace' => 'user-avatars',
+        'original_name' => 'old-avatar.png',
+        'storage_path' => 'user-avatars/old.png',
+        'mime_type' => 'image/png',
+        'size_in_bytes' => 100,
+        'version_number' => 1,
+        'uploaded_by' => $user->id,
+        'uploaded_at' => now(),
+    ]);
+
+    $user->update(['avatar_file_id' => $fileId]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Avatar Remove',
+            'remove_avatar' => '1',
+        ])
+        ->assertRedirect('/profile');
+
+    $user->refresh();
+    expect($user->avatar_file_id)->toBeNull();
+});
+
+it('preserves avatar when no change submitted via profile', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d33',
+        'name' => 'Avatar Preserve',
+        'email' => 'avatar-preserve@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+
+    $fileId = Str::uuid()->toString();
+    FileModel::create([
+        'id' => $fileId,
+        'namespace' => 'user-avatars',
+        'original_name' => 'keep-avatar.png',
+        'storage_path' => 'user-avatars/keep.png',
+        'mime_type' => 'image/png',
+        'size_in_bytes' => 100,
+        'version_number' => 1,
+        'uploaded_by' => $user->id,
+        'uploaded_at' => now(),
+    ]);
+
+    $user->update(['avatar_file_id' => $fileId]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Avatar Preserve Updated',
+        ])
+        ->assertRedirect('/profile');
+
+    $user->refresh();
+    expect($user->avatar_file_id)->toBe($fileId);
 });

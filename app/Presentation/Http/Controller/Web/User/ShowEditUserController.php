@@ -54,6 +54,8 @@ final readonly class ShowEditUserController
             $userTeams = $this->queryBus->dispatch(new GetUserTeamsQuery($userId));
         }
 
+        $canEditEmail = $this->authorizationChecker->can($currentUserId, 'users.list.update');
+
         $canManageLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
         $canCreateLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.create');
 
@@ -83,6 +85,7 @@ final readonly class ShowEditUserController
 
         return view('users.edit', [
             'user' => $user,
+            'canEditEmail' => $canEditEmail,
             'canManageRoles' => $canManageRoles,
             'assignableRoles' => $assignableRoles,
             'userRoleIds' => $userRoleIds,

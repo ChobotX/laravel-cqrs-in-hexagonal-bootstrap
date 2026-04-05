@@ -6,17 +6,10 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Entity\Role;
-use App\Domain\Authorization\Contract\Query\GetAssignableRolesQuery;
-use App\Domain\Authorization\Contract\Query\GetAvailableModulesQuery;
-use App\Domain\Authorization\Contract\Query\GetOwnEffectivePermissionsQuery;
-use App\Domain\Authorization\Contract\Query\GetOwnOverridesQuery;
-use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Query\GetNotificationPreferencesQuery;
 use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
-use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
@@ -35,28 +28,7 @@ final readonly class ShowProfileController
         $userId = $this->authenticatedUser->id() ?? '';
 
         $user = $this->queryBus->dispatch(new GetOwnProfileQuery($userId));
-        $effectivePermissions = $this->queryBus->dispatch(new GetOwnEffectivePermissionsQuery($userId));
-        $modules = $this->queryBus->dispatch(new GetAvailableModulesQuery);
-        $userOverrides = $this->queryBus->dispatch(new GetOwnOverridesQuery($userId));
-
         $canEditEmail = $this->authorizationChecker->can($userId, 'users.list.update');
-
-        $canManageRoles = $this->authorizationChecker->can($userId, 'users.roles.read');
-        $assignableRoles = [];
-        $userRoleIds = [];
-
-        if ($canManageRoles) {
-            $assignableRoles = $this->queryBus->dispatch(new GetAssignableRolesQuery($userId));
-            $userRoles = $this->queryBus->dispatch(new GetUserRolesQuery($userId));
-            $userRoleIds = array_map(fn (Role $role): string => $role->id->value, $userRoles);
-        }
-
-        $canManageTeams = $this->authorizationChecker->can($userId, 'teams.members.update');
-        $userTeams = $canManageTeams
-            ? $this->queryBus->dispatch(new GetUserTeamsQuery($userId))
-            : [];
-
-        $canManageOverrides = $this->authorizationChecker->can($userId, 'users.roles.update');
 
         $notificationPreferences = $this->queryBus->dispatch(new GetNotificationPreferencesQuery($userId));
         $notificationPreferencesData = array_map(
@@ -71,15 +43,6 @@ final readonly class ShowProfileController
         return view('profile.edit', [
             'user' => $user,
             'canEditEmail' => $canEditEmail,
-            'canManageRoles' => $canManageRoles,
-            'assignableRoles' => $assignableRoles,
-            'userRoleIds' => $userRoleIds,
-            'canManageTeams' => $canManageTeams,
-            'userTeams' => $userTeams,
-            'effectivePermissions' => $effectivePermissions,
-            'modules' => $modules,
-            'userOverrides' => $userOverrides,
-            'canManageOverrides' => $canManageOverrides,
             'notificationPreferences' => $notificationPreferencesData,
         ]);
     }
