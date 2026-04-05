@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\ValueObject;
 
 use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\Enum\Feature;
 use App\Domain\Authorization\Exception\InvalidPermissionKeyException;
 use Stringable;
 

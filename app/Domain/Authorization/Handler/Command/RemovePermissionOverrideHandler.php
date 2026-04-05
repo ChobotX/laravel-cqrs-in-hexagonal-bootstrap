@@ -11,7 +11,7 @@ use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
 use DateTimeImmutable;

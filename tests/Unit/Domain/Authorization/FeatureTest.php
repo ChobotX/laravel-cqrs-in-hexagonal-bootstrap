@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Enum\Feature;
 use App\Domain\Authorization\Exception\InvalidPermissionKeyException;
+use App\Domain\Authorization\ValueObject\Feature;
 
 it('creates a valid feature', function (): void {
     $feature = new Feature('list');

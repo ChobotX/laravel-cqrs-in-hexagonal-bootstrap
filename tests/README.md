@@ -50,6 +50,11 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `ControllerDependenciesRule` | Controllers may only inject `CommandBus`, `QueryBus`, `AuthenticatedUser`, `AuthorizationChecker`, `IdGenerator`, `Guard` — no domain services or infrastructure |
 | `NoHttpExceptionsInInfrastructureRule` | Infrastructure must not throw Symfony HTTP exceptions — throw domain exceptions instead, Presentation translates |
 | `NoBusDispatchInControllerLoopsRule` | Controllers must not call `->dispatch()` inside foreach loops — use batch queries or aggregate commands instead |
+| `NoLooseFilesInDomainModuleRule` | No PHP classes directly at `Domain/{Module}/` root — must be in a typed subdirectory (`Handler/`, `ValueObject/`, `Enum/`, etc.) |
+| `NoLooseFilesInContractRule` | No PHP classes directly at `Domain/{Module}/Contract/` root — must be in a typed subdirectory (`Entity/`, `ValueObject/`, `Repository/`, etc.) |
+| `ContractSubdirectoryTypeEnforcementRule` | Enforces type constraints per Contract subdirectory: `Repository/`/`Service/` → interface, `Enum/` → enum, `Command/` → implements Command, etc. |
+| `DomainSubdirectoryTypeEnforcementRule` | Enforces type constraints per Domain subdirectory: `Enum/` → enum, `Handler/Command/` → implements CommandHandler, `EventHandler/` → implements DomainEventHandler, etc. Exempt: `Registry/Schema/` |
+| `NoDomainSpecificContractsInGlobalContractRule` | `App\Contract\` may only contain framework-level namespaces (Bus, Command, Query, Event, etc.) — domain-specific contracts must live in `Domain/{Module}/Contract/` |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
 

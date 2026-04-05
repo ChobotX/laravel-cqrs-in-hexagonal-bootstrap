@@ -15,7 +15,7 @@ use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\Enum\Feature;
+use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
 use App\Domain\Authorization\ValueObject\RoleName;

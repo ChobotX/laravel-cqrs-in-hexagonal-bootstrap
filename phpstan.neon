@@ -159,6 +159,26 @@ services:
         class: Tests\Architecture\PHPStan\NoBusDispatchInControllerLoopsRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoLooseFilesInDomainModuleRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoLooseFilesInContractRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\ContractSubdirectoryTypeEnforcementRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\DomainSubdirectoryTypeEnforcementRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoDomainSpecificContractsInGlobalContractRule
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:

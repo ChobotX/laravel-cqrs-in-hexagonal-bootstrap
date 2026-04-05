@@ -10,8 +10,8 @@ use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
 use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\Enum\Feature;
 use App\Domain\Authorization\Enum\OverrideType;
+use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
 

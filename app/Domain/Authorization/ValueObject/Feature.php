@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization\Enum;
+namespace App\Domain\Authorization\ValueObject;
 
 use App\Domain\Authorization\Exception\InvalidPermissionKeyException;
 use Stringable;
