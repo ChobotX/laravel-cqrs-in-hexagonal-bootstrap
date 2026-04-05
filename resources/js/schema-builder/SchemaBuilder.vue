@@ -2,28 +2,8 @@
 import { trans } from 'laravel-vue-i18n';
 import { onMounted, ref } from 'vue';
 import { error as logError } from '../logger/logger';
-
-interface FieldRow {
-    name: string;
-    label: string;
-    type: string;
-    required: boolean;
-    multiline: boolean;
-    referenceNamespace: string;
-    referenceSlug: string;
-    fileNamespace: string;
-    fileMimeTypes: string;
-    fileMaxSize: string;
-    minItems: string;
-    maxItems: string;
-    subFields: FieldRow[];
-}
-
-interface DefinitionOption {
-    namespace: string;
-    slug: string;
-    name: string;
-}
+import FieldConfigDrawer from './FieldConfigDrawer.vue';
+import type { DefinitionOption, FieldRow } from './types';
 
 const FIELD_TYPE_VALUES = [
     'string',
@@ -111,6 +91,14 @@ function createEmptyField(): FieldRow {
         type: 'string',
         required: false,
         multiline: false,
+        minLength: '',
+        maxLength: '',
+        pattern: '',
+        min: '',
+        max: '',
+        step: '',
+        minDate: '',
+        maxDate: '',
         referenceNamespace: '',
         referenceSlug: '',
         fileNamespace: '',
@@ -119,11 +107,14 @@ function createEmptyField(): FieldRow {
         minItems: '',
         maxItems: '',
         subFields: [],
+        placeholder: '',
+        helpText: '',
+        defaultValue: '',
     };
 }
 
 const fields = ref<FieldRow[]>([createEmptyField()]);
-
+const configField = ref<FieldRow | null>(null);
 const isSubmitting = ref(false);
 
 function addField(): void {
@@ -141,6 +132,22 @@ function addSubField(parent: FieldRow): void {
 
 function removeSubField(parent: FieldRow, index: number): void {
     parent.subFields.splice(index, 1);
+}
+
+const TYPE_CONFIG_CHECKS: Record<string, (f: FieldRow) => boolean> = {
+    string: (f) => !!(f.minLength || f.maxLength || f.pattern || f.multiline),
+    integer: (f) => !!(f.min || f.max || f.step),
+    number: (f) => !!(f.min || f.max || f.step),
+    date: (f) => !!(f.minDate || f.maxDate),
+    file: (f) => !!(f.fileMimeTypes || f.fileMaxSize),
+    repeater: (f) => !!(f.minItems || f.maxItems),
+};
+
+function hasCustomConfig(field: FieldRow): boolean {
+    if (field.placeholder || field.helpText) return true;
+    if (field.defaultValue !== '' && field.defaultValue !== false) return true;
+
+    return TYPE_CONFIG_CHECKS[field.type]?.(field) ?? false;
 }
 
 function applyReferenceProps(field: Record<string, unknown>, f: FieldRow): void {
@@ -162,7 +169,37 @@ function applyCompositeProps(field: Record<string, unknown>, f: FieldRow): void 
     }
 }
 
+function applyStringProps(field: Record<string, unknown>, f: FieldRow): void {
+    if (f.multiline) field.multiline = true;
+    if (f.minLength) field.minLength = Number(f.minLength);
+    if (f.maxLength) field.maxLength = Number(f.maxLength);
+    if (f.pattern) field.pattern = f.pattern;
+    if (f.defaultValue) field.defaultValue = f.defaultValue;
+}
+
+function applyNumericProps(field: Record<string, unknown>, f: FieldRow): void {
+    if (f.min) field.min = Number(f.min);
+    if (f.max) field.max = Number(f.max);
+    if (f.step) field.step = Number(f.step);
+    if (f.defaultValue) field.defaultValue = Number(f.defaultValue);
+}
+
+function applyDateProps(field: Record<string, unknown>, f: FieldRow): void {
+    if (f.minDate) field.minDate = f.minDate;
+    if (f.maxDate) field.maxDate = f.maxDate;
+    if (f.defaultValue) field.defaultValue = f.defaultValue;
+}
+
+function applyBooleanProps(field: Record<string, unknown>, f: FieldRow): void {
+    if (f.defaultValue === true || f.defaultValue === 'true') field.defaultValue = true;
+}
+
 const TYPE_ENHANCERS: Record<string, (field: Record<string, unknown>, f: FieldRow) => void> = {
+    string: applyStringProps,
+    integer: applyNumericProps,
+    number: applyNumericProps,
+    date: applyDateProps,
+    boolean: applyBooleanProps,
     reference: applyReferenceProps,
     file: applyFileProps,
     repeater: applyCompositeProps,
@@ -179,8 +216,11 @@ function buildFieldPayload(f: FieldRow): Record<string, unknown> | null {
         required: f.required,
     };
 
-    if (f.type === 'string' && f.multiline) field.multiline = true;
     TYPE_ENHANCERS[f.type]?.(field, f);
+
+    if (f.placeholder) field.placeholder = f.placeholder;
+    if (f.helpText) field.helpText = f.helpText;
+
     return field;
 }
 
@@ -275,19 +315,14 @@ const checkboxClasses =
                         <option v-for="ft in fieldTypeOptions()" :key="ft.value" :value="ft.value">{{ ft.label }}</option>
                     </select>
                 </div>
-                <div class="flex items-end pb-2">
-                    <label class="inline-flex cursor-pointer items-center gap-1.5">
+                <div>
+                    <span class="mb-1 block h-4">&nbsp;</span>
+                    <label class="inline-flex h-[38px] cursor-pointer items-center gap-1.5">
                         <input v-model="field.required" type="checkbox" :class="checkboxClasses" />
                         <span class="text-xs font-medium text-gray-600">{{ t('field_required') }}</span>
                     </label>
                 </div>
-                <div v-if="field.type === 'string'" class="flex items-end pb-2">
-                    <label class="inline-flex cursor-pointer items-center gap-1.5">
-                        <input v-model="field.multiline" type="checkbox" :class="checkboxClasses" />
-                        <span class="text-xs font-medium text-gray-600">{{ t('multiline') }}</span>
-                    </label>
-                </div>
-                <!-- Reference: definition picker -->
+                <!-- Reference: definition picker stays inline -->
                 <div v-if="field.type === 'reference'" class="w-56">
                     <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('select_definition') }}</label>
                     <select
@@ -301,46 +336,51 @@ const checkboxClasses =
                         </option>
                     </select>
                 </div>
-                <!-- File: namespace datalist + options -->
-                <template v-if="field.type === 'file'">
-                    <div class="w-36">
-                        <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('file_namespace') }}</label>
-                        <input v-model="field.fileNamespace" :class="inputClasses" type="text" :list="`ns-${index}`" />
-                        <datalist :id="`ns-${index}`">
-                            <option v-for="ns in namespaces" :key="ns" :value="ns" />
-                        </datalist>
+                <!-- File: namespace stays inline -->
+                <div v-if="field.type === 'file'" class="w-36">
+                    <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('file_namespace') }}</label>
+                    <input v-model="field.fileNamespace" :class="inputClasses" type="text" :list="`ns-${index}`" />
+                    <datalist :id="`ns-${index}`">
+                        <option v-for="ns in namespaces" :key="ns" :value="ns" />
+                    </datalist>
+                </div>
+                <!-- Configure button -->
+                <div>
+                    <span class="mb-1 block h-4">&nbsp;</span>
+                    <div class="flex h-[38px] items-center">
+                        <button
+                            type="button"
+                            class="relative cursor-pointer rounded p-1.5 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                            :title="t('configure_field')"
+                            @click="configField = field"
+                        >
+                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                            <span
+                                v-if="hasCustomConfig(field)"
+                                class="absolute -top-0.5 -right-0.5 size-2.5 rounded-full bg-indigo-500"
+                            />
+                        </button>
                     </div>
-                    <div class="w-40">
-                        <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('file_mime_types') }}</label>
-                        <input v-model="field.fileMimeTypes" :class="inputClasses" type="text" placeholder="image/jpeg, application/pdf" />
+                </div>
+                <!-- Delete button -->
+                <div>
+                    <span class="mb-1 block h-4">&nbsp;</span>
+                    <div class="flex h-[38px] items-center">
+                        <button
+                            type="button"
+                            class="cursor-pointer rounded p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            :disabled="fields.length <= 1"
+                            :title="t('remove_field')"
+                            @click="removeField(index)"
+                        >
+                            <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
-                    <div class="w-28">
-                        <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('file_max_size') }}</label>
-                        <input v-model="field.fileMaxSize" :class="inputClasses" type="number" min="0" placeholder="5242880" />
-                    </div>
-                </template>
-                <template v-if="field.type === 'repeater'">
-                    <div class="w-20">
-                        <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('min_items') }}</label>
-                        <input v-model="field.minItems" :class="inputClasses" type="number" min="0" placeholder="0" />
-                    </div>
-                    <div class="w-20">
-                        <label class="mb-1 block text-xs font-medium text-gray-600">{{ t('max_items') }}</label>
-                        <input v-model="field.maxItems" :class="inputClasses" type="number" min="0" />
-                    </div>
-                </template>
-                <div class="flex items-end pb-1">
-                    <button
-                        type="button"
-                        class="cursor-pointer rounded p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                        :disabled="fields.length <= 1"
-                        :title="t('remove_field')"
-                        @click="removeField(index)"
-                    >
-                        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                        </svg>
-                    </button>
                 </div>
             </div>
 
@@ -368,16 +408,46 @@ const checkboxClasses =
                             <input v-model="sub.required" type="checkbox" :class="checkboxClasses" />
                             <span class="text-xs text-gray-500">{{ t('field_required') }}</span>
                         </label>
-                        <!-- Sub-field: string multiline -->
-                        <div v-if="sub.type === 'string'" class="flex items-center gap-1 pt-2">
-                            <label class="inline-flex cursor-pointer items-center gap-1">
-                                <input v-model="sub.multiline" type="checkbox" :class="checkboxClasses" />
-                                <span class="text-xs text-gray-500">{{ t('multiline') }}</span>
-                            </label>
+                        <!-- Sub-field: reference picker inline -->
+                        <div v-if="sub.type === 'reference'" class="w-48">
+                            <select
+                                class="w-full rounded-lg border border-gray-300 px-2 py-1.5 text-xs shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600"
+                                :value="referenceValue(sub)"
+                                @change="onReferenceSelected(sub, ($event.target as HTMLSelectElement).value)"
+                            >
+                                <option value="">— {{ t('select_definition') }} —</option>
+                                <option v-for="def in definitions" :key="`${def.namespace}/${def.slug}`" :value="`${def.namespace}/${def.slug}`">
+                                    {{ def.name }} ({{ def.namespace }}/{{ def.slug }})
+                                </option>
+                            </select>
                         </div>
+                        <!-- Sub-field: file namespace inline -->
+                        <div v-if="sub.type === 'file'" class="w-32">
+                            <input v-model="sub.fileNamespace" :class="inputClasses" type="text" :list="`sub-ns-${index}-${subIndex}`" :placeholder="t('file_namespace')" />
+                            <datalist :id="`sub-ns-${index}-${subIndex}`">
+                                <option v-for="ns in namespaces" :key="ns" :value="ns" />
+                            </datalist>
+                        </div>
+                        <!-- Sub-field: configure -->
                         <button
                             type="button"
-                            class="cursor-pointer rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
+                            class="relative mt-1.5 cursor-pointer rounded p-1 text-gray-400 transition-colors hover:bg-indigo-50 hover:text-indigo-600"
+                            :title="t('configure_field')"
+                            @click="configField = sub"
+                        >
+                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                            <span
+                                v-if="hasCustomConfig(sub)"
+                                class="absolute -top-0.5 -right-0.5 size-2 rounded-full bg-indigo-500"
+                            />
+                        </button>
+                        <!-- Sub-field: delete -->
+                        <button
+                            type="button"
+                            class="mt-1.5 cursor-pointer rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
                             :title="t('remove_field')"
                             :aria-label="t('remove_field')"
                             @click="removeSubField(field, subIndex)"
@@ -386,37 +456,6 @@ const checkboxClasses =
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                             </svg>
                         </button>
-                    </div>
-                    <!-- Sub-field: reference picker -->
-                    <div v-if="sub.type === 'reference'" class="flex items-center gap-2 pl-1">
-                        <select
-                            class="w-56 rounded-lg border border-gray-300 px-2 py-1.5 text-xs shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600"
-                            :value="referenceValue(sub)"
-                            @change="onReferenceSelected(sub, ($event.target as HTMLSelectElement).value)"
-                        >
-                            <option value="">— {{ t('select_definition') }} —</option>
-                            <option v-for="def in definitions" :key="`${def.namespace}/${def.slug}`" :value="`${def.namespace}/${def.slug}`">
-                                {{ def.name }} ({{ def.namespace }}/{{ def.slug }})
-                            </option>
-                        </select>
-                    </div>
-                    <!-- Sub-field: file options -->
-                    <div v-if="sub.type === 'file'" class="flex flex-wrap items-start gap-2 pl-1">
-                        <div class="w-32">
-                            <label class="mb-0.5 block text-xs text-gray-400">{{ t('file_namespace') }}</label>
-                            <input v-model="sub.fileNamespace" :class="inputClasses" type="text" :list="`sub-ns-${index}-${subIndex}`" />
-                            <datalist :id="`sub-ns-${index}-${subIndex}`">
-                                <option v-for="ns in namespaces" :key="ns" :value="ns" />
-                            </datalist>
-                        </div>
-                        <div class="w-36">
-                            <label class="mb-0.5 block text-xs text-gray-400">{{ t('file_mime_types') }}</label>
-                            <input v-model="sub.fileMimeTypes" :class="inputClasses" type="text" placeholder="image/jpeg" />
-                        </div>
-                        <div class="w-24">
-                            <label class="mb-0.5 block text-xs text-gray-400">{{ t('file_max_size') }}</label>
-                            <input v-model="sub.fileMaxSize" :class="inputClasses" type="number" min="0" />
-                        </div>
                     </div>
                 </div>
                 <button
@@ -446,5 +485,14 @@ const checkboxClasses =
                 {{ t('create_action') }}
             </button>
         </div>
+
+        <!-- Config drawer -->
+        <FieldConfigDrawer
+            v-if="configField"
+            :field="configField"
+            :definitions="definitions"
+            :namespaces="namespaces"
+            @close="configField = null"
+        />
     </div>
 </template>

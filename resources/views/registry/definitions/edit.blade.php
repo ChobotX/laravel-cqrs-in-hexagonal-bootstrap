@@ -10,7 +10,7 @@
         ['label' => __('messages.registry.definitions.edit')],
     ]" />
 
-    <div class="max-w-4xl">
+    <div>
         {{-- Update name --}}
         <div class="mb-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
             <div class="border-b border-gray-200 px-6 py-4">
@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <form class="space-y-5 p-6"
+            <form class="grid grid-cols-1 gap-x-6 gap-y-5 p-6 md:grid-cols-2 xl:grid-cols-4"
                   method="POST"
                   action="{{ route('registry.definitions.update', [$definition->namespace, $definition->slug]) }}">
                 @csrf
@@ -44,7 +44,7 @@
                     @enderror
                 </div>
 
-                <div class="flex items-center gap-3 pt-2">
+                <div class="col-span-full flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
                                       :label="__('messages.registry.definitions.update_name')" />
                     <x-primary-button skip-permission

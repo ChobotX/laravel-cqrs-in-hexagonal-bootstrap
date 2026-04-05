@@ -164,7 +164,7 @@ onMounted(() => {
 });
 
 const inputClasses =
-    'block w-full max-w-md rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm';
+    'block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm';
 const labelClasses = 'mb-1.5 block text-base font-medium text-gray-700 sm:text-sm';
 const errorClasses = 'mt-1 text-base text-red-600 sm:text-sm';
 const checkboxClasses =
@@ -172,8 +172,15 @@ const checkboxClasses =
 </script>
 
 <template>
-    <div v-if="parsed.properties" class="space-y-5">
-        <div v-for="(fieldSchema, fieldName) in parsed.properties" :key="fieldName">
+    <div v-if="parsed.properties" class="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2 xl:grid-cols-4">
+        <div
+            v-for="(fieldSchema, fieldName) in parsed.properties"
+            :key="fieldName"
+            :class="{
+                'col-span-full': getFieldType(fieldSchema) === 'repeater' || getFieldType(fieldSchema) === 'object',
+                'md:col-span-2': getFieldType(fieldSchema) === 'textarea',
+            }"
+        >
             <!-- String -->
             <div v-if="getFieldType(fieldSchema) === 'string'">
                 <label :class="labelClasses" :for="`field-${fieldName}`">
@@ -352,7 +359,7 @@ const checkboxClasses =
                 </div>
                 <input
                     :id="`field-${fieldName}`"
-                    class="block w-full max-w-md cursor-pointer text-sm text-gray-500 file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
+                    class="block w-full cursor-pointer text-sm text-gray-500 file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
                     :name="getInputName(String(fieldName))"
                     type="file"
                     :accept="getFileAccept(fieldSchema)"
@@ -435,9 +442,9 @@ const checkboxClasses =
                             </div>
                         </div>
                         <button
+                            v-if="getRepeaterRows(String(fieldName)).length > (fieldSchema.minItems ?? 0)"
                             type="button"
                             class="mt-6 cursor-pointer rounded p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-600"
-                            :disabled="getRepeaterRows(String(fieldName)).length <= (fieldSchema.minItems ?? 0)"
                             :aria-label="trans('messages.registry.versions.remove_field')"
                             @click="removeRepeaterRow(String(fieldName), rowIndex, fieldSchema)"
                         >
