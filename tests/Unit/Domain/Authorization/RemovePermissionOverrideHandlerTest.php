@@ -19,6 +19,10 @@ it('removes a permission override and emits event', function (): void {
         permission: 'users.list.read',
     ));
 
+    expect($userPermRepo->removedOverrides)->toHaveCount(1)
+        ->and($userPermRepo->removedOverrides[0]['userId'])->toBe('00000000-0000-0000-0000-000000000010')
+        ->and($userPermRepo->removedOverrides[0]['permission'])->toBe('users.list.read');
+
     expect($eventCollector->collected)->toHaveCount(1);
     expect($eventCollector->collected[0])->toBeInstanceOf(PermissionOverrideRemoved::class);
 

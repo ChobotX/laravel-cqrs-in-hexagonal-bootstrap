@@ -35,6 +35,39 @@ it('deletes a team and emits event', function (): void {
         ->and($eventCollector->collected[0])->toBeInstanceOf(TeamDeleted::class);
 });
 
+it('deletes a parent team leaving children orphaned', function (): void {
+    $parent = new Team(
+        new TeamId('550e8400-e29b-41d4-a716-446655440000'),
+        new TeamName('Engineering'),
+        new TeamSlug('engineering'),
+        'Parent',
+        null,
+    );
+    $child = new Team(
+        new TeamId('660e8400-e29b-41d4-a716-446655440000'),
+        new TeamName('Backend'),
+        new TeamSlug('backend'),
+        'Child',
+        new TeamId('550e8400-e29b-41d4-a716-446655440000'),
+    );
+
+    $teamRepo = new FakeTeamRepository([
+        '550e8400-e29b-41d4-a716-446655440000' => $parent,
+        '660e8400-e29b-41d4-a716-446655440000' => $child,
+    ]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new DeleteTeamHandler($teamRepo, $eventCollector);
+
+    $handler->handle(new DeleteTeamCommand('550e8400-e29b-41d4-a716-446655440000'));
+
+    expect($teamRepo->deleted)->toContain('550e8400-e29b-41d4-a716-446655440000');
+
+    $remainingChild = $teamRepo->findById(new TeamId('660e8400-e29b-41d4-a716-446655440000'));
+    assert($remainingChild instanceof Team);
+    expect($remainingChild->parentTeamId?->value)->toBe('550e8400-e29b-41d4-a716-446655440000');
+});
+
 it('throws when team not found', function (): void {
     $teamRepo = new FakeTeamRepository;
     $eventCollector = new FakeEventCollector;

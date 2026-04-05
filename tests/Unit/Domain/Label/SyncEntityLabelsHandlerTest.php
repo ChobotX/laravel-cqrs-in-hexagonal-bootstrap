@@ -109,6 +109,33 @@ it('does nothing when submitted matches current', function (): void {
     expect($eventCollector->collected)->toBeEmpty();
 });
 
+it('skips sync when submittedLabelIds is null', function (): void {
+    $labelA = createSyncLabel('00000000-0000-0000-0000-00000000000a', 'Label A');
+
+    $labelRepo = new FakeLabelRepository(
+        labels: ['00000000-0000-0000-0000-00000000000a' => $labelA],
+        assignments: [
+            ['labelId' => '00000000-0000-0000-0000-00000000000a', 'labelableId' => 'entity-1'],
+        ],
+    );
+    $eventCollector = new FakeEventCollector;
+    $syncEntityLabelsHandler = createSyncLabelsHandler($labelRepo, $eventCollector);
+
+    $syncEntityLabelsHandler->handle(new SyncEntityLabelsCommand(
+        entityId: 'entity-1',
+        entityType: 'users',
+        submittedLabelIds: null,
+        actingUserId: 'user-1',
+    ));
+
+    expect($eventCollector->collected)->toBeEmpty()
+        ->and($labelRepo->saved)->toBeEmpty()
+        ->and($labelRepo->deleted)->toBeEmpty();
+
+    $currentLabels = $labelRepo->findByLabelableId('entity-1');
+    expect($currentLabels)->toHaveCount(1);
+});
+
 it('skips sync when user lacks permission', function (): void {
     $labelA = createSyncLabel('00000000-0000-0000-0000-00000000000a', 'Label A');
 
@@ -128,5 +155,11 @@ it('skips sync when user lacks permission', function (): void {
         actingUserId: 'user-1',
     ));
 
-    expect($eventCollector->collected)->toBeEmpty();
+    expect($eventCollector->collected)->toBeEmpty()
+        ->and($labelRepo->saved)->toBeEmpty()
+        ->and($labelRepo->deleted)->toBeEmpty();
+
+    $currentLabels = $labelRepo->findByLabelableId('entity-1');
+    expect($currentLabels)->toHaveCount(1)
+        ->and($currentLabels[0]->id->value)->toBe('00000000-0000-0000-0000-00000000000a');
 });

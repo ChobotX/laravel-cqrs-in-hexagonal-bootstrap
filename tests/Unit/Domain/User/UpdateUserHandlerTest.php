@@ -66,6 +66,59 @@ it('collects an enriched UserUpdated event', function (): void {
         ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
 });
 
+it('saves an updated user with avatarFileId', function (): void {
+    $existing = new User(
+        new UserId('550e8400-e29b-41d4-a716-446655440000'),
+        new UserName('John Doe'),
+        new Email('john@example.com'),
+    );
+
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateUserHandler($repository, $eventCollector);
+
+    $handler->handle(new UpdateUserCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'john@example.com',
+        avatarFileId: '770e8400-e29b-41d4-a716-446655440000',
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->avatarFileId?->value)->toBe('770e8400-e29b-41d4-a716-446655440000');
+
+    $event = $eventCollector->collected[0];
+    assert($event instanceof UserUpdated);
+    expect($event->avatarFileId)->toBe('770e8400-e29b-41d4-a716-446655440000');
+});
+
+it('clears avatarFileId when set to null', function (): void {
+    $existing = new User(
+        new UserId('550e8400-e29b-41d4-a716-446655440000'),
+        new UserName('John Doe'),
+        new Email('john@example.com'),
+        new App\Domain\File\Contract\ValueObject\FileId('770e8400-e29b-41d4-a716-446655440000'),
+    );
+
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateUserHandler($repository, $eventCollector);
+
+    $handler->handle(new UpdateUserCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'john@example.com',
+    ));
+
+    expect($repository->saved[0]->avatarFileId)->toBeNull();
+
+    $event = $eventCollector->collected[0];
+    assert($event instanceof UserUpdated);
+    expect($event->avatarFileId)->toBeNull();
+});
+
 it('throws UserNotFoundException when user does not exist', function (): void {
     $repository = new FakeUserRepository;
     $eventCollector = new FakeEventCollector;
@@ -124,6 +177,33 @@ it('throws when email belongs to another user', function (): void {
         email: 'jane@example.com',
     ));
 })->throws(EmailAlreadyExistsException::class, 'A user with email [jane@example.com] already exists.');
+
+it('throws when email matches another user case-insensitively', function (): void {
+    $user1 = new User(
+        new UserId('550e8400-e29b-41d4-a716-446655440000'),
+        new UserName('John Doe'),
+        new Email('john@example.com'),
+    );
+    $user2 = new User(
+        new UserId('660e8400-e29b-41d4-a716-446655440000'),
+        new UserName('Jane Doe'),
+        new Email('jane@example.com'),
+    );
+
+    $repository = new FakeUserRepository([
+        '550e8400-e29b-41d4-a716-446655440000' => $user1,
+        '660e8400-e29b-41d4-a716-446655440000' => $user2,
+    ]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateUserHandler($repository, $eventCollector);
+
+    $handler->handle(new UpdateUserCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'Jane@Example.COM',
+    ));
+})->throws(EmailAlreadyExistsException::class);
 
 it('allows keeping the same email for the same user', function (): void {
     $existing = new User(

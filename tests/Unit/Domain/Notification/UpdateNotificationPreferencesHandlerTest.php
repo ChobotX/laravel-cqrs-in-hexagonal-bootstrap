@@ -69,7 +69,9 @@ it('enforces in_app channel is always present', function (): void {
 
     expect($prefRepo->saved)->toHaveCount(1);
     $saved = $prefRepo->saved[0];
-    expect($saved->preferences[0]->channels)->toBe([NotificationChannel::Email, NotificationChannel::InApp]);
+    expect($saved->preferences[0]->channels)->toContain(NotificationChannel::Email)
+        ->and($saved->preferences[0]->channels)->toContain(NotificationChannel::InApp)
+        ->and($saved->preferences[0]->channels)->toHaveCount(2);
 });
 
 it('throws on invalid level', function (): void {

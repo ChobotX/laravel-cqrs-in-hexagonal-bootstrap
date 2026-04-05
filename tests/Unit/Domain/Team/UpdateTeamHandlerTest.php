@@ -46,6 +46,25 @@ it('updates a team and emits event', function (): void {
         ->and($eventCollector->collected[0])->toBeInstanceOf(TeamUpdated::class);
 });
 
+it('allows keeping the same slug for the same team', function (): void {
+    $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+
+    $handler->handle(new UpdateTeamCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'New Name',
+        slug: 'engineering',
+        description: 'Changed description only',
+        parentTeamId: null,
+    ));
+
+    expect($teamRepo->saved)->toHaveCount(1)
+        ->and($teamRepo->saved[0]->name->value)->toBe('New Name')
+        ->and($teamRepo->saved[0]->slug->value)->toBe('engineering');
+});
+
 it('throws when team not found', function (): void {
     $teamRepo = new FakeTeamRepository;
     $eventCollector = new FakeEventCollector;

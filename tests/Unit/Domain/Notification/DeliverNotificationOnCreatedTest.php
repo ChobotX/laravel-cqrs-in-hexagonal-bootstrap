@@ -52,8 +52,13 @@ it('broadcasts notification and unread count for in_app channel', function (): v
     expect($broadcaster->broadcastedNotifications)->toHaveCount(1)
         ->and($broadcaster->broadcastedNotifications[0]['recipientId'])->toBe('660e8400-e29b-41d4-a716-446655440000')
         ->and($broadcaster->broadcastedNotifications[0]['notificationId'])->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($broadcaster->broadcastedNotifications[0]['title'])->toBe('Welcome!')
+        ->and($broadcaster->broadcastedNotifications[0]['body'])->toBe('Body')
+        ->and($broadcaster->broadcastedNotifications[0]['level'])->toBe('info')
+        ->and($broadcaster->broadcastedNotifications[0]['link'])->toBeNull()
         ->and($broadcaster->broadcastedUnreadCounts)->toHaveCount(1)
-        ->and($broadcaster->broadcastedUnreadCounts[0]['recipientId'])->toBe('660e8400-e29b-41d4-a716-446655440000');
+        ->and($broadcaster->broadcastedUnreadCounts[0]['recipientId'])->toBe('660e8400-e29b-41d4-a716-446655440000')
+        ->and($broadcaster->broadcastedUnreadCounts[0]['count'])->toBe(1);
 });
 
 it('skips broadcast for non in_app channel', function (): void {

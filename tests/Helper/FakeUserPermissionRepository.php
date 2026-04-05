@@ -26,6 +26,9 @@ final class FakeUserPermissionRepository implements UserPermissionRepository
     /** @var list<array{userId: string, roleId: string}> */
     public array $revokedRoles = [];
 
+    /** @var list<array{userId: string, permission: string}> */
+    public array $removedOverrides = [];
+
     /** @var array<string, list<string>> */
     public array $userIdsByRole = [];
 
@@ -83,7 +86,10 @@ final class FakeUserPermissionRepository implements UserPermissionRepository
         AccessScope $accessScope,
     ): void {}
 
-    public function removeOverride(string $userId, PermissionKey $permissionKey): void {}
+    public function removeOverride(string $userId, PermissionKey $permissionKey): void
+    {
+        $this->removedOverrides[] = ['userId' => $userId, 'permission' => (string) $permissionKey];
+    }
 
     /** @return list<string> */
     public function userIdsWithRole(RoleId $roleId): array

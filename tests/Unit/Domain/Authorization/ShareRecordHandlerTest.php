@@ -41,3 +41,43 @@ it('shares a record and emits event', function (): void {
     expect($event->action)->toBe('read');
     expect($event->grantorUserId)->toBe('00000000-0000-0000-0000-000000000001');
 });
+
+it('allows sharing a record with oneself', function (): void {
+    $recordShareRepo = new FakeRecordShareRepository;
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new ShareRecordHandler($recordShareRepo, $eventCollector);
+
+    $handler->handle(new ShareRecordCommand(
+        granteeUserId: '00000000-0000-0000-0000-000000000001',
+        resourceType: 'contact',
+        resourceId: '00000000-0000-0000-0000-000000000099',
+        action: 'read',
+        grantorUserId: '00000000-0000-0000-0000-000000000001',
+    ));
+
+    expect($recordShareRepo->shared)->toHaveCount(1)
+        ->and($recordShareRepo->shared[0]->granteeUserId)->toBe('00000000-0000-0000-0000-000000000001')
+        ->and($recordShareRepo->shared[0]->grantorUserId)->toBe('00000000-0000-0000-0000-000000000001');
+});
+
+it('allows duplicate sharing of same record', function (): void {
+    $recordShareRepo = new FakeRecordShareRepository;
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new ShareRecordHandler($recordShareRepo, $eventCollector);
+
+    $command = new ShareRecordCommand(
+        granteeUserId: '00000000-0000-0000-0000-000000000010',
+        resourceType: 'contact',
+        resourceId: '00000000-0000-0000-0000-000000000099',
+        action: 'read',
+        grantorUserId: '00000000-0000-0000-0000-000000000001',
+    );
+
+    $handler->handle($command);
+    $handler->handle($command);
+
+    expect($recordShareRepo->shared)->toHaveCount(2)
+        ->and($eventCollector->collected)->toHaveCount(2);
+});

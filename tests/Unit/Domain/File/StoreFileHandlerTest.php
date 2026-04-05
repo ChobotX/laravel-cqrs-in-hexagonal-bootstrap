@@ -91,4 +91,15 @@ it('increments version for same namespace and name', function (): void {
     expect($fileRepo->saved)->toHaveCount(1)
         ->and($fileRepo->saved[0]->version->value)->toBe(2)
         ->and($event->version)->toBe(2);
+
+    $versions = $fileRepo->findVersions(
+        new App\Domain\File\ValueObject\FileNamespace('documents'),
+        new FileName('report.pdf'),
+    );
+
+    expect($versions)->toHaveCount(2)
+        ->and($versions[0]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($versions[0]->version->value)->toBe(1)
+        ->and($versions[1]->id->value)->toBe('770e8400-e29b-41d4-a716-446655440000')
+        ->and($versions[1]->version->value)->toBe(2);
 });

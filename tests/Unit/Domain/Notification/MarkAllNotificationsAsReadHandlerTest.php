@@ -74,6 +74,66 @@ it('collects AllNotificationsRead event', function (): void {
         ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
 });
 
+it('marks multiple unread notifications including mix of read and unread', function (): void {
+    $unread1 = new Notification(
+        id: new NotificationId('00000000-0000-0000-0000-000000000001'),
+        recipientId: '550e8400-e29b-41d4-a716-446655440000',
+        type: new NotificationType('test.notification'),
+        title: 'Unread 1',
+        body: 'Body',
+        level: NotificationLevel::Info,
+        link: null,
+        channel: NotificationChannel::InApp,
+        isRead: false,
+        createdAt: new DateTimeImmutable('2026-01-01 00:00:00'),
+        readAt: null,
+    );
+    $unread2 = new Notification(
+        id: new NotificationId('00000000-0000-0000-0000-000000000002'),
+        recipientId: '550e8400-e29b-41d4-a716-446655440000',
+        type: new NotificationType('test.notification'),
+        title: 'Unread 2',
+        body: 'Body',
+        level: NotificationLevel::Warning,
+        link: null,
+        channel: NotificationChannel::InApp,
+        isRead: false,
+        createdAt: new DateTimeImmutable('2026-01-02 00:00:00'),
+        readAt: null,
+    );
+    $alreadyRead = new Notification(
+        id: new NotificationId('00000000-0000-0000-0000-000000000003'),
+        recipientId: '550e8400-e29b-41d4-a716-446655440000',
+        type: new NotificationType('test.notification'),
+        title: 'Already Read',
+        body: 'Body',
+        level: NotificationLevel::Info,
+        link: null,
+        channel: NotificationChannel::InApp,
+        isRead: true,
+        createdAt: new DateTimeImmutable('2026-01-01 00:00:00'),
+        readAt: new DateTimeImmutable('2026-01-01 01:00:00'),
+    );
+
+    $repo = new FakeNotificationRepository([
+        '00000000-0000-0000-0000-000000000001' => $unread1,
+        '00000000-0000-0000-0000-000000000002' => $unread2,
+        '00000000-0000-0000-0000-000000000003' => $alreadyRead,
+    ]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new MarkAllNotificationsAsReadHandler($repo, $eventCollector);
+
+    $handler->handle(new MarkAllNotificationsAsReadCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+    ));
+
+    expect($repo->markedAllAsReadForRecipients)->toHaveCount(1)
+        ->and($repo->markedAllAsReadForRecipients[0])->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($eventCollector->collected)->toHaveCount(1)
+        ->and($eventCollector->collected[0])->toBeInstanceOf(AllNotificationsRead::class);
+});
+
 it('skips event when no unread notifications exist', function (): void {
     $repo = new FakeNotificationRepository;
     $eventCollector = new FakeEventCollector;

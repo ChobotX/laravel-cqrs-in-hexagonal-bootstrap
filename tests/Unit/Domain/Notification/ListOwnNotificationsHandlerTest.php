@@ -79,7 +79,25 @@ it('uses provided pagination', function (): void {
 });
 
 it('uses provided sorting', function (): void {
-    $repo = new FakeNotificationRepository;
+    $notification = createNotificationFixture('550e8400-e29b-41d4-a716-446655440001', '660e8400-e29b-41d4-a716-446655440000');
+    $newer = new Notification(
+        id: new NotificationId('550e8400-e29b-41d4-a716-446655440002'),
+        recipientId: '660e8400-e29b-41d4-a716-446655440000',
+        type: new NotificationType('user.welcome'),
+        title: 'Newer',
+        body: 'Body',
+        level: NotificationLevel::Info,
+        link: null,
+        channel: NotificationChannel::InApp,
+        isRead: false,
+        createdAt: new DateTimeImmutable('2026-01-16T10:00:00+00:00'),
+        readAt: null,
+    );
+
+    $repo = new FakeNotificationRepository([
+        '550e8400-e29b-41d4-a716-446655440001' => $notification,
+        '550e8400-e29b-41d4-a716-446655440002' => $newer,
+    ]);
 
     $handler = new ListOwnNotificationsHandler($repo);
 
@@ -89,7 +107,18 @@ it('uses provided sorting', function (): void {
 
     $paginatedResult = $handler->handle($listOwnNotificationsQuery);
 
-    expect($paginatedResult->total)->toBe(0);
+    expect($paginatedResult->items)->toHaveCount(2)
+        ->and($paginatedResult->items[0]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440001')
+        ->and($paginatedResult->items[1]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440002');
+
+    $descQuery = new ListOwnNotificationsQuery(
+        userId: '660e8400-e29b-41d4-a716-446655440000',
+    )->withSorting([new Sorting('created_at', SortDirection::Desc)]);
+
+    $descResult = $handler->handle($descQuery);
+
+    expect($descResult->items[0]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440002')
+        ->and($descResult->items[1]->id->value)->toBe('550e8400-e29b-41d4-a716-446655440001');
 });
 
 it('filters by isRead', function (): void {

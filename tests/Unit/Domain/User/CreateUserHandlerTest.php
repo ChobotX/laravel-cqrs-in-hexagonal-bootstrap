@@ -53,6 +53,46 @@ it('collects an enriched UserCreated event', function (): void {
         ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
 });
 
+it('saves a user with avatarFileId', function (): void {
+    $repository = new FakeUserRepository;
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new CreateUserHandler($repository, $eventCollector);
+
+    $handler->handle(new CreateUserCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'john@example.com',
+        avatarFileId: '770e8400-e29b-41d4-a716-446655440000',
+    ));
+
+    expect($repository->saved)->toHaveCount(1)
+        ->and($repository->saved[0]->avatarFileId?->value)->toBe('770e8400-e29b-41d4-a716-446655440000');
+
+    $event = $eventCollector->collected[0];
+    assert($event instanceof UserCreated);
+    expect($event->avatarFileId)->toBe('770e8400-e29b-41d4-a716-446655440000');
+});
+
+it('saves a user with null avatarFileId', function (): void {
+    $repository = new FakeUserRepository;
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new CreateUserHandler($repository, $eventCollector);
+
+    $handler->handle(new CreateUserCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'john@example.com',
+    ));
+
+    expect($repository->saved[0]->avatarFileId)->toBeNull();
+
+    $event = $eventCollector->collected[0];
+    assert($event instanceof UserCreated);
+    expect($event->avatarFileId)->toBeNull();
+});
+
 it('throws when name is empty', function (): void {
     $repository = new FakeUserRepository;
     $eventCollector = new FakeEventCollector;

@@ -84,6 +84,14 @@ it('matches diacritics term against ascii name', function (): void {
         ->and($result[0]->name->value)->toBe('Ondřej Černý');
 });
 
+it('returns all users for empty search term', function (): void {
+    $handler = new SearchUsersHandler(searchUsersRepository());
+
+    $result = $handler->handle(new SearchUsersQuery('', [], 10));
+
+    expect($result)->toHaveCount(4);
+});
+
 it('returns User scope target', function (): void {
     $query = new SearchUsersQuery('test', []);
 

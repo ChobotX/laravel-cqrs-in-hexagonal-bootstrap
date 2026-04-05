@@ -64,9 +64,20 @@ it('throws when label with same namespace and name already exists', function ():
 
     $handler = new CreateLabelHandler($repository, $eventCollector);
 
-    $handler->handle(new CreateLabelCommand(
-        id: '550e8400-e29b-41d4-a716-446655440000',
-        namespace: 'users',
-        name: 'important',
-    ));
-})->throws(LabelAlreadyExistsException::class, 'A label [important] already exists in namespace [users].');
+    $thrown = false;
+
+    try {
+        $handler->handle(new CreateLabelCommand(
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            namespace: 'users',
+            name: 'important',
+        ));
+    } catch (LabelAlreadyExistsException $labelAlreadyExistsException) {
+        $thrown = true;
+        expect($labelAlreadyExistsException->getMessage())->toBe('A label [important] already exists in namespace [users].')
+            ->and($repository->saved)->toBeEmpty()
+            ->and($eventCollector->collected)->toBeEmpty();
+    }
+
+    expect($thrown)->toBeTrue();
+});
