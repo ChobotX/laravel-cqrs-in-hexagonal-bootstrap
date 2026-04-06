@@ -57,11 +57,13 @@
                                 <td class="px-6 py-4 pl-10">
                                     <div>
                                         <div class="flex items-baseline gap-2">
-                                            <span class="text-sm font-medium text-gray-900">{{ __($flag->definition->label) }}</span>
+                                            <span
+                                                  class="text-sm font-medium text-gray-900">{{ __($flag->definition->label) }}</span>
                                             <code
                                                   class="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">{{ $flag->definition->key->value }}</code>
                                         </div>
-                                        <p class="mt-0.5 text-xs text-gray-400">{{ __($flag->definition->description) }}</p>
+                                        <p class="mt-0.5 text-xs text-gray-400">{{ __($flag->definition->description) }}
+                                        </p>
                                     </div>
                                 </td>
                                 <td class="px-6 py-4">

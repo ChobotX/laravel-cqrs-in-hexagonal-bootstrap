@@ -28,7 +28,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 
 ## Critical rules before touching code
 
-1. **Run via Sail** — `./vendor/bin/sail composer check-and-fix` for development (auto-fixes then verifies). `./vendor/bin/sail composer check` for CI (check-only, no modifications). Append `-- --frontend` or `-- --backend` to run only one side. Never run PHP on host.
+1. **Run via Sail** — `./vendor/bin/sail composer check-and-fix` for development (auto-fixes then verifies). `./vendor/bin/sail composer check` for CI (check-only, no modifications). Append `-- --frontend` or `-- --backend` to run only one side. Never run PHP on host. In Claude Code sessions, prefer the `/qa` skill for smart targeted checks on changed files only — it auto-detects what changed and runs the minimum required checks.
 2. **`composer check` must pass** — linting & static analysis (pint, blade-formatter, blade lint, biome, rector, phpstan, vite build) then tests & per-layer 100% coverage, all in parallel waves. No warnings, no baselines, no ignores.
 3. **Permission attributes required** — every Command/Query and every Controller needs `#[RequiresPermission]` or `#[SkipPermissionCheck]`.
 4. **No cross-domain imports** — `App\Domain\{A}` must not import from `App\Domain\{B}`. Use QueryBus.
