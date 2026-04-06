@@ -140,6 +140,12 @@ All Feature tests use `RefreshDatabase` applied once in `Pest.php`. Individual t
 **Why:** Centralized config prevents accidental non-transactional traits that break parallel test execution and database isolation.
 **Enforced by:** PHPStan rule `NoDatabaseTraitsInTestsRule`. See [tests/README.md](tests/README.md).
 
+### Every command handler must collect domain events
+
+Every `CommandHandler` must inject `EventCollector` and fire at least one domain event. Handlers that legitimately produce no events (infrastructure provisioning, data initialization) must declare `#[SkipDomainEvent(reason: '...')]`.
+**Why:** Domain events are the backbone of cross-domain communication, audit logging, and webhook delivery. Silent commands — those that mutate state without signaling — are invisible to the rest of the system. Requiring an explicit opt-out forces a conscious decision.
+**Enforced by:** PHPStan rule `CommandHandlerMustCollectEventsRule`. See [app/Domain/README.md](app/Domain/README.md).
+
 ### Command bus transaction wrapper
 
 All command handler execution (including event job insertion) is wrapped in a database transaction by the `WrapInTransaction` bus middleware. Nested `DB::transaction()` calls (from repositories or inner command dispatches) create PostgreSQL SAVEPOINTs. Commands can opt out with `#[SkipTransaction(reason: '...')]` (e.g. tenancy commands that write to the `landlord` connection or run DDL/migrations).

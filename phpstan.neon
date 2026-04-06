@@ -84,6 +84,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\CommandHandlerMustCollectEventsRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\ControllerRequiresPermissionRule
         tags:
             - phpstan.rules.rule

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Handler\Command;
 
+use App\Application\Bus\SkipDomainEvent;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
@@ -21,6 +22,7 @@ use App\Domain\Authorization\ValueObject\PermissionKey;
 use App\Domain\Authorization\ValueObject\RoleName;
 
 /** @implements CommandHandler<SeedDefaultRolesCommand> */
+#[SkipDomainEvent(reason: 'Data initialization — seeds default roles during setup, no domain events needed')]
 final readonly class SeedDefaultRolesHandler implements CommandHandler
 {
     /**

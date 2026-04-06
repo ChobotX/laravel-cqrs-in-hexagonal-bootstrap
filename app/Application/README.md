@@ -32,6 +32,10 @@ Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus
 
 - `App\Application\Bus\SkipTransaction` — attribute opting a command out of the `WrapInTransaction` bus middleware. Requires a `reason` string. Use for commands that write to a different connection (e.g. landlord), run DDL/migrations, or manage their own transactions.
 
+## Domain event control
+
+- `App\Application\Bus\SkipDomainEvent` — attribute opting a command handler out of the `CommandHandlerMustCollectEventsRule` enforcement. Requires a `reason` string. Use for handlers that legitimately produce no domain events (infrastructure provisioning, data initialization).
+
 ## Authorization attributes and interfaces
 
 - `App\Application\Authorization\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.

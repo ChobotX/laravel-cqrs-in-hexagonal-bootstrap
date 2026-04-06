@@ -58,7 +58,7 @@ Override root path (useful for CI with non-standard working directories):
 1. Create domain directory: `app/Domain/{Context}/`
 2. Add commands/queries with handlers — see [app/Domain/README.md](app/Domain/README.md) for CQRS walkthrough
 3. Register handlers in `app/Infrastructure/Provider/BusServiceProvider.php` — see [app/Infrastructure/README.md](app/Infrastructure/README.md)
-4. Add `#[RequiresPermission]` or `#[SkipPermissionCheck]` to every Command/Query — see [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md). Commands are automatically wrapped in a database transaction; add `#[SkipTransaction(reason: '...')]` for commands that must opt out (DDL, cross-connection writes).
+4. Add `#[RequiresPermission]` or `#[SkipPermissionCheck]` to every Command/Query — see [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md). Commands are automatically wrapped in a database transaction; add `#[SkipTransaction(reason: '...')]` for commands that must opt out (DDL, cross-connection writes). Command handlers must inject `EventCollector` and fire at least one domain event; add `#[SkipDomainEvent(reason: '...')]` to the handler for legitimate exceptions (infrastructure provisioning, data initialization).
 5. Add API controllers in `app/Presentation/Http/Controller/Api/V1/` and web controllers in `app/Presentation/Http/Controller/Web/` — see [app/Presentation/README.md](app/Presentation/README.md)
 6. Write tests, ensure 100% coverage across all layers
 

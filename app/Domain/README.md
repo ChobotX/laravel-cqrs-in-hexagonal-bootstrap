@@ -32,6 +32,7 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 - **Contract subdirectory types enforced** — `Repository/` and `Service/` must contain interfaces, `Enum/` must contain enums, `Command/`/`Query/`/`Event/`/`Exception/` must implement their respective Contract interfaces (`ContractSubdirectoryTypeEnforcementRule`)
 - **Domain subdirectory types enforced** — `Enum/` must contain enums, `Handler/Command/` must implement `CommandHandler`, `Handler/Query/` must implement `QueryHandler`, `EventHandler/` must implement `DomainEventHandler`, `Middleware/` must implement `Middleware`, `Exception/` must implement `DomainException`. `Registry/Schema/` is exempt (`DomainSubdirectoryTypeEnforcementRule`)
 - **All handlers in Domain** — `CommandHandler`, `QueryHandler`, and `DomainEventHandler` implementations must live in `App\Domain\`; if a handler needs infrastructure, use a `Contract` interface (`HandlersInDomainRule`)
+- **Every command handler must collect domain events** — `CommandHandler` implementations must inject `EventCollector` and fire at least one event. Handlers that legitimately produce no events (infrastructure provisioning, data initialization) must declare `#[SkipDomainEvent(reason: '...')]` from `App\Application\Bus\SkipDomainEvent` (`CommandHandlerMustCollectEventsRule`)
 - **No `assert()` calls** in `App\` namespace — use proper exceptions (`NoAssertInAppRule`)
 - **No `mixed` native type** in `App\Domain` — parameters, return types, and properties must use specific types (`NoMixedInDomainRule`)
 - **100% test coverage** of `app/Domain/` enforced by `phpunit.domain-coverage.xml`
@@ -55,15 +56,21 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
    /** @implements CommandHandler<{Name}Command> */
    final readonly class {Name}Handler implements \App\Contract\Command\CommandHandler
    {
-       public function __construct(private SomeDependency $dep) {}
+       public function __construct(
+           private SomeDependency $dep,
+           private \App\Contract\Event\EventCollector $eventCollector,
+       ) {}
 
        public function handle(Command $command): void
        {
            // PHPStan resolves $command as {Name}Command via @implements
            // domain logic
+           $this->eventCollector->collect(new {Name}Event(...));
        }
    }
    ```
+
+   Every command handler must inject `EventCollector` and fire at least one domain event. For handlers that legitimately produce no events (infrastructure provisioning, data initialization), add `#[SkipDomainEvent(reason: '...')]` to the handler class. Enforced by `CommandHandlerMustCollectEventsRule`.
 
 3. Register in `app/Infrastructure/Provider/BusServiceProvider.php` (see [Infrastructure README](../Infrastructure/README.md)):
    ```php
