@@ -43,6 +43,28 @@ return [
         'sign_in' => 'Přihlásit se',
         'invalid_credentials' => 'Neplatné přihlašovací údaje.',
         'session_expired' => 'Vaše relace vypršela. Přihlaste se prosím znovu.',
+        'accept_invite' => 'Přijetí pozvánky',
+        'accept_invite_title' => 'Nastavte si heslo',
+        'accept_invite_subtitle' => 'Vítejte :name, nastavte si heslo pro aktivaci účtu.',
+        'confirm_password' => 'Potvrzení hesla',
+        'set_password' => 'Nastavit heslo',
+        'invite_accepted' => 'Váš účet byl aktivován.',
+        'forgot_password' => 'Zapomenuté heslo?',
+        'forgot_password_title' => 'Obnovení hesla',
+        'forgot_password_subtitle' => 'Zadejte svou e-mailovou adresu a my vám pošleme odkaz pro obnovení.',
+        'send_reset_link' => 'Odeslat odkaz pro obnovení',
+        'reset_link_sent' => 'Pokud účet s touto e-mailovou adresou existuje, odeslali jsme odkaz pro obnovení hesla.',
+        'reset_password' => 'Obnovit heslo',
+        'reset_password_title' => 'Nastavte nové heslo',
+        'reset_password_subtitle' => 'Zadejte své nové heslo.',
+        'password_reset_success' => 'Vaše heslo bylo obnoveno.',
+    ],
+
+    'email' => [
+        'invite_subject' => 'Byli jste pozváni',
+        'invite_body' => "Byli jste pozváni k připojení na platformu.\n\nKlikněte na odkaz níže pro nastavení hesla a aktivaci účtu:\n\n:link\n\nPlatnost odkazu vyprší za 72 hodin.",
+        'password_reset_subject' => 'Žádost o obnovení hesla',
+        'password_reset_body' => "Požádali jste o obnovení hesla.\n\nKlikněte na odkaz níže pro nastavení nového hesla:\n\n:link\n\nPlatnost odkazu vyprší za 60 minut.\n\nPokud jste o obnovení nežádali, můžete tento e-mail ignorovat.",
     ],
 
     'users' => [
@@ -70,6 +92,9 @@ return [
         'created' => 'Uživatel vytvořen.',
         'updated' => 'Uživatel aktualizován.',
         'deleted' => 'Uživatel smazán.',
+        'invite_resent' => 'Pozvánka byla znovu odeslána.',
+        'resend_invite' => 'Znovu odeslat pozvánku',
+        'pending_activation' => 'Tento uživatel si zatím neaktivoval svůj účet.',
         'no_role' => 'Bez role',
         'delete_confirm_title' => 'Smazat uživatele',
         'delete_confirm_message' => 'Opravdu chcete smazat uživatele :name? Tuto akci nelze vrátit zpět.',
@@ -263,6 +288,8 @@ return [
         'image_processing_error' => 'Zpracování obrázku selhalo.',
         'tenant_not_found' => 'Tenant [:identifier] nebyl nalezen.',
         'tenant_inactive' => 'Tenant [:identifier] je neaktivní.',
+        'invalid_password_reset_token' => 'Tento odkaz pro obnovení hesla je neplatný nebo vypršel.',
+        'user_already_activated' => 'Tento účet byl již aktivován.',
     ],
 
     'pagination' => [

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\User\Contract\Command;
 
 use App\Application\Authorization\SkipPermissionCheck;
+use App\Application\Bus\Sensitive;
 use App\Contract\Command\Command;
 
 #[SkipPermissionCheck(reason: 'Profile self-edit is available to all authenticated users')]
@@ -18,6 +19,7 @@ final readonly class UpdateProfileCommand implements Command
         public string $userId,
         public string $name,
         public ?string $email = null,
+        #[Sensitive]
         public ?string $rawPassword = null,
         public ?string $avatarFileId = null,
     ) {}

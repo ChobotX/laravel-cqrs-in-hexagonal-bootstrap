@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Presentation\Http\Controller\Web\Auth\AcceptInviteController;
+use App\Presentation\Http\Controller\Web\Auth\ForgotPasswordController;
 use App\Presentation\Http\Controller\Web\Auth\LoginController;
 use App\Presentation\Http\Controller\Web\Auth\LogoutController;
+use App\Presentation\Http\Controller\Web\Auth\ResetPasswordController;
+use App\Presentation\Http\Controller\Web\Auth\ShowAcceptInviteController;
+use App\Presentation\Http\Controller\Web\Auth\ShowForgotPasswordController;
 use App\Presentation\Http\Controller\Web\Auth\ShowLoginController;
+use App\Presentation\Http\Controller\Web\Auth\ShowResetPasswordController;
 use App\Presentation\Http\Controller\Web\Authorization\CreateRoleController as WebCreateRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\DeleteRoleController as WebDeleteRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\ListRolesController as WebListRolesController;
@@ -45,6 +51,7 @@ use App\Presentation\Http\Controller\Web\Team\UpdateTeamController;
 use App\Presentation\Http\Controller\Web\User\CreateUserController;
 use App\Presentation\Http\Controller\Web\User\DeleteUserController;
 use App\Presentation\Http\Controller\Web\User\ListUsersController;
+use App\Presentation\Http\Controller\Web\User\ResendInviteController;
 use App\Presentation\Http\Controller\Web\User\ShowCreateUserController;
 use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
 use App\Presentation\Http\Controller\Web\User\ShowProfileController;
@@ -57,6 +64,14 @@ Route::post('/locale', SwitchLocaleController::class)->name('locale.update');
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', ShowLoginController::class)->name('login');
     Route::post('/login', LoginController::class)->middleware('throttle:login');
+
+    Route::get('/invite/{userId}', ShowAcceptInviteController::class)->name('invite.accept')->middleware('signed');
+    Route::post('/invite/{userId}', AcceptInviteController::class)->name('invite.accept.store')->middleware('signed');
+
+    Route::get('/forgot-password', ShowForgotPasswordController::class)->name('password.request');
+    Route::post('/forgot-password', ForgotPasswordController::class)->name('password.email')->middleware('throttle:password-reset');
+    Route::get('/reset-password/{token}', ShowResetPasswordController::class)->name('password.reset');
+    Route::post('/reset-password', ResetPasswordController::class)->name('password.update');
 });
 
 Route::middleware('auth')->group(function (): void {
@@ -75,6 +90,7 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/users/{userId}', UpdateUserController::class)->name('users.update');
     Route::delete('/users/{userId}', DeleteUserController::class)->name('users.destroy');
     Route::post('/users/{userId}/permissions', ManageUserPermissionsController::class)->name('users.permissions.manage');
+    Route::post('/users/{userId}/resend-invite', ResendInviteController::class)->name('users.resend-invite');
 
     Route::get('/roles', WebListRolesController::class)->name('roles.index');
     Route::get('/roles/create', ShowCreateRoleController::class)->name('roles.create');

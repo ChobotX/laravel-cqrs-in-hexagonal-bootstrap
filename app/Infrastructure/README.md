@@ -31,7 +31,16 @@ Middleware is business logic and lives outside Infrastructure. See [Application 
 
 ## Domain Event Handler Logging
 
-`HandleDomainEventJob` logs every event handler execution with structured context: `trace_id`, `level`, event class, handler class, tenant slug, and `duration_ms`. Logs `debug` before execution with full event data (respects `LOG_LEVEL`), `info` on success, `error` on failure (with exception). The `failed()` callback also includes `trace_id` and `level` for permanent failures. Uses `TraceContext` contract for trace propagation.
+`HandleDomainEventJob` logs every event handler execution with structured context: `trace_id`, `level`, event class, handler class, tenant slug, and `duration_ms`. Logs `debug` before execution with event data (sensitive properties masked via `SensitiveDataMasker`), `info` on success, `error` on failure (with exception). The `failed()` callback also includes `trace_id` and `level` for permanent failures. Uses `TraceContext` contract for trace propagation.
+
+## Auth Infrastructure
+
+`AuthServiceProvider` binds auth-related domain contracts to Laravel implementations:
+
+- `PasswordManager` → `EloquentPasswordManager` — hashes and stores passwords via `Hash::make()`
+- `InviteLinkGenerator` → `LaravelInviteLinkGenerator` — generates signed invite URLs via `URL::temporarySignedRoute()` (72h expiry)
+- `PasswordResetBroker` → `LaravelPasswordResetBroker` — wraps Laravel's `Password::broker()` for token creation/validation
+- `DirectEmailSender` → `LaravelDirectEmailSender` — sends transactional emails (invites, password resets) via `Mailer`, bypassing notification preferences
 
 ## Scope Resolution
 

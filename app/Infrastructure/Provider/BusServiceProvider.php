@@ -218,22 +218,37 @@ use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
 use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
+use App\Domain\User\Contract\Command\AcceptInviteCommand;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Domain\User\Contract\Command\DeleteUserCommand;
+use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
+use App\Domain\User\Contract\Command\ResendUserInviteCommand;
+use App\Domain\User\Contract\Command\ResetPasswordCommand;
+use App\Domain\User\Contract\Command\SendUserInviteCommand;
 use App\Domain\User\Contract\Command\SetPasswordCommand;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
+use App\Domain\User\Contract\Event\PasswordResetCompleted;
+use App\Domain\User\Contract\Event\PasswordResetRequested;
 use App\Domain\User\Contract\Event\UserCreated;
 use App\Domain\User\Contract\Event\UserDeleted;
+use App\Domain\User\Contract\Event\UserInviteAccepted;
+use App\Domain\User\Contract\Event\UserInviteSent;
 use App\Domain\User\Contract\Query\CountUsersQuery;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\Query\ListUsersQuery;
 use App\Domain\User\Contract\Query\SearchUsersQuery;
+use App\Domain\User\EventHandler\SendInviteOnUserCreated;
+use App\Domain\User\Handler\Command\AcceptInviteHandler;
 use App\Domain\User\Handler\Command\CreateUserHandler;
 use App\Domain\User\Handler\Command\DeleteUserHandler;
+use App\Domain\User\Handler\Command\RequestPasswordResetHandler;
+use App\Domain\User\Handler\Command\ResendUserInviteHandler;
+use App\Domain\User\Handler\Command\ResetPasswordHandler;
+use App\Domain\User\Handler\Command\SendUserInviteHandler;
 use App\Domain\User\Handler\Command\SetPasswordHandler;
 use App\Domain\User\Handler\Command\UpdateProfileHandler;
 use App\Domain\User\Handler\Command\UpdateUserHandler;
@@ -267,7 +282,11 @@ final class BusServiceProvider extends ServiceProvider
                 PermissionOverrideRemoved::class => [RefreshAuthorizationOnOverrideRemoved::class],
                 RoleUpdated::class => [RefreshAuthorizationOnRoleUpdated::class],
                 RoleDeleted::class => [RefreshAuthorizationOnRoleDeleted::class],
-                UserCreated::class => [SendWelcomeNotificationOnUserCreated::class],
+                UserCreated::class => [SendWelcomeNotificationOnUserCreated::class, SendInviteOnUserCreated::class],
+                UserInviteSent::class => [],
+                UserInviteAccepted::class => [],
+                PasswordResetRequested::class => [],
+                PasswordResetCompleted::class => [],
                 UserDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupNotificationsOnUserDeleted::class],
                 TeamDeleted::class => [CleanupLabelsOnEntityDeleted::class],
                 NotificationCreated::class => [DeliverNotificationOnCreated::class],
@@ -299,6 +318,11 @@ final class BusServiceProvider extends ServiceProvider
                 UpdateProfileCommand::class => UpdateProfileHandler::class,
                 DeleteUserCommand::class => DeleteUserHandler::class,
                 SetPasswordCommand::class => SetPasswordHandler::class,
+                SendUserInviteCommand::class => SendUserInviteHandler::class,
+                ResendUserInviteCommand::class => ResendUserInviteHandler::class,
+                AcceptInviteCommand::class => AcceptInviteHandler::class,
+                RequestPasswordResetCommand::class => RequestPasswordResetHandler::class,
+                ResetPasswordCommand::class => ResetPasswordHandler::class,
                 CreateRoleCommand::class => CreateRoleHandler::class,
                 UpdateRoleCommand::class => UpdateRoleHandler::class,
                 DeleteRoleCommand::class => DeleteRoleHandler::class,

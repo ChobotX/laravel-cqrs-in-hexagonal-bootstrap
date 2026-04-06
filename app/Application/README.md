@@ -19,9 +19,14 @@ $result = $this->queryBus->dispatch(new SomeQuery($id));
 
 Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus orchestration that doesn't belong to a specific domain context. Context-specific middleware (authorization) lives in the respective domain. Enforced by PHPStan rule `testMiddlewareDoesNotLiveInInfrastructure`.
 
-- `LogBusMessage` — logs every command dispatch with structured context: `trace_id`, `user_id`, `tenant_id`, message class, `duration_ms`, and `level`. Logs `debug` before execution with full message data (respects `LOG_LEVEL`), `info` on success, `error` on failure. Not applied to QueryBus — queries are read-only.
+- `LogBusMessage` — logs every command dispatch with structured context: `trace_id`, `user_id`, `tenant_id`, message class, `duration_ms`, and `level`. Logs `debug` before execution with message data (sensitive properties masked via `SensitiveDataMasker`), `info` on success, `error` on failure. Not applied to QueryBus — queries are read-only.
 - `WrapInTransaction` — wraps handler execution in a database transaction via `TransactionManager` contract. Commands can opt out with `#[SkipTransaction(reason: '...')]`.
 - `DispatchCollectedEvents` — runs the handler, then flushes collected events to the async queue via `EventBus`.
+
+## Sensitive Data Masking
+
+- `App\Application\Bus\Sensitive` — attribute marking a command/query/event property as sensitive. Properties annotated with `#[Sensitive]` are replaced with `'***'` in all bus log output. Use on passwords, tokens, and other secrets.
+- `App\Application\Bus\SensitiveDataMasker` — static utility that reads `#[Sensitive]` attributes via reflection and masks annotated properties. Used by `LogBusMessage` middleware and `HandleDomainEventJob`.
 
 ## Transaction control
 

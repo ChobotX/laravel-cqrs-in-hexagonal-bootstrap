@@ -28,6 +28,8 @@ final class AppServiceProvider extends ServiceProvider
 
     private const int WEB_RATE_LIMIT = 120;
 
+    private const int PASSWORD_RESET_RATE_LIMIT = 3;
+
     #[Override]
     public function register(): void
     {
@@ -50,5 +52,7 @@ final class AppServiceProvider extends ServiceProvider
         RateLimiter::for('api', static fn (Request $request): Limit => Limit::perMinute(self::API_RATE_LIMIT)->by($request->user()?->getAuthIdentifier() ?? $request->ip()));
 
         RateLimiter::for('web', static fn (Request $request): Limit => Limit::perMinute(self::WEB_RATE_LIMIT)->by($request->user()?->getAuthIdentifier() ?? $request->ip()));
+
+        RateLimiter::for('password-reset', static fn (Request $request): Limit => Limit::perMinute(self::PASSWORD_RESET_RATE_LIMIT)->by(Str::lower((string) $request->string('email')).'|'.$request->ip()));
     }
 }

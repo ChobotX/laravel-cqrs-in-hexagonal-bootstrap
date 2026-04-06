@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Bus\Sensitive;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Logging\Logger;
@@ -309,6 +310,43 @@ it('logs debug with event data before handler execution', function (): void {
         ->and($logger->debugCalls[0]['message'])->toBe('Domain event handler dispatching')
         ->and($logger->debugCalls[0]['context']['level'])->toBe('debug')
         ->and($data['userId'])->toBe('user-abc');
+});
+
+it('masks sensitive properties in debug event log', function (): void {
+    $event = new class('user-abc', 's3cret-token') implements DomainEvent
+    {
+        public function __construct(
+            public string $userId,
+            #[Sensitive]
+            public string $secretToken,
+        ) {}
+
+        public function occurredAt(): DateTimeImmutable
+        {
+            return new DateTimeImmutable;
+        }
+    };
+
+    $handler = new FakeDomainEventHandler;
+    $logger = createJobLoggerSpy();
+
+    $container = new Container;
+    $container->instance(FakeDomainEventHandler::class, $handler);
+    $container->instance(Logger::class, $logger);
+    $container->instance(TraceContext::class, createJobFakeTraceContext());
+
+    $job = new HandleDomainEventJob(
+        handlerClass: FakeDomainEventHandler::class,
+        domainEvent: $event,
+    );
+
+    $job->handle($container);
+
+    $data = $logger->debugCalls[0]['context']['data'];
+    assert(is_array($data));
+
+    expect($data['userId'])->toBe('user-abc')
+        ->and($data['secretToken'])->toBe('***');
 });
 
 function createJobFakeTraceContext(

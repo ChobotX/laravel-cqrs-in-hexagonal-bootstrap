@@ -10,7 +10,6 @@ use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;
-use App\Domain\User\Contract\Command\SetPasswordCommand;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\User\CreateUserRequest;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +33,6 @@ final readonly class CreateUserController
         $createUserCommand = $createUserRequest->toCommand($avatarFileId);
 
         $this->commandBus->dispatch($createUserCommand);
-        $this->commandBus->dispatch(new SetPasswordCommand($createUserCommand->id, $createUserRequest->string('password')->toString()));
 
         return redirect('/users')->with('success', __('messages.users.created'));
     }

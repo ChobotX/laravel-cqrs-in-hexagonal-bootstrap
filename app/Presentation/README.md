@@ -433,6 +433,20 @@ When a user's session expires, the app redirects them to login and returns them 
 
 `SafeRedirectValidator` (`App\Presentation\Http\Security`) prevents open redirect attacks by only allowing relative paths (not protocol-relative `//`) or same-host absolute URLs.
 
+## Auth flows
+
+Guest routes (`routes/web.php`, `guest` middleware group):
+
+- **Login** — `GET /login` (ShowLoginController), `POST /login` (LoginController)
+- **Invite acceptance** — `GET /invite/{userId}` (ShowAcceptInviteController), `POST /invite/{userId}` (AcceptInviteController). Uses `signed` middleware — invite links are HMAC-signed with 72h expiry via `URL::temporarySignedRoute()`. User sets their password to activate their account.
+- **Password reset** — `GET /forgot-password` (ShowForgotPasswordController), `POST /forgot-password` (ForgotPasswordController), `GET /reset-password/{token}` (ShowResetPasswordController), `POST /reset-password` (ResetPasswordController). Uses Laravel's Password Broker for token generation/validation. Rate-limited at 3 requests/min per email+IP.
+
+Authenticated routes:
+
+- **Resend invite** — `POST /users/{userId}/resend-invite` (ResendInviteController). Available for non-activated users. Requires `users.list.update` permission.
+
+All auth controllers use `#[SkipPermissionCheck]` (guest actions) or `#[RequiresPermission]` (admin actions).
+
 ## Shared Vue components
 
 Reusable Vue components live in `resources/js/shared/`. These mirror the styling of their Blade counterparts to ensure visual consistency across server-rendered grids and Vue-powered lists.

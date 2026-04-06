@@ -18,6 +18,7 @@ final readonly class UserMapper
             id: new UserId($userModel->id),
             name: new UserName($userModel->name),
             email: new Email($userModel->email),
+            isActivated: $userModel->password !== null,
             avatarFileId: $userModel->avatar_file_id !== null ? new FileId($userModel->avatar_file_id) : null,
         );
     }

@@ -23,7 +23,7 @@ it('shows the create user form', function (): void {
         ->assertSee('Create User');
 });
 
-it('creates a user with password', function (): void {
+it('creates a user without password via invite flow', function (): void {
     $this->seedSuperAdminRole();
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440031',
@@ -37,8 +37,6 @@ it('creates a user with password', function (): void {
         ->post('/users', [
             'name' => 'New User',
             'email' => 'new@example.com',
-            'password' => 'secret1234',
-            'password_confirmation' => 'secret1234',
         ])->assertRedirect('/users')
         ->assertSessionHas('success');
 
@@ -48,7 +46,7 @@ it('creates a user with password', function (): void {
     ]);
 
     $created = UserModel::where('email', 'new@example.com')->first();
-    expect(Hash::check('secret1234', $created->password))->toBeTrue();
+    expect($created->password)->toBeNull();
 });
 
 it('validates required fields', function (): void {
@@ -63,10 +61,10 @@ it('validates required fields', function (): void {
 
     $this->actingAs($user)
         ->post('/users', [])
-        ->assertSessionHasErrors(['name', 'email', 'password']);
+        ->assertSessionHasErrors(['name', 'email']);
 });
 
-it('validates password confirmation', function (): void {
+it('validates unique email', function (): void {
     $this->seedSuperAdminRole();
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440033',
@@ -79,10 +77,8 @@ it('validates password confirmation', function (): void {
     $this->actingAs($user)
         ->post('/users', [
             'name' => 'New User',
-            'email' => 'new@example.com',
-            'password' => 'secret1234',
-            'password_confirmation' => 'mismatch',
-        ])->assertSessionHasErrors('password');
+            'email' => 'admin@example.com',
+        ])->assertSessionHasErrors('email');
 });
 
 it('creates a user with avatar', function (): void {
@@ -103,8 +99,6 @@ it('creates a user with avatar', function (): void {
         ->post('/users', [
             'name' => 'Avatar User',
             'email' => 'avatar-user@example.com',
-            'password' => 'secret1234',
-            'password_confirmation' => 'secret1234',
             'avatar' => $file,
         ])->assertRedirect('/users')
         ->assertSessionHas('success');
@@ -132,8 +126,6 @@ it('creates a user without avatar', function (): void {
         ->post('/users', [
             'name' => 'No Avatar User',
             'email' => 'no-avatar@example.com',
-            'password' => 'secret1234',
-            'password_confirmation' => 'secret1234',
         ])->assertRedirect('/users');
 
     $created = UserModel::where('email', 'no-avatar@example.com')->first();
@@ -144,7 +136,5 @@ it('redirects unauthenticated user', function (): void {
     $this->post('/users', [
         'name' => 'New User',
         'email' => 'new@example.com',
-        'password' => 'secret1234',
-        'password_confirmation' => 'secret1234',
     ])->assertRedirect('/login');
 });

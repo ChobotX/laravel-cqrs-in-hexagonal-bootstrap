@@ -261,7 +261,7 @@ it('removes avatar when avatarFileId is null', function (): void {
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
         new UserName('John Doe'),
         new Email('john@example.com'),
-        new App\Domain\File\Contract\ValueObject\FileId('00000000-0000-0000-0000-000000000002'),
+        avatarFileId: new App\Domain\File\Contract\ValueObject\FileId('00000000-0000-0000-0000-000000000002'),
     );
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $userWithAvatar]);
     $eventCollector = new FakeEventCollector;

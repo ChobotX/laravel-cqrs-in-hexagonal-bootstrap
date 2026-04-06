@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Bus\Middleware\LogBusMessage;
+use App\Application\Bus\Sensitive;
 use App\Contract\Logging\Logger;
 use App\Contract\Tracing\TraceContext;
 
@@ -115,6 +116,27 @@ it('logs debug with message data before execution', function (): void {
             'action' => 'create-user',
             'email' => 'john@example.com',
         ]);
+});
+
+it('masks sensitive properties in debug log', function (): void {
+    $logger = createLoggerSpy();
+    $middleware = new LogBusMessage($logger, createFakeTraceContext());
+
+    $message = new readonly class('user-123', 's3cret!')
+    {
+        public function __construct(
+            public string $userId,
+            #[Sensitive]
+            public string $rawPassword,
+        ) {}
+    };
+
+    $middleware->handle($message, static fn (): null => null);
+
+    expect($logger->debugCalls[0]['context']['data'])->toBe([
+        'userId' => 'user-123',
+        'rawPassword' => '***',
+    ]);
 });
 
 function createFakeTraceContext(

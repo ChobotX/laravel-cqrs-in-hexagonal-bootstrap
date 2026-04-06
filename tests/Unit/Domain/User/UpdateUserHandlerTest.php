@@ -98,7 +98,7 @@ it('clears avatarFileId when set to null', function (): void {
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
         new UserName('John Doe'),
         new Email('john@example.com'),
-        new App\Domain\File\Contract\ValueObject\FileId('770e8400-e29b-41d4-a716-446655440000'),
+        avatarFileId: new App\Domain\File\Contract\ValueObject\FileId('770e8400-e29b-41d4-a716-446655440000'),
     );
 
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);

@@ -46,6 +46,7 @@ final readonly class UpdateProfileHandler implements CommandHandler
             id: $existing->id,
             name: new UserName($command->name),
             email: $email,
+            isActivated: $existing->isActivated,
             avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : null,
         );
 

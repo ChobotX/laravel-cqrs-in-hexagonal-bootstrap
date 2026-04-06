@@ -19,6 +19,7 @@ return [
 
     'defaults' => [
         'guard' => env('AUTH_GUARD', 'web'),
+        'passwords' => 'users',
     ],
 
     /*
@@ -66,6 +67,26 @@ return [
         'users' => [
             'driver' => 'soft-delete-aware',
             'model' => env('AUTH_MODEL', UserModel::class),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resetting Passwords
+    |--------------------------------------------------------------------------
+    |
+    | These configuration options specify the behavior of Laravel's password
+    | reset functionality, including the table utilized for token storage
+    | and the user provider that is invoked to actually retrieve users.
+    |
+    */
+
+    'passwords' => [
+        'users' => [
+            'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
         ],
     ],
 

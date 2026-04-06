@@ -15,6 +15,7 @@ final readonly class User
         public UserId $id,
         public UserName $name,
         public Email $email,
+        public bool $isActivated = false,
         public ?FileId $avatarFileId = null,
     ) {}
 }

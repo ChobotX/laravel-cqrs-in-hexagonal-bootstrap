@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Bus\Middleware;
 
+use App\Application\Bus\SensitiveDataMasker;
 use App\Contract\Bus\Middleware;
 use App\Contract\Logging\Logger;
 use App\Contract\Tracing\TraceContext;
@@ -33,7 +34,7 @@ final readonly class LogBusMessage implements Middleware
         $this->logger->debug('Bus message dispatching', [
             ...$context,
             'level' => 'debug',
-            'data' => get_object_vars($message),
+            'data' => SensitiveDataMasker::mask($message),
         ]);
 
         try {

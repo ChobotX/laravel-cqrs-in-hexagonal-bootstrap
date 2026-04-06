@@ -63,4 +63,10 @@
                           variant="login"
                           :label="__('messages.auth.sign_in')" />
     </form>
+
+    <p class="mt-4 text-center text-base text-gray-500 sm:text-sm">
+        <a class="font-medium text-indigo-600 hover:text-indigo-500"
+           href="{{ route('password.request') }}"
+           title="{{ __('messages.auth.forgot_password') }}">{{ __('messages.auth.forgot_password') }}</a>
+    </p>
 @endsection

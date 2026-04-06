@@ -94,6 +94,21 @@
         </div>
     </form>
 
+    @if (!$user->isActivated)
+        <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4">
+            <div class="flex items-center justify-between">
+                <p class="text-sm text-amber-800">{{ __('messages.users.pending_activation') }}</p>
+                <form method="POST"
+                      action="{{ route('users.resend-invite', $user->id->value) }}">
+                    @csrf
+                    <x-primary-button skip-permission
+                                      variant="secondary"
+                                      :label="__('messages.users.resend_invite')" />
+                </form>
+            </div>
+        </div>
+    @endif
+
     @if ($canViewPermissions)
         @include('partials.permissions-section', [
             'effectivePermissions' => $effectivePermissions,

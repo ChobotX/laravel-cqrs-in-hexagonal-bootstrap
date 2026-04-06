@@ -43,6 +43,28 @@ return [
         'sign_in' => 'Sign in',
         'invalid_credentials' => 'Invalid credentials.',
         'session_expired' => 'Your session has expired. Please log in again.',
+        'accept_invite' => 'Accept Invite',
+        'accept_invite_title' => 'Set your password',
+        'accept_invite_subtitle' => 'Welcome :name, please set your password to activate your account.',
+        'confirm_password' => 'Confirm password',
+        'set_password' => 'Set password',
+        'invite_accepted' => 'Your account has been activated.',
+        'forgot_password' => 'Forgot password?',
+        'forgot_password_title' => 'Reset your password',
+        'forgot_password_subtitle' => 'Enter your email address and we will send you a reset link.',
+        'send_reset_link' => 'Send reset link',
+        'reset_link_sent' => 'If an account exists with that email, we have sent a password reset link.',
+        'reset_password' => 'Reset Password',
+        'reset_password_title' => 'Set a new password',
+        'reset_password_subtitle' => 'Enter your new password below.',
+        'password_reset_success' => 'Your password has been reset.',
+    ],
+
+    'email' => [
+        'invite_subject' => 'You have been invited',
+        'invite_body' => "You have been invited to join the platform.\n\nClick the link below to set your password and activate your account:\n\n:link\n\nThis link expires in 72 hours.",
+        'password_reset_subject' => 'Password Reset Request',
+        'password_reset_body' => "You have requested to reset your password.\n\nClick the link below to set a new password:\n\n:link\n\nThis link expires in 60 minutes.\n\nIf you did not request this, you can safely ignore this email.",
     ],
 
     'users' => [
@@ -70,6 +92,9 @@ return [
         'created' => 'User created.',
         'updated' => 'User updated.',
         'deleted' => 'User deleted.',
+        'invite_resent' => 'Invite has been resent.',
+        'resend_invite' => 'Resend Invite',
+        'pending_activation' => 'This user has not yet activated their account.',
         'no_role' => 'No role',
         'delete_confirm_title' => 'Delete User',
         'delete_confirm_message' => 'Are you sure you want to delete :name? This action cannot be undone.',
@@ -271,6 +296,8 @@ return [
         'image_processing_error' => 'Image processing failed.',
         'tenant_not_found' => 'Tenant [:identifier] not found.',
         'tenant_inactive' => 'Tenant [:identifier] is inactive.',
+        'invalid_password_reset_token' => 'This password reset link is invalid or has expired.',
+        'user_already_activated' => 'This account has already been activated.',
     ],
 
     'pagination' => [
