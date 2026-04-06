@@ -15,6 +15,8 @@ return [
         'registry' => 'Registr',
         'notifications' => 'Upozornění',
         'dashboard' => 'Přehled',
+        'system' => 'Systém',
+        'feature_flags' => 'Přepínače funkcí',
         'logout' => 'Odhlásit se',
     ],
 
@@ -247,6 +249,47 @@ return [
         'search_failed' => 'Nepodařilo se načíst štítky.',
     ],
 
+    'feature_flags' => [
+        'title' => 'Přepínače funkcí',
+        'flag' => 'Přepínač',
+        'type' => 'Typ',
+        'value' => 'Hodnota',
+        'status' => 'Stav',
+        'enabled' => 'Aktivní',
+        'actions' => 'Akce',
+        'default_value' => 'Výchozí hodnota',
+        'edit' => 'Upravit přepínač',
+        'edit_action' => 'Upravit',
+        'save' => 'Uložit',
+        'cancel' => 'Zrušit',
+        'reset_action' => 'Obnovit výchozí',
+        'reset_to_default' => 'Obnovit výchozí',
+        'reset_confirm_title' => 'Obnovit přepínač',
+        'reset_confirm_message' => 'Opravdu chcete obnovit :key na výchozí hodnotu?',
+        'updated' => 'Přepínač funkce byl aktualizován.',
+        'reset' => 'Přepínač funkce byl obnoven na výchozí hodnotu.',
+        'override_active' => 'Tento přepínač má přepsanou hodnotu. Výchozí: :default',
+        'override_badge' => 'Přepsáno',
+        'default_badge' => 'Výchozí',
+        'type_boolean' => 'Přepínač',
+        'type_select' => 'Výběr',
+        'type_input' => 'Vstup',
+        'pattern_hint' => 'Musí odpovídat vzoru: :pattern',
+        'empty' => 'Žádné přepínače funkcí nejsou nakonfigurovány.',
+        'count' => ':count přepínač|:count přepínače|:count přepínačů',
+        'groups' => [
+            'registry' => [
+                'label' => 'Registr',
+                'flags' => [
+                    'schema-builder' => [
+                        'label' => 'Editor schémat',
+                        'description' => 'Aktivovat systém schémat a záznamů pro dynamické datové definice',
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'exceptions' => [
         'user_not_found' => 'Uživatel s id [:id] nebyl nalezen.',
         'invalid_user_id' => 'Hodnota [:value] není platné UUID.',
@@ -290,6 +333,9 @@ return [
         'tenant_inactive' => 'Tenant [:identifier] je neaktivní.',
         'invalid_password_reset_token' => 'Tento odkaz pro obnovení hesla je neplatný nebo vypršel.',
         'user_already_activated' => 'Tento účet byl již aktivován.',
+        'feature_flag_not_found' => 'Přepínač funkce [:key] nebyl nalezen.',
+        'invalid_flag_key' => 'Neplatný formát klíče přepínače: [:key].',
+        'invalid_flag_value' => 'Neplatná hodnota [:value] pro přepínač [:key]: :reason',
     ],
 
     'pagination' => [

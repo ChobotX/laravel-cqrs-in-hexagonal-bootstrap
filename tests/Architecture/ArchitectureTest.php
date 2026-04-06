@@ -84,6 +84,7 @@ final class ArchitectureTest
             ->classes(Selector::inNamespace('App\Domain'))
             ->excluding(
                 Selector::inNamespace('App\Domain\Authorization\Contract'),
+                Selector::inNamespace('App\Domain\FeatureFlag\Contract'),
                 Selector::inNamespace('App\Domain\File\Contract'),
                 Selector::inNamespace('App\Domain\Label\Contract'),
                 Selector::inNamespace('App\Domain\Notification\Contract'),

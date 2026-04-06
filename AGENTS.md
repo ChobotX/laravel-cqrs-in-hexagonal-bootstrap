@@ -21,6 +21,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/File/README.md](app/Domain/File/README.md) | File module — centralized storage, namespace directories, versioning, PHPStan enforcement |
 | [app/Domain/Notification/README.md](app/Domain/Notification/README.md) | Notification module — multi-channel delivery, preferences, real-time |
 | [app/Domain/Registry/README.md](app/Domain/Registry/README.md) | Registry module — dynamic schema-driven CRUD, versioned definitions, typed entries |
+| [app/Domain/FeatureFlag/README.md](app/Domain/FeatureFlag/README.md) | Feature flag module — code-defined flags, per-tenant overrides, boolean/select/input types |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |
@@ -56,6 +57,7 @@ When you change **one** of these, check **all** listed files:
 | Add/change API versioning pattern | `ADR.md`, `app/Presentation/README.md`, `routes/api.php`, `QUICKSTART.md` |
 | Add/change file storage pattern | `app/Domain/File/README.md`, `app/Infrastructure/README.md`, `ADR.md` |
 | Add/change registry module/feature | `app/Domain/Registry/README.md`, `config/authorization.php` |
+| Add/change feature flag module/feature | `app/Domain/FeatureFlag/README.md`, `config/authorization.php`, `config/feature-flags.php` |
 | Add/change infrastructure pattern | `app/Infrastructure/README.md` |
 | Add/change contract interface | `app/Contract/README.md` (contents list + generic type docs if applicable) |
 | Add/change coverage config | `tests/README.md`, `AGENTS.md` (coverage config row) |

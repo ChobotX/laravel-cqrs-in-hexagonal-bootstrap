@@ -22,6 +22,10 @@ use App\Presentation\Http\Controller\Web\Authorization\StartImpersonationControl
 use App\Presentation\Http\Controller\Web\Authorization\StopImpersonationController as WebStopImpersonationController;
 use App\Presentation\Http\Controller\Web\Authorization\UpdateRoleController as WebUpdateRoleController;
 use App\Presentation\Http\Controller\Web\Dashboard\DashboardController;
+use App\Presentation\Http\Controller\Web\FeatureFlag\ListFeatureFlagsController;
+use App\Presentation\Http\Controller\Web\FeatureFlag\ResetFeatureFlagController;
+use App\Presentation\Http\Controller\Web\FeatureFlag\ShowEditFeatureFlagController;
+use App\Presentation\Http\Controller\Web\FeatureFlag\UpdateFeatureFlagController;
 use App\Presentation\Http\Controller\Web\File\ServeFileController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
 use App\Presentation\Http\Controller\Web\Notification\ShowNotificationsController;
@@ -111,6 +115,14 @@ Route::middleware('auth')->group(function (): void {
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');
+
+    Route::get('/feature-flags', ListFeatureFlagsController::class)->name('feature-flags.index');
+    Route::get('/feature-flags/{key}', ShowEditFeatureFlagController::class)->name('feature-flags.edit')
+        ->where('key', '[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*');
+    Route::put('/feature-flags/{key}', UpdateFeatureFlagController::class)->name('feature-flags.update')
+        ->where('key', '[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*');
+    Route::delete('/feature-flags/{key}', ResetFeatureFlagController::class)->name('feature-flags.reset')
+        ->where('key', '[a-z][a-z0-9-]*\.[a-z][a-z0-9-]*');
 
     Route::get('/registry', ListDefinitionsController::class)->name('registry.definitions.index');
     Route::get('/registry/create', ShowCreateDefinitionController::class)->name('registry.definitions.create');

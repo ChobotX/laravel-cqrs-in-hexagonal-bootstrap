@@ -63,6 +63,15 @@ return [
                 ],
             ],
         ],
+        'feature_flags' => [
+            'label' => 'Feature Flags',
+            'features' => [
+                'management' => [
+                    'label' => 'Feature Flag Management',
+                    'actions' => ['read', 'update'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

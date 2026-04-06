@@ -17,6 +17,8 @@
           content="{{ config('reverb.apps.apps.0.options.client_scheme') }}">
     <meta name="tenant-slug"
           content="{{ $tenantSlug ?? '' }}">
+    <meta name="feature-flags"
+          content="{{ json_encode($featureFlags ?? new stdClass()) }}">
     <title>@yield('title', __('messages.nav.dashboard'))</title>
     @include('components.sentry-meta')
     @vite(['resources/css/app.css', 'resources/js/app.ts'])

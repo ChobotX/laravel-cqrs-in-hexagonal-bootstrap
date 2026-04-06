@@ -24,9 +24,20 @@
                 icon="heroicon-o-user-group"
                 :label="__('messages.nav.teams')"
                 :active="request()->routeIs('teams.*')" />
-    <x-nav-link permission="registry.definitions.read"
-                :href="route('registry.definitions.index')"
-                icon="heroicon-o-rectangle-stack"
-                :label="__('messages.nav.registry')"
-                :active="request()->routeIs('registry.*')" />
+    @feature('registry.schema-builder')
+        <x-nav-link permission="registry.definitions.read"
+                    :href="route('registry.definitions.index')"
+                    icon="heroicon-o-rectangle-stack"
+                    :label="__('messages.nav.registry')"
+                    :active="request()->routeIs('registry.*')" />
+    @endfeature
+
+    <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+        {{ __('messages.nav.system') }}
+    </p>
+    <x-nav-link permission="feature_flags.management.read"
+                :href="route('feature-flags.index')"
+                icon="heroicon-o-flag"
+                :label="__('messages.nav.feature_flags')"
+                :active="request()->routeIs('feature-flags.*')" />
 </nav>

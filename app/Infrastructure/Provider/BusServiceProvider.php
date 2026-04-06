@@ -80,6 +80,18 @@ use App\Domain\Authorization\Handler\Query\ListRolesHandler;
 use App\Domain\Authorization\Handler\Query\SearchRolesHandler;
 use App\Domain\Authorization\Middleware\AuthorizeAction;
 use App\Domain\Authorization\Middleware\ResolveScopeFilter;
+use App\Domain\FeatureFlag\Contract\Command\ResetFeatureFlagCommand;
+use App\Domain\FeatureFlag\Contract\Command\UpdateFeatureFlagCommand;
+use App\Domain\FeatureFlag\Contract\Event\FeatureFlagReset;
+use App\Domain\FeatureFlag\Contract\Event\FeatureFlagUpdated;
+use App\Domain\FeatureFlag\Contract\Query\GetAllFeatureFlagValuesQuery;
+use App\Domain\FeatureFlag\Contract\Query\GetFeatureFlagQuery;
+use App\Domain\FeatureFlag\Contract\Query\ListFeatureFlagsQuery;
+use App\Domain\FeatureFlag\Handler\Command\ResetFeatureFlagHandler;
+use App\Domain\FeatureFlag\Handler\Command\UpdateFeatureFlagHandler;
+use App\Domain\FeatureFlag\Handler\Query\GetAllFeatureFlagValuesHandler;
+use App\Domain\FeatureFlag\Handler\Query\GetFeatureFlagHandler;
+use App\Domain\FeatureFlag\Handler\Query\ListFeatureFlagsHandler;
 use App\Domain\File\Contract\Command\DeleteFileCommand;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\Command\StoreFileCommand;
@@ -306,6 +318,8 @@ final class BusServiceProvider extends ServiceProvider
                 EntryCreated::class => [],
                 EntryUpdated::class => [],
                 EntryDeleted::class => [],
+                FeatureFlagUpdated::class => [],
+                FeatureFlagReset::class => [],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
@@ -366,6 +380,8 @@ final class BusServiceProvider extends ServiceProvider
                 CreateEntryCommand::class => CreateEntryHandler::class,
                 UpdateEntryCommand::class => UpdateEntryHandler::class,
                 DeleteEntryCommand::class => DeleteEntryHandler::class,
+                UpdateFeatureFlagCommand::class => UpdateFeatureFlagHandler::class,
+                ResetFeatureFlagCommand::class => ResetFeatureFlagHandler::class,
             ],
             middleware: [
                 $this->app->make(LogBusMessage::class),
@@ -426,6 +442,9 @@ final class BusServiceProvider extends ServiceProvider
                 GetEntryByIdQuery::class => GetEntryByIdHandler::class,
                 ListEntriesQuery::class => ListEntriesHandler::class,
                 ListEntriesByDefinitionSlugQuery::class => ListEntriesByDefinitionSlugHandler::class,
+                ListFeatureFlagsQuery::class => ListFeatureFlagsHandler::class,
+                GetFeatureFlagQuery::class => GetFeatureFlagHandler::class,
+                GetAllFeatureFlagValuesQuery::class => GetAllFeatureFlagValuesHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

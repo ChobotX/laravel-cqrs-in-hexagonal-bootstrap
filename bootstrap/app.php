@@ -30,6 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withProviders([
         App\Infrastructure\Provider\AppServiceProvider::class,
         App\Infrastructure\Provider\TenancyServiceProvider::class,
+        App\Infrastructure\Provider\FeatureFlagServiceProvider::class,
     ])
     ->withCommands([
         __DIR__.'/../app/Presentation/Console/User',

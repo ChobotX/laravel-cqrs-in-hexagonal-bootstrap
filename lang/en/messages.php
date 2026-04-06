@@ -15,6 +15,8 @@ return [
         'registry' => 'Registry',
         'notifications' => 'Notifications',
         'dashboard' => 'Dashboard',
+        'system' => 'System',
+        'feature_flags' => 'Feature Flags',
         'logout' => 'Log out',
     ],
 
@@ -249,6 +251,47 @@ return [
         'search_failed' => 'Failed to load labels.',
     ],
 
+    'feature_flags' => [
+        'title' => 'Feature Flags',
+        'flag' => 'Flag',
+        'type' => 'Type',
+        'value' => 'Value',
+        'status' => 'Status',
+        'enabled' => 'Enabled',
+        'actions' => 'Actions',
+        'default_value' => 'Default Value',
+        'edit' => 'Edit Feature Flag',
+        'edit_action' => 'Edit',
+        'save' => 'Save',
+        'cancel' => 'Cancel',
+        'reset_action' => 'Reset to Default',
+        'reset_to_default' => 'Reset to Default',
+        'reset_confirm_title' => 'Reset Feature Flag',
+        'reset_confirm_message' => 'Are you sure you want to reset :key to its default value?',
+        'updated' => 'Feature flag updated.',
+        'reset' => 'Feature flag reset to default.',
+        'override_active' => 'This flag has a tenant override. Default value: :default',
+        'override_badge' => 'Override',
+        'default_badge' => 'Default',
+        'type_boolean' => 'Toggle',
+        'type_select' => 'Select',
+        'type_input' => 'Input',
+        'pattern_hint' => 'Must match pattern: :pattern',
+        'empty' => 'No feature flags configured.',
+        'count' => ':count flag|:count flags',
+        'groups' => [
+            'registry' => [
+                'label' => 'Registry',
+                'flags' => [
+                    'schema-builder' => [
+                        'label' => 'Schema Builder',
+                        'description' => 'Enable the Schema/Entry system for dynamic data definitions',
+                    ],
+                ],
+            ],
+        ],
+    ],
+
     'exceptions' => [
         'user_not_found' => 'User with id [:id] not found.',
         'invalid_user_id' => 'Value [:value] is not a valid UUID.',
@@ -298,6 +341,9 @@ return [
         'tenant_inactive' => 'Tenant [:identifier] is inactive.',
         'invalid_password_reset_token' => 'This password reset link is invalid or has expired.',
         'user_already_activated' => 'This account has already been activated.',
+        'feature_flag_not_found' => 'Feature flag [:key] not found.',
+        'invalid_flag_key' => 'Invalid feature flag key format: [:key].',
+        'invalid_flag_value' => 'Invalid value [:value] for feature flag [:key]: :reason',
     ],
 
     'pagination' => [
