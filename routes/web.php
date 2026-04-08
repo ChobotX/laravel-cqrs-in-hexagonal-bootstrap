@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Presentation\Http\Controller\Web\AuditLog\ListAuditLogController;
+use App\Presentation\Http\Controller\Web\AuditLog\ShowAuditLogTraceController;
 use App\Presentation\Http\Controller\Web\Auth\AcceptInviteController;
 use App\Presentation\Http\Controller\Web\Auth\ForgotPasswordController;
 use App\Presentation\Http\Controller\Web\Auth\LoginController;
@@ -153,4 +155,7 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/grid-presets', SaveGridPresetController::class)->name('grid-presets.store');
     Route::delete('/grid-presets/{presetId}', DeleteGridPresetController::class)->name('grid-presets.destroy');
     Route::post('/grid-presets/{presetId}/default', SetDefaultGridPresetController::class)->name('grid-presets.set-default');
+
+    Route::get('/audit-log', ListAuditLogController::class)->name('audit-log.index');
+    Route::get('/audit-log/trace/{traceId}', ShowAuditLogTraceController::class)->name('audit-log.trace');
 });

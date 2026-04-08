@@ -46,4 +46,9 @@
                 icon="heroicon-o-cog-6-tooth"
                 :label="__('messages.nav.settings')"
                 :active="request()->routeIs('settings.*')" />
+    <x-nav-link permission="audit_log.history.read"
+                :href="route('audit-log.index')"
+                icon="heroicon-o-clipboard-document-list"
+                :label="__('messages.nav.audit_log')"
+                :active="request()->routeIs('audit-log.*')" />
 </nav>

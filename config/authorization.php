@@ -81,6 +81,15 @@ return [
                 ],
             ],
         ],
+        'audit_log' => [
+            'label' => 'Audit Log',
+            'features' => [
+                'history' => [
+                    'label' => 'Audit History',
+                    'actions' => ['read'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

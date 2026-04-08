@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Domain\Label\Contract\Command;
 
 use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Command\AuditableCommand;
 use App\Contract\Command\Command;
 
 #[SkipPermissionCheck(reason: 'Null-safe — null input means skip, controller decides based on form visibility')]
-final readonly class SyncEntityLabelsCommand implements Command
+final readonly class SyncEntityLabelsCommand implements AuditableCommand, Command
 {
     /**
      * @param  list<string>|null  $submittedLabelIds  null = skip sync, [] = remove all
@@ -19,4 +20,14 @@ final readonly class SyncEntityLabelsCommand implements Command
         public ?array $submittedLabelIds,
         public string $actingUserId,
     ) {}
+
+    public function auditEntityType(): string
+    {
+        return 'label';
+    }
+
+    public function auditEntityId(): string
+    {
+        return $this->entityId;
+    }
 }

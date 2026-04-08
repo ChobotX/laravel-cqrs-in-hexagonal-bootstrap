@@ -8,10 +8,15 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\EventBus;
 use App\Application\Bus\Middleware\DispatchCollectedEvents;
 use App\Application\Bus\Middleware\LogBusMessage;
+use App\Application\Bus\Middleware\RecordAuditLog;
 use App\Application\Bus\Middleware\WrapInTransaction;
 use App\Application\Bus\QueryBus;
 use App\Contract\Event\EventCollector;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\AuditLog\Contract\Query\GetAuditLogByTraceId\GetAuditLogByTraceIdQuery;
+use App\Domain\AuditLog\Contract\Query\ListAuditLog\ListAuditLogQuery;
+use App\Domain\AuditLog\Handler\Query\GetAuditLogByTraceIdHandler;
+use App\Domain\AuditLog\Handler\Query\ListAuditLogHandler;
 use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
 use App\Domain\Authorization\Contract\Command\CreateRoleCommand;
 use App\Domain\Authorization\Contract\Command\DeleteRoleCommand;
@@ -406,6 +411,7 @@ final class BusServiceProvider extends ServiceProvider
             middleware: [
                 $this->app->make(LogBusMessage::class),
                 $this->app->make(AuthorizeAction::class),
+                $this->app->make(RecordAuditLog::class),
                 $this->app->make(WrapInTransaction::class),
                 $this->app->make(DispatchCollectedEvents::class),
             ],
@@ -469,6 +475,8 @@ final class BusServiceProvider extends ServiceProvider
                 GetDefaultGridPresetQuery::class => GetDefaultGridPresetHandler::class,
                 GetPresetShareCapabilitiesQuery::class => GetPresetShareCapabilitiesHandler::class,
                 GetTenantSettingsQuery::class => GetTenantSettingsHandler::class,
+                ListAuditLogQuery::class => ListAuditLogHandler::class,
+                GetAuditLogByTraceIdQuery::class => GetAuditLogByTraceIdHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

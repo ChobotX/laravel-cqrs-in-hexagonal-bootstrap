@@ -18,6 +18,7 @@ return [
         'dashboard' => 'Dashboard',
         'system' => 'System',
         'feature_flags' => 'Feature Flags',
+        'audit_log' => 'Audit Log',
         'logout' => 'Log out',
     ],
 
@@ -306,6 +307,31 @@ return [
         'updated' => 'Settings updated.',
     ],
 
+    'audit_log' => [
+        'title' => 'Audit Log',
+        'action' => 'Action',
+        'user' => 'User',
+        'entity' => 'Entity',
+        'trace_id' => 'Trace ID',
+        'occurred_at' => 'Time',
+        'ip_address' => 'IP Address',
+        'status' => 'Status',
+        'payload' => 'Details',
+        'success' => 'Success',
+        'failure' => 'Failure',
+        'no_entries' => 'No audit entries found.',
+        'filter_entity_type' => 'Entity Type',
+        'filter_user' => 'User ID',
+        'filter_trace' => 'Trace ID',
+        'filter_from' => 'From',
+        'filter_to' => 'To',
+        'filter' => 'Filter',
+        'clear' => 'Clear',
+        'trace_title' => 'Trace :traceId',
+        'back' => 'Back to Audit Log',
+        'grouped_entries' => '{1} action in this request|[2,*] actions in this request',
+    ],
+
     'exceptions' => [
         'user_not_found' => 'User with id [:id] not found.',
         'invalid_user_id' => 'Value [:value] is not a valid UUID.',
@@ -363,6 +389,7 @@ return [
         'grid_preset_not_found' => 'Grid preset not found.',
         'grid_preset_ownership' => 'You do not have access to this grid preset.',
         'grid_preset_scope_permission' => 'You do not have permission to share presets with this scope.',
+        'invalid_audit_log_id' => 'Value [:value] is not a valid UUID.',
     ],
 
     'pagination' => [

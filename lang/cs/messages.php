@@ -18,6 +18,7 @@ return [
         'dashboard' => 'Přehled',
         'system' => 'Systém',
         'feature_flags' => 'Přepínače funkcí',
+        'audit_log' => 'Auditní protokol',
         'logout' => 'Odhlásit se',
     ],
 
@@ -304,6 +305,31 @@ return [
         'updated' => 'Nastavení aktualizováno.',
     ],
 
+    'audit_log' => [
+        'title' => 'Auditní protokol',
+        'action' => 'Akce',
+        'user' => 'Uživatel',
+        'entity' => 'Entita',
+        'trace_id' => 'ID stopy',
+        'occurred_at' => 'Čas',
+        'ip_address' => 'IP adresa',
+        'status' => 'Stav',
+        'payload' => 'Detail',
+        'success' => 'Úspěch',
+        'failure' => 'Chyba',
+        'no_entries' => 'Žádné záznamy v auditním protokolu.',
+        'filter_entity_type' => 'Typ entity',
+        'filter_user' => 'ID uživatele',
+        'filter_trace' => 'ID stopy',
+        'filter_from' => 'Od',
+        'filter_to' => 'Do',
+        'filter' => 'Filtrovat',
+        'clear' => 'Vymazat',
+        'trace_title' => 'Stopa :traceId',
+        'back' => 'Zpět na auditní protokol',
+        'grouped_entries' => '{1} akce v tomto požadavku|[2,4] akce v tomto požadavku|[5,*] akcí v tomto požadavku',
+    ],
+
     'exceptions' => [
         'user_not_found' => 'Uživatel s id [:id] nebyl nalezen.',
         'invalid_user_id' => 'Hodnota [:value] není platné UUID.',
@@ -355,6 +381,7 @@ return [
         'grid_preset_not_found' => 'Uložený pohled nenalezen.',
         'grid_preset_ownership' => 'K tomuto uloženému pohledu nemáte přístup.',
         'grid_preset_scope_permission' => 'Nemáte oprávnění sdílet pohledy s tímto rozsahem.',
+        'invalid_audit_log_id' => 'Hodnota [:value] není platné UUID.',
     ],
 
     'pagination' => [

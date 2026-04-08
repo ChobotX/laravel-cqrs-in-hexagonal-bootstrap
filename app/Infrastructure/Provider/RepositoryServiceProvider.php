@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Provider;
 
 use App\Contract\IdGenerator;
+use App\Domain\AuditLog\Contract\Repository\AuditLogRepository;
+use App\Domain\AuditLog\Contract\Repository\AuditLogWriter;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
@@ -26,6 +28,8 @@ use App\Domain\Registry\Contract\Service\SchemaSerializer;
 use App\Domain\Team\Contract\Repository\TeamMemberRepository;
 use App\Domain\Team\Contract\Repository\TeamRepository;
 use App\Domain\User\Contract\Repository\UserRepository;
+use App\Infrastructure\Eloquent\AuditLog\EloquentAuditLogRepository;
+use App\Infrastructure\Eloquent\AuditLog\EloquentAuditLogWriter;
 use App\Infrastructure\Eloquent\Authorization\EloquentRecordShareRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentUserPermissionRepository;
@@ -78,6 +82,8 @@ final class RepositoryServiceProvider extends ServiceProvider
             $this->app->make(FilesystemFactory::class)->disk('files'),
         ));
         $this->app->bind(ImageProcessor::class, GdImageProcessor::class);
+        $this->app->bind(AuditLogRepository::class, EloquentAuditLogRepository::class);
+        $this->app->bind(AuditLogWriter::class, EloquentAuditLogWriter::class);
         $this->app->bind(IdGenerator::class, UuidIdGenerator::class);
         $this->app->bind(DefinitionRepository::class, EloquentDefinitionRepository::class);
         $this->app->bind(DefinitionVersionRepository::class, EloquentDefinitionVersionRepository::class);

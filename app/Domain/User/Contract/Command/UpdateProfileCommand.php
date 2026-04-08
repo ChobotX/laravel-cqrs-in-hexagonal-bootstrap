@@ -6,10 +6,11 @@ namespace App\Domain\User\Contract\Command;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\Sensitive;
+use App\Contract\Command\AuditableCommand;
 use App\Contract\Command\Command;
 
 #[SkipPermissionCheck(reason: 'Profile self-edit is available to all authenticated users')]
-final readonly class UpdateProfileCommand implements Command
+final readonly class UpdateProfileCommand implements AuditableCommand, Command
 {
     /**
      * @param  ?string  $email  null = not submitted (field hidden), handler decides whether to apply based on authorization
@@ -23,4 +24,14 @@ final readonly class UpdateProfileCommand implements Command
         public ?string $rawPassword = null,
         public ?string $avatarFileId = null,
     ) {}
+
+    public function auditEntityType(): string
+    {
+        return 'user';
+    }
+
+    public function auditEntityId(): string
+    {
+        return $this->userId;
+    }
 }

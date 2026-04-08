@@ -84,6 +84,7 @@ final class ArchitectureTest
             ->shouldNotDependOn()
             ->classes(Selector::inNamespace('App\Domain'))
             ->excluding(
+                Selector::inNamespace('App\Domain\AuditLog\Contract'),
                 Selector::inNamespace('App\Domain\Authorization\Contract'),
                 Selector::inNamespace('App\Domain\FeatureFlag\Contract'),
                 Selector::inNamespace('App\Domain\File\Contract'),
