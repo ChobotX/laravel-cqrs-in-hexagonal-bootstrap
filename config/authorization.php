@@ -72,6 +72,15 @@ return [
                 ],
             ],
         ],
+        'settings' => [
+            'label' => 'Settings',
+            'features' => [
+                'tenant' => [
+                    'label' => 'Tenant Settings',
+                    'actions' => ['read', 'update'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

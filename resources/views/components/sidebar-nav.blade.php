@@ -1,10 +1,11 @@
-<nav class="flex-1 px-3 py-4"
+<nav class="flex flex-1 flex-col px-3 py-4"
      aria-label="{{ __('messages.a11y.main_navigation') }}">
-    <x-nav-link skip-permission
-                :href="route('dashboard')"
-                icon="heroicon-o-home"
-                :label="__('messages.nav.dashboard')"
-                :active="request()->routeIs('dashboard')" />
+    <div class="flex-1">
+        <x-nav-link skip-permission
+                    :href="route('dashboard')"
+                    icon="heroicon-o-home"
+                    :label="__('messages.nav.dashboard')"
+                    :active="request()->routeIs('dashboard')" />
 
     <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
         {{ __('messages.nav.management') }}
@@ -40,4 +41,9 @@
                 icon="heroicon-o-flag"
                 :label="__('messages.nav.feature_flags')"
                 :active="request()->routeIs('feature-flags.*')" />
+    <x-nav-link permission="settings.tenant.read"
+                :href="route('settings.index')"
+                icon="heroicon-o-cog-6-tooth"
+                :label="__('messages.nav.settings')"
+                :active="request()->routeIs('settings.*')" />
 </nav>

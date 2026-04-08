@@ -14,6 +14,7 @@ return [
         'teams' => 'Týmy',
         'registry' => 'Registr',
         'notifications' => 'Upozornění',
+        'settings' => 'Nastavení',
         'dashboard' => 'Přehled',
         'system' => 'Systém',
         'feature_flags' => 'Přepínače funkcí',
@@ -290,6 +291,19 @@ return [
         ],
     ],
 
+    'settings' => [
+        'title' => 'Nastavení organizace',
+        'subtitle' => 'Spravujte název a značku vaší organizace',
+        'name' => 'Název organizace',
+        'logo' => 'Logo',
+        'current_logo' => 'Aktuální logo',
+        'remove_logo' => 'Odebrat logo',
+        'logo_hint' => 'PNG, JPG nebo SVG. Max 2 MB.',
+        'update_action' => 'Uložit',
+        'cancel' => 'Zrušit',
+        'updated' => 'Nastavení aktualizováno.',
+    ],
+
     'exceptions' => [
         'user_not_found' => 'Uživatel s id [:id] nebyl nalezen.',
         'invalid_user_id' => 'Hodnota [:value] není platné UUID.',
@@ -329,7 +343,8 @@ return [
         'file_not_found' => 'Soubor s id [:id] nebyl nalezen.',
         'file_storage_error' => 'Operace úložiště souborů selhala.',
         'image_processing_error' => 'Zpracování obrázku selhalo.',
-        'tenant_not_found' => 'Tenant [:identifier] nebyl nalezen.',
+        'tenant_not_found' => 'Organizace s id [:id] nebyla nalezena.',
+        'invalid_tenant_name' => 'Název organizace nesmí být prázdný.',
         'tenant_inactive' => 'Tenant [:identifier] je neaktivní.',
         'invalid_password_reset_token' => 'Tento odkaz pro obnovení hesla je neplatný nebo vypršel.',
         'user_already_activated' => 'Tento účet byl již aktivován.',

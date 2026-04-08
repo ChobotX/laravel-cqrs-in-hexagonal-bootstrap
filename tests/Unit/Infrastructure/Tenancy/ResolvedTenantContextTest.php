@@ -7,11 +7,20 @@ use App\Infrastructure\Tenancy\TenantNotResolvedException;
 
 it('returns tenant id after set', function (): void {
     $context = new ResolvedTenantContext;
-    $context->set('tenant-123', 'test-slug');
+    $context->set('tenant-123', 'test-slug', 'Test Tenant', '/storage/logo.png');
 
     expect($context->currentTenantId())->toBe('tenant-123')
         ->and($context->currentTenantSlug())->toBe('test-slug')
+        ->and($context->currentTenantName())->toBe('Test Tenant')
+        ->and($context->currentTenantLogoUrl())->toBe('/storage/logo.png')
         ->and($context->isResolved())->toBeTrue();
+});
+
+it('returns null logo url when none set', function (): void {
+    $context = new ResolvedTenantContext;
+    $context->set('tenant-123', 'test-slug', 'Test Tenant', null);
+
+    expect($context->currentTenantLogoUrl())->toBeNull();
 });
 
 it('is not resolved by default', function (): void {
@@ -28,4 +37,14 @@ it('throws when accessing tenant id before resolution', function (): void {
 it('throws when accessing tenant slug before resolution', function (): void {
     $context = new ResolvedTenantContext;
     $context->currentTenantSlug();
+})->throws(TenantNotResolvedException::class);
+
+it('throws when accessing tenant name before resolution', function (): void {
+    $context = new ResolvedTenantContext;
+    $context->currentTenantName();
+})->throws(TenantNotResolvedException::class);
+
+it('throws when accessing tenant logo url before resolution', function (): void {
+    $context = new ResolvedTenantContext;
+    $context->currentTenantLogoUrl();
 })->throws(TenantNotResolvedException::class);

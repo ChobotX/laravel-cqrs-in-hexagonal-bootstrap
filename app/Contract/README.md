@@ -15,7 +15,8 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 - `Logging/` — `Logger` interface for framework-agnostic structured logging
 - `Persistence/` — `TransactionManager` interface for database transaction control
 - `Query/` — `Query`, `QueryHandler` interfaces
-- `Tenancy/` — `TenantContext` (current tenant ID/slug), `TenantBootstrapper` (resolve + switch schema) — infrastructure ports, not domain contracts
+- `Team/` — `TeamMembershipChecker`
+- `Tenancy/` — `TenantContext` (current tenant ID/slug/name/logo URL), `TenantBootstrapper` (resolve + switch schema) — infrastructure ports, not domain contracts
 - `Tracing/` — `TraceContext` interface for request context propagation (`traceId`, `userId`, `tenantId`)
 - `Translation/` — `Translator` interface for framework-agnostic translations
 

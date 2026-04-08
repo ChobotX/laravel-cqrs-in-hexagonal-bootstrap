@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Tenancy;
 
 use App\Contract\Tenancy\TenantBootstrapper;
+use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use Illuminate\Contracts\Filesystem\Filesystem;
 
 final readonly class TenantBootstrapperImpl implements TenantBootstrapper
 {
@@ -12,24 +14,43 @@ final readonly class TenantBootstrapperImpl implements TenantBootstrapper
         private TenantResolver $tenantResolver,
         private TenantSchemaManager $tenantSchemaManager,
         private ResolvedTenantContext $resolvedTenantContext,
+        private Filesystem $filesystem,
     ) {}
 
     public function bootstrapByDomain(string $domain): void
     {
         $tenantModel = $this->tenantResolver->resolveByDomain($domain);
-        $this->resolvedTenantContext->set($tenantModel->id, $tenantModel->slug);
-        $this->tenantSchemaManager->switchTo($tenantModel);
+        $this->bootstrap($tenantModel);
     }
 
     public function bootstrapBySlug(string $slug): void
     {
         $tenantModel = $this->tenantResolver->resolveBySlug($slug);
-        $this->resolvedTenantContext->set($tenantModel->id, $tenantModel->slug);
-        $this->tenantSchemaManager->switchTo($tenantModel);
+        $this->bootstrap($tenantModel);
     }
 
     public function reset(): void
     {
         $this->tenantSchemaManager->reset();
+    }
+
+    private function bootstrap(TenantModel $tenantModel): void
+    {
+        $this->resolvedTenantContext->set(
+            $tenantModel->id,
+            $tenantModel->slug,
+            $tenantModel->name,
+            $this->resolveLogoUrl($tenantModel->logo_path),
+        );
+        $this->tenantSchemaManager->switchTo($tenantModel);
+    }
+
+    private function resolveLogoUrl(?string $logoPath): ?string
+    {
+        if ($logoPath === null || ! $this->filesystem->exists($logoPath)) {
+            return null;
+        }
+
+        return $this->filesystem->url($logoPath);
     }
 }

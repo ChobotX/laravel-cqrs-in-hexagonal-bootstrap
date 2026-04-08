@@ -7,6 +7,7 @@ namespace Tests\Helper;
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
 trait TenantAwareRefreshDatabase
@@ -129,7 +130,10 @@ trait TenantAwareRefreshDatabase
     private function setTenantContext(): void
     {
         $resolvedTenantContext = app(ResolvedTenantContext::class);
-        $resolvedTenantContext->set($this->tenantId(), 'test-'.$this->workerToken());
+        $resolvedTenantContext->set($this->tenantId(), 'test-'.$this->workerToken(), 'Test Tenant', null);
+
+        Context::add('tenant_id', $this->tenantId());
+        Context::add('tenant_slug', 'test-'.$this->workerToken());
     }
 
     private function beginDatabaseTransactions(): void

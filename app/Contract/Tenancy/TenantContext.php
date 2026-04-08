@@ -10,5 +10,9 @@ interface TenantContext
 
     public function currentTenantSlug(): string;
 
+    public function currentTenantName(): string;
+
+    public function currentTenantLogoUrl(): ?string;
+
     public function isResolved(): bool;
 }

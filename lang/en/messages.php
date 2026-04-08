@@ -14,6 +14,7 @@ return [
         'teams' => 'Teams',
         'registry' => 'Registry',
         'notifications' => 'Notifications',
+        'settings' => 'Settings',
         'dashboard' => 'Dashboard',
         'system' => 'System',
         'feature_flags' => 'Feature Flags',
@@ -292,6 +293,19 @@ return [
         ],
     ],
 
+    'settings' => [
+        'title' => 'Tenant Settings',
+        'subtitle' => 'Manage your organization name and branding',
+        'name' => 'Organization Name',
+        'logo' => 'Logo',
+        'current_logo' => 'Current logo',
+        'remove_logo' => 'Remove logo',
+        'logo_hint' => 'PNG, JPG or SVG. Max 2 MB.',
+        'update_action' => 'Save',
+        'cancel' => 'Cancel',
+        'updated' => 'Settings updated.',
+    ],
+
     'exceptions' => [
         'user_not_found' => 'User with id [:id] not found.',
         'invalid_user_id' => 'Value [:value] is not a valid UUID.',
@@ -337,7 +351,8 @@ return [
         'file_not_found' => 'File with id [:id] not found.',
         'file_storage_error' => 'File storage operation failed.',
         'image_processing_error' => 'Image processing failed.',
-        'tenant_not_found' => 'Tenant [:identifier] not found.',
+        'tenant_not_found' => 'Tenant with id [:id] not found.',
+        'invalid_tenant_name' => 'Tenant name must not be empty.',
         'tenant_inactive' => 'Tenant [:identifier] is inactive.',
         'invalid_password_reset_token' => 'This password reset link is invalid or has expired.',
         'user_already_activated' => 'This account has already been activated.',

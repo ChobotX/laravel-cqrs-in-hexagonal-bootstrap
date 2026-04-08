@@ -1,0 +1,43 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Helper;
+
+use App\Domain\Tenancy\TenantSettings;
+use App\Domain\Tenancy\TenantSettingsRepository;
+use SplFileInfo;
+
+final class FakeTenantSettingsRepository implements TenantSettingsRepository
+{
+    public ?string $updatedName = null;
+
+    public ?SplFileInfo $updatedLogo = null;
+
+    public bool $removedLogo = false;
+
+    public ?string $updatedTenantId = null;
+
+    /** @param array<string, TenantSettings> $settings */
+    public function __construct(
+        private array $settings = [],
+    ) {}
+
+    public function findByTenantId(string $tenantId): ?TenantSettings
+    {
+        return $this->settings[$tenantId] ?? null;
+    }
+
+    public function updateSettings(string $tenantId, string $name, ?SplFileInfo $logo, bool $removeLogo): void
+    {
+        $this->updatedTenantId = $tenantId;
+        $this->updatedName = $name;
+        $this->updatedLogo = $logo;
+        $this->removedLogo = $removeLogo;
+
+        $this->settings[$tenantId] = new TenantSettings(
+            name: $name,
+            logoUrl: $removeLogo ? null : ($this->settings[$tenantId]?->logoUrl),
+        );
+    }
+}

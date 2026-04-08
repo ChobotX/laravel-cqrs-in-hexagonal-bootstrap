@@ -7,15 +7,19 @@ namespace App\Infrastructure\Provider;
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
 use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
+use App\Domain\Tenancy\TenantSettingsRepository;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
 use App\Infrastructure\Tenancy\EloquentTenantProvisioner;
+use App\Infrastructure\Tenancy\EloquentTenantSettingsRepository;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
 use App\Infrastructure\Tenancy\TenantBootstrapperImpl;
 use App\Infrastructure\Tenancy\TenantMigrator;
 use App\Infrastructure\Tenancy\TenantResolver;
 use App\Infrastructure\Tenancy\TenantSchemaManager;
 use Illuminate\Console\Events\CommandStarting;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Override;
 
@@ -36,6 +40,12 @@ final class TenancyServiceProvider extends ServiceProvider
         $this->app->singleton(TenantResolver::class);
         $this->app->singleton(TenantMigrator::class);
         $this->app->bind(TenantProvisioner::class, EloquentTenantProvisioner::class);
+        $this->app->bind(TenantSettingsRepository::class, fn (): EloquentTenantSettingsRepository => new EloquentTenantSettingsRepository(
+            filesystem: Storage::disk('public'),
+        ));
+        $this->app->when(TenantBootstrapperImpl::class)
+            ->needs(Filesystem::class)
+            ->give(fn (): Filesystem => Storage::disk('public'));
     }
 
     public function boot(): void

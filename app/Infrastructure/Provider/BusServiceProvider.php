@@ -236,12 +236,16 @@ use App\Domain\Team\Handler\Query\GetUserTeamsHandler;
 use App\Domain\Team\Handler\Query\ListTeamMembersHandler;
 use App\Domain\Team\Handler\Query\ListTeamsHandler;
 use App\Domain\Team\Handler\Query\SearchTeamsHandler;
+use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsCommand;
+use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsHandler;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateAllTenantsCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
 use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
+use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsHandler;
+use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsQuery;
 use App\Domain\User\Contract\Command\AcceptInviteCommand;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Domain\User\Contract\Command\DeleteUserCommand;
@@ -397,6 +401,7 @@ final class BusServiceProvider extends ServiceProvider
                 SaveGridPresetCommand::class => SaveGridPresetHandler::class,
                 DeleteGridPresetCommand::class => DeleteGridPresetHandler::class,
                 SetDefaultGridPresetCommand::class => SetDefaultGridPresetHandler::class,
+                UpdateTenantSettingsCommand::class => UpdateTenantSettingsHandler::class,
             ],
             middleware: [
                 $this->app->make(LogBusMessage::class),
@@ -463,6 +468,7 @@ final class BusServiceProvider extends ServiceProvider
                 ListGridPresetsQuery::class => ListGridPresetsHandler::class,
                 GetDefaultGridPresetQuery::class => GetDefaultGridPresetHandler::class,
                 GetPresetShareCapabilitiesQuery::class => GetPresetShareCapabilitiesHandler::class,
+                GetTenantSettingsQuery::class => GetTenantSettingsHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

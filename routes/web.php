@@ -47,6 +47,8 @@ use App\Presentation\Http\Controller\Web\Registry\ShowEditDefinitionController;
 use App\Presentation\Http\Controller\Web\Registry\ShowEditEntryController;
 use App\Presentation\Http\Controller\Web\Registry\UpdateDefinitionController;
 use App\Presentation\Http\Controller\Web\Registry\UpdateEntryController;
+use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
+use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
 use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
 use App\Presentation\Http\Controller\Web\Team\ListTeamsController;
@@ -115,6 +117,9 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/teams/{teamId}', UpdateTeamController::class)->name('teams.update');
     Route::delete('/teams/{teamId}', DeleteTeamController::class)->name('teams.destroy');
     Route::post('/teams/{teamId}/members', ManageTeamMembersController::class)->name('teams.members');
+
+    Route::get('/settings', ShowTenantSettingsController::class)->name('settings.index');
+    Route::put('/settings', UpdateTenantSettingsController::class)->name('settings.update');
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');

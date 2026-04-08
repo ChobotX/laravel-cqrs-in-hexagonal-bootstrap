@@ -59,6 +59,9 @@ final readonly class ResolveTenantMiddleware
 
         View::share('tenantSlug', $tenantSlug);
 
+        View::share('tenantName', $this->tenantContext->currentTenantName());
+        View::share('tenantLogoUrl', $this->tenantContext->currentTenantLogoUrl());
+
         return $next($request);
     }
 }

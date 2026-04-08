@@ -41,4 +41,4 @@ See [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md)
 
 ---
 
-See [ADR.md](ADR.md) | [QUICKSTART.md](QUICKSTART.md) | [AGENTS.md](AGENTS.md)
+See [ADR.md](ADR.md) | [QUICKSTART.md](QUICKSTART.md) | [AGENTS.md](AGENTS.md) | [ROADMAP.md](ROADMAP.md)
