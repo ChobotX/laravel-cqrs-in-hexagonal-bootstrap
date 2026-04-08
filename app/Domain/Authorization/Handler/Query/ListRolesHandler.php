@@ -26,12 +26,13 @@ final readonly class ListRolesHandler implements QueryHandler
     {
         $pagination = $query->pagination();
         $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting(Sorting::PERMISSION_SCORE, SortDirection::Desc)];
+        $filters = $query->filters();
 
         if ($pagination !== null) {
-            return $this->roleRepository->findAllPaginated($pagination, $sortings);
+            return $this->roleRepository->findAllPaginated($pagination, $sortings, $filters);
         }
 
-        $items = $this->roleRepository->findAll($sortings);
+        $items = $this->roleRepository->findAll($sortings, $filters);
 
         return new PaginatedResult($items, count($items), new Pagination(1, max(count($items), 1)));
     }

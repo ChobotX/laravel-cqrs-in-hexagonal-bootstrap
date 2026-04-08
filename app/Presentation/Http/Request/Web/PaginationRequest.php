@@ -19,6 +19,10 @@ final class PaginationRequest extends FormRequest
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:'.Pagination::MAX_PER_PAGE],
             'sort' => ['sometimes', 'string', 'max:50', 'regex:/^[a-z_]+$/'],
             'direction' => ['sometimes', 'string', 'in:asc,desc'],
+            'search' => ['nullable', 'string', 'max:200'],
+            'filter' => ['sometimes', 'array'],
+            'filter.*' => ['sometimes', 'string', 'max:200'],
+            'preset' => ['sometimes', 'string', 'uuid'],
         ];
     }
 
@@ -42,5 +46,26 @@ final class PaginationRequest extends FormRequest
             $sort,
             SortDirection::tryFrom($this->string('direction', 'asc')->toString()) ?? SortDirection::Asc,
         );
+    }
+
+    public function search(): string
+    {
+        return $this->string('search')->toString();
+    }
+
+    /** @return array<string, string> */
+    public function rawFilters(): array
+    {
+        /** @var array<string, string> $filters */
+        $filters = $this->validated('filter') ?? [];
+
+        return $filters;
+    }
+
+    public function presetId(): ?string
+    {
+        $preset = $this->string('preset')->toString();
+
+        return $preset !== '' ? $preset : null;
     }
 }

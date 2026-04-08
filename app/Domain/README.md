@@ -159,6 +159,14 @@ Repository interfaces expose separate paginated methods (`allPaginated()`, `find
 
 List queries that support sorting implement `SortableQuery` alongside `Query`. When `sorting()` is `null` (no sorting requested), the handler applies a domain-appropriate default (e.g., users by name, roles by permission score). The `Sorting` value object carries a column name (a domain concept like `'name'` or `Sorting::PERMISSION_SCORE`) and a `SortDirection`. Infrastructure repositories translate these to SQL ORDER BY clauses, computing values for virtual columns like `permission_score` via SQL subqueries.
 
+## Filtered Queries
+
+List queries that support filtering implement `FilterableQuery` alongside `Query`. The `Filter` value object carries a column name, `FilterOperator` (Equals, Contains, In, Search), and a value. The `Search` operator fans out across multiple columns defined by the repository's `searchColumns()` method — the column field is ignored for search filters.
+
+Handlers pass `$query->filters()` to the repository. Empty filter list = no filtering. Controllers own the column allowlist via `FILTERABLE_COLUMNS` constant and build `Filter` objects from request parameters (`?search=` for fulltext, `?filter[col]=` for column filters).
+
+Infrastructure repositories apply filters via the `FiltersQuery` trait, which maps operators to SQL: `Equals` → `WHERE col = ?`, `Contains` → `unaccent(col) ILIKE unaccent(?)`, `In` → `WHERE col IN (?)`, `Search` → OR-group across `searchColumns()`. LIKE wildcards in user input are escaped via `escapeLike()`.
+
 ## Domain\*\Contract pattern
 
 Each bounded context exposes a `Contract` sub-namespace containing types that other domains may import:

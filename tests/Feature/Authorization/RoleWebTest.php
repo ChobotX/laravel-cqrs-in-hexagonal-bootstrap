@@ -100,48 +100,8 @@ it('stops impersonation via web', function (): void {
     $this->actingAs($userModel)->post('/stop-impersonation')->assertRedirect();
 });
 
-it('sorts roles by name ascending via query params', function (): void {
-    $userModel = webUser();
-
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c070', 'name' => 'Zulu Role', 'description' => 'Z', 'is_system' => false]);
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c071', 'name' => 'Alpha Role', 'description' => 'A', 'is_system' => false]);
-
-    $this->actingAs($userModel)
-        ->get('/roles?sort=name&direction=asc')
-        ->assertOk()
-        ->assertSeeInOrder(['Alpha Role', 'Zulu Role']);
-});
-
-it('sorts roles by name descending via query params', function (): void {
-    $userModel = webUser();
-
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c072', 'name' => 'Zulu Desc', 'description' => 'Z', 'is_system' => false]);
-    RoleModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c073', 'name' => 'Alpha Desc', 'description' => 'A', 'is_system' => false]);
-
-    $this->actingAs($userModel)
-        ->get('/roles?sort=name&direction=desc')
-        ->assertOk()
-        ->assertSeeInOrder(['Zulu Desc', 'Alpha Desc']);
-});
-
-it('ignores invalid sort column for roles', function (): void {
-    $userModel = webUser();
-
-    $this->actingAs($userModel)
-        ->get('/roles?sort=invalid&direction=asc')
-        ->assertOk();
-});
-
 it('redirects unauthenticated to login', function (): void {
     $this->get('/roles')->assertRedirect('/login?'.http_build_query(['redirect' => '/roles']));
-});
-
-it('redirects to page 1 when requested page exceeds total pages', function (): void {
-    $userModel = webUser();
-
-    $this->actingAs($userModel)
-        ->get('/roles?page=5&per_page=15&sort=name&direction=asc')
-        ->assertRedirect('/roles?page=1&per_page=15&sort=name&direction=asc');
 });
 
 it('creates a role with permissions via web', function (): void {

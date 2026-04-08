@@ -11,6 +11,7 @@ use App\Domain\Team\Contract\Repository\TeamRepository;
 use App\Domain\Team\Contract\ValueObject\TeamId;
 use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Domain\Team\Exception\TeamSlugAlreadyExistsException;
+use App\Infrastructure\Eloquent\FiltersQuery;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentTeamRepository implements TeamRepository
 {
+    use FiltersQuery;
     use PaginatesQuery;
     use SortsQuery;
 
@@ -27,9 +29,9 @@ final readonly class EloquentTeamRepository implements TeamRepository
     ) {}
 
     /** @return list<Team> */
-    public function findAll(?array $onlyIds = null, array $sortings = []): array
+    public function findAll(?array $onlyIds = null, array $sortings = [], array $filters = []): array
     {
-        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->filterBuilder($this->sortBuilder($this->baseQuery($onlyIds), $sortings), $filters);
 
         return array_values(
             $builder->get()
@@ -39,9 +41,9 @@ final readonly class EloquentTeamRepository implements TeamRepository
     }
 
     /** @return PaginatedResult<Team> */
-    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = [], array $filters = []): PaginatedResult
     {
-        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->filterBuilder($this->sortBuilder($this->baseQuery($onlyIds), $sortings), $filters);
 
         [$models, $total] = $this->paginateBuilder($builder, $pagination);
 
@@ -159,6 +161,12 @@ final readonly class EloquentTeamRepository implements TeamRepository
     private function textSortColumns(): array
     {
         return ['name', 'slug'];
+    }
+
+    /** @return list<string> */
+    private function searchColumns(): array
+    {
+        return ['name', 'slug', 'description'];
     }
 
     /**

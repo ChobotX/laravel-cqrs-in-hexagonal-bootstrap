@@ -11,6 +11,7 @@ use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
 use App\Domain\Authorization\Exception\RoleAlreadyExistsException;
+use App\Infrastructure\Eloquent\FiltersQuery;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,7 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class EloquentRoleRepository implements RoleRepository
 {
+    use FiltersQuery;
     use PaginatesQuery;
     use SortsQuery;
 
@@ -35,9 +37,9 @@ final readonly class EloquentRoleRepository implements RoleRepository
     ) {}
 
     /** @return list<Role> */
-    public function findAll(array $sortings = []): array
+    public function findAll(array $sortings = [], array $filters = []): array
     {
-        $builder = $this->applySortings(RoleModel::with('permissions'), $sortings);
+        $builder = $this->filterBuilder($this->applySortings(RoleModel::with('permissions'), $sortings), $filters);
 
         return array_values(
             $builder->get()->map(fn (RoleModel $roleModel): Role => $this->roleMapper->toDomain($roleModel))->all(),
@@ -45,9 +47,9 @@ final readonly class EloquentRoleRepository implements RoleRepository
     }
 
     /** @return PaginatedResult<Role> */
-    public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult
+    public function findAllPaginated(Pagination $pagination, array $sortings = [], array $filters = []): PaginatedResult
     {
-        $builder = $this->applySortings(RoleModel::with('permissions'), $sortings);
+        $builder = $this->filterBuilder($this->applySortings(RoleModel::with('permissions'), $sortings), $filters);
         [$models, $total] = $this->paginateBuilder($builder, $pagination);
 
         return new PaginatedResult(
@@ -172,6 +174,12 @@ final readonly class EloquentRoleRepository implements RoleRepository
         if ($model instanceof RoleModel) {
             $model->delete();
         }
+    }
+
+    /** @return list<string> */
+    private function searchColumns(): array
+    {
+        return ['name', 'description'];
     }
 
     /** @return list<string> */

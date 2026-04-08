@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Contract\Repository;
 
+use App\Application\Filtering\Filter;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Domain\Registry\Contract\Entity\Entry;
@@ -22,8 +23,11 @@ interface EntryRepository
 
     public function delete(EntryId $entryId): void;
 
-    /** @return PaginatedResult<Entry> */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination): PaginatedResult;
+    /**
+     * @param  list<Filter>  $filters
+     * @return PaginatedResult<Entry>
+     */
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = []): PaginatedResult;
 
     public function existsByDefinition(DefinitionId $definitionId): bool;
 

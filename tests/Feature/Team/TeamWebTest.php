@@ -207,48 +207,8 @@ it('removes a team member via web', function (): void {
     ]);
 });
 
-it('sorts teams by name ascending via query params', function (): void {
-    $userModel = teamWebUser();
-
-    TeamModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c080', 'name' => 'Zulu Team', 'slug' => 'zulu-team', 'description' => 'Z']);
-    TeamModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c081', 'name' => 'Alpha Team', 'slug' => 'alpha-team', 'description' => 'A']);
-
-    $this->actingAs($userModel)
-        ->get('/teams?sort=name&direction=asc')
-        ->assertOk()
-        ->assertSeeInOrder(['Alpha Team', 'Zulu Team']);
-});
-
-it('sorts teams by slug via query params', function (): void {
-    $userModel = teamWebUser();
-
-    TeamModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c082', 'name' => 'First By Name', 'slug' => 'zulu-slug', 'description' => 'Z']);
-    TeamModel::create(['id' => '550e8400-e29b-41d4-a716-44665544c083', 'name' => 'Second By Name', 'slug' => 'alpha-slug', 'description' => 'A']);
-
-    $this->actingAs($userModel)
-        ->get('/teams?sort=slug&direction=asc')
-        ->assertOk()
-        ->assertSeeInOrder(['alpha-slug', 'zulu-slug']);
-});
-
-it('ignores invalid sort column for teams', function (): void {
-    $userModel = teamWebUser();
-
-    $this->actingAs($userModel)
-        ->get('/teams?sort=invalid&direction=asc')
-        ->assertOk();
-});
-
 it('redirects unauthenticated to login', function (): void {
     $this->get('/teams')->assertRedirect('/login?'.http_build_query(['redirect' => '/teams']));
-});
-
-it('redirects to page 1 when requested page exceeds total pages', function (): void {
-    $userModel = teamWebUser();
-
-    $this->actingAs($userModel)
-        ->get('/teams?page=5&per_page=15&sort=name&direction=asc')
-        ->assertRedirect('/teams?page=1&per_page=15&sort=name&direction=asc');
 });
 
 it('skips label sync when user lacks labels.management.read', function (): void {

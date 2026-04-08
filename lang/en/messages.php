@@ -344,6 +344,10 @@ return [
         'feature_flag_not_found' => 'Feature flag [:key] not found.',
         'invalid_flag_key' => 'Invalid feature flag key format: [:key].',
         'invalid_flag_value' => 'Invalid value [:value] for feature flag [:key]: :reason',
+        'invalid_id' => 'Value [:value] is not a valid UUID.',
+        'grid_preset_not_found' => 'Grid preset not found.',
+        'grid_preset_ownership' => 'You do not have access to this grid preset.',
+        'grid_preset_scope_permission' => 'You do not have permission to share presets with this scope.',
     ],
 
     'pagination' => [
@@ -352,6 +356,36 @@ return [
         'previous' => 'Previous',
         'next' => 'Next',
         'page' => 'Page :page',
+    ],
+
+    'grid' => [
+        'search_placeholder' => 'Search...',
+        'search_label' => 'Search',
+        'filter_all' => 'All',
+        'clear_filters' => 'Clear all',
+        'remove_filter' => 'Remove filter: :label',
+        'search_filter' => 'Search: :term',
+        'no_results' => 'No results found for your search.',
+        'actions' => 'Actions',
+        'presets' => [
+            'save' => 'Save view',
+            'save_as' => 'Save as new view',
+            'name_label' => 'View name',
+            'name_placeholder' => 'My view',
+            'rename' => 'Rename',
+            'set_default' => 'Set as default',
+            'delete' => 'Delete view',
+            'delete_confirm_title' => 'Delete View',
+            'delete_confirm_message' => 'Are you sure you want to delete the view ":name"?',
+            'delete_shared_warning' => 'This preset is shared with others. Deleting it will remove it for everyone.',
+            'all' => 'All',
+            'scope_personal' => 'Only me',
+            'scope_team' => 'My team',
+            'scope_global' => 'Everyone',
+            'share_label' => 'Visible to',
+            'scope_badge_team' => 'Team',
+            'scope_badge_global' => 'Global',
+        ],
     ],
 
     'registry' => [

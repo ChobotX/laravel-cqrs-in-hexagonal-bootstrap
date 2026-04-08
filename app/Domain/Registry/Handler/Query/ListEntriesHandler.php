@@ -30,6 +30,7 @@ final readonly class ListEntriesHandler implements QueryHandler
         return $this->entryRepository->findByDefinitionPaginated(
             new DefinitionId($query->definitionId),
             $pagination,
+            $query->filters(),
         );
     }
 }

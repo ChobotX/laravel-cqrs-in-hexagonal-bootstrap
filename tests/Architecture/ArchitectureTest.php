@@ -23,6 +23,7 @@ final class ArchitectureTest
                 Selector::inNamespace('App\Contract'),
                 // Application-layer attributes and interfaces used by Domain commands/queries
                 Selector::inNamespace('App\Application\Authorization'),
+                Selector::inNamespace('App\Application\Filtering'),
                 Selector::inNamespace('App\Application\Pagination'),
                 Selector::inNamespace('App\Application\Sorting'),
                 Selector::inNamespace('App\Application\Bus'),
@@ -86,6 +87,7 @@ final class ArchitectureTest
                 Selector::inNamespace('App\Domain\Authorization\Contract'),
                 Selector::inNamespace('App\Domain\FeatureFlag\Contract'),
                 Selector::inNamespace('App\Domain\File\Contract'),
+                Selector::inNamespace('App\Domain\GridPreset\Contract'),
                 Selector::inNamespace('App\Domain\Label\Contract'),
                 Selector::inNamespace('App\Domain\Notification\Contract'),
                 Selector::inNamespace('App\Domain\Registry\Contract'),

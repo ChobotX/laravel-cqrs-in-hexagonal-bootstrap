@@ -13,6 +13,7 @@ use App\Domain\Team\Contract\ValueObject\TeamSlug;
 
 final class FakeTeamRepository implements TeamRepository
 {
+    use FiltersArray;
     use PaginatesArray;
     use SortsArray;
 
@@ -28,7 +29,7 @@ final class FakeTeamRepository implements TeamRepository
     ) {}
 
     /** @return list<Team> */
-    public function findAll(?array $onlyIds = null, array $sortings = []): array
+    public function findAll(?array $onlyIds = null, array $sortings = [], array $filters = []): array
     {
         $teams = array_values($this->teams);
 
@@ -38,6 +39,8 @@ final class FakeTeamRepository implements TeamRepository
                 fn (Team $team): bool => in_array($team->id->value, $onlyIds, true),
             ));
         }
+
+        $teams = $this->filterArray($teams, $filters, $this->filterValueExtractor(...), $this->searchMatcher(...));
 
         return $this->sortArray($teams, $sortings, $this->sortValueExtractor(...));
     }
@@ -85,9 +88,9 @@ final class FakeTeamRepository implements TeamRepository
     }
 
     /** @return PaginatedResult<Team> */
-    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = [], array $filters = []): PaginatedResult
     {
-        return $this->paginateArray($this->findAll($onlyIds, $sortings), $pagination);
+        return $this->paginateArray($this->findAll($onlyIds, $sortings, $filters), $pagination);
     }
 
     public function count(): int
@@ -128,5 +131,24 @@ final class FakeTeamRepository implements TeamRepository
             'slug' => fn (Team $team): string => $team->slug->value,
             default => fn (Team $team): int => 0,
         };
+    }
+
+    private function filterValueExtractor(Team $team, string $column): string
+    {
+        return match ($column) {
+            'name' => $team->name->value,
+            'slug' => $team->slug->value,
+            'description' => $team->description ?? '',
+            default => '',
+        };
+    }
+
+    private function searchMatcher(Team $team, string $term): bool
+    {
+        $normalizedTerm = mb_strtolower($this->stripDiacriticsForFilter($term));
+
+        return str_contains($this->stripDiacriticsForFilter(mb_strtolower($team->name->value)), $normalizedTerm)
+            || str_contains($this->stripDiacriticsForFilter(mb_strtolower($team->slug->value)), $normalizedTerm)
+            || str_contains($this->stripDiacriticsForFilter(mb_strtolower($team->description ?? '')), $normalizedTerm);
     }
 }

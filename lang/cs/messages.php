@@ -336,6 +336,10 @@ return [
         'feature_flag_not_found' => 'Přepínač funkce [:key] nebyl nalezen.',
         'invalid_flag_key' => 'Neplatný formát klíče přepínače: [:key].',
         'invalid_flag_value' => 'Neplatná hodnota [:value] pro přepínač [:key]: :reason',
+        'invalid_id' => 'Hodnota [:value] není platné UUID.',
+        'grid_preset_not_found' => 'Uložený pohled nenalezen.',
+        'grid_preset_ownership' => 'K tomuto uloženému pohledu nemáte přístup.',
+        'grid_preset_scope_permission' => 'Nemáte oprávnění sdílet pohledy s tímto rozsahem.',
     ],
 
     'pagination' => [
@@ -344,6 +348,36 @@ return [
         'previous' => 'Předchozí',
         'next' => 'Další',
         'page' => 'Stránka :page',
+    ],
+
+    'grid' => [
+        'search_placeholder' => 'Hledat...',
+        'search_label' => 'Hledat',
+        'filter_all' => 'Vše',
+        'clear_filters' => 'Zrušit vše',
+        'remove_filter' => 'Odebrat filtr: :label',
+        'search_filter' => 'Hledání: :term',
+        'no_results' => 'Pro vaše hledání nebyly nalezeny žádné výsledky.',
+        'actions' => 'Akce',
+        'presets' => [
+            'save' => 'Uložit pohled',
+            'save_as' => 'Uložit jako nový pohled',
+            'name_label' => 'Název pohledu',
+            'name_placeholder' => 'Můj pohled',
+            'rename' => 'Přejmenovat',
+            'set_default' => 'Nastavit jako výchozí',
+            'delete' => 'Smazat pohled',
+            'delete_confirm_title' => 'Smazat pohled',
+            'delete_confirm_message' => 'Opravdu chcete smazat pohled ":name"?',
+            'delete_shared_warning' => 'Tento pohled je sdílený s ostatními. Smazáním ho odeberete všem.',
+            'all' => 'Vše',
+            'scope_personal' => 'Jen já',
+            'scope_team' => 'Můj tým',
+            'scope_global' => 'Všichni',
+            'share_label' => 'Viditelný pro',
+            'scope_badge_team' => 'Tým',
+            'scope_badge_global' => 'Globální',
+        ],
     ],
 
     'registry' => [

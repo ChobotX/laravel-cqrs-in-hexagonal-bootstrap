@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Filtering\Filter;
+use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
@@ -151,4 +153,90 @@ it('supports withSorting immutable copy', function (): void {
         ->and($listRolesQuery->sorting())->toHaveCount(1)
         ->and($listRolesQuery->sorting()[0]->column)->toBe('name')
         ->and($listRolesQuery->sorting()[0]->direction)->toBe(SortDirection::Asc);
+});
+
+it('filters results with search filter', function (): void {
+    $roles = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440001'), new RoleName('Editor'), 'Can edit content', false, []),
+        '550e8400-e29b-41d4-a716-446655440002' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440002'), new RoleName('Viewer'), 'Read-only access', false, []),
+        '550e8400-e29b-41d4-a716-446655440003' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440003'), new RoleName('Admin'), 'Full administration', false, []),
+    ];
+
+    $handler = new ListRolesHandler(new FakeRoleRepository($roles));
+
+    $paginatedResult = $handler->handle(
+        (new ListRolesQuery)->withFilters([new Filter('', FilterOperator::Search, 'edit')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('Editor');
+});
+
+it('returns all results with empty filters', function (): void {
+    $roles = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440001'), new RoleName('Editor'), 'Editor role', false, []),
+        '550e8400-e29b-41d4-a716-446655440002' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440002'), new RoleName('Viewer'), 'Viewer role', false, []),
+    ];
+
+    $handler = new ListRolesHandler(new FakeRoleRepository($roles));
+
+    $paginatedResult = $handler->handle((new ListRolesQuery)->withFilters([]));
+
+    expect($paginatedResult->items)->toHaveCount(2);
+});
+
+it('supports withFilters immutable copy', function (): void {
+    $query = new ListRolesQuery;
+    $listRolesQuery = $query->withFilters([new Filter('', FilterOperator::Search, 'test')]);
+
+    expect($query->filters())->toBe([])
+        ->and($listRolesQuery->filters())->toHaveCount(1)
+        ->and($listRolesQuery->filters()[0]->operator)->toBe(FilterOperator::Search)
+        ->and($listRolesQuery->filters()[0]->value)->toBe('test');
+});
+
+it('search filter matches by description', function (): void {
+    $roles = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440001'), new RoleName('Editor'), 'Can edit content', false, []),
+        '550e8400-e29b-41d4-a716-446655440002' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440002'), new RoleName('Viewer'), 'Read-only access', false, []),
+    ];
+
+    $handler = new ListRolesHandler(new FakeRoleRepository($roles));
+
+    $paginatedResult = $handler->handle(
+        (new ListRolesQuery)->withFilters([new Filter('', FilterOperator::Search, 'read-only')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('Viewer');
+});
+
+it('search filter returns empty for no match', function (): void {
+    $roles = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440001'), new RoleName('Editor'), 'Editor role', false, []),
+    ];
+
+    $handler = new ListRolesHandler(new FakeRoleRepository($roles));
+
+    $paginatedResult = $handler->handle(
+        (new ListRolesQuery)->withFilters([new Filter('', FilterOperator::Search, 'nonexistent')]),
+    );
+
+    expect($paginatedResult->items)->toBeEmpty()
+        ->and($paginatedResult->total)->toBe(0);
+});
+
+it('empty search term returns all results', function (): void {
+    $roles = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440001'), new RoleName('Editor'), 'Editor role', false, []),
+        '550e8400-e29b-41d4-a716-446655440002' => new Role(new RoleId('550e8400-e29b-41d4-a716-446655440002'), new RoleName('Viewer'), 'Viewer role', false, []),
+    ];
+
+    $handler = new ListRolesHandler(new FakeRoleRepository($roles));
+
+    $paginatedResult = $handler->handle(
+        (new ListRolesQuery)->withFilters([new Filter('', FilterOperator::Search, '')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(2);
 });

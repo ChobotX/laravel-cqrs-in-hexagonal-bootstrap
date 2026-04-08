@@ -12,6 +12,7 @@ use App\Domain\User\Contract\ValueObject\UserId;
 
 final class FakeUserRepository implements UserRepository
 {
+    use FiltersArray;
     use PaginatesArray;
     use SortsArray;
 
@@ -27,7 +28,7 @@ final class FakeUserRepository implements UserRepository
     ) {}
 
     /** @return list<User> */
-    public function all(?array $onlyIds = null, array $sortings = []): array
+    public function all(?array $onlyIds = null, array $sortings = [], array $filters = []): array
     {
         $users = array_values($this->users);
 
@@ -37,6 +38,8 @@ final class FakeUserRepository implements UserRepository
                 fn (User $user): bool => in_array($user->id->value, $onlyIds, true),
             ));
         }
+
+        $users = $this->filterArray($users, $filters, $this->filterValueExtractor(...), $this->searchMatcher(...));
 
         return $this->sortArray($users, $sortings, $this->sortValueExtractor(...));
     }
@@ -73,9 +76,9 @@ final class FakeUserRepository implements UserRepository
     }
 
     /** @return PaginatedResult<User> */
-    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = [], array $filters = []): PaginatedResult
     {
-        return $this->paginateArray($this->all($onlyIds, $sortings), $pagination);
+        return $this->paginateArray($this->all($onlyIds, $sortings, $filters), $pagination);
     }
 
     public function count(): int
@@ -115,6 +118,23 @@ final class FakeUserRepository implements UserRepository
             'email' => fn (User $user): string => $user->email->value,
             default => fn (User $user): int => 0,
         };
+    }
+
+    private function filterValueExtractor(User $user, string $column): string
+    {
+        return match ($column) {
+            'name' => $user->name->value,
+            'email' => $user->email->value,
+            default => '',
+        };
+    }
+
+    private function searchMatcher(User $user, string $term): bool
+    {
+        $normalizedTerm = mb_strtolower($this->stripDiacritics($term));
+
+        return str_contains($this->stripDiacritics(mb_strtolower($user->name->value)), $normalizedTerm)
+            || str_contains($this->stripDiacritics(mb_strtolower($user->email->value)), $normalizedTerm);
     }
 
     private function stripDiacritics(string $value): string

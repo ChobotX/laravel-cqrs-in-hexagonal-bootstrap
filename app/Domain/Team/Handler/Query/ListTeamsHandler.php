@@ -27,12 +27,13 @@ final readonly class ListTeamsHandler implements QueryHandler
         $pagination = $query->pagination();
         $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting('name', SortDirection::Asc)];
         $visibleIds = $query->accessContext()?->visibleIds;
+        $filters = $query->filters();
 
         if ($pagination !== null) {
-            return $this->teamRepository->findAllPaginated($pagination, $visibleIds, $sortings);
+            return $this->teamRepository->findAllPaginated($pagination, $visibleIds, $sortings, $filters);
         }
 
-        $items = $this->teamRepository->findAll($visibleIds, $sortings);
+        $items = $this->teamRepository->findAll($visibleIds, $sortings, $filters);
 
         return new PaginatedResult($items, count($items), new Pagination(1, max(count($items), 1)));
     }

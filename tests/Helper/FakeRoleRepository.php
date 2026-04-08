@@ -14,6 +14,7 @@ use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 
 final class FakeRoleRepository implements RoleRepository
 {
+    use FiltersArray;
     use PaginatesArray;
     use SortsArray;
 
@@ -29,9 +30,11 @@ final class FakeRoleRepository implements RoleRepository
     ) {}
 
     /** @return list<Role> */
-    public function findAll(array $sortings = []): array
+    public function findAll(array $sortings = [], array $filters = []): array
     {
-        return $this->sortArray(array_values($this->roles), $sortings, $this->sortValueExtractor(...));
+        $roles = $this->filterArray(array_values($this->roles), $filters, $this->filterValueExtractor(...), $this->searchMatcher(...));
+
+        return $this->sortArray($roles, $sortings, $this->sortValueExtractor(...));
     }
 
     public function findById(RoleId $roleId): ?Role
@@ -84,9 +87,9 @@ final class FakeRoleRepository implements RoleRepository
     }
 
     /** @return PaginatedResult<Role> */
-    public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult
+    public function findAllPaginated(Pagination $pagination, array $sortings = [], array $filters = []): PaginatedResult
     {
-        return $this->paginateArray($this->findAll($sortings), $pagination);
+        return $this->paginateArray($this->findAll($sortings, $filters), $pagination);
     }
 
     public function count(): int
@@ -110,5 +113,22 @@ final class FakeRoleRepository implements RoleRepository
                 : array_sum(array_map(fn (RolePermission $rolePermission): int => $rolePermission->scope->order(), $role->permissions)),
             default => fn (Role $role): int => 0,
         };
+    }
+
+    private function filterValueExtractor(Role $role, string $column): string
+    {
+        return match ($column) {
+            'name' => $role->name->value,
+            'description' => $role->description,
+            default => '',
+        };
+    }
+
+    private function searchMatcher(Role $role, string $term): bool
+    {
+        $normalizedTerm = mb_strtolower($this->stripDiacriticsForFilter($term));
+
+        return str_contains($this->stripDiacriticsForFilter(mb_strtolower($role->name->value)), $normalizedTerm)
+            || str_contains($this->stripDiacriticsForFilter(mb_strtolower($role->description)), $normalizedTerm);
     }
 }

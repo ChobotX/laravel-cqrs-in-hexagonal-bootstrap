@@ -60,6 +60,8 @@ The `PaginatesQuery` trait (`app/Infrastructure/Eloquent/PaginatesQuery.php`) pr
 
 The `SortsQuery` trait (`app/Infrastructure/Eloquent/SortsQuery.php`) provides a `sortBuilder()` helper that applies `ORDER BY` to an Eloquent builder. Each repository using the trait must implement `textSortColumns()` returning column names where case-insensitive sorting via `LOWER()` applies. Non-text columns (timestamps, numerics) get plain `ORDER BY`. For computed columns like `permission_score`, repositories add `selectRaw` with the SQL expression before calling `sortBuilder()`.
 
+The `FiltersQuery` trait (`app/Infrastructure/Eloquent/FiltersQuery.php`) provides a `filterBuilder()` helper that applies `WHERE` clauses to an Eloquent builder. Each repository using the trait must implement `searchColumns()` returning column names for fulltext search. Operators map to SQL: `Equals` → `WHERE col = ?`, `Contains` → `unaccent(col) ILIKE unaccent(?)`, `In` → `WHERE col IN (?)`, `Search` → OR-group across search columns. LIKE wildcards (`%`, `_`, `\`) are escaped via `escapeLike()` to prevent user input from being interpreted as patterns.
+
 ## File Storage
 
 `App\Infrastructure\Filesystem\LaravelFileStorage` implements `App\Domain\File\Contract\FileStorage`, wrapping Laravel's `Illuminate\Contracts\Filesystem\Filesystem`. This is the only place in the application that touches the filesystem directly — all other code must inject the `FileStorage` interface. Storage paths use `{namespace}/{uuid}.{extension}` format. Files are streamed via `SplFileInfo::getPathname()` to avoid loading full contents into memory.

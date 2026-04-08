@@ -108,6 +108,18 @@ use App\Domain\File\Handler\Query\GetFileByIdHandler;
 use App\Domain\File\Handler\Query\GetFileContentHandler;
 use App\Domain\File\Handler\Query\GetFileVersionsHandler;
 use App\Domain\File\Handler\Query\GetLatestFileVersionHandler;
+use App\Domain\GridPreset\Contract\Command\DeleteGridPresetCommand;
+use App\Domain\GridPreset\Contract\Command\SaveGridPresetCommand;
+use App\Domain\GridPreset\Contract\Command\SetDefaultGridPresetCommand;
+use App\Domain\GridPreset\Contract\Query\GetDefaultGridPresetQuery;
+use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
+use App\Domain\GridPreset\Contract\Query\ListGridPresetsQuery;
+use App\Domain\GridPreset\Handler\Command\DeleteGridPresetHandler;
+use App\Domain\GridPreset\Handler\Command\SaveGridPresetHandler;
+use App\Domain\GridPreset\Handler\Command\SetDefaultGridPresetHandler;
+use App\Domain\GridPreset\Handler\Query\GetDefaultGridPresetHandler;
+use App\Domain\GridPreset\Handler\Query\GetPresetShareCapabilitiesHandler;
+use App\Domain\GridPreset\Handler\Query\ListGridPresetsHandler;
 use App\Domain\Label\Contract\Command\AssignLabelCommand;
 use App\Domain\Label\Contract\Command\CreateLabelCommand;
 use App\Domain\Label\Contract\Command\RemoveLabelCommand;
@@ -382,6 +394,9 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteEntryCommand::class => DeleteEntryHandler::class,
                 UpdateFeatureFlagCommand::class => UpdateFeatureFlagHandler::class,
                 ResetFeatureFlagCommand::class => ResetFeatureFlagHandler::class,
+                SaveGridPresetCommand::class => SaveGridPresetHandler::class,
+                DeleteGridPresetCommand::class => DeleteGridPresetHandler::class,
+                SetDefaultGridPresetCommand::class => SetDefaultGridPresetHandler::class,
             ],
             middleware: [
                 $this->app->make(LogBusMessage::class),
@@ -445,6 +460,9 @@ final class BusServiceProvider extends ServiceProvider
                 ListFeatureFlagsQuery::class => ListFeatureFlagsHandler::class,
                 GetFeatureFlagQuery::class => GetFeatureFlagHandler::class,
                 GetAllFeatureFlagValuesQuery::class => GetAllFeatureFlagValuesHandler::class,
+                ListGridPresetsQuery::class => ListGridPresetsHandler::class,
+                GetDefaultGridPresetQuery::class => GetDefaultGridPresetHandler::class,
+                GetPresetShareCapabilitiesQuery::class => GetPresetShareCapabilitiesHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

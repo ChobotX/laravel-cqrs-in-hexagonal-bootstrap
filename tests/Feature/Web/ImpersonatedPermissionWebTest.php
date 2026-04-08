@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 
 // -- Roles page: impersonated viewer can see and perform edit/delete --
 
-it('impersonated viewer sees view button on roles list', function (): void {
+it('impersonated viewer sees roles page', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440750',
@@ -33,10 +33,11 @@ it('impersonated viewer sees view button on roles list', function (): void {
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
-    $response = $this->actingAs($admin)->get('/roles');
+    $this->actingAs($admin)->get('/roles')->assertOk()->assertSee('app-roles-grid', false);
 
-    $content = $response->getContent();
-    expect($content)->toContain('aria-label="'.__('messages.roles.view_action').' Viewer"');
+    $response = $this->actingAs($admin)->getJson('/internal-api/roles/list');
+    $names = array_column($response->json('data'), 'name');
+    expect($names)->toContain('Viewer');
 });
 
 it('impersonated viewer can access role detail page', function (): void {
@@ -70,7 +71,7 @@ it('impersonated viewer can access role detail page', function (): void {
         ->assertOk();
 });
 
-it('impersonated viewer sees edit button on roles list', function (): void {
+it('impersonated viewer does not get update permission on roles API', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440700',
@@ -96,11 +97,10 @@ it('impersonated viewer sees edit button on roles list', function (): void {
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
-    $response = $this->actingAs($admin)->get('/roles');
+    $response = $this->actingAs($admin)->getJson('/internal-api/roles/list');
+    $response->assertOk();
 
-    $content = $response->getContent();
-    // RED: viewer should NOT see edit button, but currently does
-    expect($content)->not->toContain('aria-label="'.__('messages.roles.edit_action').' Viewer"');
+    expect($response->json('permissions.can_update'))->toBeFalse();
 });
 
 it('impersonated viewer can access role edit form', function (): void {
@@ -179,7 +179,7 @@ it('impersonated viewer can submit role edit form', function (): void {
 
 // -- Users page: impersonated viewer can see and perform edit/delete --
 
-it('impersonated viewer sees edit button on users list', function (): void {
+it('impersonated viewer does not get update permission on users API', function (): void {
     $this->seedSuperAdminRole();
     $admin = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440706',
@@ -205,13 +205,12 @@ it('impersonated viewer sees edit button on users list', function (): void {
 
     $this->actingAs($admin)->post('/impersonate/'.$viewer->id);
 
-    $response = $this->actingAs($admin)->get('/users');
+    $this->actingAs($admin)->get('/users')->assertOk();
+
+    $response = $this->actingAs($admin)->getJson('/internal-api/users/list');
     $response->assertOk();
 
-    $content = $response->getContent();
-
-    // Viewer should NOT see edit/delete/create buttons
-    expect($content)->not->toContain('aria-label="'.__('messages.users.edit_action').' Tillman Harvey"');
+    expect($response->json('permissions.can_update'))->toBeFalse();
 });
 
 it('impersonated viewer can submit user edit form', function (): void {

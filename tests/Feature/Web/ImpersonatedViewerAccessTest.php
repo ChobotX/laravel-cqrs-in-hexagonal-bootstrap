@@ -24,13 +24,13 @@ it('viewer can access users list directly', function (): void {
 
     $this->post('/login', ['email' => 'tillman-direct@example.com', 'password' => 'password123']);
 
-    $response = $this->get('/users');
+    $this->get('/users')->assertOk()->assertSee('app-users-grid', false);
+
+    $response = $this->getJson('/internal-api/users/list');
     $response->assertOk();
 
-    $content = $response->getContent();
-    expect($content)
-        ->toContain('Tillman Harvey')
-        ->not->toContain('aria-label="'.__('messages.users.edit_action').' Tillman Harvey"');
+    $names = array_column($response->json('data'), 'name');
+    expect($names)->toContain('Tillman Harvey');
 });
 
 it('impersonated viewer can access users list', function (): void {
@@ -60,11 +60,11 @@ it('impersonated viewer can access users list', function (): void {
     $this->post('/login', ['email' => 'admin-realflow@example.com', 'password' => 'password123']);
     $this->post('/impersonate/'.$viewer->id);
 
-    $response = $this->get('/users');
+    $this->get('/users')->assertOk()->assertSee('app-users-grid', false);
+
+    $response = $this->getJson('/internal-api/users/list');
     $response->assertOk();
 
-    $content = $response->getContent();
-    expect($content)
-        ->toContain('Tillman Harvey')
-        ->not->toContain('aria-label="'.__('messages.users.edit_action').' Tillman Harvey"');
+    $names = array_column($response->json('data'), 'name');
+    expect($names)->toContain('Tillman Harvey');
 });

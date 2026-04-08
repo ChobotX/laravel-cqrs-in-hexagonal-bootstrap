@@ -10,6 +10,7 @@ use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\EmailAlreadyExistsException;
 use App\Domain\User\Contract\Repository\UserRepository;
 use App\Domain\User\Contract\ValueObject\UserId;
+use App\Infrastructure\Eloquent\FiltersQuery;
 use App\Infrastructure\Eloquent\PaginatesQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +18,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 
 final readonly class EloquentUserRepository implements UserRepository
 {
+    use FiltersQuery;
     use PaginatesQuery;
     use SortsQuery;
 
@@ -25,9 +27,9 @@ final readonly class EloquentUserRepository implements UserRepository
     ) {}
 
     /** @return list<User> */
-    public function all(?array $onlyIds = null, array $sortings = []): array
+    public function all(?array $onlyIds = null, array $sortings = [], array $filters = []): array
     {
-        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->filterBuilder($this->sortBuilder($this->baseQuery($onlyIds), $sortings), $filters);
 
         return array_values(
             $builder->get()
@@ -37,9 +39,9 @@ final readonly class EloquentUserRepository implements UserRepository
     }
 
     /** @return PaginatedResult<User> */
-    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult
+    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = [], array $filters = []): PaginatedResult
     {
-        $builder = $this->sortBuilder($this->baseQuery($onlyIds), $sortings);
+        $builder = $this->filterBuilder($this->sortBuilder($this->baseQuery($onlyIds), $sortings), $filters);
 
         [$models, $total] = $this->paginateBuilder($builder, $pagination);
 
@@ -141,6 +143,12 @@ final readonly class EloquentUserRepository implements UserRepository
 
     /** @return list<string> */
     private function textSortColumns(): array
+    {
+        return ['name', 'email'];
+    }
+
+    /** @return list<string> */
+    private function searchColumns(): array
     {
         return ['name', 'email'];
     }

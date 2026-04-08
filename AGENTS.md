@@ -22,6 +22,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/Notification/README.md](app/Domain/Notification/README.md) | Notification module — multi-channel delivery, preferences, real-time |
 | [app/Domain/Registry/README.md](app/Domain/Registry/README.md) | Registry module — dynamic schema-driven CRUD, versioned definitions, typed entries |
 | [app/Domain/FeatureFlag/README.md](app/Domain/FeatureFlag/README.md) | Feature flag module — code-defined flags, per-tenant overrides, boolean/select/input types |
+| [app/Domain/GridPreset/README.md](app/Domain/GridPreset/README.md) | Grid preset module — saved filter/sort/search presets per user, default views |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |

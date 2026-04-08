@@ -382,6 +382,62 @@ $sorting = $requestSorting !== null && in_array($requestSorting->column, self::S
     : $defaultSorting;
 ```
 
+## Vue DataGrid system
+
+All list pages (users, teams, roles, registry entries) use the Vue DataGrid composable system (`resources/js/data-grid/`). The URL is the source of truth — state reads from URL on mount, writes via `history.replaceState()` on change.
+
+### Composables (`resources/js/data-grid/composables/`)
+
+| Composable | Owns | Key methods |
+|---|---|---|
+| `useUrlState` | URL query params sync | `readParam()`, `writeParams()`, `syncToUrl()` |
+| `usePagination` | `page`, `perPage`, `total`, `totalPages` | `goToPage()`, `setTotal()`, `resetPage()` |
+| `useSort` | `sortBy: { key, order }` | `toggleSort(key)`, `isSorted(key)`, `getSortDirection(key)` |
+| `useSearch` | `searchTerm`, `debouncedTerm` (300ms) | `clear()` |
+| `useFilter` | `filters: Record<string, string>` | `setFilter()`, `clearFilter()`, `clearAll()` |
+| `useServerData<T>` | `items`, `loading`, `error`, `extra` | `refresh()` — watches all state, calls fetch |
+| `usePresets` | `presets`, `activePresetId` | `savePreset()`, `loadPreset()`, `deletePreset()`, `setDefault()` |
+| `useDataGrid<T>` | Orchestrator — wires everything together | Returns all composable results + `clearAll()` |
+
+### Column definitions
+
+Column titles must use `computed()` to wrap `trans()` calls so translations load reactively:
+
+```typescript
+const columns = computed<ColumnDef[]>(() => [
+    { key: 'name', title: trans('messages.users.user'), sortable: true },
+    { key: 'email', title: trans('messages.users.email'), sortable: true },
+]);
+```
+
+### Count labels with pluralization
+
+Use `transChoice()` (not `trans()`) for pluralized count labels:
+
+```html
+<DataGrid :grid="grid" :count-label="transChoice('messages.users.count', grid.pagination.total.value)">
+```
+
+### Per-grid page files (`resources/js/data-grid/pages/`)
+
+Each grid page (`UsersGrid.vue`, `TeamsGrid.vue`, `RolesGrid.vue`, `EntriesGrid.vue`) defines columns, slots, and actions. Mounted from `*-grid-app.ts` scripts to Blade mount points.
+
+### Blade integration
+
+List page Blade views render a mount point with `data-*` attributes for config:
+
+```blade
+<div id="app-users-grid"
+     data-fetch-url="{{ route('internal-api.users.list') }}"
+     data-create-url="{{ route('users.create') }}"
+     data-can-create="{{ $permissions['canCreate'] ? 'true' : 'false' }}">
+</div>
+```
+
+### Internal API controllers
+
+JSON endpoints at `/internal-api/{resource}/list` reuse existing Query/Handler/Repository stack. Return `{ data, meta, permissions }` shape. Defined in `routes/internal_api.php`.
+
 ## `<x-topbar-button>` component
 
 Permission-gated topbar form action button (icon-only). Fail-safe: renders nothing without `permission` or `skip-permission`.

@@ -19,3 +19,7 @@ import './notification/notification-list-app';
 import './notification/notification-preferences-app';
 import './schema-form/schema-form-app';
 import './schema-builder/schema-builder-app';
+import './data-grid/pages/users-grid-app';
+import './data-grid/pages/teams-grid-app';
+import './data-grid/pages/roles-grid-app';
+import './data-grid/pages/entries-grid-app';

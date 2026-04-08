@@ -11,6 +11,7 @@ use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\File\Contract\Repository\FileRepository;
 use App\Domain\File\Contract\Service\FileStorage;
 use App\Domain\File\Contract\Service\ImageProcessor;
+use App\Domain\GridPreset\Contract\Repository\GridPresetRepository;
 use App\Domain\Label\Contract\Repository\LabelRepository;
 use App\Domain\Notification\Contract\Repository\NotificationPreferenceRepository;
 use App\Domain\Notification\Contract\Repository\NotificationRepository;
@@ -29,6 +30,7 @@ use App\Infrastructure\Eloquent\Authorization\EloquentRecordShareRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\EloquentUserPermissionRepository;
 use App\Infrastructure\Eloquent\File\EloquentFileRepository;
+use App\Infrastructure\Eloquent\GridPreset\EloquentGridPresetRepository;
 use App\Infrastructure\Eloquent\Label\EloquentLabelRepository;
 use App\Infrastructure\Eloquent\Notification\EloquentNotificationPreferenceRepository;
 use App\Infrastructure\Eloquent\Notification\EloquentNotificationRepository;
@@ -70,6 +72,7 @@ final class RepositoryServiceProvider extends ServiceProvider
             'email' => $this->app->make(EmailNotificationSender::class),
         ]));
         $this->app->bind(NotificationBroadcaster::class, LaravelNotificationBroadcaster::class);
+        $this->app->bind(GridPresetRepository::class, EloquentGridPresetRepository::class);
         $this->app->bind(FileRepository::class, EloquentFileRepository::class);
         $this->app->bind(FileStorage::class, fn (): LaravelFileStorage => new LaravelFileStorage(
             $this->app->make(FilesystemFactory::class)->disk('files'),

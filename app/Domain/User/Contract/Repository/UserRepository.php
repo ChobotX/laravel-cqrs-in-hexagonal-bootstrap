@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Contract\Repository;
 
+use App\Application\Filtering\Filter;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
@@ -15,16 +16,18 @@ interface UserRepository
     /**
      * @param  list<string>|null  $onlyIds  null = all records (no scope filter)
      * @param  list<Sorting>  $sortings
+     * @param  list<Filter>  $filters
      * @return list<User>
      */
-    public function all(?array $onlyIds = null, array $sortings = []): array;
+    public function all(?array $onlyIds = null, array $sortings = [], array $filters = []): array;
 
     /**
      * @param  list<string>|null  $onlyIds  null = all records (no scope filter)
      * @param  list<Sorting>  $sortings
+     * @param  list<Filter>  $filters
      * @return PaginatedResult<User>
      */
-    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult;
+    public function allPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = [], array $filters = []): PaginatedResult;
 
     public function findById(UserId $userId): ?User;
 

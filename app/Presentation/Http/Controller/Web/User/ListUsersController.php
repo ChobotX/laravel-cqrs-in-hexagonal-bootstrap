@@ -6,79 +6,30 @@ namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Application\Sorting\SortDirection;
-use App\Application\Sorting\Sorting;
-use App\Domain\Authorization\Contract\Entity\Role;
-use App\Domain\Authorization\Contract\Query\GetRolesForUsersQuery;
-use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
-use App\Domain\Label\Contract\Query\GetLabelsForEntitiesQuery;
-use App\Domain\Team\Contract\Query\GetTeamsForUsersQuery;
-use App\Domain\User\Contract\Entity\User;
-use App\Domain\User\Contract\Query\ListUsersQuery;
+use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
-use App\Presentation\Http\Request\Web\PaginationRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.list.read')]
 final readonly class ListUsersController
 {
-    private const array SORTABLE_COLUMNS = ['name', 'email'];
-
     public function __construct(
-        private QueryBus $queryBus,
         private AuthenticatedUser $authenticatedUser,
         private AuthorizationChecker $authorizationChecker,
+        private QueryBus $queryBus,
     ) {}
 
-    public function __invoke(PaginationRequest $paginationRequest): View|RedirectResponse
+    public function __invoke(): View
     {
         $currentUserId = $this->authenticatedUser->id() ?? '';
-
-        $defaultSorting = new Sorting('name', SortDirection::Asc);
-        $requestSorting = $paginationRequest->sorting();
-        $sorting = $requestSorting instanceof Sorting && in_array($requestSorting->column, self::SORTABLE_COLUMNS, true)
-            ? $requestSorting
-            : $defaultSorting;
-
-        $paginatedResult = $this->queryBus->dispatch(
-            new ListUsersQuery($paginationRequest->pagination())->withSorting([$sorting]),
-        );
-
-        if ($paginatedResult->isPageOutOfBounds()) {
-            return redirect(url()->current().'?'.http_build_query([...$paginationRequest->query(), 'page' => 1]));
-        }
-
-        $userIds = array_map(fn (User $user): string => $user->id->value, $paginatedResult->items);
-
-        $canReadRoles = $this->authorizationChecker->can($currentUserId, 'users.roles.read');
-        $userRoles = $canReadRoles ? $this->queryBus->dispatch(new GetRolesForUsersQuery($userIds)) : [];
-
-        $isSuperAdmin = false;
-
-        if ($canReadRoles) {
-            $currentUserRoles = $this->queryBus->dispatch(new GetUserRolesQuery($currentUserId));
-            $isSuperAdmin = array_any($currentUserRoles, fn (Role $role): bool => $role->isSystem);
-        }
-
-        $canReadTeams = $this->authorizationChecker->can($currentUserId, 'teams.members.read');
-        $userTeams = $canReadTeams ? $this->queryBus->dispatch(new GetTeamsForUsersQuery($userIds)) : [];
-
-        $canReadLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
-        $userLabels = $canReadLabels ? $this->queryBus->dispatch(new GetLabelsForEntitiesQuery($userIds)) : [];
+        $presetShareCapabilities = $this->queryBus->dispatch(new GetPresetShareCapabilitiesQuery($currentUserId));
 
         return view('users.index', [
-            'result' => $paginatedResult,
-            'sorting' => $sorting,
-            'userRoles' => $userRoles,
-            'canReadRoles' => $canReadRoles,
-            'canReadTeams' => $canReadTeams,
-            'userTeams' => $userTeams,
-            'canReadLabels' => $canReadLabels,
-            'userLabels' => $userLabels,
-            'isSuperAdmin' => $isSuperAdmin,
-            'currentUserId' => $currentUserId,
+            'canCreate' => $this->authorizationChecker->can($currentUserId, 'users.list.create'),
+            'canShareTeam' => $presetShareCapabilities->canShareTeam,
+            'canShareGlobal' => $presetShareCapabilities->canShareGlobal,
+            'shareableTeams' => $presetShareCapabilities->shareableTeams,
         ]);
     }
 }

@@ -9,9 +9,13 @@ use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 
 final readonly class FakeAuthorizationChecker implements AuthorizationChecker
 {
-    /** @param list<string> $grantedPermissions */
+    /**
+     * @param  list<string>  $grantedPermissions
+     * @param  array<string, string>  $permissionScopes  permission => scope (defaults to 'all')
+     */
     public function __construct(
         private array $grantedPermissions = [],
+        private array $permissionScopes = [],
     ) {}
 
     public function can(string $userId, string $permission): bool
@@ -22,10 +26,14 @@ final readonly class FakeAuthorizationChecker implements AuthorizationChecker
     public function canWithScope(string $userId, string $permission): AccessDecision
     {
         $granted = $this->can($userId, $permission);
+        $scope = $this->permissionScopes[$permission] ?? 'all';
 
-        return new readonly class($granted) implements AccessDecision
+        return new readonly class($granted, $scope) implements AccessDecision
         {
-            public function __construct(private bool $isGranted) {}
+            public function __construct(
+                private bool $isGranted,
+                private string $resolvedScope,
+            ) {}
 
             public function granted(): bool
             {
@@ -34,7 +42,7 @@ final readonly class FakeAuthorizationChecker implements AuthorizationChecker
 
             public function scope(): string
             {
-                return 'all';
+                return $this->resolvedScope;
             }
         };
     }

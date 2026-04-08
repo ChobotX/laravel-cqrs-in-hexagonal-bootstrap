@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Contract\Repository;
 
+use App\Application\Filtering\Filter;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
@@ -14,15 +15,17 @@ interface RoleRepository
 {
     /**
      * @param  list<Sorting>  $sortings
+     * @param  list<Filter>  $filters
      * @return list<Role>
      */
-    public function findAll(array $sortings = []): array;
+    public function findAll(array $sortings = [], array $filters = []): array;
 
     /**
      * @param  list<Sorting>  $sortings
+     * @param  list<Filter>  $filters
      * @return PaginatedResult<Role>
      */
-    public function findAllPaginated(Pagination $pagination, array $sortings = []): PaginatedResult;
+    public function findAllPaginated(Pagination $pagination, array $sortings = [], array $filters = []): PaginatedResult;
 
     public function findById(RoleId $roleId): ?Role;
 

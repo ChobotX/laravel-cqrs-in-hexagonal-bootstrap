@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Contract\Repository;
 
+use App\Application\Filtering\Filter;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\Sorting;
@@ -16,16 +17,18 @@ interface TeamRepository
     /**
      * @param  list<string>|null  $onlyIds  null = all records (no scope filter)
      * @param  list<Sorting>  $sortings
+     * @param  list<Filter>  $filters
      * @return list<Team>
      */
-    public function findAll(?array $onlyIds = null, array $sortings = []): array;
+    public function findAll(?array $onlyIds = null, array $sortings = [], array $filters = []): array;
 
     /**
      * @param  list<string>|null  $onlyIds  null = all records (no scope filter)
      * @param  list<Sorting>  $sortings
+     * @param  list<Filter>  $filters
      * @return PaginatedResult<Team>
      */
-    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = []): PaginatedResult;
+    public function findAllPaginated(Pagination $pagination, ?array $onlyIds = null, array $sortings = [], array $filters = []): PaginatedResult;
 
     public function findById(TeamId $teamId): ?Team;
 

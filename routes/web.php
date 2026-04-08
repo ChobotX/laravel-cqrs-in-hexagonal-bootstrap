@@ -27,6 +27,9 @@ use App\Presentation\Http\Controller\Web\FeatureFlag\ResetFeatureFlagController;
 use App\Presentation\Http\Controller\Web\FeatureFlag\ShowEditFeatureFlagController;
 use App\Presentation\Http\Controller\Web\FeatureFlag\UpdateFeatureFlagController;
 use App\Presentation\Http\Controller\Web\File\ServeFileController;
+use App\Presentation\Http\Controller\Web\GridPreset\DeleteGridPresetController;
+use App\Presentation\Http\Controller\Web\GridPreset\SaveGridPresetController;
+use App\Presentation\Http\Controller\Web\GridPreset\SetDefaultGridPresetController;
 use App\Presentation\Http\Controller\Web\Locale\SwitchLocaleController;
 use App\Presentation\Http\Controller\Web\Notification\ShowNotificationsController;
 use App\Presentation\Http\Controller\Web\Registry\ActivateDefinitionVersionController;
@@ -141,4 +144,8 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/registry/{namespace}/{slug}/entries/{entryId}/edit', ShowEditEntryController::class)->name('registry.entries.edit');
     Route::put('/registry/{namespace}/{slug}/entries/{entryId}', UpdateEntryController::class)->name('registry.entries.update');
     Route::delete('/registry/{namespace}/{slug}/entries/{entryId}', DeleteEntryController::class)->name('registry.entries.destroy');
+
+    Route::post('/grid-presets', SaveGridPresetController::class)->name('grid-presets.store');
+    Route::delete('/grid-presets/{presetId}', DeleteGridPresetController::class)->name('grid-presets.destroy');
+    Route::post('/grid-presets/{presetId}/default', SetDefaultGridPresetController::class)->name('grid-presets.set-default');
 });

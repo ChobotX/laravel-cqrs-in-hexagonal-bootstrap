@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Application\Authorization\ScopeTarget;
+use App\Application\Filtering\Filter;
+use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
@@ -119,4 +121,109 @@ it('returns User scope target', function (): void {
     $query = new ListUsersQuery;
 
     expect($query->scopeTarget())->toBe(ScopeTarget::User);
+});
+
+it('filters results with search filter', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), new UserName('John Doe'), new Email('john@example.com')),
+        '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), new UserName('Jane Smith'), new Email('jane@example.com')),
+        '770e8400-e29b-41d4-a716-446655440000' => new User(new UserId('770e8400-e29b-41d4-a716-446655440000'), new UserName('Bob Wilson'), new Email('bob@example.com')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $paginatedResult = $handler->handle(
+        (new ListUsersQuery)->withFilters([new Filter('', FilterOperator::Search, 'john')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('John Doe');
+});
+
+it('returns all results with empty filters', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), new UserName('Alice'), new Email('alice@example.com')),
+        '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), new UserName('Bob'), new Email('bob@example.com')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $paginatedResult = $handler->handle((new ListUsersQuery)->withFilters([]));
+
+    expect($paginatedResult->items)->toHaveCount(2);
+});
+
+it('combines search filter with sorting and pagination', function (): void {
+    $users = [];
+    for ($i = 1; $i <= 10; $i++) {
+        $id = sprintf('550e8400-e29b-41d4-a716-44665544%04d', $i);
+        $users[$id] = new User(new UserId($id), new UserName('User '.$i), new Email(sprintf('user%d@example.com', $i)));
+    }
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $paginatedResult = $handler->handle(
+        new ListUsersQuery(new Pagination(1, 5))
+            ->withSorting([new Sorting('name', SortDirection::Asc)])
+            ->withFilters([new Filter('', FilterOperator::Search, 'user')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(5)
+        ->and($paginatedResult->total)->toBe(10);
+});
+
+it('supports withFilters immutable copy', function (): void {
+    $query = new ListUsersQuery;
+    $listUsersQuery = $query->withFilters([new Filter('', FilterOperator::Search, 'test')]);
+
+    expect($query->filters())->toBe([])
+        ->and($listUsersQuery->filters())->toHaveCount(1)
+        ->and($listUsersQuery->filters()[0]->operator)->toBe(FilterOperator::Search)
+        ->and($listUsersQuery->filters()[0]->value)->toBe('test');
+});
+
+it('search filter matches by email', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), new UserName('Alice'), new Email('alice@example.com')),
+        '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), new UserName('Bob'), new Email('bob@different.org')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $paginatedResult = $handler->handle(
+        (new ListUsersQuery)->withFilters([new Filter('', FilterOperator::Search, 'example.com')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('Alice');
+});
+
+it('search filter returns empty for no match', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), new UserName('Alice'), new Email('alice@example.com')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $paginatedResult = $handler->handle(
+        (new ListUsersQuery)->withFilters([new Filter('', FilterOperator::Search, 'nonexistent')]),
+    );
+
+    expect($paginatedResult->items)->toBeEmpty()
+        ->and($paginatedResult->total)->toBe(0);
+});
+
+it('empty search term returns all results', function (): void {
+    $users = [
+        '550e8400-e29b-41d4-a716-446655440000' => new User(new UserId('550e8400-e29b-41d4-a716-446655440000'), new UserName('Alice'), new Email('alice@example.com')),
+        '660e8400-e29b-41d4-a716-446655440000' => new User(new UserId('660e8400-e29b-41d4-a716-446655440000'), new UserName('Bob'), new Email('bob@example.com')),
+    ];
+
+    $handler = new ListUsersHandler(new FakeUserRepository($users));
+
+    $paginatedResult = $handler->handle(
+        (new ListUsersQuery)->withFilters([new Filter('', FilterOperator::Search, '')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(2);
 });

@@ -15,6 +15,7 @@ use App\Domain\Registry\ValueObject\DefinitionSlug;
 
 final class FakeEntryRepository implements EntryRepository
 {
+    use FiltersArray;
     use PaginatesArray;
 
     /** @var list<Entry> */
@@ -50,12 +51,14 @@ final class FakeEntryRepository implements EntryRepository
     }
 
     /** @return PaginatedResult<Entry> */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination): PaginatedResult
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = []): PaginatedResult
     {
         $items = array_values(array_filter(
             $this->entries,
             fn (Entry $entry): bool => $entry->definitionId->value === $definitionId->value,
         ));
+
+        $items = $this->filterArray($items, $filters, $this->filterValueExtractor(...), $this->searchMatcher(...));
 
         return $this->paginateArray($items, $pagination);
     }
@@ -72,5 +75,20 @@ final class FakeEntryRepository implements EntryRepository
             $this->entries,
             fn (Entry $entry): bool => $entry->namespace->value === $definitionNamespace->value,
         ));
+    }
+
+    private function filterValueExtractor(Entry $entry, string $column): string
+    {
+        return match ($column) {
+            'title' => $entry->title->value,
+            default => '',
+        };
+    }
+
+    private function searchMatcher(Entry $entry, string $term): bool
+    {
+        $normalizedTerm = mb_strtolower($this->stripDiacriticsForFilter($term));
+
+        return str_contains($this->stripDiacriticsForFilter(mb_strtolower($entry->title->value)), $normalizedTerm);
     }
 }

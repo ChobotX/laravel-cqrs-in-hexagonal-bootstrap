@@ -27,12 +27,13 @@ final readonly class ListUsersHandler implements QueryHandler
         $pagination = $query->pagination();
         $onlyIds = $query->accessContext()?->visibleIds;
         $sortings = $query->sorting() !== [] ? $query->sorting() : [new Sorting('name', SortDirection::Asc)];
+        $filters = $query->filters();
 
         if ($pagination !== null) {
-            return $this->userRepository->allPaginated($pagination, $onlyIds, $sortings);
+            return $this->userRepository->allPaginated($pagination, $onlyIds, $sortings, $filters);
         }
 
-        $items = $this->userRepository->all($onlyIds, $sortings);
+        $items = $this->userRepository->all($onlyIds, $sortings, $filters);
 
         return new PaginatedResult($items, count($items), new Pagination(1, max(count($items), 1)));
     }

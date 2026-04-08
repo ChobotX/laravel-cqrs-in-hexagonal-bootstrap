@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\ScopeTarget;
+use App\Application\Filtering\Filter;
+use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
@@ -218,4 +220,74 @@ it('supports withAccessContext immutable copy', function (): void {
     expect($query->accessContext())->toBeNull()
         ->and($listTeamsQuery->accessContext())->toBeInstanceOf(AccessContext::class)
         ->and($listTeamsQuery->accessContext()?->scope)->toBe(AccessScope::All);
+});
+
+it('filters results with search filter', function (): void {
+    $teams = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440001'),
+            new TeamName('Engineering'),
+            new TeamSlug('engineering'),
+            'Build things',
+            null,
+        ),
+        '550e8400-e29b-41d4-a716-446655440002' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440002'),
+            new TeamName('Marketing'),
+            new TeamSlug('marketing'),
+            'Sell things',
+            null,
+        ),
+        '550e8400-e29b-41d4-a716-446655440003' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440003'),
+            new TeamName('Sales'),
+            new TeamSlug('sales'),
+            'Close deals',
+            null,
+        ),
+    ];
+
+    $handler = new ListTeamsHandler(new FakeTeamRepository($teams));
+
+    $paginatedResult = $handler->handle(
+        (new ListTeamsQuery)->withFilters([new Filter('', FilterOperator::Search, 'engineer')]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(1)
+        ->and($paginatedResult->items[0]->name->value)->toBe('Engineering');
+});
+
+it('returns all results with empty filters', function (): void {
+    $teams = [
+        '550e8400-e29b-41d4-a716-446655440001' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440001'),
+            new TeamName('Alpha'),
+            new TeamSlug('alpha'),
+            'Desc',
+            null,
+        ),
+        '550e8400-e29b-41d4-a716-446655440002' => new Team(
+            new TeamId('550e8400-e29b-41d4-a716-446655440002'),
+            new TeamName('Beta'),
+            new TeamSlug('beta'),
+            'Desc',
+            null,
+        ),
+    ];
+
+    $handler = new ListTeamsHandler(new FakeTeamRepository($teams));
+
+    $paginatedResult = $handler->handle((new ListTeamsQuery)->withFilters([]));
+
+    expect($paginatedResult->items)->toHaveCount(2);
+});
+
+it('supports withFilters immutable copy', function (): void {
+    $query = new ListTeamsQuery;
+    $listTeamsQuery = $query->withFilters([new Filter('', FilterOperator::Search, 'test')]);
+
+    expect($query->filters())->toBe([])
+        ->and($listTeamsQuery->filters())->toHaveCount(1)
+        ->and($listTeamsQuery->filters()[0]->operator)->toBe(FilterOperator::Search)
+        ->and($listTeamsQuery->filters()[0]->value)->toBe('test');
 });
