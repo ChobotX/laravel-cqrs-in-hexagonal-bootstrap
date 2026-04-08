@@ -7,7 +7,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | File | Topic |
 |---|---|
 | [README.md](README.md) | Project overview, principles, architecture table |
-| [ADR.md](ADR.md) | 12 enforced architecture decisions with rationale |
+| [ADR.md](ADR.md) | Enforced architecture decisions with rationale |
 | [QUICKSTART.md](QUICKSTART.md) | Setup, commands, verification, adding contexts |
 | [app/README.md](app/README.md) | Cross-layer class rules, code style conventions |
 | [app/Contract/README.md](app/Contract/README.md) | Contract layer — pure interfaces, generic types |
@@ -55,6 +55,8 @@ When you change **one** of these, check **all** listed files:
 | Add/change code style rule | `app/README.md`, `pint.json` or `rector.php` (whichever enforces it) |
 | Add/change class structural rule | `app/README.md` (class rules table), `ADR.md` if it's a new decision |
 | Add/change presentation pattern | `app/Presentation/README.md` |
+| Add/change frontend architecture rule | `app/Presentation/README.md`, `.dependency-cruiser.cjs`, `bin/lint-frontend-structure.sh`, `ADR.md` |
+| Move/add frontend module | `app/Presentation/README.md` (architecture table), `.dependency-cruiser.cjs` if new category |
 | Add/change API versioning pattern | `ADR.md`, `app/Presentation/README.md`, `routes/api.php`, `QUICKSTART.md` |
 | Add/change file storage pattern | `app/Domain/File/README.md`, `app/Infrastructure/README.md`, `ADR.md` |
 | Add/change registry module/feature | `app/Domain/Registry/README.md`, `config/authorization.php` |
@@ -82,7 +84,8 @@ When you change **one** of these, check **all** listed files:
 | Add a command/query | [app/Domain/README.md](app/Domain/README.md), `app/Infrastructure/Provider/BusServiceProvider.php` |
 | Add authorization | [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md), `config/authorization.php` |
 | Add a controller | [app/Presentation/README.md](app/Presentation/README.md) |
-| Architecture tests | `tests/Architecture/ArchitectureTest.php` |
+| Architecture tests (backend) | `tests/Architecture/ArchitectureTest.php` |
+| Architecture rules (frontend) | `.dependency-cruiser.cjs`, `bin/lint-frontend-structure.sh` |
 | PHPStan custom rules | `tests/Architecture/PHPStan/` |
 | Code style config | `pint.json`, `rector.php` |
 | Coverage config | `phpunit.coverage.xml` (unified), `phpunit.domain-coverage.xml`, `phpunit.infrastructure-coverage.xml`, `phpunit.presentation-coverage.xml` (per-layer) |

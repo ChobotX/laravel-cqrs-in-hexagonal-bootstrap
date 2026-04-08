@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { onMounted, ref, watch } from 'vue';
-import { error as logError } from '../logger/logger';
-import { error as toastError } from '../toast/toast-queue';
+import { error as logError } from '../../core/logger/logger';
+import { error as toastError } from '../../shared/toast/toast-queue';
 import NotificationItem from './NotificationItem.vue';
 import { deleteNotification, fetchNotifications, markAllRead, markRead } from './notification-api';
 import type { NotificationEntry } from './notification-store';

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { onMounted, ref } from 'vue';
-import { error as logError } from '../logger/logger';
+import { error as logError } from '../../core/logger/logger';
 import FieldConfigDrawer from './FieldConfigDrawer.vue';
 import type { DefinitionOption, FieldRow } from './types';
 

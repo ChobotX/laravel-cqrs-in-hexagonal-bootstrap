@@ -105,7 +105,7 @@
     },
     "overrides": [
         {
-            "includes": ["resources/js/logger/logger.ts", "resources/js/logger/logger.test.ts"],
+            "includes": ["resources/js/core/logger/logger.ts", "resources/js/core/logger/logger.test.ts"],
             "linter": {
                 "rules": {
                     "suspicious": {

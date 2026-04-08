@@ -38,6 +38,8 @@ frontend_check() {
     run_step "blade-url" bash bin/lint-blade-url.sh
     run_step "blade-layers" bash bin/lint-blade-layers.sh
     run_step "catch-blocks" bash bin/lint-catch-blocks.sh
+    run_step "frontend-structure" bash bin/lint-frontend-structure.sh
+    run_step "depcruise" npx depcruise resources/js/app.ts --config --output-type err-long
     run_step "vitest" npx vitest run --coverage
     run_step "vite-build" npx vite build
 }

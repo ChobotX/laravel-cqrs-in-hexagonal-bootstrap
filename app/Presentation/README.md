@@ -384,9 +384,9 @@ $sorting = $requestSorting !== null && in_array($requestSorting->column, self::S
 
 ## Vue DataGrid system
 
-All list pages (users, teams, roles, registry entries) use the Vue DataGrid composable system (`resources/js/data-grid/`). The URL is the source of truth — state reads from URL on mount, writes via `history.replaceState()` on change.
+All list pages (users, teams, roles, registry entries) use the Vue DataGrid composable system (`resources/js/widgets/data-grid/`). The URL is the source of truth — state reads from URL on mount, writes via `history.replaceState()` on change.
 
-### Composables (`resources/js/data-grid/composables/`)
+### Composables (`resources/js/widgets/data-grid/composables/`)
 
 | Composable | Owns | Key methods |
 |---|---|---|
@@ -418,7 +418,7 @@ Use `transChoice()` (not `trans()`) for pluralized count labels:
 <DataGrid :grid="grid" :count-label="transChoice('messages.users.count', grid.pagination.total.value)">
 ```
 
-### Per-grid page files (`resources/js/data-grid/pages/`)
+### Per-grid page files (`resources/js/widgets/data-grid/pages/`)
 
 Each grid page (`UsersGrid.vue`, `TeamsGrid.vue`, `RolesGrid.vue`, `EntriesGrid.vue`) defines columns, slots, and actions. Mounted from `*-grid-app.ts` scripts to Blade mount points.
 
@@ -505,7 +505,7 @@ All auth controllers use `#[SkipPermissionCheck]` (guest actions) or `#[Requires
 
 ## Shared Vue components
 
-Reusable Vue components live in `resources/js/shared/`. These mirror the styling of their Blade counterparts to ensure visual consistency across server-rendered grids and Vue-powered lists.
+Reusable Vue components live in `resources/js/shared/components/`. These mirror the styling of their Blade counterparts to ensure visual consistency across server-rendered grids and Vue-powered lists.
 
 ### `ActionButton`
 
@@ -527,6 +527,36 @@ Uses a default slot for the icon SVG (`h-5 w-5`). Styling matches the Blade comp
 </ActionButton>
 ```
 
+## Frontend architecture
+
+The frontend follows an adapted Feature-Sliced Design with 4 categories and strict unidirectional dependencies, enforced by dependency-cruiser.
+
+| Category | Purpose | May import from |
+|----------|---------|-----------------|
+| `core/` | Global infrastructure (logger, feature flags, sentry, session guard) | npm packages only |
+| `behaviors/` | Vanilla DOM scripts (dropdown, auto-submit, etc.) | `core/` |
+| `shared/` | Cross-cutting UI services and components (dialog, toast, tooltip, ActionButton) | `core/` |
+| `widgets/` | Feature-specific Vue micro-apps (data-grid, notification, etc.) | `shared/`, `core/` |
+
+**Key rule:** `widgets/X/` must never import from `widgets/Y/`. Cross-widget communication goes through `shared/` services or DOM globals.
+
+**Enforced by:** dependency-cruiser (`.dependency-cruiser.cjs`) + `bin/lint-frontend-structure.sh`
+
+### Adding a new module
+
+1. Decide the category: Uses Vue? → `widgets/` or `shared/`. Pure DOM? → `behaviors/`. Infrastructure? → `core/`.
+2. If `widgets/`: create a directory with a `*-app.ts` bootstrapper. Must not import from sibling widgets.
+3. If the new module is needed by multiple widgets: it belongs in `shared/`, not `widgets/`.
+4. Run `composer check -- --frontend` to verify boundaries.
+
+### File naming conventions
+
+- Vue components: `PascalCase.vue` (e.g. `DataGrid.vue`, `ActionButton.vue`)
+- TypeScript files: `kebab-case.ts` (e.g. `dialog-queue.ts`, `session-guard.ts`)
+- Vue composables: `camelCase.ts` with `use` prefix (e.g. `useDataGrid.ts`, `usePagination.ts`)
+- Component test files: `PascalCase.test.ts` matching their component (e.g. `ChipSelector.test.ts`)
+- Mount bootstrappers: `*-app.ts` (e.g. `dialog-app.ts`, `users-grid-app.ts`)
+
 ## Vue frontend rules (when applicable)
 
 - **Minimal frontend logic** — JavaScript should only handle UI interactions (toggles, transitions, form UX). All data shaping, filtering, sorting, and formatting must happen server-side. The backend serves ready-to-render payloads.
@@ -541,7 +571,7 @@ The notification system uses internal API routes (`routes/internal_api.php`) con
 
 **Controllers** (`Controller\Web\Notification\`): `ListNotificationsController`, `CountUnreadNotificationsController`, `MarkNotificationAsReadController`, `MarkAllNotificationsAsReadController`, `DeleteNotificationController`, `ShowNotificationsController`. All use `#[SkipPermissionCheck]` — ownership enforced in domain handlers.
 
-**Vue components** (`resources/js/notification/`):
+**Vue components** (`resources/js/widgets/notification/`):
 - `NotificationBell.vue` — topbar bell icon + dropdown, mounted to `#app-notification-bell`
 - `NotificationList.vue` — full page list with filters/pagination, mounted to `#app-notification-list`
 - `NotificationItem.vue` — single notification display (compact mode for bell, full for list)

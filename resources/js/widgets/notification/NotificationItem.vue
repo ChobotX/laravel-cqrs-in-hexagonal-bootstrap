@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { computed, ref } from 'vue';
-import ActionButton from '../shared/ActionButton.vue';
+import ActionButton from '../../shared/components/ActionButton.vue';
 import { type NotificationEntry, NotificationLevel } from './notification-store';
 
 const TRUNCATE_LENGTH = 80;

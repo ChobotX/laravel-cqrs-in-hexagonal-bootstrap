@@ -1,5 +1,5 @@
 import { type Ref, ref, watch } from 'vue';
-import { error as logError } from '../../logger/logger';
+import { error as logError } from '../../../core/logger/logger';
 import { fetchGridData } from '../data-grid-api';
 import type { FetchParams, FetchResult, SortItem } from './types';
 

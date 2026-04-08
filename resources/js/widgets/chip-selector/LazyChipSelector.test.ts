@@ -6,7 +6,7 @@ vi.mock('laravel-vue-i18n', () => ({
     trans: (key: string): string => key,
 }));
 
-vi.mock('../toast/toast-queue', () => ({
+vi.mock('../../shared/toast/toast-queue', () => ({
     error: vi.fn(),
     success: vi.fn(),
 }));
@@ -300,7 +300,7 @@ describe('LazyChipSelector', () => {
     });
 
     it('shows error toast on fetch failure', async () => {
-        const { error: errorToast } = await import('../toast/toast-queue');
+        const { error: errorToast } = await import('../../shared/toast/toast-queue');
         global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
         const wrapper = mountLazy();
@@ -315,7 +315,7 @@ describe('LazyChipSelector', () => {
     });
 
     it('shows error toast on non-ok search response', async () => {
-        const { error: errorToast } = await import('../toast/toast-queue');
+        const { error: errorToast } = await import('../../shared/toast/toast-queue');
         global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 403 });
 
         const wrapper = mountLazy();
@@ -405,14 +405,14 @@ describe('LazyChipSelector', () => {
         await createOption?.trigger('mousedown');
         await flushPromises();
 
-        const { success: successToast } = await import('../toast/toast-queue');
+        const { success: successToast } = await import('../../shared/toast/toast-queue');
         expect(wrapper.find('input[type="hidden"][value="new-1"]').exists()).toBe(true);
         expect(successToast).toHaveBeenCalledWith('messages.labels.created');
         expect(wrapper.text()).toContain('newlabel');
     });
 
     it('shows error toast on create failure', async () => {
-        const { error: errorToast } = await import('../toast/toast-queue');
+        const { error: errorToast } = await import('../../shared/toast/toast-queue');
         const fetchMock = vi
             .fn()
             .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })
@@ -444,7 +444,7 @@ describe('LazyChipSelector', () => {
     });
 
     it('shows error toast on non-ok create response', async () => {
-        const { error: errorToast } = await import('../toast/toast-queue');
+        const { error: errorToast } = await import('../../shared/toast/toast-queue');
         const fetchMock = vi
             .fn()
             .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve(emptyResults) })

@@ -130,7 +130,7 @@ Public API routes use URL-based versioning: `/api/v1/`. API controllers live und
 
 ### Single logging interface, no direct facade or helper usage
 
-All logging must go through `App\Contract\Logging\Logger` (backend) or the `logger` module in `resources/js/logger/logger.ts` (frontend). Direct `Log::`, `logger()`, `report()` calls are banned in PHP. Direct `console.*` calls are banned in JS/TS. Catch blocks must either rethrow, log via the interface, or carry a `// @silent: <reason>` comment.
+All logging must go through `App\Contract\Logging\Logger` (backend) or the `logger` module in `resources/js/core/logger/logger.ts` (frontend). Direct `Log::`, `logger()`, `report()` calls are banned in PHP. Direct `console.*` calls are banned in JS/TS. Catch blocks must either rethrow, log via the interface, or carry a `// @silent: <reason>` comment.
 **Why:** Prevents silent error swallowing and ensures a single, injectable logging seam. One sanctioned path makes it easy to swap implementations (e.g. structured logging, Sentry breadcrumbs) without shotgun surgery.
 **Enforced by:** PHPStan rules `NoSilentCatchRule` and `NoDirectLoggingRule`. Biome `noConsole` rule (frontend). Shell lint `bin/lint-catch-blocks.sh` (frontend catch blocks).
 
@@ -187,6 +187,18 @@ Controllers must not dispatch bus messages inside loops — neither commands nor
 Blade templates may only reference `App\Presentation\*` types. All other data (authenticated user, tenant slug, access scopes) must be passed from controllers or shared via middleware using `View::share`.
 **Why:** Views referencing `App\Contract`, `App\Domain`, or `App\Application` types bypass the Presentation boundary. Service provider `View::share` in `AuthorizationServiceProvider` and middleware share common view data.
 **Enforced by:** Shell lint `bin/lint-blade-layers.sh`. See [tests/README.md](tests/README.md).
+
+### Frontend organized as core/behaviors/shared/widgets
+
+The frontend uses an adapted Feature-Sliced Design with 4 categories: `core/` (infrastructure), `behaviors/` (vanilla DOM scripts), `shared/` (cross-cutting UI services), `widgets/` (feature-specific Vue micro-apps). Dependencies flow unidirectionally: `core ← shared ← widgets`, with `behaviors` isolated.
+**Why:** Cross-widget imports were emerging organically (logger, toast, dialog used by many widgets). Formalizing the dependency hierarchy prevents coupling creep — same principle as backend layer rules. Adapted from FSD for our Blade+Vue micro-app architecture where all business logic is server-side.
+**Enforced by:** dependency-cruiser rules in `.dependency-cruiser.cjs`, structural checks in `bin/lint-frontend-structure.sh`. See [app/Presentation/README.md](app/Presentation/README.md).
+
+### Frontend boundary enforcement via dependency-cruiser
+
+Import boundaries are validated by dependency-cruiser, a standalone CLI tool (no ESLint needed). It runs alongside Biome in CI, checking the full import graph for layer violations and cross-widget imports.
+**Why:** Biome does not support import boundary rules. dependency-cruiser validates the import graph statically, catching cross-widget imports and layer direction violations before they merge. Parallels backend PHPat enforcement.
+**Enforced by:** `npx depcruise` step in `bin/check.sh` and `bin/check-and-fix.sh`.
 
 ### Domain\*\Contract pattern for cross-domain contracts
 

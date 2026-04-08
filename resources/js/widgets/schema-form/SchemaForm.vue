@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { computed, onMounted, ref } from 'vue';
-import { error as logError } from '../logger/logger';
+import { error as logError } from '../../core/logger/logger';
 
 interface FieldSchema {
     type: string;

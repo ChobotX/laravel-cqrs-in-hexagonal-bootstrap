@@ -401,7 +401,9 @@ describe('usePresets', () => {
             // setDefault will call postGridAction then loadPresets
             await setDefault('p1');
 
-            expect(vi.mocked(postGridAction)).toHaveBeenCalledWith('/grid-presets/p1/default', { grid_name: 'test-grid' });
+            expect(vi.mocked(postGridAction)).toHaveBeenCalledWith('/grid-presets/p1/default', {
+                grid_name: 'test-grid',
+            });
             // Verify loadPresets was called again (fetch called for initial + setDefault reload)
             expect(vi.mocked(globalThis.fetch)).toHaveBeenCalledTimes(2);
         });

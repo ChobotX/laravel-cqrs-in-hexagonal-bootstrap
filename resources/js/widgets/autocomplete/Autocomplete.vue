@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { nextTick, ref, watch } from 'vue';
-import { error as logError } from '../logger/logger';
-import { error as showErrorToast } from '../toast/toast-queue';
+import { error as logError } from '../../core/logger/logger';
+import { error as showErrorToast } from '../../shared/toast/toast-queue';
 
 interface SearchResult {
     id: string;

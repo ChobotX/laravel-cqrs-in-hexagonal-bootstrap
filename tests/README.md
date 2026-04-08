@@ -69,6 +69,32 @@ Shell scripts in `bin/` enforce Blade template rules:
 | `lint-blade-a11y.sh` | Accessibility checks on Blade templates |
 | `lint-blade-layers.sh` | Blade templates must not reference `App\*` namespaces except `App\Presentation\*` — all data via controllers/middleware |
 
+## Frontend architecture enforcement
+
+Import boundaries are validated by dependency-cruiser (`.dependency-cruiser.cjs`), structural conventions by `bin/lint-frontend-structure.sh`.
+
+### dependency-cruiser rules
+
+| Rule | Enforces |
+|---|---|
+| `no-core-upward-deps` | `core/` must not import from `shared/`, `behaviors/`, or `widgets/` |
+| `no-behaviors-upward-deps` | `behaviors/` must not import from `shared/` or `widgets/` |
+| `no-shared-upward-deps` | `shared/` must not import from `widgets/` or `behaviors/` |
+| `no-cross-widget-imports` | `widgets/X/` must not import from `widgets/Y/` |
+| `no-vue-in-core-or-behaviors` | `core/` and `behaviors/` must not import Vue |
+| `no-circular` | No circular dependencies |
+
+### Structure lint rules (`bin/lint-frontend-structure.sh`)
+
+| Rule | Enforces |
+|---|---|
+| PascalCase Vue files | `.vue` filenames must start with uppercase |
+| Correct TS casing | kebab-case for regular files, camelCase for `use*` composables, PascalCase for component test files |
+| No barrel files | No `index.ts` files (complements Biome `noBarrelFile`) |
+| createApp isolation | Only `*-app.ts` files may call `createApp()` |
+| Widget bootstrapper | Widget dirs with Vue files must have `*-app.ts` |
+| No loose root files | Only `app.ts` allowed at `resources/js/` root |
+
 ## Adding a new PHPStan rule
 
 1. Create the rule class in `tests/Architecture/PHPStan/`

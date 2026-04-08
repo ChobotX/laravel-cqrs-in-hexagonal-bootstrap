@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { computed, ref } from 'vue';
-import { error as showErrorToast, success as showSuccessToast } from '../toast/toast-queue';
+import { error as showErrorToast, success as showSuccessToast } from '../../shared/toast/toast-queue';
 import type { ChipOption } from './ChipSelector.vue';
 import ChipSelector from './ChipSelector.vue';
 

@@ -7,11 +7,11 @@ vi.mock('laravel-vue-i18n', () => ({
     trans: (key: string): string => key,
 }));
 
-vi.mock('../toast/toast-queue', () => ({
+vi.mock('../../shared/toast/toast-queue', () => ({
     error: vi.fn(),
 }));
 
-vi.mock('../logger/logger', () => ({
+vi.mock('../../core/logger/logger', () => ({
     error: vi.fn(),
 }));
 
@@ -191,7 +191,7 @@ describe('NotificationList', () => {
 
     it('shows error toast when fetch fails', async () => {
         mockFetchNotifications.mockRejectedValueOnce(new Error('fail'));
-        const { error: toastError } = await import('../toast/toast-queue');
+        const { error: toastError } = await import('../../shared/toast/toast-queue');
 
         const wrapper = mountList();
         await flushPromises();
@@ -213,7 +213,7 @@ describe('NotificationList', () => {
 
     it('shows error toast when markRead fails', async () => {
         mockMarkRead.mockRejectedValueOnce(new Error('fail'));
-        const { error: toastError } = await import('../toast/toast-queue');
+        const { error: toastError } = await import('../../shared/toast/toast-queue');
 
         const wrapper = mountList();
         await flushPromises();
@@ -227,7 +227,7 @@ describe('NotificationList', () => {
 
     it('shows error toast when delete fails', async () => {
         mockDeleteNotification.mockRejectedValueOnce(new Error('fail'));
-        const { error: toastError } = await import('../toast/toast-queue');
+        const { error: toastError } = await import('../../shared/toast/toast-queue');
 
         const wrapper = mountList();
         await flushPromises();
@@ -252,7 +252,7 @@ describe('NotificationList', () => {
 
     it('shows error toast when markAllRead fails', async () => {
         mockMarkAllRead.mockRejectedValueOnce(new Error('fail'));
-        const { error: toastError } = await import('../toast/toast-queue');
+        const { error: toastError } = await import('../../shared/toast/toast-queue');
 
         const wrapper = mountList();
         await flushPromises();

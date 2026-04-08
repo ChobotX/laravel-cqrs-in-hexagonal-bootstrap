@@ -6,11 +6,11 @@ vi.mock('laravel-vue-i18n', () => ({
     trans: (key: string): string => key,
 }));
 
-vi.mock('../toast/toast-queue', () => ({
+vi.mock('../../shared/toast/toast-queue', () => ({
     error: vi.fn(),
 }));
 
-vi.mock('../logger/logger', () => ({
+vi.mock('../../core/logger/logger', () => ({
     error: vi.fn(),
 }));
 
@@ -254,8 +254,8 @@ describe('Autocomplete', () => {
     });
 
     it('handles fetch error gracefully', async () => {
-        const { error: logError } = await import('../logger/logger');
-        const { error: errorToast } = await import('../toast/toast-queue');
+        const { error: logError } = await import('../../core/logger/logger');
+        const { error: errorToast } = await import('../../shared/toast/toast-queue');
         global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
         const wrapper = mountAutocomplete();

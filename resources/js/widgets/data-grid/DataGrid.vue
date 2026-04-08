@@ -1,6 +1,6 @@
 <script setup lang="ts" generic="T extends Record<string, unknown>">
 import { trans } from 'laravel-vue-i18n';
-import LoadingOverlay from '../shared/LoadingOverlay.vue';
+import LoadingOverlay from '../../shared/components/LoadingOverlay.vue';
 import type { ColumnDef, ShareableTeam } from './composables/types';
 import DataGridFilterChips from './DataGridFilterChips.vue';
 import DataGridPagination from './DataGridPagination.vue';

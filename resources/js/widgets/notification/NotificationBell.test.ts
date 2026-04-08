@@ -7,11 +7,11 @@ vi.mock('laravel-vue-i18n', () => ({
     trans: (key: string): string => key,
 }));
 
-vi.mock('../toast/toast-queue', () => ({
+vi.mock('../../shared/toast/toast-queue', () => ({
     error: vi.fn(),
 }));
 
-vi.mock('../logger/logger', () => ({
+vi.mock('../../core/logger/logger', () => ({
     error: vi.fn(),
 }));
 
@@ -232,7 +232,7 @@ describe('NotificationBell', () => {
         const { fetchNotifications } = await import('./notification-api');
         (fetchNotifications as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
 
-        const { error: logError } = await import('../logger/logger');
+        const { error: logError } = await import('../../core/logger/logger');
         const wrapper = mountBell();
 
         await wrapper.find('[data-testid="notification-bell-button"]').trigger('click');
@@ -261,8 +261,8 @@ describe('NotificationBell', () => {
         const { markRead } = await import('./notification-api');
         (markRead as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
 
-        const { error: logError } = await import('../logger/logger');
-        const { error: toastError } = await import('../toast/toast-queue');
+        const { error: logError } = await import('../../core/logger/logger');
+        const { error: toastError } = await import('../../shared/toast/toast-queue');
 
         const wrapper = mountBell();
         await flushPromises();
@@ -294,7 +294,7 @@ describe('NotificationBell', () => {
         const { fetchUnreadCount } = await import('./notification-api');
         (fetchUnreadCount as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
 
-        const { error: logError } = await import('../logger/logger');
+        const { error: logError } = await import('../../core/logger/logger');
         mountBell();
         await flushPromises();
 
@@ -311,8 +311,8 @@ describe('NotificationBell', () => {
         await wrapper.find('[data-testid="notification-bell-button"]').trigger('click');
         await flushPromises();
 
-        const { error: logError } = await import('../logger/logger');
-        const { error: toastError } = await import('../toast/toast-queue');
+        const { error: logError } = await import('../../core/logger/logger');
+        const { error: toastError } = await import('../../shared/toast/toast-queue');
 
         await wrapper.find('[data-testid="mark-all-read-button"]').trigger('click');
         await flushPromises();

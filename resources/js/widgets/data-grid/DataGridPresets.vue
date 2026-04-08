@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
-import { confirm } from '../dialog/dialog-queue';
-import { resolvePosition } from '../tooltip/tooltip-position';
+import { confirm } from '../../shared/dialog/dialog-queue';
+import { resolvePosition } from '../../shared/tooltip/tooltip-position';
 import type { Preset, ShareableTeam } from './composables/types';
 
 const props = defineProps<{

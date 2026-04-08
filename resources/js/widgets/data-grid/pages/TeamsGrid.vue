@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans, transChoice } from 'laravel-vue-i18n';
 import { computed } from 'vue';
-import ActionButton from '../../shared/ActionButton.vue';
+import ActionButton from '../../../shared/components/ActionButton.vue';
 import type { ColumnDef, ShareableTeam } from '../composables/types';
 import { useDataGrid } from '../composables/useDataGrid';
 import DataGrid from '../DataGrid.vue';
