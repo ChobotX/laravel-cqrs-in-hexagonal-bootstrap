@@ -197,24 +197,42 @@ final class TenantSeeder extends Seeder
         /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */
         $modules = config('authorization.modules');
 
-        $allPermissions = $this->allPermissionKeys($modules);
-        $readPermissions = $this->filterByActions($modules, ['read']);
-        $createUpdatePermissions = $this->filterByActions($modules, ['create', 'update']);
-        $readCreateUpdatePermissions = $this->filterByActions($modules, ['read', 'create', 'update']);
+        $excludeAdminOnly = ['feature_flags'];
+        $nonAdminModules = $this->excludeModules($modules, $excludeAdminOnly);
+
+        $nonAdminAll = $this->allPermissionKeys($nonAdminModules);
+        $nonAdminRead = $this->filterByActions($nonAdminModules, ['read']);
+        $nonAdminCreateUpdate = $this->filterByActions($nonAdminModules, ['create', 'update']);
+
+        $registryDefinitionsRead = [['registry', 'definitions', 'read']];
+        $registryEntriesAll = $this->filterByModule($modules, 'registry', 'entries');
+        $registryEntriesReadCreateUpdate = $this->filterByModule($modules, 'registry', 'entries', ['read', 'create', 'update']);
+
+        $nonAdminNonRegistry = $this->excludeModules($nonAdminModules, ['registry']);
+        $nonRegistryAll = $this->allPermissionKeys($nonAdminNonRegistry);
+        $nonRegistryRead = $this->filterByActions($nonAdminNonRegistry, ['read']);
+        $nonRegistryCreateUpdate = $this->filterByActions($nonAdminNonRegistry, ['create', 'update']);
+        $nonRegistryReadCreateUpdate = $this->filterByActions($nonAdminNonRegistry, ['read', 'create', 'update']);
 
         $roleDefinitions = [
             ['name' => 'Manager', 'description' => 'Full access within tenant', 'groups' => [
-                ['permissions' => $allPermissions, 'scope' => 'all'],
+                ['permissions' => $nonAdminAll, 'scope' => 'all'],
             ]],
             ['name' => 'Team Leader', 'description' => 'Full access scoped to own team hierarchy', 'groups' => [
-                ['permissions' => $allPermissions, 'scope' => 'team'],
+                ['permissions' => $nonRegistryAll, 'scope' => 'team'],
+                ['permissions' => $registryDefinitionsRead, 'scope' => 'all'],
+                ['permissions' => $registryEntriesAll, 'scope' => 'team'],
             ]],
             ['name' => 'Team Member', 'description' => 'Can view all, create and update own resources', 'groups' => [
-                ['permissions' => $readPermissions, 'scope' => 'all'],
-                ['permissions' => $createUpdatePermissions, 'scope' => 'own'],
+                ['permissions' => $nonRegistryRead, 'scope' => 'all'],
+                ['permissions' => $nonRegistryCreateUpdate, 'scope' => 'own'],
+                ['permissions' => $registryDefinitionsRead, 'scope' => 'all'],
+                ['permissions' => $registryEntriesAll, 'scope' => 'team'],
             ]],
             ['name' => 'Externist', 'description' => 'External collaborator with own resource access', 'groups' => [
-                ['permissions' => $readCreateUpdatePermissions, 'scope' => 'own'],
+                ['permissions' => $nonRegistryReadCreateUpdate, 'scope' => 'own'],
+                ['permissions' => $registryDefinitionsRead, 'scope' => 'all'],
+                ['permissions' => $registryEntriesReadCreateUpdate, 'scope' => 'own'],
             ]],
         ];
 
@@ -282,15 +300,38 @@ final class TenantSeeder extends Seeder
      */
     private function filterByActions(array $modules, array $actions): array
     {
+        return array_values(array_filter(
+            $this->allPermissionKeys($modules),
+            fn (array $key): bool => in_array($key[2], $actions, true),
+        ));
+    }
+
+    /**
+     * @param  array<string, array{features: array<string, array{actions: list<string>}>}>  $modules
+     * @param  list<string>  $excludeModuleNames
+     * @return array<string, array{features: array<string, array{actions: list<string>}>}>
+     */
+    private function excludeModules(array $modules, array $excludeModuleNames): array
+    {
+        return array_diff_key($modules, array_flip($excludeModuleNames));
+    }
+
+    /**
+     * @param  array<string, array{features: array<string, array{actions: list<string>}>}>  $modules
+     * @param  list<string>|null  $actions
+     * @return list<array{0: string, 1: string, 2: string}>
+     */
+    private function filterByModule(array $modules, string $moduleName, string $featureName, ?array $actions = null): array
+    {
         $keys = [];
 
-        foreach ($modules as $moduleName => $moduleConfig) {
-            foreach ($moduleConfig['features'] as $featureName => $featureConfig) {
-                foreach ($featureConfig['actions'] as $action) {
-                    if (in_array($action, $actions, true)) {
-                        $keys[] = [$moduleName, $featureName, $action];
-                    }
-                }
+        if (! isset($modules[$moduleName]['features'][$featureName])) {
+            return [];
+        }
+
+        foreach ($modules[$moduleName]['features'][$featureName]['actions'] as $action) {
+            if ($actions === null || in_array($action, $actions, true)) {
+                $keys[] = [$moduleName, $featureName, $action];
             }
         }
 
@@ -413,14 +454,7 @@ final class TenantSeeder extends Seeder
         ];
 
         foreach ($userAssignments as $email => $labels) {
-            $userId = $this->userIds[$email];
-
-            foreach ($labels as $label) {
-                DB::table('label_assignments')->insert([
-                    'label_id' => $labelIds["users:$label"],
-                    'labelable_id' => $userId,
-                ]);
-            }
+            $this->assignLabels($labelIds, 'users', $this->userIds[$email], $labels);
         }
 
         $teamAssignments = [
@@ -432,12 +466,19 @@ final class TenantSeeder extends Seeder
         ];
 
         foreach ($teamAssignments as $teamId => $labels) {
-            foreach ($labels as $label) {
-                DB::table('label_assignments')->insert([
-                    'label_id' => $labelIds["teams:$label"],
-                    'labelable_id' => $teamId,
-                ]);
-            }
+            $this->assignLabels($labelIds, 'teams', $teamId, $labels);
+        }
+    }
+
+    /** @param array<string, string> $labelIds
+     *  @param list<string> $labels */
+    private function assignLabels(array $labelIds, string $namespace, string $entityId, array $labels): void
+    {
+        foreach ($labels as $label) {
+            DB::table('label_assignments')->insert([
+                'label_id' => $labelIds["$namespace:$label"],
+                'labelable_id' => $entityId,
+            ]);
         }
     }
 }
