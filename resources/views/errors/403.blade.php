@@ -8,7 +8,7 @@
         <p class="mt-4 text-lg text-gray-600">{{ $exception->getMessage() ?: __('messages.exceptions.permission_denied') }}
         </p>
         <div class="mt-6 flex items-center justify-center gap-3">
-            @if ($authenticatedUser?->isImpersonating())
+            @if (isset($authenticatedUser) && $authenticatedUser->isImpersonating())
                 <x-primary-button skip-permission
                                   variant="amber"
                                   :action="route('impersonation.stop')"

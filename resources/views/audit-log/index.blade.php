@@ -4,62 +4,64 @@
 
 @section('content')
     <div class="mb-6">
-        <div class="overflow-hidden rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5">
+        <x-form-card>
             <form method="GET"
                   action="{{ route('audit-log.index') }}"
-                  class="flex flex-wrap items-end gap-3">
+                  class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
                 <div>
-                    <label class="block text-xs font-medium text-gray-500"
+                    <label class="mb-1 block text-sm font-medium text-gray-700"
                            for="filter-entity-type">{{ __('messages.audit_log.filter_entity_type') }}</label>
-                    <input class="mt-1 block w-32 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="filter-entity-type"
                            name="entity_type"
                            type="text"
+                           placeholder="user, role..."
                            value="{{ $filters['entity_type'] ?? '' }}">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-500"
+                    <label class="mb-1 block text-sm font-medium text-gray-700"
                            for="filter-user">{{ __('messages.audit_log.filter_user') }}</label>
-                    <input class="mt-1 block w-64 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="filter-user"
                            name="user_id"
                            type="text"
                            value="{{ $filters['user_id'] ?? '' }}">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-500"
+                    <label class="mb-1 block text-sm font-medium text-gray-700"
                            for="filter-trace">{{ __('messages.audit_log.filter_trace') }}</label>
-                    <input class="mt-1 block w-64 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="filter-trace"
                            name="trace_id"
                            type="text"
                            value="{{ $filters['trace_id'] ?? '' }}">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-500"
+                    <label class="mb-1 block text-sm font-medium text-gray-700"
                            for="filter-from">{{ __('messages.audit_log.filter_from') }}</label>
-                    <input class="mt-1 block w-40 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="filter-from"
                            name="from"
                            type="date"
                            value="{{ $filters['from'] ?? '' }}">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-gray-500"
+                    <label class="mb-1 block text-sm font-medium text-gray-700"
                            for="filter-to">{{ __('messages.audit_log.filter_to') }}</label>
-                    <input class="mt-1 block w-40 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="filter-to"
                            name="to"
                            type="date"
                            value="{{ $filters['to'] ?? '' }}">
                 </div>
-                <button
-                        class="cursor-pointer rounded-md bg-indigo-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500"
-                        type="submit">{{ __('messages.audit_log.filter') }}</button>
-                <a class="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-200"
-                   href="{{ route('audit-log.index') }}">{{ __('messages.audit_log.clear') }}</a>
+                <div class="flex items-end gap-2">
+                    <button class="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            type="submit">{{ __('messages.audit_log.filter') }}</button>
+                    <a class="cursor-pointer rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                       href="{{ route('audit-log.index') }}">{{ __('messages.audit_log.clear') }}</a>
+                </div>
             </form>
-        </div>
+        </x-form-card>
     </div>
 
     <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
