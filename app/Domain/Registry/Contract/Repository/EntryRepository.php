@@ -7,6 +7,7 @@ namespace App\Domain\Registry\Contract\Repository;
 use App\Application\Filtering\Filter;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Application\Sorting\Sorting;
 use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\ValueObject\DefinitionId;
 use App\Domain\Registry\Contract\ValueObject\EntryId;
@@ -25,9 +26,10 @@ interface EntryRepository
 
     /**
      * @param  list<Filter>  $filters
+     * @param  list<Sorting>  $sortings
      * @return PaginatedResult<Entry>
      */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = []): PaginatedResult;
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = []): PaginatedResult;
 
     public function existsByDefinition(DefinitionId $definitionId): bool;
 

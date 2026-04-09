@@ -23,14 +23,15 @@ interface EntryRow {
 }
 
 const columns = computed<ColumnDef[]>(() => [
-    { key: 'title', title: trans('messages.registry.entries.title_field'), sortable: false },
-    { key: 'version', title: trans('messages.registry.entries.version_field'), sortable: false },
+    { key: 'title', title: trans('messages.registry.entries.title_field'), sortable: true },
+    { key: 'version', title: trans('messages.registry.entries.version_field'), sortable: true },
 ]);
 
 const grid = useDataGrid<EntryRow>({
     fetchUrl: props.fetchUrl,
     gridName: `entries-${props.definitionName}`,
     columns,
+    defaultSort: { key: 'title', order: 'asc' },
 });
 </script>
 

@@ -42,11 +42,11 @@ final readonly class RecordAuditLog implements Middleware
         try {
             $result = $next($message);
             $status = AuditLogStatus::Success;
-        } catch (Throwable $exception) {
+        } catch (Throwable $throwable) {
             $status = AuditLogStatus::Failure;
             $this->writeEntry($message, $status);
 
-            throw $exception;
+            throw $throwable;
         }
 
         $this->writeEntry($message, $status);
@@ -56,10 +56,10 @@ final readonly class RecordAuditLog implements Middleware
 
     private function shouldSkip(object $message): bool
     {
-        return (new ReflectionClass($message))->getAttributes(SkipAuditLog::class) !== [];
+        return new ReflectionClass($message)->getAttributes(SkipAuditLog::class) !== [];
     }
 
-    private function writeEntry(object $message, AuditLogStatus $status): void
+    private function writeEntry(object $message, AuditLogStatus $auditLogStatus): void
     {
         $entityType = null;
         $entityId = null;
@@ -79,7 +79,7 @@ final readonly class RecordAuditLog implements Middleware
             entityType: $entityType,
             entityId: $entityId,
             payload: SensitiveDataMasker::mask($message),
-            status: $status,
+            status: $auditLogStatus,
             ipAddress: $this->request?->ip(),
             occurredAt: new DateTimeImmutable,
         ));

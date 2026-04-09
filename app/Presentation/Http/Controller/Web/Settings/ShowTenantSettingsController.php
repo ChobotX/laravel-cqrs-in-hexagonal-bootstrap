@@ -6,7 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Settings;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
-use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsQuery;
+use App\Contract\Http\HttpStatus;
+use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\View;
 
@@ -20,7 +21,10 @@ final readonly class ShowTenantSettingsController
     public function __invoke(): View
     {
         $tenantId = Context::get('tenant_id');
-        assert(is_string($tenantId));
+
+        if (! is_string($tenantId)) {
+            abort(HttpStatus::FORBIDDEN);
+        }
 
         $tenantSettings = $this->queryBus->dispatch(new GetTenantSettingsQuery(
             tenantId: $tenantId,

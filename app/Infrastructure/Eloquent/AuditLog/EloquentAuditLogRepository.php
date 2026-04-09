@@ -26,7 +26,7 @@ final readonly class EloquentAuditLogRepository implements AuditLogRepository
         ?DateTimeImmutable $from = null,
         ?DateTimeImmutable $to = null,
     ): array {
-        $query = $this->applyFilters(
+        $builder = $this->applyFilters(
             AuditLogModel::query(),
             $entityType,
             $entityId,
@@ -37,10 +37,10 @@ final readonly class EloquentAuditLogRepository implements AuditLogRepository
         );
 
         return array_values(
-            $query->orderByDesc('occurred_at')
+            $builder->orderByDesc('occurred_at')
                 ->limit(self::MAX_RESULTS)
                 ->get()
-                ->map(fn (AuditLogModel $model): AuditLogEntry => $this->auditLogMapper->toDomain($model))
+                ->map(fn (AuditLogModel $auditLogModel): AuditLogEntry => $this->auditLogMapper->toDomain($auditLogModel))
                 ->all(),
         );
     }
@@ -52,7 +52,7 @@ final readonly class EloquentAuditLogRepository implements AuditLogRepository
             AuditLogModel::where('trace_id', $traceId)
                 ->orderBy('occurred_at')
                 ->get()
-                ->map(fn (AuditLogModel $model): AuditLogEntry => $this->auditLogMapper->toDomain($model))
+                ->map(fn (AuditLogModel $auditLogModel): AuditLogEntry => $this->auditLogMapper->toDomain($auditLogModel))
                 ->all(),
         );
     }
@@ -77,11 +77,11 @@ final readonly class EloquentAuditLogRepository implements AuditLogRepository
     }
 
     /**
-     * @param  Builder<AuditLogModel>  $query
+     * @param  Builder<AuditLogModel>  $builder
      * @return Builder<AuditLogModel>
      */
     private function applyFilters(
-        Builder $query,
+        Builder $builder,
         ?string $entityType,
         ?string $entityId,
         ?string $userId,
@@ -90,29 +90,29 @@ final readonly class EloquentAuditLogRepository implements AuditLogRepository
         ?DateTimeImmutable $to,
     ): Builder {
         if ($entityType !== null) {
-            $query->where('entity_type', $entityType);
+            $builder->where('entity_type', $entityType);
         }
 
         if ($entityId !== null) {
-            $query->where('entity_id', $entityId);
+            $builder->where('entity_id', $entityId);
         }
 
         if ($userId !== null) {
-            $query->where('user_id', $userId);
+            $builder->where('user_id', $userId);
         }
 
         if ($traceId !== null) {
-            $query->where('trace_id', $traceId);
+            $builder->where('trace_id', $traceId);
         }
 
-        if ($from !== null) {
-            $query->where('occurred_at', '>=', $from);
+        if ($from instanceof DateTimeImmutable) {
+            $builder->where('occurred_at', '>=', $from);
         }
 
-        if ($to !== null) {
-            $query->where('occurred_at', '<=', $to);
+        if ($to instanceof DateTimeImmutable) {
+            $builder->where('occurred_at', '<=', $to);
         }
 
-        return $query;
+        return $builder;
     }
 }

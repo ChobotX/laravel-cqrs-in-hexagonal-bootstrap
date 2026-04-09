@@ -10,9 +10,9 @@ use App\Domain\AuditLog\ValueObject\AuditLogId;
 use App\Infrastructure\Eloquent\AuditLog\AuditLogModel;
 
 it('writes an audit log entry to the database', function (): void {
-    $writer = app(AuditLogWriter::class);
+    $auditLogWriter = app(AuditLogWriter::class);
 
-    $writer->record(new AuditLogEntry(
+    $auditLogWriter->record(new AuditLogEntry(
         id: new AuditLogId('550e8400-e29b-41d4-a716-446655440d01'),
         traceId: 'trace-write-test',
         userId: '660e8400-e29b-41d4-a716-446655440000',
@@ -35,9 +35,9 @@ it('writes an audit log entry to the database', function (): void {
 });
 
 it('prevents updating an existing entry', function (): void {
-    $writer = app(AuditLogWriter::class);
+    $auditLogWriter = app(AuditLogWriter::class);
 
-    $writer->record(new AuditLogEntry(
+    $auditLogWriter->record(new AuditLogEntry(
         id: new AuditLogId('550e8400-e29b-41d4-a716-446655440d02'),
         traceId: 'trace-immutable',
         userId: null,
@@ -58,9 +58,9 @@ it('prevents updating an existing entry', function (): void {
 })->throws(ImmutableAuditLogException::class, 'cannot be updated');
 
 it('prevents deleting an entry', function (): void {
-    $writer = app(AuditLogWriter::class);
+    $auditLogWriter = app(AuditLogWriter::class);
 
-    $writer->record(new AuditLogEntry(
+    $auditLogWriter->record(new AuditLogEntry(
         id: new AuditLogId('550e8400-e29b-41d4-a716-446655440d03'),
         traceId: 'trace-nodelete',
         userId: null,

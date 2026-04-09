@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Tenancy\TenantSettings;
-use App\Domain\Tenancy\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
+use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
 use SplFileInfo;
 
 final class FakeTenantSettingsRepository implements TenantSettingsRepository
@@ -37,7 +37,7 @@ final class FakeTenantSettingsRepository implements TenantSettingsRepository
 
         $this->settings[$tenantId] = new TenantSettings(
             name: $name,
-            logoUrl: $removeLogo ? null : ($this->settings[$tenantId]?->logoUrl),
+            logoUrl: $removeLogo ? null : (($this->settings[$tenantId] ?? null)?->logoUrl),
         );
     }
 }

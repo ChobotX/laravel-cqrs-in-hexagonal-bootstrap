@@ -9,21 +9,21 @@ use App\Domain\AuditLog\Contract\ValueObject\AuditLogEntry;
 
 final readonly class EloquentAuditLogWriter implements AuditLogWriter
 {
-    public function record(AuditLogEntry $entry): void
+    public function record(AuditLogEntry $auditLogEntry): void
     {
-        $model = new AuditLogModel;
-        $model->id = $entry->id->value;
-        $model->trace_id = $entry->traceId;
-        $model->user_id = $entry->userId;
-        $model->impersonator_id = $entry->impersonatorId;
-        $model->command = $entry->command;
-        $model->action_label = $entry->actionLabel;
-        $model->entity_type = $entry->entityType;
-        $model->entity_id = $entry->entityId;
-        $model->payload = $entry->payload;
-        $model->status = $entry->status->value;
-        $model->ip_address = $entry->ipAddress;
-        $model->occurred_at = $entry->occurredAt;
-        $model->save();
+        $auditLogModel = new AuditLogModel;
+        $auditLogModel->id = $auditLogEntry->id->value;
+        $auditLogModel->trace_id = $auditLogEntry->traceId;
+        $auditLogModel->user_id = $auditLogEntry->userId;
+        $auditLogModel->impersonator_id = $auditLogEntry->impersonatorId;
+        $auditLogModel->command = $auditLogEntry->command;
+        $auditLogModel->action_label = $auditLogEntry->actionLabel;
+        $auditLogModel->entity_type = $auditLogEntry->entityType;
+        $auditLogModel->entity_id = $auditLogEntry->entityId;
+        $auditLogModel->payload = $auditLogEntry->payload;
+        $auditLogModel->status = $auditLogEntry->status->value;
+        $auditLogModel->ip_address = $auditLogEntry->ipAddress;
+        $auditLogModel->occurred_at = $auditLogEntry->occurredAt;
+        $auditLogModel->save();
     }
 }

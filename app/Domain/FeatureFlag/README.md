@@ -79,7 +79,14 @@ Flag state is passed to the frontend via a `<meta name="feature-flags">` tag in 
 
 ## Management UI
 
-- `GET /feature-flags` — list all flags with inline toggles for all types
+Web routes:
+
+- `GET /feature-flags` — Vue DataGrid with search, sort, pagination, presets, group filter, inline toggles
 - `GET /feature-flags/{key}` — edit page (toggle + value for select/input types)
 - `PUT /feature-flags/{key}` — update flag enabled state and/or value
 - `DELETE /feature-flags/{key}` — reset to default
+
+Internal API (Vue DataGrid):
+
+- `GET /internal-api/feature-flags/list` — JSON endpoint for DataGrid (in-memory filter/sort/paginate over config-defined flags)
+- `PATCH /internal-api/feature-flags/{key}/toggle` — toggle enabled state via JSON

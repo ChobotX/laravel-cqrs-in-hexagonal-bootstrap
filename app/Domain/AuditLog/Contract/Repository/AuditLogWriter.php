@@ -8,5 +8,5 @@ use App\Domain\AuditLog\Contract\ValueObject\AuditLogEntry;
 
 interface AuditLogWriter
 {
-    public function record(AuditLogEntry $entry): void;
+    public function record(AuditLogEntry $auditLogEntry): void;
 }

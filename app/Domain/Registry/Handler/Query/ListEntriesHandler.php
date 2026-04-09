@@ -31,6 +31,7 @@ final readonly class ListEntriesHandler implements QueryHandler
             new DefinitionId($query->definitionId),
             $pagination,
             $query->filters(),
+            $query->sorting(),
         );
     }
 }

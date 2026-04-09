@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\Tenancy\Command\UpdateTenantSettings;
 
+use App\Application\Bus\SkipDomainEvent;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
+use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
+use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\Tenancy\Exception\InvalidTenantNameException;
 use App\Domain\Tenancy\Exception\TenantNotFoundException;
-use App\Domain\Tenancy\TenantSettings;
-use App\Domain\Tenancy\TenantSettingsRepository;
 
 /** @implements CommandHandler<UpdateTenantSettingsCommand> */
+#[SkipDomainEvent(reason: 'Settings changes are captured via AuditableCommand — no separate domain event needed')]
 final readonly class UpdateTenantSettingsHandler implements CommandHandler
 {
     public function __construct(

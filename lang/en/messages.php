@@ -281,6 +281,8 @@ return [
         'pattern_hint' => 'Must match pattern: :pattern',
         'empty' => 'No feature flags configured.',
         'count' => ':count flag|:count flags',
+        'group_filter_all' => 'All Groups',
+        'group_filter_label' => 'Filter by group',
         'groups' => [
             'registry' => [
                 'label' => 'Registry',
@@ -379,6 +381,7 @@ return [
         'image_processing_error' => 'Image processing failed.',
         'tenant_not_found' => 'Tenant with id [:id] not found.',
         'invalid_tenant_name' => 'Tenant name must not be empty.',
+        'tenant_logo_storage_failed' => 'Failed to store tenant logo.',
         'tenant_inactive' => 'Tenant [:identifier] is inactive.',
         'invalid_password_reset_token' => 'This password reset link is invalid or has expired.',
         'user_already_activated' => 'This account has already been activated.',
@@ -428,6 +431,11 @@ return [
             'scope_badge_team' => 'Team',
             'scope_badge_global' => 'Global',
         ],
+    ],
+
+    'dialog' => [
+        'cancel' => 'Cancel',
+        'confirm' => 'Confirm',
     ],
 
     'registry' => [

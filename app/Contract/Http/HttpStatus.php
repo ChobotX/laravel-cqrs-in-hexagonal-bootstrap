@@ -19,4 +19,6 @@ interface HttpStatus
     public const int CREATED = 201;
 
     public const int NO_CONTENT = 204;
+
+    public const int INTERNAL_SERVER_ERROR = 500;
 }

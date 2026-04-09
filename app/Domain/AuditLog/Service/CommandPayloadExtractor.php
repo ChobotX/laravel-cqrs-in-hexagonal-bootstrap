@@ -10,7 +10,7 @@ final readonly class CommandPayloadExtractor
 {
     public function deriveActionLabel(object $command): string
     {
-        $className = (new ReflectionClass($command))->getShortName();
+        $className = new ReflectionClass($command)->getShortName();
         $withoutSuffix = preg_replace('/Command$/', '', $className) ?? $className;
 
         return trim((string) preg_replace('/(?<=[a-z])(?=[A-Z])/', ' ', $withoutSuffix));

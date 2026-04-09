@@ -134,6 +134,103 @@ it('paginates results', function (): void {
         ->assertJsonPath('meta.total', 20);
 });
 
+it('sorts entries by title ascending', function (): void {
+    $userModel = entriesGridAdmin();
+    $definitionModel = createTestDefinition();
+
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d340',
+        'definition_id' => $definitionModel->id,
+        'definition_version' => 1,
+        'namespace' => 'enumerations',
+        'title' => 'Zebra',
+        'data' => ['brand' => 'Zebra'],
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d341',
+        'definition_id' => $definitionModel->id,
+        'definition_version' => 1,
+        'namespace' => 'enumerations',
+        'title' => 'Alpha',
+        'data' => ['brand' => 'Alpha'],
+    ]);
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/registry/enumerations/car_brand/entries/list?sort=title&direction=asc')
+        ->assertOk();
+
+    $titles = array_column($response->json('data'), 'title');
+    expect($titles)->toBe(['Alpha', 'Zebra']);
+});
+
+it('sorts entries by title descending', function (): void {
+    $userModel = entriesGridAdmin();
+    $definitionModel = createTestDefinition();
+
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d350',
+        'definition_id' => $definitionModel->id,
+        'definition_version' => 1,
+        'namespace' => 'enumerations',
+        'title' => 'Alpha',
+        'data' => ['brand' => 'Alpha'],
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d351',
+        'definition_id' => $definitionModel->id,
+        'definition_version' => 1,
+        'namespace' => 'enumerations',
+        'title' => 'Zebra',
+        'data' => ['brand' => 'Zebra'],
+    ]);
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/registry/enumerations/car_brand/entries/list?sort=title&direction=desc')
+        ->assertOk();
+
+    $titles = array_column($response->json('data'), 'title');
+    expect($titles)->toBe(['Zebra', 'Alpha']);
+});
+
+it('sorts entries by version', function (): void {
+    $userModel = entriesGridAdmin();
+    $definitionModel = createTestDefinition();
+
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d201',
+        'definition_id' => $definitionModel->id,
+        'version' => 2,
+        'body' => [
+            ['name' => 'brand', 'label' => 'Brand', 'type' => 'string', 'required' => true],
+        ],
+        'status' => 'active',
+    ]);
+
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d360',
+        'definition_id' => $definitionModel->id,
+        'definition_version' => 2,
+        'namespace' => 'enumerations',
+        'title' => 'BMW',
+        'data' => ['brand' => 'BMW'],
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-44665544d361',
+        'definition_id' => $definitionModel->id,
+        'definition_version' => 1,
+        'namespace' => 'enumerations',
+        'title' => 'Toyota',
+        'data' => ['brand' => 'Toyota'],
+    ]);
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/registry/enumerations/car_brand/entries/list?sort=version&direction=desc')
+        ->assertOk();
+
+    $versions = array_column($response->json('data'), 'version');
+    expect($versions)->toBe([2, 1]);
+});
+
 it('includes version in entry data', function (): void {
     $userModel = entriesGridAdmin();
     $definitionModel = createTestDefinition();

@@ -15,9 +15,9 @@ final class FakeAuditLogRepository implements AuditLogRepository
         private array $entries = [],
     ) {}
 
-    public function add(AuditLogEntry $entry): void
+    public function add(AuditLogEntry $auditLogEntry): void
     {
-        $this->entries[$entry->id->value] = $entry;
+        $this->entries[$auditLogEntry->id->value] = $auditLogEntry;
     }
 
     /** @return list<AuditLogEntry> */
@@ -32,27 +32,27 @@ final class FakeAuditLogRepository implements AuditLogRepository
         $results = array_values($this->entries);
 
         if ($entityType !== null) {
-            $results = array_values(array_filter($results, fn (AuditLogEntry $e): bool => $e->entityType === $entityType));
+            $results = array_values(array_filter($results, fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->entityType === $entityType));
         }
 
         if ($entityId !== null) {
-            $results = array_values(array_filter($results, fn (AuditLogEntry $e): bool => $e->entityId === $entityId));
+            $results = array_values(array_filter($results, fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->entityId === $entityId));
         }
 
         if ($userId !== null) {
-            $results = array_values(array_filter($results, fn (AuditLogEntry $e): bool => $e->userId === $userId));
+            $results = array_values(array_filter($results, fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->userId === $userId));
         }
 
         if ($traceId !== null) {
-            $results = array_values(array_filter($results, fn (AuditLogEntry $e): bool => $e->traceId === $traceId));
+            $results = array_values(array_filter($results, fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->traceId === $traceId));
         }
 
-        if ($from !== null) {
-            $results = array_values(array_filter($results, fn (AuditLogEntry $e): bool => $e->occurredAt >= $from));
+        if ($from instanceof DateTimeImmutable) {
+            $results = array_values(array_filter($results, fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->occurredAt >= $from));
         }
 
-        if ($to !== null) {
-            $results = array_values(array_filter($results, fn (AuditLogEntry $e): bool => $e->occurredAt <= $to));
+        if ($to instanceof DateTimeImmutable) {
+            $results = array_values(array_filter($results, fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->occurredAt <= $to));
         }
 
         usort($results, fn (AuditLogEntry $a, AuditLogEntry $b): int => $b->occurredAt <=> $a->occurredAt);
@@ -65,7 +65,7 @@ final class FakeAuditLogRepository implements AuditLogRepository
     {
         $results = array_values(array_filter(
             $this->entries,
-            fn (AuditLogEntry $e): bool => $e->traceId === $traceId,
+            fn (AuditLogEntry $auditLogEntry): bool => $auditLogEntry->traceId === $traceId,
         ));
 
         usort($results, fn (AuditLogEntry $a, AuditLogEntry $b): int => $a->occurredAt <=> $b->occurredAt);

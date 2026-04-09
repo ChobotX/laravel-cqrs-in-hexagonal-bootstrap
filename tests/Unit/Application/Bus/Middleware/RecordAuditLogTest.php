@@ -17,11 +17,11 @@ use Tests\Helper\FakeAuditLogWriter;
 
 it('records a successful command', function (): void {
     $writer = new FakeAuditLogWriter;
-    $middleware = buildAuditMiddleware($writer, 'user-1', 'test-trace-id');
+    $recordAuditLog = buildAuditMiddleware($writer, 'user-1', 'test-trace-id');
 
     $command = new TestAuditableCmd('entity-1', 'Test');
 
-    $middleware->handle($command, fn () => null);
+    $recordAuditLog->handle($command, fn (): null => null);
 
     expect($writer->recorded)->toHaveCount(1);
 
@@ -36,12 +36,12 @@ it('records a successful command', function (): void {
 
 it('records a failed command', function (): void {
     $writer = new FakeAuditLogWriter;
-    $middleware = buildAuditMiddleware($writer, 'user-1');
+    $recordAuditLog = buildAuditMiddleware($writer, 'user-1');
 
     $command = new TestAuditableCmd('entity-1', 'Test');
 
     try {
-        $middleware->handle($command, fn () => throw new RuntimeException('fail'));
+        $recordAuditLog->handle($command, fn () => throw new RuntimeException('fail'));
     } catch (RuntimeException) {
     }
 
@@ -51,22 +51,22 @@ it('records a failed command', function (): void {
 
 it('skips commands with SkipAuditLog attribute', function (): void {
     $writer = new FakeAuditLogWriter;
-    $middleware = buildAuditMiddleware($writer, 'user-1');
+    $recordAuditLog = buildAuditMiddleware($writer, 'user-1');
 
     $command = new TestSkippedCmd;
 
-    $middleware->handle($command, fn () => null);
+    $recordAuditLog->handle($command, fn (): null => null);
 
     expect($writer->recorded)->toHaveCount(0);
 });
 
 it('records entity info from AuditableCommand', function (): void {
     $writer = new FakeAuditLogWriter;
-    $middleware = buildAuditMiddleware($writer, 'user-1');
+    $recordAuditLog = buildAuditMiddleware($writer, 'user-1');
 
     $command = new TestEntityCmd('data-123');
 
-    $middleware->handle($command, fn () => null);
+    $recordAuditLog->handle($command, fn (): null => null);
 
     expect($writer->recorded)->toHaveCount(1)
         ->and($writer->recorded[0]->entityType)->toBe('test')
@@ -75,11 +75,11 @@ it('records entity info from AuditableCommand', function (): void {
 
 it('masks sensitive properties', function (): void {
     $writer = new FakeAuditLogWriter;
-    $middleware = buildAuditMiddleware($writer, 'user-1');
+    $recordAuditLog = buildAuditMiddleware($writer, 'user-1');
 
     $command = new TestSensitiveCmd('user-1', 'secret-password');
 
-    $middleware->handle($command, fn () => null);
+    $recordAuditLog->handle($command, fn (): null => null);
 
     expect($writer->recorded[0]->payload)->toBe([
         'userId' => 'user-1',
@@ -89,18 +89,18 @@ it('masks sensitive properties', function (): void {
 
 it('handles null user context', function (): void {
     $writer = new FakeAuditLogWriter;
-    $middleware = buildAuditMiddleware($writer, null);
+    $recordAuditLog = buildAuditMiddleware($writer, null);
 
     $command = new TestAuditableCmd('entity-1', 'Test');
 
-    $middleware->handle($command, fn () => null);
+    $recordAuditLog->handle($command, fn (): null => null);
 
     expect($writer->recorded[0]->userId)->toBeNull();
 });
 
-function buildAuditMiddleware(FakeAuditLogWriter $writer, ?string $userId, string $traceId = ''): RecordAuditLog
+function buildAuditMiddleware(FakeAuditLogWriter $fakeAuditLogWriter, ?string $userId, string $traceId = ''): RecordAuditLog
 {
-    $authenticatedUser = new class($userId) implements AuthenticatedUser
+    $authenticatedUser = new readonly class($userId) implements AuthenticatedUser
     {
         public function __construct(private ?string $userId) {}
 
@@ -133,7 +133,7 @@ function buildAuditMiddleware(FakeAuditLogWriter $writer, ?string $userId, strin
         }
     };
 
-    $traceContext = new class($traceId) implements TraceContext
+    $traceContext = new readonly class($traceId) implements TraceContext
     {
         public function __construct(private ?string $traceId) {}
 
@@ -154,7 +154,7 @@ function buildAuditMiddleware(FakeAuditLogWriter $writer, ?string $userId, strin
     };
 
     return new RecordAuditLog(
-        auditLogWriter: $writer,
+        auditLogWriter: $fakeAuditLogWriter,
         authenticatedUser: $authenticatedUser,
         idGenerator: $idGenerator,
         commandPayloadExtractor: new CommandPayloadExtractor,

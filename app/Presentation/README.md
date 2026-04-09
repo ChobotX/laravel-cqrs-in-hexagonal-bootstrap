@@ -420,7 +420,7 @@ Use `transChoice()` (not `trans()`) for pluralized count labels:
 
 ### Per-grid page files (`resources/js/widgets/data-grid/pages/`)
 
-Each grid page (`UsersGrid.vue`, `TeamsGrid.vue`, `RolesGrid.vue`, `EntriesGrid.vue`) defines columns, slots, and actions. Mounted from `*-grid-app.ts` scripts to Blade mount points.
+Each grid page (`UsersGrid.vue`, `TeamsGrid.vue`, `RolesGrid.vue`, `EntriesGrid.vue`, `FeatureFlagsGrid.vue`) defines columns, slots, and actions. Mounted from `*-grid-app.ts` scripts to Blade mount points.
 
 ### Blade integration
 
@@ -527,6 +527,21 @@ Uses a default slot for the icon SVG (`h-5 w-5`). Styling matches the Blade comp
 </ActionButton>
 ```
 
+### `BadgeList`
+
+Displays a list of badge items with overflow collapsing. Shows first N items, then a "+M" indicator with tooltip revealing all items. Vue equivalent of `<x-badge-list>`.
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `items` | `Record<string, unknown>[]` | — | Array of items to display |
+| `labelKey` | `string` | `'name'` | Key to read the display label from each item |
+| `max` | `number` | `2` | Maximum visible badges before collapsing |
+
+**Example:**
+```vue
+<BadgeList :items="item.labels" label-key="name" :max="2" />
+```
+
 ## Frontend architecture
 
 The frontend follows an adapted Feature-Sliced Design with 4 categories and strict unidirectional dependencies, enforced by dependency-cruiser.
@@ -535,7 +550,7 @@ The frontend follows an adapted Feature-Sliced Design with 4 categories and stri
 |----------|---------|-----------------|
 | `core/` | Global infrastructure (logger, feature flags, sentry, session guard) | npm packages only |
 | `behaviors/` | Vanilla DOM scripts (dropdown, auto-submit, etc.) | `core/` |
-| `shared/` | Cross-cutting UI services and components (dialog, toast, tooltip, ActionButton) | `core/` |
+| `shared/` | Cross-cutting UI services and components (dialog, toast, tooltip, ActionButton, BadgeList) | `core/` |
 | `widgets/` | Feature-specific Vue micro-apps (data-grid, notification, etc.) | `shared/`, `core/` |
 
 **Key rule:** `widgets/X/` must never import from `widgets/Y/`. Cross-widget communication goes through `shared/` services or DOM globals.

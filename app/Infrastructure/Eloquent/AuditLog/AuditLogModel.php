@@ -8,6 +8,7 @@ use App\Domain\AuditLog\Exception\ImmutableAuditLogException;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Override;
 
 /**
  * @property string $id
@@ -50,6 +51,7 @@ final class AuditLogModel extends Model
         'occurred_at',
     ];
 
+    #[Override]
     public function save(array $options = []): bool
     {
         if ($this->exists) {
@@ -59,12 +61,14 @@ final class AuditLogModel extends Model
         return parent::save($options);
     }
 
+    #[Override]
     public function delete(): ?bool
     {
         throw new ImmutableAuditLogException('deleted');
     }
 
     /** @return array<string, string> */
+    #[Override]
     protected function casts(): array
     {
         return [

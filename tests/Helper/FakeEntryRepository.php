@@ -51,7 +51,7 @@ final class FakeEntryRepository implements EntryRepository
     }
 
     /** @return PaginatedResult<Entry> */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = []): PaginatedResult
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = []): PaginatedResult
     {
         $items = array_values(array_filter(
             $this->entries,

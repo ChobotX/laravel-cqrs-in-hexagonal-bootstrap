@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsCommand;
+use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsHandler;
 use App\Domain\Tenancy\Exception\InvalidTenantNameException;
 use App\Domain\Tenancy\Exception\TenantNotFoundException;
-use App\Domain\Tenancy\TenantSettings;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use Tests\Helper\FakeTenantSettingsRepository;
 
 it('updates tenant name', function (): void {

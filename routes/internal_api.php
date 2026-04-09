@@ -6,6 +6,8 @@ use App\Presentation\Http\Controller\Api\Registry\ListDefinitionsApiController;
 use App\Presentation\Http\Controller\Api\Registry\ListEntriesApiController;
 use App\Presentation\Http\Controller\Api\Registry\ListNamespacesApiController;
 use App\Presentation\Http\Controller\InternalApi\Authorization\ListRolesGridController;
+use App\Presentation\Http\Controller\InternalApi\FeatureFlag\ListFeatureFlagsGridController;
+use App\Presentation\Http\Controller\InternalApi\FeatureFlag\ToggleFeatureFlagController;
 use App\Presentation\Http\Controller\InternalApi\Registry\ListEntriesGridController;
 use App\Presentation\Http\Controller\InternalApi\Team\ListTeamsGridController;
 use App\Presentation\Http\Controller\InternalApi\User\ListUsersGridController;
@@ -28,6 +30,8 @@ Route::middleware('auth')->prefix('internal-api')->group(function (): void {
     Route::get('/teams/list', ListTeamsGridController::class)->name('internal-api.teams.list');
     Route::get('/roles/list', ListRolesGridController::class)->name('internal-api.roles.list');
     Route::get('/registry/{namespace}/{slug}/entries/list', ListEntriesGridController::class)->name('internal-api.registry.entries.list');
+    Route::get('/feature-flags/list', ListFeatureFlagsGridController::class)->name('internal-api.feature-flags.list');
+    Route::patch('/feature-flags/{key}/toggle', ToggleFeatureFlagController::class)->name('internal-api.feature-flags.toggle');
     Route::get('/users/search', SearchUsersController::class)->name('internal-api.users.search');
     Route::get('/roles/search', SearchRolesController::class)->name('internal-api.roles.search');
     Route::get('/teams/search', SearchTeamsController::class)->name('internal-api.teams.search');

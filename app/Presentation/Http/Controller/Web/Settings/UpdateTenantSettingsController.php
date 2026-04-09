@@ -6,7 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Settings;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\CommandBus;
-use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsCommand;
+use App\Contract\Http\HttpStatus;
+use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Presentation\Http\Request\Web\Settings\UpdateTenantSettingsRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
@@ -22,7 +23,10 @@ final readonly class UpdateTenantSettingsController
     public function __invoke(UpdateTenantSettingsRequest $updateTenantSettingsRequest): RedirectResponse
     {
         $tenantId = Context::get('tenant_id');
-        assert(is_string($tenantId));
+
+        if (! is_string($tenantId)) {
+            abort(HttpStatus::FORBIDDEN);
+        }
 
         $logo = $updateTenantSettingsRequest->file('logo');
 

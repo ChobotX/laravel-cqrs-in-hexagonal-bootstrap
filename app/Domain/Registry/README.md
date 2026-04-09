@@ -85,7 +85,7 @@ Selects always reference another definition's entries (no inline options). A `Ca
 | `GetActiveDefinitionVersionQuery` | `registry.definitions.read` | `?DefinitionVersion` |
 | `GetSerializedSchemaQuery` | `registry.definitions.read` | `?JsonSchema` (serialized for Vue) |
 | `GetEntryByIdQuery` | `registry.entries.read` | `?Entry` |
-| `ListEntriesQuery` | `registry.entries.read` | `PaginatedResult<Entry>` |
+| `ListEntriesQuery` | `registry.entries.read` | `PaginatedResult<Entry>` (filterable, sortable) |
 | `ListEntriesByDefinitionSlugQuery` | `registry.entries.read` | `list<Entry>` |
 | `ListDefinitionNamespacesQuery` | `registry.definitions.read` | `list<string>` |
 

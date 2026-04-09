@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Tenancy\TenantSettings;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 
 it('constructs with name and logo URL', function (): void {
     $settings = new TenantSettings(name: 'Acme Corp', logoUrl: '/storage/tenant-logos/abc.png');

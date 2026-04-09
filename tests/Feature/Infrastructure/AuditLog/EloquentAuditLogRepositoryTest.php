@@ -53,17 +53,17 @@ beforeEach(function (): void {
 });
 
 it('finds all entries without filters', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findAll();
+    $entries = $auditLogRepository->findAll();
 
     expect($entries)->toHaveCount(3);
 });
 
 it('filters by entity type', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findAll(entityType: 'user');
+    $entries = $auditLogRepository->findAll(entityType: 'user');
 
     expect($entries)->toHaveCount(2)
         ->and($entries[0]->entityType)->toBe('user')
@@ -71,26 +71,26 @@ it('filters by entity type', function (): void {
 });
 
 it('filters by user id', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findAll(userId: '660e8400-e29b-41d4-a716-446655440002');
+    $entries = $auditLogRepository->findAll(userId: '660e8400-e29b-41d4-a716-446655440002');
 
     expect($entries)->toHaveCount(1)
         ->and($entries[0]->actionLabel)->toBe('Update User');
 });
 
 it('filters by trace id', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findAll(traceId: 'trace-repo-A');
+    $entries = $auditLogRepository->findAll(traceId: 'trace-repo-A');
 
     expect($entries)->toHaveCount(2);
 });
 
 it('filters by date range', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findAll(
+    $entries = $auditLogRepository->findAll(
         from: new DateTimeImmutable('2026-04-08 10:30:00'),
     );
 
@@ -99,9 +99,9 @@ it('filters by date range', function (): void {
 });
 
 it('finds by trace id sorted chronologically', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findByTraceId('trace-repo-A');
+    $entries = $auditLogRepository->findByTraceId('trace-repo-A');
 
     expect($entries)->toHaveCount(2)
         ->and($entries[0]->actionLabel)->toBe('Create User')
@@ -109,17 +109,17 @@ it('finds by trace id sorted chronologically', function (): void {
 });
 
 it('returns empty for unknown trace id', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    $entries = $repository->findByTraceId('nonexistent');
+    $entries = $auditLogRepository->findByTraceId('nonexistent');
 
     expect($entries)->toHaveCount(0);
 });
 
 it('counts entries with filters', function (): void {
-    $repository = app(AuditLogRepository::class);
+    $auditLogRepository = app(AuditLogRepository::class);
 
-    expect($repository->count())->toBe(3)
-        ->and($repository->count(entityType: 'role'))->toBe(1)
-        ->and($repository->count(userId: '660e8400-e29b-41d4-a716-446655440001'))->toBe(2);
+    expect($auditLogRepository->count())->toBe(3)
+        ->and($auditLogRepository->count(entityType: 'role'))->toBe(1)
+        ->and($auditLogRepository->count(userId: '660e8400-e29b-41d4-a716-446655440001'))->toBe(2);
 });

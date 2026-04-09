@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Tenancy\Command\UpdateTenantSettings;
+namespace App\Domain\Tenancy\Contract\Command;
 
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Command\AuditableCommand;

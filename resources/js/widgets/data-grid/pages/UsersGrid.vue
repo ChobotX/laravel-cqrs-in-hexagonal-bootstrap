@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans, transChoice } from 'laravel-vue-i18n';
 import { computed } from 'vue';
-import ActionButton from '../../../shared/components/ActionButton.vue';
+import BadgeList from '../../../shared/components/BadgeList.vue';
 import type { ColumnDef, ShareableTeam } from '../composables/types';
 import { useDataGrid } from '../composables/useDataGrid';
 import DataGrid from '../DataGrid.vue';
@@ -74,16 +74,7 @@ const grid = useDataGrid<UserRow>({
                 <div>
                     <div class="flex items-center gap-1.5">
                         <span class="text-base font-medium text-gray-900 sm:text-sm">{{ item.name }}</span>
-                        <template v-if="item.labels">
-                            <span
-                                v-for="label in item.labels"
-                                :key="label.id"
-                                class="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium ring-1 ring-inset"
-                                :class="label.color ? `bg-${label.color}-50 text-${label.color}-700 ring-${label.color}-700/10` : 'bg-gray-50 text-gray-700 ring-gray-700/10'"
-                            >
-                                {{ label.name }}
-                            </span>
-                        </template>
+                        <BadgeList v-if="item.labels" :items="item.labels" label-key="name" />
                     </div>
                     <p v-if="item.roles || item.teams" class="mt-0.5 text-xs text-gray-400">
                         <template v-if="item.roles">

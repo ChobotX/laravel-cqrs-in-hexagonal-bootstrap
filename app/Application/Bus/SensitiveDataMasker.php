@@ -25,10 +25,39 @@ final readonly class SensitiveDataMasker
             if ($reflectionProperty->getAttributes(Sensitive::class) !== []) {
                 $result[$name] = self::MASK;
             } else {
-                $result[$name] = $reflectionProperty->getValue($object);
+                $result[$name] = self::toJsonSafe($reflectionProperty->getValue($object));
             }
         }
 
         return $result;
+    }
+
+    private static function toJsonSafe(mixed $value): mixed
+    {
+        if ($value === null || is_scalar($value)) {
+            return $value;
+        }
+
+        if (is_array($value)) {
+            return array_map(self::toJsonSafe(...), $value);
+        }
+
+        if (! is_object($value)) {
+            return '[non-serializable]';
+        }
+
+        if (method_exists($value, '__toString')) {
+            return (string) $value;
+        }
+
+        if ($value instanceof \BackedEnum) {
+            return $value->value;
+        }
+
+        if ($value instanceof \UnitEnum) {
+            return $value->name;
+        }
+
+        return $value::class;
     }
 }

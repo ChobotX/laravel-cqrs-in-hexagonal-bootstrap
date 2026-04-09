@@ -5,9 +5,9 @@
 @section('content')
     <div class="mb-6">
         <x-form-card>
-            <form method="GET"
-                  action="{{ route('audit-log.index') }}"
-                  class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            <form class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6"
+                  method="GET"
+                  action="{{ route('audit-log.index') }}">
                 <div>
                     <label class="mb-1 block text-sm font-medium text-gray-700"
                            for="filter-entity-type">{{ __('messages.audit_log.filter_entity_type') }}</label>
@@ -15,8 +15,8 @@
                            id="filter-entity-type"
                            name="entity_type"
                            type="text"
-                           placeholder="user, role..."
-                           value="{{ $filters['entity_type'] ?? '' }}">
+                           value="{{ $filters['entity_type'] ?? '' }}"
+                           placeholder="user, role...">
                 </div>
                 <div>
                     <label class="mb-1 block text-sm font-medium text-gray-700"
@@ -56,9 +56,11 @@
                 </div>
                 <div class="flex items-end gap-2">
                     <button class="cursor-pointer rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            type="submit">{{ __('messages.audit_log.filter') }}</button>
+                            type="submit"
+                            title="{{ __('messages.audit_log.filter') }}">{{ __('messages.audit_log.filter') }}</button>
                     <a class="cursor-pointer rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                       href="{{ route('audit-log.index') }}">{{ __('messages.audit_log.clear') }}</a>
+                       href="{{ route('audit-log.index') }}"
+                       title="{{ __('messages.audit_log.clear') }}">{{ __('messages.audit_log.clear') }}</a>
                 </div>
             </form>
         </x-form-card>
@@ -95,10 +97,12 @@
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
                                 @if ($entry->entityType)
-                                    <span class="inline-flex items-center rounded-full bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-500/10">
+                                    <span
+                                          class="inline-flex items-center rounded-full bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 ring-1 ring-gray-500/10">
                                         {{ $entry->entityType }}
                                     </span>
-                                    <span class="ml-1 font-mono text-xs text-gray-400">{{ Str::limit($entry->entityId ?? '', 8, '...') }}</span>
+                                    <span
+                                          class="ml-1 font-mono text-xs text-gray-400">{{ Str::limit($entry->entityId ?? '', 8, '...') }}</span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-500">
@@ -108,18 +112,21 @@
                             </td>
                             <td class="px-6 py-4 text-sm">
                                 @if ($entry->status->value === 'success')
-                                    <span class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 ring-1 ring-green-600/10">
+                                    <span
+                                          class="inline-flex items-center rounded-full bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 ring-1 ring-green-600/10">
                                         {{ __('messages.audit_log.success') }}
                                     </span>
                                 @else
-                                    <span class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-red-600/10">
+                                    <span
+                                          class="inline-flex items-center rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 ring-1 ring-red-600/10">
                                         {{ __('messages.audit_log.failure') }}
                                     </span>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-sm">
                                 <a class="cursor-pointer font-mono text-xs text-indigo-600 hover:text-indigo-800"
-                                   href="{{ route('audit-log.trace', $entry->traceId) }}">{{ Str::limit($entry->traceId, 12, '...') }}</a>
+                                   href="{{ route('audit-log.trace', $entry->traceId) }}"
+                                   title="{{ $entry->traceId }}">{{ Str::limit($entry->traceId, 12, '...') }}</a>
                             </td>
                         </tr>
                     @empty

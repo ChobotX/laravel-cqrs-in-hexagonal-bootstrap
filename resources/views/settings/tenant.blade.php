@@ -22,10 +22,10 @@
                     <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="name"
                            name="name"
+                           data-testid="tenant-name-input"
                            type="text"
                            value="{{ old('name', $settings->name) }}"
                            required
-                           data-testid="tenant-name-input"
                            @error('name') aria-describedby="name-error" aria-invalid="true" @enderror>
                     @error('name')
                         <p class="mt-1 text-base text-red-600 sm:text-sm"
@@ -34,19 +34,21 @@
                 </div>
 
                 <div>
-                    <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.settings.logo') }}</label>
+                    <label
+                           class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm">{{ __('messages.settings.logo') }}</label>
 
                     @if ($settings->logoUrl)
                         <div class="mb-3 flex items-center gap-4">
                             <img class="h-16 w-16 rounded-lg object-cover ring-1 ring-gray-200"
                                  src="{{ $settings->logoUrl }}"
                                  alt="{{ __('messages.settings.current_logo') }}">
-                            <label class="flex cursor-pointer items-center gap-2 text-base text-red-600 hover:text-red-700 sm:text-sm">
-                                <input name="remove_logo"
+                            <label
+                                   class="flex cursor-pointer items-center gap-2 text-base text-red-600 hover:text-red-700 sm:text-sm">
+                                <input class="rounded border-gray-300 text-red-600 focus:ring-red-600"
+                                       name="remove_logo"
+                                       data-testid="remove-logo-checkbox"
                                        type="checkbox"
-                                       value="1"
-                                       class="rounded border-gray-300 text-red-600 focus:ring-red-600"
-                                       data-testid="remove-logo-checkbox">
+                                       value="1">
                                 {{ __('messages.settings.remove_logo') }}
                             </label>
                         </div>
@@ -55,9 +57,9 @@
                     <input class="block w-full text-base text-gray-500 file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-indigo-50 file:px-4 file:py-2.5 file:text-base file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100 sm:text-sm sm:file:text-sm"
                            id="logo"
                            name="logo"
+                           data-testid="logo-upload-input"
                            type="file"
                            accept="image/*"
-                           data-testid="logo-upload-input"
                            @error('logo') aria-describedby="logo-error" aria-invalid="true" @enderror>
                     <p class="mt-1 text-xs text-gray-400">{{ __('messages.settings.logo_hint') }}</p>
                     @error('logo')

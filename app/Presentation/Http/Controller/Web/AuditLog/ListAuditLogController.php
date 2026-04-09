@@ -17,26 +17,26 @@ final readonly class ListAuditLogController
         private QueryBus $queryBus,
     ) {}
 
-    public function __invoke(ListAuditLogRequest $request): View
+    public function __invoke(ListAuditLogRequest $listAuditLogRequest): View
     {
         $entries = $this->queryBus->dispatch(new ListAuditLogQuery(
-            entityType: $request->entityType(),
-            entityId: $request->entityId(),
-            userId: $request->userId(),
-            traceId: $request->traceId(),
-            from: $request->from(),
-            to: $request->to(),
+            entityType: $listAuditLogRequest->entityType(),
+            entityId: $listAuditLogRequest->entityId(),
+            userId: $listAuditLogRequest->userId(),
+            traceId: $listAuditLogRequest->traceId(),
+            from: $listAuditLogRequest->from(),
+            to: $listAuditLogRequest->to(),
         ));
 
         return view('audit-log.index', [
             'entries' => $entries,
             'filters' => [
-                'entity_type' => $request->entityType(),
-                'entity_id' => $request->entityId(),
-                'user_id' => $request->userId(),
-                'trace_id' => $request->traceId(),
-                'from' => $request->input('from'),
-                'to' => $request->input('to'),
+                'entity_type' => $listAuditLogRequest->entityType(),
+                'entity_id' => $listAuditLogRequest->entityId(),
+                'user_id' => $listAuditLogRequest->userId(),
+                'trace_id' => $listAuditLogRequest->traceId(),
+                'from' => $listAuditLogRequest->input('from'),
+                'to' => $listAuditLogRequest->input('to'),
             ],
         ]);
     }

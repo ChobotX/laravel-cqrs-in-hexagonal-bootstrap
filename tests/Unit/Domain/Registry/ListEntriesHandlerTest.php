@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Application\Filtering\Filter;
 use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Query\ListEntriesQuery;
 use App\Domain\Registry\Contract\ValueObject\DefinitionId;
@@ -193,6 +195,40 @@ it('supports withFilters immutable copy', function (): void {
         ->and($listEntriesQuery->filters())->toHaveCount(1)
         ->and($listEntriesQuery->filters()[0]->operator)->toBe(FilterOperator::Search)
         ->and($listEntriesQuery->filters()[0]->value)->toBe('test');
+});
+
+it('supports withSorting immutable copy', function (): void {
+    $query = new ListEntriesQuery(definitionId: '550e8400-e29b-41d4-a716-446655440000');
+    $sorting = new Sorting('title', SortDirection::Desc);
+    $listEntriesQuery = $query->withSorting([$sorting]);
+
+    expect($query->sorting())->toBe([])
+        ->and($listEntriesQuery->sorting())->toHaveCount(1)
+        ->and($listEntriesQuery->sorting()[0]->column)->toBe('title')
+        ->and($listEntriesQuery->sorting()[0]->direction)->toBe(SortDirection::Desc);
+});
+
+it('passes sortings to repository', function (): void {
+    $entry = new Entry(
+        new EntryId('770e8400-e29b-41d4-a716-446655440000'),
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440000'),
+        new VersionNumber(1),
+        new DefinitionNamespace('crm'),
+        new EntryTitle('Toyota'),
+        ['name' => 'Toyota'],
+    );
+
+    $repo = new FakeEntryRepository([
+        '770e8400-e29b-41d4-a716-446655440000' => $entry,
+    ]);
+    $handler = new ListEntriesHandler($repo);
+
+    $paginatedResult = $handler->handle(
+        new ListEntriesQuery(definitionId: '550e8400-e29b-41d4-a716-446655440000')
+            ->withSorting([new Sorting('title', SortDirection::Asc)]),
+    );
+
+    expect($paginatedResult->items)->toHaveCount(1);
 });
 
 it('combines search filter with pagination', function (): void {

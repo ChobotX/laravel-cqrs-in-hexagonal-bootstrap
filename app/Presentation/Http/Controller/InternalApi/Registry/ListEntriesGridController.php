@@ -9,6 +9,8 @@ use App\Application\Bus\QueryBus;
 use App\Application\Filtering\Filter;
 use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
+use App\Application\Sorting\SortDirection;
+use App\Application\Sorting\Sorting;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
@@ -19,6 +21,10 @@ use Illuminate\Http\JsonResponse;
 #[RequiresPermission('registry.entries.read')]
 final readonly class ListEntriesGridController
 {
+    private const array SORTABLE_COLUMNS = ['title', 'version'];
+
+    private const array COLUMN_MAP = ['version' => 'definition_version'];
+
     public function __construct(
         private QueryBus $queryBus,
     ) {}
@@ -51,16 +57,30 @@ final readonly class ListEntriesGridController
     /** @return PaginatedResult<Entry> */
     private function fetchEntries(PaginationRequest $paginationRequest, string $definitionId): PaginatedResult
     {
-        $pagination = $paginationRequest->pagination();
+        $sorting = $this->resolveSorting($paginationRequest);
         $search = $paginationRequest->search();
         $filters = $search !== '' ? [new Filter('', FilterOperator::Search, $search)] : [];
 
         return $this->queryBus->dispatch(
             new ListEntriesQuery(
                 definitionId: $definitionId,
-                page: $pagination->page,
-                perPage: $pagination->perPage,
-            )->withFilters($filters),
+                page: $paginationRequest->pagination()->page,
+                perPage: $paginationRequest->pagination()->perPage,
+            )->withFilters($filters)->withSorting([$sorting]),
         );
+    }
+
+    private function resolveSorting(PaginationRequest $paginationRequest): Sorting
+    {
+        $defaultSorting = new Sorting('title', SortDirection::Asc);
+        $requestSorting = $paginationRequest->sorting();
+
+        if (! $requestSorting instanceof Sorting || ! in_array($requestSorting->column, self::SORTABLE_COLUMNS, true)) {
+            return $defaultSorting;
+        }
+
+        $dbColumn = self::COLUMN_MAP[$requestSorting->column] ?? $requestSorting->column;
+
+        return new Sorting($dbColumn, $requestSorting->direction);
     }
 }

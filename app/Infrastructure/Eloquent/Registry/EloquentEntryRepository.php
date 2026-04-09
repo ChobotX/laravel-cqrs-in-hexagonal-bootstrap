@@ -13,10 +13,12 @@ use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\ValueObject\DefinitionNamespace;
 use App\Domain\Registry\ValueObject\DefinitionSlug;
 use App\Infrastructure\Eloquent\FiltersQuery;
+use App\Infrastructure\Eloquent\SortsQuery;
 
 final readonly class EloquentEntryRepository implements EntryRepository
 {
     use FiltersQuery;
+    use SortsQuery;
 
     public function __construct(
         private EntryMapper $entryMapper,
@@ -64,7 +66,7 @@ final readonly class EloquentEntryRepository implements EntryRepository
     }
 
     /** @return PaginatedResult<Entry> */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = []): PaginatedResult
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = []): PaginatedResult
     {
         $builder = $this->filterBuilder(
             EntryModel::where('definition_id', $definitionId->value),
@@ -73,8 +75,13 @@ final readonly class EloquentEntryRepository implements EntryRepository
 
         $total = $builder->count();
 
-        $models = $builder->orderByRaw('LOWER(title) ASC')
-            ->offset($pagination->offset())
+        $builder = $this->sortBuilder($builder, $sortings);
+
+        if ($sortings === []) {
+            $builder->orderByRaw('LOWER(title) ASC');
+        }
+
+        $models = $builder->offset($pagination->offset())
             ->limit($pagination->perPage)
             ->get();
 
@@ -108,6 +115,12 @@ final readonly class EloquentEntryRepository implements EntryRepository
 
     /** @return list<string> */
     private function searchColumns(): array
+    {
+        return ['title'];
+    }
+
+    /** @return list<string> */
+    private function textSortColumns(): array
     {
         return ['title'];
     }

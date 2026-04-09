@@ -23,3 +23,4 @@ import './widgets/data-grid/pages/users-grid-app';
 import './widgets/data-grid/pages/teams-grid-app';
 import './widgets/data-grid/pages/roles-grid-app';
 import './widgets/data-grid/pages/entries-grid-app';
+import './widgets/data-grid/pages/feature-flags-grid-app';

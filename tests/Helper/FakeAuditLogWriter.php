@@ -12,8 +12,8 @@ final class FakeAuditLogWriter implements AuditLogWriter
     /** @var list<AuditLogEntry> */
     public array $recorded = [];
 
-    public function record(AuditLogEntry $entry): void
+    public function record(AuditLogEntry $auditLogEntry): void
     {
-        $this->recorded[] = $entry;
+        $this->recorded[] = $auditLogEntry;
     }
 }

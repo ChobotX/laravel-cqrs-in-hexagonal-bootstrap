@@ -10,21 +10,21 @@ use App\Domain\AuditLog\ValueObject\AuditLogId;
 
 final readonly class AuditLogMapper
 {
-    public function toDomain(AuditLogModel $model): AuditLogEntry
+    public function toDomain(AuditLogModel $auditLogModel): AuditLogEntry
     {
         return new AuditLogEntry(
-            id: new AuditLogId($model->id),
-            traceId: $model->trace_id,
-            userId: $model->user_id,
-            impersonatorId: $model->impersonator_id,
-            command: $model->command,
-            actionLabel: $model->action_label,
-            entityType: $model->entity_type,
-            entityId: $model->entity_id,
-            payload: $model->payload,
-            status: AuditLogStatus::from($model->status),
-            ipAddress: $model->ip_address,
-            occurredAt: $model->occurred_at,
+            id: new AuditLogId($auditLogModel->id),
+            traceId: $auditLogModel->trace_id,
+            userId: $auditLogModel->user_id,
+            impersonatorId: $auditLogModel->impersonator_id,
+            command: $auditLogModel->command,
+            actionLabel: $auditLogModel->action_label,
+            entityType: $auditLogModel->entity_type,
+            entityId: $auditLogModel->entity_id,
+            payload: $auditLogModel->payload,
+            status: AuditLogStatus::from($auditLogModel->status),
+            ipAddress: $auditLogModel->ip_address,
+            occurredAt: $auditLogModel->occurred_at,
         );
     }
 }

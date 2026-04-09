@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
 
-it('shows feature flags list for super admin', function (): void {
+it('shows feature flags page for super admin', function (): void {
     $this->seedSuperAdminRole();
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440f00',
@@ -18,7 +18,7 @@ it('shows feature flags list for super admin', function (): void {
     $this->actingAs($user)
         ->get('/feature-flags')
         ->assertStatus(200)
-        ->assertSee('registry.schema-builder');
+        ->assertSee('app-feature-flags-grid');
 });
 
 it('redirects unauthenticated user to login', function (): void {

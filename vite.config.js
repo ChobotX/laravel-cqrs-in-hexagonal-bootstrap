@@ -74,6 +74,7 @@ export default defineConfig({
                 'resources/js/widgets/data-grid/pages/teams-grid-app.ts',
                 'resources/js/widgets/data-grid/pages/roles-grid-app.ts',
                 'resources/js/widgets/data-grid/pages/entries-grid-app.ts',
+                'resources/js/widgets/data-grid/pages/feature-flags-grid-app.ts',
             ],
             thresholds: {
                 autoUpdate: true,

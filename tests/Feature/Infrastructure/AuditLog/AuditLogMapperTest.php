@@ -22,19 +22,19 @@ it('maps model to domain entry', function (): void {
     $model->occurred_at = new DateTimeImmutable('2026-04-08 10:00:00');
 
     $mapper = new AuditLogMapper;
-    $entry = $mapper->toDomain($model);
+    $auditLogEntry = $mapper->toDomain($model);
 
-    expect($entry->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($entry->traceId)->toBe('trace-abc')
-        ->and($entry->userId)->toBe('660e8400-e29b-41d4-a716-446655440000')
-        ->and($entry->impersonatorId)->toBeNull()
-        ->and($entry->command)->toBe('App\\Domain\\User\\Command\\CreateUser\\CreateUserCommand')
-        ->and($entry->actionLabel)->toBe('Create User')
-        ->and($entry->entityType)->toBe('user')
-        ->and($entry->entityId)->toBe('770e8400-e29b-41d4-a716-446655440000')
-        ->and($entry->payload)->toBe(['name' => 'John', 'email' => 'john@example.com'])
-        ->and($entry->status)->toBe(AuditLogStatus::Success)
-        ->and($entry->ipAddress)->toBe('127.0.0.1');
+    expect($auditLogEntry->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($auditLogEntry->traceId)->toBe('trace-abc')
+        ->and($auditLogEntry->userId)->toBe('660e8400-e29b-41d4-a716-446655440000')
+        ->and($auditLogEntry->impersonatorId)->toBeNull()
+        ->and($auditLogEntry->command)->toBe('App\\Domain\\User\\Command\\CreateUser\\CreateUserCommand')
+        ->and($auditLogEntry->actionLabel)->toBe('Create User')
+        ->and($auditLogEntry->entityType)->toBe('user')
+        ->and($auditLogEntry->entityId)->toBe('770e8400-e29b-41d4-a716-446655440000')
+        ->and($auditLogEntry->payload)->toBe(['name' => 'John', 'email' => 'john@example.com'])
+        ->and($auditLogEntry->status)->toBe(AuditLogStatus::Success)
+        ->and($auditLogEntry->ipAddress)->toBe('127.0.0.1');
 });
 
 it('maps model with null fields', function (): void {
@@ -53,11 +53,11 @@ it('maps model with null fields', function (): void {
     $model->occurred_at = new DateTimeImmutable('2026-04-08 10:00:00');
 
     $mapper = new AuditLogMapper;
-    $entry = $mapper->toDomain($model);
+    $auditLogEntry = $mapper->toDomain($model);
 
-    expect($entry->userId)->toBeNull()
-        ->and($entry->entityType)->toBeNull()
-        ->and($entry->entityId)->toBeNull()
-        ->and($entry->ipAddress)->toBeNull()
-        ->and($entry->status)->toBe(AuditLogStatus::Failure);
+    expect($auditLogEntry->userId)->toBeNull()
+        ->and($auditLogEntry->entityType)->toBeNull()
+        ->and($auditLogEntry->entityId)->toBeNull()
+        ->and($auditLogEntry->ipAddress)->toBeNull()
+        ->and($auditLogEntry->status)->toBe(AuditLogStatus::Failure);
 });

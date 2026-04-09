@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { trans, transChoice } from 'laravel-vue-i18n';
 import { computed } from 'vue';
-import ActionButton from '../../../shared/components/ActionButton.vue';
+import BadgeList from '../../../shared/components/BadgeList.vue';
 import type { ColumnDef, ShareableTeam } from '../composables/types';
 import { useDataGrid } from '../composables/useDataGrid';
 import DataGrid from '../DataGrid.vue';
@@ -88,14 +88,8 @@ const grid = useDataGrid<TeamRow>({
         <template #item.name="{ item }">
             <div>
                 <span class="text-base font-medium text-gray-900 sm:text-sm">{{ item.name }}</span>
-                <div v-if="item.labels && item.labels.length > 0" class="mt-1 flex flex-wrap items-center gap-1">
-                    <span
-                        v-for="label in item.labels"
-                        :key="label.id"
-                        class="inline-flex items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-[10px] font-medium text-gray-700 ring-1 ring-inset ring-gray-700/10"
-                    >
-                        {{ label.name }}
-                    </span>
+                <div v-if="item.labels && item.labels.length > 0" class="mt-1">
+                    <BadgeList :items="item.labels" label-key="name" />
                 </div>
             </div>
         </template>

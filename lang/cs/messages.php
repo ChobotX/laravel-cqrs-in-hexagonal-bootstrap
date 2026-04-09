@@ -279,6 +279,8 @@ return [
         'pattern_hint' => 'Musí odpovídat vzoru: :pattern',
         'empty' => 'Žádné přepínače funkcí nejsou nakonfigurovány.',
         'count' => ':count přepínač|:count přepínače|:count přepínačů',
+        'group_filter_all' => 'Všechny skupiny',
+        'group_filter_label' => 'Filtrovat podle skupiny',
         'groups' => [
             'registry' => [
                 'label' => 'Registr',
@@ -371,6 +373,7 @@ return [
         'image_processing_error' => 'Zpracování obrázku selhalo.',
         'tenant_not_found' => 'Organizace s id [:id] nebyla nalezena.',
         'invalid_tenant_name' => 'Název organizace nesmí být prázdný.',
+        'tenant_logo_storage_failed' => 'Nepodařilo se uložit logo organizace.',
         'tenant_inactive' => 'Tenant [:identifier] je neaktivní.',
         'invalid_password_reset_token' => 'Tento odkaz pro obnovení hesla je neplatný nebo vypršel.',
         'user_already_activated' => 'Tento účet byl již aktivován.',
@@ -420,6 +423,11 @@ return [
             'scope_badge_team' => 'Tým',
             'scope_badge_global' => 'Globální',
         ],
+    ],
+
+    'dialog' => [
+        'cancel' => 'Zrušit',
+        'confirm' => 'Potvrdit',
     ],
 
     'registry' => [

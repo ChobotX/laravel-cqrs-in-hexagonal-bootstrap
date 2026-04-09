@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Filesystem\TenantLogoFileStorage;
 use App\Infrastructure\Tenancy\EloquentTenantSettingsRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -10,15 +11,15 @@ use Illuminate\Support\Facades\Storage;
 function settingsRepo(): EloquentTenantSettingsRepository
 {
     return new EloquentTenantSettingsRepository(
-        filesystem: Storage::fake('public'),
+        tenantLogoStorage: new TenantLogoFileStorage(Storage::fake('public')),
     );
 }
 
 it('reads tenant settings by id', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $repo = settingsRepo();
+    $eloquentTenantSettingsRepository = settingsRepo();
 
-    $settings = $repo->findByTenantId($tenant->id);
+    $settings = $eloquentTenantSettingsRepository->findByTenantId($tenant->id);
 
     expect($settings)->not->toBeNull()
         ->and($settings->name)->toBe('Test Tenant')
@@ -26,16 +27,16 @@ it('reads tenant settings by id', function (): void {
 });
 
 it('returns null for nonexistent tenant', function (): void {
-    $repo = settingsRepo();
+    $eloquentTenantSettingsRepository = settingsRepo();
 
-    expect($repo->findByTenantId('99999999-9999-9999-9999-999999999999'))->toBeNull();
+    expect($eloquentTenantSettingsRepository->findByTenantId('99999999-9999-9999-9999-999999999999'))->toBeNull();
 });
 
 it('updates tenant name', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $repo = settingsRepo();
+    $eloquentTenantSettingsRepository = settingsRepo();
 
-    $repo->updateSettings($tenant->id, 'Updated Name', null, false);
+    $eloquentTenantSettingsRepository->updateSettings($tenant->id, 'Updated Name', null, false);
 
     $tenant->refresh();
     expect($tenant->name)->toBe('Updated Name');
@@ -43,8 +44,8 @@ it('updates tenant name', function (): void {
 
 it('stores a logo file', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $disk = Storage::fake('public');
-    $repo = new EloquentTenantSettingsRepository($disk);
+    $filesystem = Storage::fake('public');
+    $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file = UploadedFile::fake()->image('logo.png', 100, 100);
 
@@ -52,13 +53,13 @@ it('stores a logo file', function (): void {
 
     $tenant->refresh();
     expect($tenant->logo_path)->not->toBeNull();
-    $disk->assertExists($tenant->logo_path);
+    $filesystem->assertExists($tenant->logo_path);
 });
 
 it('removes a logo', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $disk = Storage::fake('public');
-    $repo = new EloquentTenantSettingsRepository($disk);
+    $filesystem = Storage::fake('public');
+    $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file = UploadedFile::fake()->image('logo.png', 100, 100);
     $repo->updateSettings($tenant->id, 'Acme', $file, false);
@@ -71,13 +72,13 @@ it('removes a logo', function (): void {
 
     $tenant->refresh();
     expect($tenant->logo_path)->toBeNull();
-    $disk->assertMissing($oldPath);
+    $filesystem->assertMissing($oldPath);
 });
 
 it('returns logo URL after upload via findByTenantId', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $disk = Storage::fake('public');
-    $repo = new EloquentTenantSettingsRepository($disk);
+    $filesystem = Storage::fake('public');
+    $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file = UploadedFile::fake()->image('logo.png', 100, 100);
     $repo->updateSettings($tenant->id, 'Acme', $file, false);
@@ -90,8 +91,8 @@ it('returns logo URL after upload via findByTenantId', function (): void {
 
 it('returns null logo URL when file missing on disk', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $disk = Storage::fake('public');
-    $repo = new EloquentTenantSettingsRepository($disk);
+    $filesystem = Storage::fake('public');
+    $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $tenant->logo_path = 'tenant-logos/nonexistent.png';
     $tenant->save();
@@ -104,8 +105,8 @@ it('returns null logo URL when file missing on disk', function (): void {
 
 it('replaces existing logo when new one uploaded with different extension', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
-    $disk = Storage::fake('public');
-    $repo = new EloquentTenantSettingsRepository($disk);
+    $filesystem = Storage::fake('public');
+    $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file1 = UploadedFile::fake()->image('logo1.png', 100, 100);
     $repo->updateSettings($tenant->id, 'Acme', $file1, false);
@@ -119,6 +120,6 @@ it('replaces existing logo when new one uploaded with different extension', func
 
     $tenant->refresh();
     expect($tenant->logo_path)->toContain('.jpg');
-    $disk->assertMissing($oldPath);
-    $disk->assertExists($tenant->logo_path);
+    $filesystem->assertMissing($oldPath);
+    $filesystem->assertExists($tenant->logo_path);
 });

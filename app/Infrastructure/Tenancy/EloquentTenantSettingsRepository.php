@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Domain\Tenancy\TenantSettings;
-use App\Domain\Tenancy\TenantSettingsRepository;
+use App\Contract\Tenancy\TenantLogoStorage;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
+use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
-use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use SplFileInfo;
 
 final readonly class EloquentTenantSettingsRepository implements TenantSettingsRepository
 {
     public function __construct(
-        private Filesystem $filesystem,
+        private TenantLogoStorage $tenantLogoStorage,
     ) {}
 
     public function findByTenantId(string $tenantId): ?TenantSettings
@@ -36,22 +36,22 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         $tenant = TenantModel::findOrFail($tenantId);
 
         if ($removeLogo && $tenant->logo_path !== null) {
-            $this->filesystem->delete($tenant->logo_path);
+            $this->tenantLogoStorage->delete($tenant->logo_path);
             $tenant->logo_path = null;
         }
 
         if ($logo instanceof SplFileInfo) {
             if ($tenant->logo_path !== null) {
-                $this->filesystem->delete($tenant->logo_path);
+                $this->tenantLogoStorage->delete($tenant->logo_path);
             }
 
             $extension = $logo instanceof UploadedFile
                 ? $logo->getClientOriginalExtension()
                 : $logo->getExtension();
-            $tenant->logo_path = $this->filesystem->putFileAs(
-                'tenant-logos',
+            $tenant->logo_path = $this->tenantLogoStorage->store(
+                $tenantId,
                 $logo->getPathname(),
-                $tenantId.'.'.$extension,
+                $extension,
             );
         }
 
@@ -61,10 +61,10 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
 
     private function resolveLogoUrl(?string $logoPath): ?string
     {
-        if ($logoPath === null || ! $this->filesystem->exists($logoPath)) {
+        if ($logoPath === null || ! $this->tenantLogoStorage->exists($logoPath)) {
             return null;
         }
 
-        return $this->filesystem->url($logoPath);
+        return $this->tenantLogoStorage->url($logoPath);
     }
 }
