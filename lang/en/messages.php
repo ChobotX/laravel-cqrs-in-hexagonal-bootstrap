@@ -19,6 +19,8 @@ return [
         'system' => 'System',
         'feature_flags' => 'Feature Flags',
         'audit_log' => 'Audit Log',
+        'email_templates' => 'Email Templates',
+        'email_logs' => 'Sent Emails',
         'logout' => 'Log out',
     ],
 
@@ -401,9 +403,9 @@ return [
     'email_templates' => [
         'title' => 'Email Templates',
         'subtitle' => 'Manage the content and appearance of system emails',
+        'count' => '{1} template|[2,*] templates',
         'name' => 'Name',
         'description' => 'Description',
-        'locales' => 'Locales',
         'last_modified' => 'Last Modified',
         'actions' => 'Actions',
         'edit_action' => 'Edit',
@@ -424,6 +426,24 @@ return [
         'updated' => 'Email template updated.',
         'reset' => 'Email template reset to default.',
         'empty' => 'No email templates found.',
+        'source_view' => 'HTML',
+        'visual_view' => 'Visual',
+        'unlink' => 'Unlink',
+        'email_footer' => 'This email was sent by :tenant.',
+        'types' => [
+            'user_invite' => [
+                'name' => 'User Invitation',
+                'description' => 'Sent when a new user is invited to the platform',
+            ],
+            'password_reset' => [
+                'name' => 'Password Reset',
+                'description' => 'Sent when a user requests a password reset',
+            ],
+            'notification' => [
+                'name' => 'Notification Email',
+                'description' => 'Wraps in-app notifications sent via email channel',
+            ],
+        ],
     ],
 
     'email_logs' => [

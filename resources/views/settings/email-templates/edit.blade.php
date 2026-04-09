@@ -7,12 +7,29 @@
         ['label' => __('messages.nav.dashboard'), 'href' => route('dashboard')],
         ['label' => __('messages.nav.settings'), 'href' => route('settings.index')],
         ['label' => __('messages.email_templates.title'), 'href' => route('settings.email-templates.index')],
-        ['label' => $typeConfig['name'] . ' (' . strtoupper($locale) . ')'],
+        ['label' => __("messages.email_templates.types.{$type}.name")],
     ]" />
 
-    <div class="max-w-4xl">
-        <x-form-card :title="$typeConfig['name']"
-                     :subtitle="$typeConfig['description']">
+    <div>
+        <div class="mb-4 border-b border-gray-200">
+            <nav class="-mb-px flex gap-4" aria-label="{{ __('messages.email_templates.locale_label') }}" data-testid="locale-tabs">
+                @foreach (config('app.locales') as $availableLocale)
+                    <a href="{{ route('settings.email-templates.edit', ['type' => $type, 'locale' => $availableLocale]) }}"
+                       @class([
+                           'cursor-pointer whitespace-nowrap border-b-2 px-1 py-3 text-sm font-medium',
+                           'border-indigo-500 text-indigo-600' => $availableLocale === $locale,
+                           'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' => $availableLocale !== $locale,
+                       ])
+                       data-testid="locale-tab-{{ $availableLocale }}"
+                       @if($availableLocale === $locale) aria-current="page" @endif>
+                        {{ strtoupper($availableLocale) }}
+                    </a>
+                @endforeach
+            </nav>
+        </div>
+
+        <x-form-card :title="__('messages.email_templates.types.' . $type . '.name')"
+                     :subtitle="__('messages.email_templates.types.' . $type . '.description')">
             <form id="email-template-form"
                   method="POST"
                   action="{{ route('settings.email-templates.update', ['type' => $type, 'locale' => $locale]) }}"
@@ -42,38 +59,6 @@
                        data-testid="body-template-error">{{ $message }}</p>
                 @enderror
 
-                <div class="mb-6 grid grid-cols-2 gap-4">
-                    <div>
-                        <span class="mb-1 block text-xs font-medium text-gray-500">
-                            {{ __('messages.email_templates.type_label') }}
-                        </span>
-                        <code class="rounded bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">{{ $type }}</code>
-                    </div>
-                    <div>
-                        <span class="mb-1 block text-xs font-medium text-gray-500">
-                            {{ __('messages.email_templates.locale_label') }}
-                        </span>
-                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-300/50">
-                            {{ strtoupper($locale) }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="mb-6">
-                    <span class="mb-2 block text-xs font-medium text-gray-500">
-                        {{ __('messages.email_templates.available_variables') }}
-                    </span>
-                    <div class="flex flex-wrap gap-1.5">
-                        @foreach ($typeConfig['variables'] as $varName => $varConfig)
-                            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10"
-                                  title="{{ $varConfig['description'] }}"
-                                  data-testid="variable-chip-{{ $varName }}">
-                                {{ '{{ ' . $varName . ' }}' }}
-                            </span>
-                        @endforeach
-                    </div>
-                </div>
-
                 <div data-email-template-editor
                      data-subject-template="{{ old('subject_template', $template->subjectTemplate) }}"
                      data-body-template="{{ old('body_template', $template->bodyTemplate) }}"
@@ -100,7 +85,7 @@
                                      :label="__('messages.email_templates.reset_to_default')"
                                      confirm
                                      :confirm-title="__('messages.email_templates.reset_confirm_title')"
-                                     :confirm-message="__('messages.email_templates.reset_confirm_message', ['type' => $typeConfig['name']])"
+                                     :confirm-message="__('messages.email_templates.reset_confirm_message', ['type' => __('messages.email_templates.types.' . $type . '.name')])"
                                      data-testid="reset-template-button" />
                 </div>
             </form>

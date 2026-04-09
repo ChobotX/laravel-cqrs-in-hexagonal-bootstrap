@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -34,7 +34,7 @@
                     <tr>
                         <td align="center" style="padding-top: 24px;">
                             <p style="margin: 0; font-size: 13px; color: #9ca3af; line-height: 1.5;">
-                                This email was sent by {{ $tenantName }}.
+                                {{ __('messages.email_templates.email_footer', ['tenant' => $tenantName]) }}
                             </p>
                         </td>
                     </tr>

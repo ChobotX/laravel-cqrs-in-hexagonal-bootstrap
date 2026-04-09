@@ -29,10 +29,11 @@ describe('email-log-toggle', () => {
         buildDom();
         await import('./email-log-toggle');
 
-        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]')!;
-        button.click();
+        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]');
+        expect(button).not.toBeNull();
+        button?.click();
 
-        expect(button.getAttribute('aria-expanded')).toBe('true');
+        expect(button?.getAttribute('aria-expanded')).toBe('true');
         expect(document.querySelector('[data-testid="detail-row"]')?.classList.contains('hidden')).toBe(false);
     });
 
@@ -40,11 +41,12 @@ describe('email-log-toggle', () => {
         buildDom();
         await import('./email-log-toggle');
 
-        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]')!;
-        button.click();
-        button.click();
+        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]');
+        expect(button).not.toBeNull();
+        button?.click();
+        button?.click();
 
-        expect(button.getAttribute('aria-expanded')).toBe('false');
+        expect(button?.getAttribute('aria-expanded')).toBe('false');
         expect(document.querySelector('[data-testid="detail-row"]')?.classList.contains('hidden')).toBe(true);
     });
 
@@ -52,10 +54,11 @@ describe('email-log-toggle', () => {
         buildDom();
         await import('./email-log-toggle');
 
-        const detailRow = document.querySelector('[data-testid="detail-row"]')!;
+        const detailRow = document.querySelector('[data-testid="detail-row"]');
+        expect(detailRow).not.toBeNull();
         document.body.click();
 
-        expect(detailRow.classList.contains('hidden')).toBe(true);
+        expect(detailRow?.classList.contains('hidden')).toBe(true);
     });
 
     it('does nothing when there is no next sibling row', async () => {
@@ -72,9 +75,10 @@ describe('email-log-toggle', () => {
         `;
         await import('./email-log-toggle');
 
-        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]')!;
-        button.click();
+        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]');
+        expect(button).not.toBeNull();
+        button?.click();
 
-        expect(button.getAttribute('aria-expanded')).toBe('false');
+        expect(button?.getAttribute('aria-expanded')).toBe('false');
     });
 });

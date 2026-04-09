@@ -108,7 +108,8 @@ describe('createVariableRuleHandler', () => {
         const handler = createVariableRuleHandler(nodeType);
         const { view } = editor;
         const { tr } = view.state;
-        const match = '{{ $ruleVar }}'.match(/\{\{\s*\$(\w+)\s*\}\}/)!;
+        const match = '{{ $ruleVar }}'.match(/\{\{\s*\$(\w+)\s*\}\}/);
+        expect(match).not.toBeNull();
 
         handler({ state: { tr }, range: { from: 7, to: 21 }, match });
         view.dispatch(tr);
@@ -124,7 +125,8 @@ describe('createVariableRuleHandler', () => {
         const handler = createVariableRuleHandler(nodeType);
         const { view } = editor;
         const { tr } = view.state;
-        const match = '{{ $myVariable }}'.match(/\{\{\s*\$(\w+)\s*\}\}/)!;
+        const match = '{{ $myVariable }}'.match(/\{\{\s*\$(\w+)\s*\}\}/);
+        expect(match).not.toBeNull();
 
         handler({ state: { tr }, range: { from: 1, to: 12 }, match });
         view.dispatch(tr);

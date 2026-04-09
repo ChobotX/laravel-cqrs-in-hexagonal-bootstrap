@@ -66,3 +66,10 @@
     top: 50%;
     margin-top: -0.25rem;
 }
+
+/* Email template editor: link styles */
+.ProseMirror a {
+    color: #4f46e5;
+    text-decoration: underline;
+    cursor: text;
+}

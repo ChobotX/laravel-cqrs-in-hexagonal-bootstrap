@@ -6,8 +6,8 @@ namespace Tests\Helper;
 
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
-use Database\Seeders\EmailTemplateSeeder;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
+use Database\Seeders\EmailTemplateSeeder;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
 

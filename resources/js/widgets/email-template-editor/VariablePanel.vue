@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { trans } from 'laravel-vue-i18n';
+
 export interface TemplateVariable {
     name: string;
     description: string;
@@ -17,7 +19,7 @@ const emit = defineEmits<{
 <template>
     <div data-testid="variable-panel">
         <p class="mb-2 text-xs font-medium text-gray-500">
-            Available variables
+            {{ trans('messages.email_templates.available_variables') }}
         </p>
         <div class="flex flex-wrap gap-2">
             <button

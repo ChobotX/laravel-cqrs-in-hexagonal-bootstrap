@@ -45,10 +45,21 @@
                     :href="route('settings.index')"
                     icon="heroicon-o-cog-6-tooth"
                     :label="__('messages.nav.settings')"
-                    :active="request()->routeIs('settings.*')" />
+                    :active="request()->routeIs('settings.index', 'settings.update')" />
+        <x-nav-link permission="email_templates.templates.read"
+                    :href="route('settings.email-templates.index')"
+                    icon="heroicon-o-envelope"
+                    :label="__('messages.nav.email_templates')"
+                    :active="request()->routeIs('settings.email-templates.*')" />
+        <x-nav-link permission="email_templates.logs.read"
+                    :href="route('settings.email-logs.index')"
+                    icon="heroicon-o-paper-airplane"
+                    :label="__('messages.nav.email_logs')"
+                    :active="request()->routeIs('settings.email-logs.*')" />
         <x-nav-link permission="audit_log.history.read"
                     :href="route('audit-log.index')"
                     icon="heroicon-o-clipboard-document-list"
                     :label="__('messages.nav.audit_log')"
                     :active="request()->routeIs('audit-log.*')" />
+    </div>
 </nav>

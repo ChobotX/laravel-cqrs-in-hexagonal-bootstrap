@@ -19,6 +19,8 @@ return [
         'system' => 'Systém',
         'feature_flags' => 'Přepínače funkcí',
         'audit_log' => 'Auditní protokol',
+        'email_templates' => 'Šablony e-mailů',
+        'email_logs' => 'Odeslané e-maily',
         'logout' => 'Odhlásit se',
     ],
 
@@ -393,9 +395,9 @@ return [
     'email_templates' => [
         'title' => 'Emailové šablony',
         'subtitle' => 'Spravujte obsah a vzhled systémových emailů',
+        'count' => '{1} šablona|[2,4] šablony|[5,*] šablon',
         'name' => 'Název',
         'description' => 'Popis',
-        'locales' => 'Jazyky',
         'last_modified' => 'Poslední úprava',
         'actions' => 'Akce',
         'edit_action' => 'Upravit',
@@ -416,6 +418,24 @@ return [
         'updated' => 'Emailová šablona aktualizována.',
         'reset' => 'Emailová šablona obnovena na výchozí.',
         'empty' => 'Žádné emailové šablony nebyly nalezeny.',
+        'source_view' => 'HTML',
+        'visual_view' => 'Vizuální',
+        'unlink' => 'Odebrat odkaz',
+        'email_footer' => 'Tento email byl odeslán organizací :tenant.',
+        'types' => [
+            'user_invite' => [
+                'name' => 'Pozvánka uživatele',
+                'description' => 'Odesláno při pozvání nového uživatele na platformu',
+            ],
+            'password_reset' => [
+                'name' => 'Obnovení hesla',
+                'description' => 'Odesláno při žádosti o obnovení hesla',
+            ],
+            'notification' => [
+                'name' => 'Notifikační email',
+                'description' => 'Obaluje notifikace odeslané emailovým kanálem',
+            ],
+        ],
     ],
 
     'email_logs' => [

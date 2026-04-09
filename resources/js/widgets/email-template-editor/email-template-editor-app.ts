@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { useI18n } from '../../shared/i18n/i18n';
 import EmailTemplateEditor from './EmailTemplateEditor.vue';
 
 for (const el of document.querySelectorAll<HTMLElement>('[data-email-template-editor]')) {
@@ -20,5 +21,6 @@ for (const el of document.querySelectorAll<HTMLElement>('[data-email-template-ed
         locale: el.dataset.locale ?? '',
     });
 
+    useI18n(app);
     app.mount(el);
 }

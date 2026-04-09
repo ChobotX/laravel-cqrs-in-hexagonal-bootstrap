@@ -12,7 +12,7 @@
     <div class="mb-6 flex items-center justify-between">
         <span
               class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-            {{ trans_choice('messages.email_templates.count', count($templates)) }}
+            {{ count($templates) }} {{ trans_choice('messages.email_templates.count', count($templates)) }}
         </span>
     </div>
 
@@ -33,10 +33,6 @@
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
                             scope="col">
-                            {{ __('messages.email_templates.locales') }}
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                            scope="col">
                             {{ __('messages.email_templates.last_modified') }}
                         </th>
                         <th class="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500"
@@ -50,20 +46,10 @@
                         <tr class="transition-colors hover:bg-gray-50/50"
                             data-testid="template-row-{{ $template['type'] }}">
                             <td class="px-6 py-4">
-                                <span class="text-sm font-medium text-gray-900">{{ $template['name'] }}</span>
+                                <span class="text-sm font-medium text-gray-900">{{ __('messages.email_templates.types.' . $template['type'] . '.name') }}</span>
                             </td>
                             <td class="px-6 py-4">
-                                <p class="text-sm text-gray-500">{{ $template['description'] }}</p>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div class="flex flex-wrap gap-1">
-                                    @foreach ($template['locales'] as $locale)
-                                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-300/50"
-                                              data-testid="locale-badge-{{ $template['type'] }}-{{ $locale }}">
-                                            {{ strtoupper($locale) }}
-                                        </span>
-                                    @endforeach
-                                </div>
+                                <p class="text-sm text-gray-500">{{ __('messages.email_templates.types.' . $template['type'] . '.description') }}</p>
                             </td>
                             <td class="px-6 py-4">
                                 @if ($template['updatedAt'])
@@ -73,22 +59,18 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-1">
-                                    @foreach ($template['locales'] as $locale)
-                                        <x-action-button skip-permission
-                                                         :href="route('settings.email-templates.edit', [
-                                                             'type' => $template['type'],
-                                                             'locale' => $locale,
-                                                         ])"
-                                                         icon="heroicon-o-pencil-square"
-                                                         :label="__('messages.email_templates.edit_locale', ['locale' => strtoupper($locale)])"
-                                                         data-testid="edit-template-{{ $template['type'] }}-{{ $locale }}" />
-                                    @endforeach
-                                </div>
+                                <x-action-button skip-permission
+                                                 :href="route('settings.email-templates.edit', [
+                                                     'type' => $template['type'],
+                                                     'locale' => app()->getLocale(),
+                                                 ])"
+                                                 icon="heroicon-o-pencil-square"
+                                                 :label="__('messages.email_templates.edit_action')"
+                                                 data-testid="edit-template-{{ $template['type'] }}" />
                             </td>
                         </tr>
                     @empty
-                        <x-table-empty-state colspan="5"
+                        <x-table-empty-state colspan="4"
                                              :message="__('messages.email_templates.empty')" />
                     @endforelse
                 </tbody>
