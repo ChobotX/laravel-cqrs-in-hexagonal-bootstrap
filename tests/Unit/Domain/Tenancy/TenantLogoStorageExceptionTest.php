@@ -19,7 +19,7 @@ it('returns internal server error status code', function (): void {
 
 it('returns translated user message', function (): void {
     $exception = new TenantLogoStorageException('tenant-123');
-    $translator = new \Tests\Helper\FakeTranslator;
+    $translator = new Tests\Helper\FakeTranslator;
 
     $message = $exception->userMessage($translator);
 

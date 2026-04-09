@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Application\Bus;
 
+use BackedEnum;
 use ReflectionClass;
 use ReflectionProperty;
+use UnitEnum;
 
 final readonly class SensitiveDataMasker
 {
@@ -50,11 +52,11 @@ final readonly class SensitiveDataMasker
             return (string) $value;
         }
 
-        if ($value instanceof \BackedEnum) {
+        if ($value instanceof BackedEnum) {
             return $value->value;
         }
 
-        if ($value instanceof \UnitEnum) {
+        if ($value instanceof UnitEnum) {
             return $value->name;
         }
 

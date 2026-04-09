@@ -278,7 +278,7 @@ return [
         'type_input' => 'Vstup',
         'pattern_hint' => 'Musí odpovídat vzoru: :pattern',
         'empty' => 'Žádné přepínače funkcí nejsou nakonfigurovány.',
-        'count' => ':count přepínač|:count přepínače|:count přepínačů',
+        'count' => '{1} přepínač|[2,4] přepínače|[5,*] přepínačů',
         'group_filter_all' => 'Všechny skupiny',
         'group_filter_label' => 'Filtrovat podle skupiny',
         'groups' => [

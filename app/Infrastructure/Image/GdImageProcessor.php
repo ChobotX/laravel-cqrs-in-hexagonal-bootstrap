@@ -30,12 +30,8 @@ final readonly class GdImageProcessor implements ImageProcessor
 
         [$newWidth, $newHeight] = $this->calculateDimensions($originalWidth, $originalHeight, $maxDimension);
 
+        /** @var GdImage $resized */
         $resized = imagecreatetruecolor($newWidth, $newHeight);
-
-        if (! $resized instanceof GdImage) {
-            throw new ImageProcessingException('Failed to create resized image.');
-        }
-
         imagecopyresampled($resized, $gdImage, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
         imagedestroy($gdImage);
 
@@ -49,6 +45,7 @@ final readonly class GdImageProcessor implements ImageProcessor
     private function createFromFile(string $path, string $mimeType): GdImage
     {
         try {
+            /** @var GdImage $image */
             $image = match ($mimeType) {
                 self::MIME_PNG => imagecreatefrompng($path),
                 self::MIME_GIF => imagecreatefromgif($path),
@@ -56,10 +53,6 @@ final readonly class GdImageProcessor implements ImageProcessor
                 default => imagecreatefromjpeg($path),
             };
         } catch (ErrorException) {
-            throw new ImageProcessingException(sprintf('Failed to load image from %s.', $path));
-        }
-
-        if (! $image instanceof GdImage) {
             throw new ImageProcessingException(sprintf('Failed to load image from %s.', $path));
         }
 

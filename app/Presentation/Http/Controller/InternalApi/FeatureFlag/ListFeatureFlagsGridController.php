@@ -46,25 +46,26 @@ final readonly class ListFeatureFlagsGridController
         $flags = $this->applyGroupFilter($flags, $paginationRequest->rawFilters());
         $flags = $this->applySearch($flags, $paginationRequest->search());
         $flags = $this->applySort($flags, $paginationRequest);
+
         $total = count($flags);
 
         $pagination = $paginationRequest->pagination();
         $flags = array_slice($flags, $pagination->offset(), $pagination->perPage);
 
         return new JsonResponse([
-            'data' => array_map(fn (ResolvedFlag $flag): array => [
-                self::SORT_KEY => $flag->definition->key->value,
-                self::SORT_LABEL => $flag->definition->label,
-                'description' => $flag->definition->description,
-                self::SORT_TYPE => $flag->definition->type->value,
-                self::SORT_GROUP => $flag->definition->group,
-                'group_label' => $flag->definition->groupLabel,
-                'enabled' => $flag->enabled,
-                'value' => $flag->value,
-                'is_overridden' => $flag->isOverridden,
-                'has_options' => $flag->definition->type !== FlagType::Boolean,
-                'edit_url' => route('feature-flags.edit', $flag->definition->key->value),
-                'reset_url' => route('feature-flags.reset', $flag->definition->key->value),
+            'data' => array_map(fn (ResolvedFlag $resolvedFlag): array => [
+                self::SORT_KEY => $resolvedFlag->definition->key->value,
+                self::SORT_LABEL => $resolvedFlag->definition->label,
+                'description' => $resolvedFlag->definition->description,
+                self::SORT_TYPE => $resolvedFlag->definition->type->value,
+                self::SORT_GROUP => $resolvedFlag->definition->group,
+                'group_label' => $resolvedFlag->definition->groupLabel,
+                'enabled' => $resolvedFlag->enabled,
+                'value' => $resolvedFlag->value,
+                'is_overridden' => $resolvedFlag->isOverridden,
+                'has_options' => $resolvedFlag->definition->type !== FlagType::Boolean,
+                'edit_url' => route('feature-flags.edit', $resolvedFlag->definition->key->value),
+                'reset_url' => route('feature-flags.reset', $resolvedFlag->definition->key->value),
             ], $flags),
             'meta' => [
                 'current_page' => $pagination->page,
@@ -93,7 +94,7 @@ final readonly class ListFeatureFlagsGridController
 
         return array_values(array_filter(
             $flags,
-            static fn (ResolvedFlag $flag): bool => $flag->definition->group === $group,
+            static fn (ResolvedFlag $resolvedFlag): bool => $resolvedFlag->definition->group === $group,
         ));
     }
 
@@ -111,9 +112,9 @@ final readonly class ListFeatureFlagsGridController
 
         return array_values(array_filter(
             $flags,
-            static fn (ResolvedFlag $flag): bool => str_contains(mb_strtolower($flag->definition->key->value), $term)
-                || str_contains(mb_strtolower($flag->definition->label), $term)
-                || str_contains(mb_strtolower($flag->definition->description), $term),
+            static fn (ResolvedFlag $resolvedFlag): bool => str_contains(mb_strtolower($resolvedFlag->definition->key->value), $term)
+                || str_contains(mb_strtolower($resolvedFlag->definition->label), $term)
+                || str_contains(mb_strtolower($resolvedFlag->definition->description), $term),
         ));
     }
 
@@ -127,7 +128,7 @@ final readonly class ListFeatureFlagsGridController
         $column = self::SORT_LABEL;
         $direction = SortDirection::Asc;
 
-        if ($requestSorting !== null && in_array($requestSorting->column, self::SORTABLE_COLUMNS, true)) {
+        if ($requestSorting instanceof \App\Application\Sorting\Sorting && in_array($requestSorting->column, self::SORTABLE_COLUMNS, true)) {
             $column = $requestSorting->column;
             $direction = $requestSorting->direction;
         }
@@ -144,13 +145,13 @@ final readonly class ListFeatureFlagsGridController
         return $flags;
     }
 
-    private function sortValue(ResolvedFlag $flag, string $column): string
+    private function sortValue(ResolvedFlag $resolvedFlag, string $column): string
     {
         return match ($column) {
-            self::SORT_KEY => $flag->definition->key->value,
-            self::SORT_LABEL => $flag->definition->label,
-            self::SORT_TYPE => $flag->definition->type->value,
-            self::SORT_GROUP => $flag->definition->groupLabel,
+            self::SORT_KEY => $resolvedFlag->definition->key->value,
+            self::SORT_LABEL => $resolvedFlag->definition->label,
+            self::SORT_TYPE => $resolvedFlag->definition->type->value,
+            self::SORT_GROUP => $resolvedFlag->definition->groupLabel,
             default => '',
         };
     }

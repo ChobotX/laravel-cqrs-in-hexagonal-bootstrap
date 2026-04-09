@@ -2,8 +2,60 @@
 
 declare(strict_types=1);
 
+use App\Domain\FeatureFlag\Contract\Service\FeatureFlagDefinitionProvider;
 use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+
+function seedMultipleFlags(): void
+{
+    Config::set('feature-flags.groups', [
+        'registry' => [
+            'label' => 'Registry',
+            'flags' => [
+                'schema-builder' => [
+                    'type' => 'boolean',
+                    'default' => true,
+                    'label' => 'Schema Builder',
+                    'description' => 'Enable visual schema builder',
+                ],
+            ],
+        ],
+        'auth' => [
+            'label' => 'Authentication',
+            'flags' => [
+                'sso-provider' => [
+                    'type' => 'select',
+                    'default' => 'okta',
+                    'enabled' => true,
+                    'label' => 'SSO Provider',
+                    'description' => 'Select SSO provider',
+                    'options' => ['okta', 'azure', 'google'],
+                ],
+            ],
+        ],
+        'ui' => [
+            'label' => 'User Interface',
+            'flags' => [
+                'dark-mode' => [
+                    'type' => 'boolean',
+                    'default' => false,
+                    'label' => 'Dark Mode',
+                    'description' => 'Enable dark mode theme',
+                ],
+                'max-items' => [
+                    'type' => 'input',
+                    'default' => '25',
+                    'enabled' => true,
+                    'label' => 'Max Items Per Page',
+                    'description' => 'Maximum items displayed per page',
+                    'pattern' => '/^\d+$/',
+                ],
+            ],
+        ],
+    ]);
+    app()->forgetInstance(FeatureFlagDefinitionProvider::class);
+}
 
 function featureFlagsGridAdmin(): UserModel
 {
@@ -128,4 +180,78 @@ it('paginates results', function (): void {
         ->getJson('/internal-api/feature-flags/list?page=1&per_page=15')
         ->assertOk()
         ->assertJsonPath('meta.current_page', 1);
+});
+
+it('sorts flags by key ascending', function (): void {
+    seedMultipleFlags();
+    $userModel = featureFlagsGridAdmin();
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=key&direction=asc')
+        ->assertOk();
+
+    $keys = array_column($response->json('data'), 'key');
+    expect($keys)->toBe(collect($keys)->sort()->values()->all())
+        ->and($keys)->toHaveCount(4);
+});
+
+it('sorts flags by key descending', function (): void {
+    seedMultipleFlags();
+    $userModel = featureFlagsGridAdmin();
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=key&direction=desc')
+        ->assertOk();
+
+    $keys = array_column($response->json('data'), 'key');
+    expect($keys)->toBe(collect($keys)->sortDesc()->values()->all());
+});
+
+it('sorts flags by type', function (): void {
+    seedMultipleFlags();
+    $userModel = featureFlagsGridAdmin();
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=type&direction=asc')
+        ->assertOk();
+
+    $types = array_column($response->json('data'), 'type');
+    expect($types)->toBe(collect($types)->sort()->values()->all());
+});
+
+it('sorts flags by group', function (): void {
+    seedMultipleFlags();
+    $userModel = featureFlagsGridAdmin();
+
+    $response = $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=group&direction=asc')
+        ->assertOk();
+
+    $groups = array_column($response->json('data'), 'group_label');
+    expect($groups)->toBe(collect($groups)->sort()->values()->all());
+});
+
+it('sorts flags by label descending', function (): void {
+    seedMultipleFlags();
+    $userModel = featureFlagsGridAdmin();
+
+    $ascResponse = $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=label&direction=asc')
+        ->assertOk();
+
+    $descResponse = $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=label&direction=desc')
+        ->assertOk();
+
+    $ascLabels = array_column($ascResponse->json('data'), 'label');
+    $descLabels = array_column($descResponse->json('data'), 'label');
+    expect($descLabels)->toBe(array_reverse($ascLabels));
+});
+
+it('ignores invalid sort column', function (): void {
+    $userModel = featureFlagsGridAdmin();
+
+    $this->actingAs($userModel)
+        ->getJson('/internal-api/feature-flags/list?sort=invalid_column&direction=asc')
+        ->assertOk();
 });

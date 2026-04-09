@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 use App\Application\Bus\Sensitive;
 use App\Application\Bus\SensitiveDataMasker;
-use SplFileInfo;
 
 enum TestBackedEnum: string
 {
     case Active = 'active';
     case Inactive = 'inactive';
+}
+
+enum TestUnitEnum
+{
+    case Pending;
+    case Done;
 }
 
 it('masks properties annotated with Sensitive', function (): void {
@@ -131,6 +136,37 @@ it('converts non-stringable objects to class name', function (): void {
     $result = SensitiveDataMasker::mask($object);
 
     expect($result['data'])->toBe('stdClass');
+});
+
+it('returns non-serializable label for resource values', function (): void {
+    $resource = fopen('php://memory', 'r');
+    $object = new readonly class($resource)
+    {
+        public function __construct(
+            public mixed $handle,
+        ) {}
+    };
+
+    $result = SensitiveDataMasker::mask($object);
+
+    expect($result['handle'])->toBe('[non-serializable]');
+
+    if (is_resource($resource)) {
+        fclose($resource);
+    }
+});
+
+it('converts unit enum to its name', function (): void {
+    $object = new readonly class(TestUnitEnum::Pending)
+    {
+        public function __construct(
+            public TestUnitEnum $status,
+        ) {}
+    };
+
+    $result = SensitiveDataMasker::mask($object);
+
+    expect($result['status'])->toBe('Pending');
 });
 
 it('preserves non-string property types', function (): void {

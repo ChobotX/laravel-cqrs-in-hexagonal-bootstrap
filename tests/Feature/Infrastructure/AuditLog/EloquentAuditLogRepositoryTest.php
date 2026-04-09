@@ -116,6 +116,38 @@ it('returns empty for unknown trace id', function (): void {
     expect($entries)->toHaveCount(0);
 });
 
+it('filters by entity id', function (): void {
+    $auditLogRepository = app(AuditLogRepository::class);
+
+    $entries = $auditLogRepository->findAll(entityId: '770e8400-e29b-41d4-a716-446655440001');
+
+    expect($entries)->toHaveCount(2)
+        ->and($entries[0]->entityId)->toBe('770e8400-e29b-41d4-a716-446655440001')
+        ->and($entries[1]->entityId)->toBe('770e8400-e29b-41d4-a716-446655440001');
+});
+
+it('filters by to date', function (): void {
+    $auditLogRepository = app(AuditLogRepository::class);
+
+    $entries = $auditLogRepository->findAll(
+        to: new DateTimeImmutable('2026-04-08 10:30:00'),
+    );
+
+    expect($entries)->toHaveCount(2);
+});
+
+it('filters by date range with both from and to', function (): void {
+    $auditLogRepository = app(AuditLogRepository::class);
+
+    $entries = $auditLogRepository->findAll(
+        from: new DateTimeImmutable('2026-04-08 10:00:30'),
+        to: new DateTimeImmutable('2026-04-08 10:30:00'),
+    );
+
+    expect($entries)->toHaveCount(1)
+        ->and($entries[0]->actionLabel)->toBe('Create Role');
+});
+
 it('counts entries with filters', function (): void {
     $auditLogRepository = app(AuditLogRepository::class);
 

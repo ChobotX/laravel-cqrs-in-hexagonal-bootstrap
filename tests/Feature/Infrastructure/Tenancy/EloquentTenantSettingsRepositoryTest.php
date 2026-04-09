@@ -103,6 +103,26 @@ it('returns null logo URL when file missing on disk', function (): void {
         ->and($settings->logoUrl)->toBeNull();
 });
 
+it('stores logo from SplFileInfo using file extension', function (): void {
+    $tenant = TenantModel::findOrFail(test()->tenantId());
+    $filesystem = Storage::fake('public');
+    $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
+
+    $tempPath = tempnam(sys_get_temp_dir(), 'logo_').'.webp';
+    $img = imagecreatetruecolor(10, 10);
+    imagewebp($img, $tempPath);
+    imagedestroy($img);
+
+    $spl = new SplFileInfo($tempPath);
+    $repo->updateSettings($tenant->id, 'Acme', $spl, false);
+
+    $tenant->refresh();
+    expect($tenant->logo_path)->toContain('.webp');
+    $filesystem->assertExists($tenant->logo_path);
+
+    unlink($tempPath);
+});
+
 it('replaces existing logo when new one uploaded with different extension', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
     $filesystem = Storage::fake('public');

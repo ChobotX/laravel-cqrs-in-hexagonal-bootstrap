@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Infrastructure\Tenancy;
 
 use App\Contract\Tenancy\TenantLogoStorage;
-use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use Illuminate\Http\UploadedFile;
 use SplFileInfo;

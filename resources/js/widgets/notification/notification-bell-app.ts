@@ -1,5 +1,5 @@
-import { i18nVue } from 'laravel-vue-i18n';
 import { createApp } from 'vue';
+import { useI18n } from '../../shared/i18n/i18n';
 import NotificationBell from './NotificationBell.vue';
 import { subscribeToNotifications } from './notification-echo';
 import { prependNotification, setUnreadCount } from './notification-store';
@@ -8,15 +8,7 @@ const mountPoint: HTMLElement | null = document.getElementById('app-notification
 
 if (mountPoint) {
     const app = createApp(NotificationBell);
-
-    app.use(i18nVue, {
-        resolve: async (lang: string) => {
-            const langs = import.meta.glob<{ default: Record<string, string> }>('../../../lang/*.json');
-
-            return await langs[`../../../lang/${lang}.json`]();
-        },
-    });
-
+    useI18n(app);
     app.mount(mountPoint);
 
     const userId = mountPoint.dataset.userId;

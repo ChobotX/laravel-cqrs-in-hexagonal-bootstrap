@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use SplFileInfo;
 
 final class FakeTenantSettingsRepository implements TenantSettingsRepository

@@ -7,6 +7,7 @@ use App\Contract\Tenancy\TenantContext;
 use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
 use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use Illuminate\Support\Facades\Storage;
 
 it('resolves tenant from subdomain', function (): void {
     $this->get('http://'.testTenantDomain().'.laravel-bootstrap.local/login')
@@ -74,6 +75,21 @@ it('throws for inactive tenant domain', function (): void {
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapByDomain(testTenantDomain());
 })->throws(InactiveTenantException::class);
+
+it('resolves logo URL when tenant has a logo file', function (): void {
+    $filesystem = Storage::fake('public');
+    $filesystem->put('tenant-logos/test-logo.webp', 'fake-image');
+
+    $tenant = TenantModel::findOrFail(test()->tenantId());
+    $tenant->logo_path = 'tenant-logos/test-logo.webp';
+    $tenant->save();
+
+    $tenantBootstrapper = app(TenantBootstrapper::class);
+    $tenantBootstrapper->bootstrapBySlug(testTenantSlug());
+
+    $tenantContext = app(TenantContext::class);
+    expect($tenantContext->currentTenantLogoUrl())->not->toBeNull();
+});
 
 it('throws for inactive tenant slug', function (): void {
     TenantModel::where('slug', testTenantSlug())->update(['is_active' => false]);

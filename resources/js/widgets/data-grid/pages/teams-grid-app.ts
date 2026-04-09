@@ -1,5 +1,5 @@
-import { i18nVue } from 'laravel-vue-i18n';
 import { createApp } from 'vue';
+import { useI18n } from '../../../shared/i18n/i18n';
 import TeamsGrid from './TeamsGrid.vue';
 
 const mountPoint: HTMLElement | null = document.getElementById('app-teams-grid');
@@ -18,13 +18,6 @@ if (mountPoint) {
         shareableTeams: JSON.parse(mountPoint.dataset.shareableTeams ?? '[]') as Array<{ id: string; name: string }>,
     });
 
-    app.use(i18nVue, {
-        resolve: async (lang: string) => {
-            const langs = import.meta.glob<{ default: Record<string, string> }>('../../../../lang/*.json');
-
-            return await langs[`../../../../lang/${lang}.json`]();
-        },
-    });
-
+    useI18n(app);
     app.mount(mountPoint);
 }

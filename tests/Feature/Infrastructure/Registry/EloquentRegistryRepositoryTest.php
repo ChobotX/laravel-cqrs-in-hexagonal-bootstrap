@@ -208,6 +208,42 @@ it('silently returns when updating non-existent entry', function (): void {
     expect(entryRepo()->findById(new EntryId('550e8400-e29b-41d4-a716-446655440c99')))->toBeNull();
 });
 
+it('paginates entries with default sort when no sortings provided', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440c50', 'namespace' => 'test', 'slug' => 'defsort', 'name' => 'DefSort']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440c51',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440c50',
+        'version' => 1,
+        'body' => [['name' => 'x', 'label' => 'X', 'type' => 'string', 'required' => false]],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440c52',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440c50',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Zebra',
+        'data' => ['x' => 'z'],
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440c53',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440c50',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Alpha',
+        'data' => ['x' => 'a'],
+    ]);
+
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440c50'),
+        new Pagination(1, 15),
+    );
+
+    expect($paginatedResult->total)->toBe(2)
+        ->and($paginatedResult->items[0]->title->value)->toBe('Alpha')
+        ->and($paginatedResult->items[1]->title->value)->toBe('Zebra');
+});
+
 it('checks if entries exist by definition', function (): void {
     DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440c30', 'namespace' => 'test', 'slug' => 'exists', 'name' => 'Exists']);
     DefinitionVersionModel::create([

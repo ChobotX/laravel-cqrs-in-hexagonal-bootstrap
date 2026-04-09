@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Application\Bus\CommandBus;
+use App\Application\Bus\QueryBus;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use App\Infrastructure\Eloquent\User\UserModel;
+use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
+use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
+use App\Presentation\Http\Request\Web\Settings\UpdateTenantSettingsRequest;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -126,6 +132,23 @@ it('requires settings.tenant.read permission for show', function (): void {
         ->get('/settings')
         ->assertForbidden();
 });
+
+it('show aborts when tenant_id is missing from context', function (): void {
+    Context::flush();
+    $mock = Mockery::mock(QueryBus::class);
+    $controller = new ShowTenantSettingsController($mock);
+
+    $controller();
+})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
+
+it('update aborts when tenant_id is missing from context', function (): void {
+    Context::flush();
+    $mock = Mockery::mock(CommandBus::class);
+    $controller = new UpdateTenantSettingsController($mock);
+
+    $updateTenantSettingsRequest = UpdateTenantSettingsRequest::create('/settings', 'PUT', ['name' => 'Test']);
+    $controller($updateTenantSettingsRequest);
+})->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
 
 it('requires settings.tenant.update permission for update', function (): void {
     $user = UserModel::create([

@@ -7,9 +7,9 @@ namespace App\Domain\Tenancy\Query\GetTenantSettings;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
-use App\Domain\Tenancy\Exception\TenantNotFoundException;
-use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
+use App\Domain\Tenancy\Exception\TenantNotFoundException;
 
 /** @implements QueryHandler<GetTenantSettingsQuery, TenantSettings> */
 final readonly class GetTenantSettingsHandler implements QueryHandler

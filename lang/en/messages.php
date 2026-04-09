@@ -280,7 +280,7 @@ return [
         'type_input' => 'Input',
         'pattern_hint' => 'Must match pattern: :pattern',
         'empty' => 'No feature flags configured.',
-        'count' => ':count flag|:count flags',
+        'count' => '{1} flag|[2,*] flags',
         'group_filter_all' => 'All Groups',
         'group_filter_label' => 'Filter by group',
         'groups' => [
