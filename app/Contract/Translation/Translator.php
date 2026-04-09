@@ -10,4 +10,6 @@ interface Translator
      * @param  array<string, string|int>  $params
      */
     public function translate(string $key, array $params = []): string;
+
+    public function locale(): string;
 }

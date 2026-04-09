@@ -25,6 +25,11 @@ it('translates user message with name', function (): void {
         {
             return $key.':'.implode(',', $params);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))

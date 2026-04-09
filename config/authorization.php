@@ -90,6 +90,19 @@ return [
                 ],
             ],
         ],
+        'email_templates' => [
+            'label' => 'Email Templates',
+            'features' => [
+                'templates' => [
+                    'label' => 'Email Template Management',
+                    'actions' => ['read', 'update'],
+                ],
+                'logs' => [
+                    'label' => 'Sent Email Logs',
+                    'actions' => ['read'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

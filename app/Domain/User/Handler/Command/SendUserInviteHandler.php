@@ -8,12 +8,12 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Translation\Translator;
+use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
 use App\Domain\User\Contract\Command\SendUserInviteCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\UserInviteSent;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Repository\UserRepository;
-use App\Domain\User\Contract\Service\DirectEmailSender;
 use App\Domain\User\Contract\Service\InviteLinkGenerator;
 use App\Domain\User\Contract\ValueObject\UserId;
 use DateTimeImmutable;
@@ -24,7 +24,7 @@ final readonly class SendUserInviteHandler implements CommandHandler
     public function __construct(
         private UserRepository $userRepository,
         private InviteLinkGenerator $inviteLinkGenerator,
-        private DirectEmailSender $directEmailSender,
+        private TemplatedEmailDispatcher $templatedEmailDispatcher,
         private EventCollector $eventCollector,
         private Translator $translator,
     ) {}
@@ -38,15 +38,20 @@ final readonly class SendUserInviteHandler implements CommandHandler
         }
 
         $inviteLink = $this->inviteLinkGenerator->generate($user->id->value);
+        $locale = $this->translator->locale();
 
-        $this->directEmailSender->sendToUser(
+        $this->templatedEmailDispatcher->dispatch(
             $user->id->value,
-            $this->translator->translate('messages.email.invite_subject'),
-            $this->translator->translate('messages.email.invite_body', ['link' => $inviteLink]),
+            'user_invite',
+            $locale,
+            ['userName' => $user->name->value, 'link' => $inviteLink],
         );
 
         $this->eventCollector->collect(new UserInviteSent(
             userId: $user->id->value,
+            userName: $user->name->value,
+            inviteLink: $inviteLink,
+            locale: $locale,
             occurredAt: new DateTimeImmutable,
         ));
     }

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
-use App\Domain\User\Contract\Service\DirectEmailSender;
 use App\Domain\User\Contract\Service\InviteLinkGenerator;
 use App\Domain\User\Contract\Service\PasswordManager;
 use App\Domain\User\Contract\Service\PasswordResetBroker;
 use App\Infrastructure\Auth\EloquentPasswordManager;
-use App\Infrastructure\Auth\LaravelDirectEmailSender;
 use App\Infrastructure\Auth\LaravelInviteLinkGenerator;
 use App\Infrastructure\Auth\LaravelPasswordResetBroker;
 use App\Infrastructure\Auth\SoftDeleteAwareUserProvider;
@@ -28,7 +26,6 @@ final class AuthServiceProvider extends ServiceProvider
         $this->app->bind(PasswordManager::class, EloquentPasswordManager::class);
         $this->app->bind(InviteLinkGenerator::class, LaravelInviteLinkGenerator::class);
         $this->app->bind(PasswordResetBroker::class, LaravelPasswordResetBroker::class);
-        $this->app->bind(DirectEmailSender::class, LaravelDirectEmailSender::class);
         $this->app->bind(UserProvider::class, fn (): UserProvider => Auth::createUserProvider('users')
             ?? throw new UserProviderNotFoundException('users'));
     }

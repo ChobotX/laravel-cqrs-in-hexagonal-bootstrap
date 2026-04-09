@@ -10,7 +10,10 @@ use DateTimeImmutable;
 final readonly class PasswordResetRequested implements DomainEvent
 {
     public function __construct(
+        public string $userId,
         public string $email,
+        public string $resetLink,
+        public string $locale,
         public DateTimeImmutable $occurredAt,
     ) {}
 

@@ -24,6 +24,11 @@ it('returns user message via translator', function (): void {
         {
             return sprintf('translated: %s [%s]', $key, implode(',', $replace));
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('translated: messages.exceptions.invalid_audit_log_id [bad-value]');

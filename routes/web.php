@@ -49,7 +49,13 @@ use App\Presentation\Http\Controller\Web\Registry\ShowEditDefinitionController;
 use App\Presentation\Http\Controller\Web\Registry\ShowEditEntryController;
 use App\Presentation\Http\Controller\Web\Registry\UpdateDefinitionController;
 use App\Presentation\Http\Controller\Web\Registry\UpdateEntryController;
+use App\Presentation\Http\Controller\Web\Settings\EditEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\ListEmailLogsController;
+use App\Presentation\Http\Controller\Web\Settings\ListEmailTemplatesController;
+use App\Presentation\Http\Controller\Web\Settings\PreviewEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\ResetEmailTemplateController;
 use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
+use App\Presentation\Http\Controller\Web\Settings\UpdateEmailTemplateController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
 use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
@@ -122,6 +128,19 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/settings', ShowTenantSettingsController::class)->name('settings.index');
     Route::put('/settings', UpdateTenantSettingsController::class)->name('settings.update');
+
+    // Email Templates
+    Route::get('/settings/email-templates', ListEmailTemplatesController::class)->name('settings.email-templates.index');
+    Route::get('/settings/email-templates/{type}/{locale}', EditEmailTemplateController::class)->name('settings.email-templates.edit')
+        ->where(['type' => '[a-z_]+', 'locale' => '[a-z]{2}']);
+    Route::put('/settings/email-templates/{type}/{locale}', UpdateEmailTemplateController::class)->name('settings.email-templates.update')
+        ->where(['type' => '[a-z_]+', 'locale' => '[a-z]{2}']);
+    Route::post('/settings/email-templates/{type}/{locale}/reset', ResetEmailTemplateController::class)->name('settings.email-templates.reset')
+        ->where(['type' => '[a-z_]+', 'locale' => '[a-z]{2}']);
+    Route::post('/settings/email-templates/preview', PreviewEmailTemplateController::class)->name('settings.email-templates.preview');
+
+    // Email Logs
+    Route::get('/settings/email-logs', ListEmailLogsController::class)->name('settings.email-logs.index');
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');

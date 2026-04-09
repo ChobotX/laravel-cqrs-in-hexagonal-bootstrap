@@ -20,6 +20,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s', $key);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('translated: messages.exceptions.invalid_password_reset_token');

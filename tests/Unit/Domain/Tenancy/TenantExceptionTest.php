@@ -14,6 +14,11 @@ function tenantTestTranslator(): Translator
         {
             return $key.':'.implode(',', $params);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 }
 

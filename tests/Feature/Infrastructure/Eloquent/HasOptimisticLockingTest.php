@@ -98,6 +98,11 @@ it('exception has correct status code and user message', function (): void {
         {
             return $key;
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->statusCode())->toBe(409)

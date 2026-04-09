@@ -8,10 +8,11 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Translation\Translator;
+use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
 use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
+use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordResetRequested;
 use App\Domain\User\Contract\Repository\UserRepository;
-use App\Domain\User\Contract\Service\DirectEmailSender;
 use App\Domain\User\Contract\Service\PasswordResetBroker;
 use DateTimeImmutable;
 
@@ -21,7 +22,7 @@ final readonly class RequestPasswordResetHandler implements CommandHandler
     public function __construct(
         private PasswordResetBroker $passwordResetBroker,
         private UserRepository $userRepository,
-        private DirectEmailSender $directEmailSender,
+        private TemplatedEmailDispatcher $templatedEmailDispatcher,
         private EventCollector $eventCollector,
         private Translator $translator,
     ) {}
@@ -36,18 +37,24 @@ final readonly class RequestPasswordResetHandler implements CommandHandler
 
         $user = $this->userRepository->findByEmail($command->email);
 
-        if (! $user instanceof \App\Domain\User\Contract\Entity\User) {
+        if (! $user instanceof User) {
             return;
         }
 
-        $this->directEmailSender->sendToUser(
+        $locale = $this->translator->locale();
+
+        $this->templatedEmailDispatcher->dispatch(
             $user->id->value,
-            $this->translator->translate('messages.email.password_reset_subject'),
-            $this->translator->translate('messages.email.password_reset_body', ['link' => $resetLink]),
+            'password_reset',
+            $locale,
+            ['link' => $resetLink],
         );
 
         $this->eventCollector->collect(new PasswordResetRequested(
+            userId: $user->id->value,
             email: $command->email,
+            resetLink: $resetLink,
+            locale: $locale,
             occurredAt: new DateTimeImmutable,
         ));
     }

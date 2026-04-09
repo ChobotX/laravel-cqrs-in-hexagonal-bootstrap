@@ -29,6 +29,11 @@ it('returns user message', function (): void {
         {
             return 'unused';
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('Audit log entries are immutable and cannot be updated.');

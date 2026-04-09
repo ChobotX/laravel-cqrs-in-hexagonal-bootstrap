@@ -23,4 +23,9 @@ final class FakeTranslator implements Translator
 
         return $result;
     }
+
+    public function locale(): string
+    {
+        return 'en';
+    }
 }

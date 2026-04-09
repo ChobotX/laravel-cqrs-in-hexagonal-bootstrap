@@ -29,6 +29,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s [identifier=%s]', $key, $params['identifier']);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('translated: messages.exceptions.tenant_not_found [identifier=test-slug]');

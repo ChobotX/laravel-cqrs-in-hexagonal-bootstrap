@@ -11,6 +11,9 @@ final readonly class UserInviteSent implements DomainEvent
 {
     public function __construct(
         public string $userId,
+        public string $userName,
+        public string $inviteLink,
+        public string $locale,
         public DateTimeImmutable $occurredAt,
     ) {}
 

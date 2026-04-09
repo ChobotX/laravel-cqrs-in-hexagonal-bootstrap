@@ -12,7 +12,7 @@ final readonly class FakeTenantContext implements TenantContext
     public function __construct(
         private ?string $tenantId = null,
         private ?string $tenantSlug = null,
-        private ?string $tenantName = null,
+        private string $tenantName = 'Test Tenant',
         private ?string $tenantLogoUrl = null,
     ) {}
 
@@ -36,10 +36,6 @@ final readonly class FakeTenantContext implements TenantContext
 
     public function currentTenantName(): string
     {
-        if ($this->tenantName === null) {
-            throw new RuntimeException('Tenant not resolved');
-        }
-
         return $this->tenantName;
     }
 

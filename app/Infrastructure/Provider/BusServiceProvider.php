@@ -85,6 +85,24 @@ use App\Domain\Authorization\Handler\Query\ListRolesHandler;
 use App\Domain\Authorization\Handler\Query\SearchRolesHandler;
 use App\Domain\Authorization\Middleware\AuthorizeAction;
 use App\Domain\Authorization\Middleware\ResolveScopeFilter;
+use App\Domain\EmailTemplate\Contract\Command\ResetEmailTemplateCommand;
+use App\Domain\EmailTemplate\Contract\Command\SendTemplatedEmailCommand;
+use App\Domain\EmailTemplate\Contract\Command\UpdateEmailTemplateCommand;
+use App\Domain\EmailTemplate\Contract\Event\EmailTemplateReset;
+use App\Domain\EmailTemplate\Contract\Event\EmailTemplateUpdated;
+use App\Domain\EmailTemplate\Contract\Event\TemplatedEmailSent;
+use App\Domain\EmailTemplate\Contract\Query\GetEmailTemplatePreviewQuery;
+use App\Domain\EmailTemplate\Contract\Query\GetEmailTemplateQuery;
+use App\Domain\EmailTemplate\Contract\Query\ListEmailLogsQuery;
+use App\Domain\EmailTemplate\Contract\Query\ListEmailTemplatesQuery;
+use App\Domain\EmailTemplate\EventHandler\LogEmailOnSent;
+use App\Domain\EmailTemplate\Handler\Command\ResetEmailTemplateHandler;
+use App\Domain\EmailTemplate\Handler\Command\SendTemplatedEmailHandler;
+use App\Domain\EmailTemplate\Handler\Command\UpdateEmailTemplateHandler;
+use App\Domain\EmailTemplate\Handler\Query\GetEmailTemplateHandler;
+use App\Domain\EmailTemplate\Handler\Query\GetEmailTemplatePreviewHandler;
+use App\Domain\EmailTemplate\Handler\Query\ListEmailLogsHandler;
+use App\Domain\EmailTemplate\Handler\Query\ListEmailTemplatesHandler;
 use App\Domain\FeatureFlag\Contract\Command\ResetFeatureFlagCommand;
 use App\Domain\FeatureFlag\Contract\Command\UpdateFeatureFlagCommand;
 use App\Domain\FeatureFlag\Contract\Event\FeatureFlagReset;
@@ -341,6 +359,9 @@ final class BusServiceProvider extends ServiceProvider
                 EntryDeleted::class => [],
                 FeatureFlagUpdated::class => [],
                 FeatureFlagReset::class => [],
+                TemplatedEmailSent::class => [LogEmailOnSent::class],
+                EmailTemplateUpdated::class => [],
+                EmailTemplateReset::class => [],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
@@ -407,6 +428,9 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteGridPresetCommand::class => DeleteGridPresetHandler::class,
                 SetDefaultGridPresetCommand::class => SetDefaultGridPresetHandler::class,
                 UpdateTenantSettingsCommand::class => UpdateTenantSettingsHandler::class,
+                SendTemplatedEmailCommand::class => SendTemplatedEmailHandler::class,
+                UpdateEmailTemplateCommand::class => UpdateEmailTemplateHandler::class,
+                ResetEmailTemplateCommand::class => ResetEmailTemplateHandler::class,
             ],
             middleware: [
                 $this->app->make(LogBusMessage::class),
@@ -477,6 +501,10 @@ final class BusServiceProvider extends ServiceProvider
                 GetTenantSettingsQuery::class => GetTenantSettingsHandler::class,
                 ListAuditLogQuery::class => ListAuditLogHandler::class,
                 GetAuditLogByTraceIdQuery::class => GetAuditLogByTraceIdHandler::class,
+                GetEmailTemplateQuery::class => GetEmailTemplateHandler::class,
+                ListEmailTemplatesQuery::class => ListEmailTemplatesHandler::class,
+                GetEmailTemplatePreviewQuery::class => GetEmailTemplatePreviewHandler::class,
+                ListEmailLogsQuery::class => ListEmailLogsHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

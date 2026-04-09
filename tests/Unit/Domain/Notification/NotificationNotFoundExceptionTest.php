@@ -27,6 +27,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s [id=%s]', $key, $params['id']);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('translated: messages.exceptions.notification_not_found [id=550e8400-e29b-41d4-a716-446655440000]');

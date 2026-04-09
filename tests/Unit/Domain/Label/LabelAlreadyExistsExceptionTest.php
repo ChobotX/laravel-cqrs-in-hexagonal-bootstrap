@@ -22,6 +22,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s [name=%s]', $key, $params['name']);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('translated: messages.exceptions.label_already_exists [name=important]');

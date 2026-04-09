@@ -6,6 +6,7 @@ namespace Tests\Helper;
 
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use Database\Seeders\EmailTemplateSeeder;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +64,8 @@ trait TenantAwareRefreshDatabase
                 '--force' => true,
             ]);
 
+            (new EmailTemplateSeeder)->run();
+
             $connection->statement(sprintf('CREATE SCHEMA IF NOT EXISTS "%s"', $this->secondaryTenantSchema()));
             $this->switchToTenantSchema($this->secondaryTenantSchema());
             $this->artisan('migrate', [
@@ -70,6 +73,8 @@ trait TenantAwareRefreshDatabase
                 '--path' => 'database/migrations/tenant',
                 '--force' => true,
             ]);
+
+            (new EmailTemplateSeeder)->run();
 
             $this->switchToTenantSchema($this->tenantSchema());
         } finally {

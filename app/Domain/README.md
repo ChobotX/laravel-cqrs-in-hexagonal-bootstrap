@@ -79,6 +79,12 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 
 4. Dispatch via `App\Application\Bus\CommandBus::dispatch()`.
 
+### Domain events vs direct service calls
+
+Domain events are for **non-critical asynchronous side effects** (logging, cache invalidation, analytics). If a side effect is **critical to the command's success** (e.g., sending a password reset email), it must be executed synchronously via a domain service contract injected into the handler — not delegated to a domain event handler.
+
+Example: `RequestPasswordResetHandler` calls `TemplatedEmailDispatcher::dispatch()` synchronously (critical — user expects the email). The `TemplatedEmailSent` event is then collected for async logging by `LogEmailOnSent` (non-critical follow-up).
+
 All commands are automatically wrapped in a database transaction by the `WrapInTransaction` middleware. For commands that must not run in a transaction (DDL, migrations, landlord-connection writes), add `#[SkipTransaction(reason: '...')]` from `App\Application\Bus\SkipTransaction`.
 
 ### Adding a query

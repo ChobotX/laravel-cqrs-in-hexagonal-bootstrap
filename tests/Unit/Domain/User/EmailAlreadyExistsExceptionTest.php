@@ -21,6 +21,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s [email=%s]', $key, $params['email']);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($emailAlreadyExistsException->userMessage($translator))->toBe('translated: messages.exceptions.email_already_exists [email=john@example.com]');

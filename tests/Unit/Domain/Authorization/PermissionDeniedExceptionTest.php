@@ -31,6 +31,11 @@ it('translates user message', function (): void {
         {
             return $key;
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))

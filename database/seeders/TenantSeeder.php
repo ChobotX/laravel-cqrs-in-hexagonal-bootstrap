@@ -63,6 +63,7 @@ final class TenantSeeder extends Seeder
         $this->seedCrossTeamMembers();
         $this->seedAvatars();
         $this->seedLabels();
+        $this->call(EmailTemplateSeeder::class);
         $this->call(NotificationSeeder::class);
         $this->call(RegistrySeeder::class);
     }

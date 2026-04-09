@@ -95,6 +95,7 @@ final class ArchitectureTest
                 Selector::inNamespace('App\Domain\Team\Contract'),
                 Selector::inNamespace('App\Domain\Tenancy\Contract'),
                 Selector::inNamespace('App\Domain\User\Contract'),
+                Selector::inNamespace('App\Domain\EmailTemplate\Contract'),
             );
     }
 

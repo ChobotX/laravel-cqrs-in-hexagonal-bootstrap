@@ -23,4 +23,9 @@ final class LaravelTranslator implements Translator
 
         return $message;
     }
+
+    public function locale(): string
+    {
+        return app()->getLocale();
+    }
 }

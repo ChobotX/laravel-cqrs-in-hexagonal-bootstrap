@@ -20,6 +20,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s', $key);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($invalidUserDataException->userMessage($translator))->toBe('translated: messages.exceptions.invalid_user_data_empty_name');

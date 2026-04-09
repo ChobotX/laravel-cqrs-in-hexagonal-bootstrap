@@ -27,6 +27,11 @@ it('returns translated user message', function (): void {
         {
             return sprintf('translated: %s [value=%s]', $key, $params['value']);
         }
+
+        public function locale(): string
+        {
+            return 'en';
+        }
     };
 
     expect($exception->userMessage($translator))->toBe('translated: messages.exceptions.invalid_notification_type [value=BAD TYPE]');

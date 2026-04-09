@@ -41,6 +41,17 @@ final class FakeMailer implements Mailer
 
     public function send($view, array $data = [], $callback = null): ?SentMessage
     {
+        if (is_callable($callback)) {
+            $message = new \Illuminate\Mail\Message(new \Symfony\Component\Mime\Email);
+            $callback($message);
+            $symfony = $message->getSymfonyMessage();
+            $this->sent[] = [
+                'to' => $symfony->getTo()[0]->getAddress(),
+                'subject' => $symfony->getSubject() ?? '',
+                'body' => (string) ($symfony->getHtmlBody() ?? ''),
+            ];
+        }
+
         return null;
     }
 
