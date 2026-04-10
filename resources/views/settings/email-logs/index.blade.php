@@ -9,12 +9,14 @@
         ['label' => __('messages.email_logs.title')],
     ]" />
 
-    <div class="mb-6 flex items-center justify-between">
-        <span
-              class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
-            {{ trans_choice('messages.email_logs.count', $logs->total) }}
-        </span>
-    </div>
+    @if ($logs->total > 0)
+        <div class="mb-6 flex items-center justify-between">
+            <span
+                  class="inline-flex items-center rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-medium text-indigo-700 ring-1 ring-inset ring-indigo-700/10">
+                {{ trans_choice('messages.email_logs.count', $logs->total) }}
+            </span>
+        </div>
+    @endif
 
     <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
         <div class="overflow-x-auto">
