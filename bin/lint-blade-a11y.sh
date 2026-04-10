@@ -18,6 +18,8 @@ check_attr() {
         # Replace Blade expressions with placeholders (no > inside)
         s/\{\{.*?\}\}/__BLADE__/sg;
         s/\{!!.*?!!\}/__BLADE__/sg;
+        # Strip @directive(...) including nested parens (e.g. @class([... => ...]))
+        s/\@\w+\((?:[^()]*|\((?:[^()]*|\([^()]*\))*\))*\)/__BLADE__/sg;
         while (/<('"$tag"')\b((?:(?!\/?>).)*?)>/sg) {
             my $attrs = $2;
             unless ($attrs =~ /\b'"$attr"'=/) {

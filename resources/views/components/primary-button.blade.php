@@ -6,9 +6,11 @@
     'method' => 'POST',
     'label',
     'variant' => 'primary',
+    'testId' => null,
 ])
 
 @php
+    $testIdAttr = $testId !== null ? 'data-testid="' . e($testId) . '"' : '';
     $variantClasses = match ($variant) {
         'secondary'
             => 'rounded-lg border border-gray-300 px-4 py-2.5 text-base font-semibold text-gray-700 transition-colors hover:bg-gray-50 sm:text-sm',
@@ -36,7 +38,8 @@
                     <button class="{{ $variantClasses }}"
                             type="submit"
                             title="{{ $label }}"
-                            aria-label="{{ $label }}">
+                            aria-label="{{ $label }}"
+                            {!! $testIdAttr !!}>
                         {{ $label }}
                     </button>
                 </form>
@@ -44,14 +47,16 @@
                 <a class="{{ $variantClasses }}"
                    href="{{ $href }}"
                    title="{{ $label }}"
-                   aria-label="{{ $label }}">
+                   aria-label="{{ $label }}"
+                   {!! $testIdAttr !!}>
                     {{ $label }}
                 </a>
             @else
                 <button class="{{ $variantClasses }}"
                         type="submit"
                         title="{{ $label }}"
-                        aria-label="{{ $label }}">
+                        aria-label="{{ $label }}"
+                        {!! $testIdAttr !!}>
                     {{ $label }}
                 </button>
             @endif
@@ -68,7 +73,8 @@
                 <button class="{{ $variantClasses }}"
                         type="submit"
                         title="{{ $label }}"
-                        aria-label="{{ $label }}">
+                        aria-label="{{ $label }}"
+                        {!! $testIdAttr !!}>
                     {{ $label }}
                 </button>
             </form>
@@ -76,14 +82,16 @@
             <a class="{{ $variantClasses }}"
                href="{{ $href }}"
                title="{{ $label }}"
-               aria-label="{{ $label }}">
+               aria-label="{{ $label }}"
+               {!! $testIdAttr !!}>
                 {{ $label }}
             </a>
         @else
             <button class="{{ $variantClasses }}"
                     type="submit"
                     title="{{ $label }}"
-                    aria-label="{{ $label }}">
+                    aria-label="{{ $label }}"
+                    {!! $testIdAttr !!}>
                 {{ $label }}
             </button>
         @endif

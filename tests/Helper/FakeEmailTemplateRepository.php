@@ -33,7 +33,7 @@ final class FakeEmailTemplateRepository implements EmailTemplateRepository
     {
         return array_values(array_filter(
             $this->templates,
-            static fn (EmailTemplate $template): bool => $template->type->value === $type,
+            static fn (EmailTemplate $emailTemplate): bool => $emailTemplate->type->value === $type,
         ));
     }
 

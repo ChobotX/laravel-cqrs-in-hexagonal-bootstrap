@@ -430,6 +430,7 @@ return [
         'visual_view' => 'Visual',
         'unlink' => 'Unlink',
         'email_footer' => 'This email was sent by :tenant.',
+        'switch_locale' => 'Switch to :locale',
         'types' => [
             'user_invite' => [
                 'name' => 'User Invitation',

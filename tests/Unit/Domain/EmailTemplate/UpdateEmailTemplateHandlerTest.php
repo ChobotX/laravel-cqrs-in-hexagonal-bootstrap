@@ -27,8 +27,8 @@ function createEmailTemplate(string $type = 'user_invite', string $locale = 'en'
 }
 
 it('updates existing template content', function (): void {
-    $template = createEmailTemplate();
-    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $template]);
+    $emailTemplate = createEmailTemplate();
+    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
     $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);
@@ -46,8 +46,8 @@ it('updates existing template content', function (): void {
 });
 
 it('collects EmailTemplateUpdated event', function (): void {
-    $template = createEmailTemplate();
-    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $template]);
+    $emailTemplate = createEmailTemplate();
+    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
     $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);

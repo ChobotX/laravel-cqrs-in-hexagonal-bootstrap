@@ -422,6 +422,7 @@ return [
         'visual_view' => 'Vizuální',
         'unlink' => 'Odebrat odkaz',
         'email_footer' => 'Tento email byl odeslán organizací :tenant.',
+        'switch_locale' => 'Přepnout na :locale',
         'types' => [
             'user_invite' => [
                 'name' => 'Pozvánka uživatele',

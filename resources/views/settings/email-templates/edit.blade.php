@@ -21,6 +21,7 @@
                            'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' => $availableLocale !== $locale,
                        ])
                        data-testid="locale-tab-{{ $availableLocale }}"
+                       title="{{ __('messages.email_templates.switch_locale', ['locale' => strtoupper($availableLocale)]) }}"
                        @if($availableLocale === $locale) aria-current="page" @endif>
                         {{ strtoupper($availableLocale) }}
                     </a>

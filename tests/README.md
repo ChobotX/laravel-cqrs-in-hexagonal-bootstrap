@@ -8,6 +8,7 @@
 - `tests/Unit/Infrastructure/` — infrastructure unit tests
 - `tests/Feature/` — integration/feature tests
 - `tests/Helper/` — shared test utilities
+- `tests/e2e/` — Playwright end-to-end tests (browser-based, against running app)
 
 ## Test rules
 
@@ -114,3 +115,16 @@ PHPStan rules do not need dedicated unit tests — they are validated by running
 ./vendor/bin/sail composer check -- --frontend   # frontend only (lint, vitest, vite build)
 ./vendor/bin/sail composer check -- --backend    # backend only (pint, rector, phpstan, pest, coverage)
 ```
+
+## E2E tests (Playwright)
+
+Browser-based tests that verify user-facing flows against a running Sail instance. Separate from `composer check` — require a running app with seeded data and a host-side browser.
+
+```
+npm run test:e2e          # headless
+npm run test:e2e:ui       # interactive UI mode
+```
+
+See [tests/e2e/README.md](e2e/README.md) for setup, best practices, and auth patterns.
+
+`data-testid` attributes are the project convention for e2e selectors. Blade components use the `testId` prop; Vue components use `data-testid` directly.

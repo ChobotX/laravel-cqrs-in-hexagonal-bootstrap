@@ -28,7 +28,7 @@ final class FakeEmailLogRepository implements EmailLogRepository
     {
         $filtered = array_values(array_filter(
             $this->logs,
-            static fn (EmailLog $log): bool => $log->recipientId === $recipientId,
+            static fn (EmailLog $emailLog): bool => $emailLog->recipientId === $recipientId,
         ));
 
         return array_slice($filtered, $offset, $limit);

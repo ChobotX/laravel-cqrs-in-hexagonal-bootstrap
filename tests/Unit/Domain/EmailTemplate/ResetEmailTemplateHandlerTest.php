@@ -28,8 +28,8 @@ function createCustomizedEmailTemplate(string $type = 'user_invite', string $loc
 }
 
 it('resets template to default content', function (): void {
-    $template = createCustomizedEmailTemplate();
-    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $template]);
+    $emailTemplate = createCustomizedEmailTemplate();
+    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
     $handler = new ResetEmailTemplateHandler($repository, $eventCollector);
@@ -47,8 +47,8 @@ it('resets template to default content', function (): void {
 });
 
 it('collects EmailTemplateReset event', function (): void {
-    $template = createCustomizedEmailTemplate();
-    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $template]);
+    $emailTemplate = createCustomizedEmailTemplate();
+    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
     $handler = new ResetEmailTemplateHandler($repository, $eventCollector);

@@ -25,6 +25,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/GridPreset/README.md](app/Domain/GridPreset/README.md) | Grid preset module — saved filter/sort/search presets per user, default views |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
+| [tests/e2e/README.md](tests/e2e/README.md) | E2E testing — Playwright setup, auth pattern, best practices |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |
 | [ROADMAP.md](ROADMAP.md) | Feature roadmap and planned work |
 
@@ -65,6 +66,7 @@ When you change **one** of these, check **all** listed files:
 | Add/change infrastructure pattern | `app/Infrastructure/README.md` |
 | Add/change contract interface | `app/Contract/README.md` (contents list + generic type docs if applicable) |
 | Add/change coverage config | `tests/README.md`, `AGENTS.md` (coverage config row) |
+| Add/change e2e test pattern | `tests/e2e/README.md`, `tests/README.md`, `playwright.config.ts` |
 | Add/change observability config | `docker/README.md` |
 | Add/remove a documentation file | `AGENTS.md` (documentation map table) |
 
@@ -90,3 +92,4 @@ When you change **one** of these, check **all** listed files:
 | PHPStan custom rules | `tests/Architecture/PHPStan/` |
 | Code style config | `pint.json`, `rector.php` |
 | Coverage config | `phpunit.coverage.xml` (unified), `phpunit.domain-coverage.xml`, `phpunit.infrastructure-coverage.xml`, `phpunit.presentation-coverage.xml` (per-layer) |
+| Add an e2e test | [tests/e2e/README.md](tests/e2e/README.md), `playwright.config.ts` |

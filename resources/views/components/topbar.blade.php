@@ -24,6 +24,7 @@
                 {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}{{ strtoupper(substr(auth()->user()->name, strpos(auth()->user()->name, ' ') + 1, 1)) }}
             </div>
             <a class="hidden text-base text-gray-600 transition-colors hover:text-indigo-600 sm:inline sm:text-sm"
+               data-testid="topbar-user-email"
                data-tooltip="{{ __('messages.profile.title') }}"
                href="{{ route('profile') }}">{{ auth()->user()->email }}</a>
         </div>
@@ -34,6 +35,7 @@
         <x-topbar-button skip-permission
                          :action="route('logout')"
                          icon="heroicon-o-arrow-right-on-rectangle"
+                         testId="logout-button"
                          :label="__('messages.nav.logout')" />
     </div>
 </header>
