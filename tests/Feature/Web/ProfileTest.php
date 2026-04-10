@@ -40,6 +40,7 @@ it('updates name and password without special permissions', function (): void {
     $this->actingAs($user)
         ->put('/profile', [
             'name' => 'New Name',
+            'current_password' => 'old-password',
             'password' => 'new-password',
             'password_confirmation' => 'new-password',
         ])
@@ -138,6 +139,7 @@ it('admin changes password via profile', function (): void {
         ->put('/profile', [
             'name' => 'Admin Pass',
             'email' => 'adminpass@example.com',
+            'current_password' => 'old-password',
             'password' => 'new-secure-pass',
             'password_confirmation' => 'new-secure-pass',
         ])
@@ -229,6 +231,128 @@ it('removes avatar via profile', function (): void {
 
     $user->refresh();
     expect($user->avatar_file_id)->toBeNull();
+});
+
+it('rejects password change when current password is missing', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d40',
+        'name' => 'No Current Pass',
+        'email' => 'no-current-pass@example.com',
+        'password' => Hash::make('old-password'),
+    ]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'No Current Pass',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('current_password');
+
+    $user->refresh();
+    expect(Hash::check('old-password', $user->password))->toBeTrue();
+});
+
+it('rejects password change when current password is wrong', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d41',
+        'name' => 'Wrong Current',
+        'email' => 'wrong-current@example.com',
+        'password' => Hash::make('correct-password'),
+    ]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Wrong Current',
+            'current_password' => 'wrong-password',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('current_password');
+
+    $user->refresh();
+    expect(Hash::check('correct-password', $user->password))->toBeTrue();
+});
+
+it('rejects password change when confirmation does not match', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d42',
+        'name' => 'Mismatch',
+        'email' => 'mismatch@example.com',
+        'password' => Hash::make('old-password'),
+    ]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Mismatch',
+            'current_password' => 'old-password',
+            'password' => 'new-password',
+            'password_confirmation' => 'different-password',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('password');
+
+    $user->refresh();
+    expect(Hash::check('old-password', $user->password))->toBeTrue();
+});
+
+it('rejects password change when new password is too short', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d43',
+        'name' => 'Short Pass',
+        'email' => 'short-pass@example.com',
+        'password' => Hash::make('old-password'),
+    ]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Short Pass',
+            'current_password' => 'old-password',
+            'password' => 'short',
+            'password_confirmation' => 'short',
+        ])
+        ->assertRedirect()
+        ->assertSessionHasErrors('password');
+
+    $user->refresh();
+    expect(Hash::check('old-password', $user->password))->toBeTrue();
+});
+
+it('allows profile update without changing password', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d44',
+        'name' => 'Name Only',
+        'email' => 'name-only@example.com',
+        'password' => Hash::make('old-password'),
+    ]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Updated Name',
+        ])
+        ->assertRedirect('/profile');
+
+    $user->refresh();
+    expect($user->name)->toBe('Updated Name')
+        ->and(Hash::check('old-password', $user->password))->toBeTrue();
+});
+
+it('redirects with success flash on valid update', function (): void {
+    $user = UserModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d45',
+        'name' => 'Flash Test',
+        'email' => 'flash-test@example.com',
+        'password' => Hash::make('old-password'),
+    ]);
+
+    $this->actingAs($user)
+        ->put('/profile', [
+            'name' => 'Flash Test Updated',
+        ])
+        ->assertRedirect('/profile')
+        ->assertSessionHas('success', __('messages.profile.updated'));
 });
 
 it('preserves avatar when no change submitted via profile', function (): void {

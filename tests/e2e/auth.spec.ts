@@ -8,7 +8,7 @@ test.describe('Authentication', () => {
             await page.goto('/login');
 
             await page.getByTestId('login-email-input').fill('admin@test.com');
-            await page.getByTestId('login-password-input').fill('admin');
+            await page.getByTestId('login-password-input').fill('password');
             await page.getByTestId('login-submit-button').click();
 
             await expect(page).toHaveURL(/\/users/);

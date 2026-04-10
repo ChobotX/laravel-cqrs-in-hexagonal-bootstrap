@@ -49,7 +49,7 @@ final class TenantSeeder extends Seeder
         $admin = UserModel::factory()->create([
             'name' => 'admin',
             'email' => 'admin@test.com',
-            'password' => Hash::make('admin'),
+            'password' => Hash::make('password'),
         ]);
         $this->assignRole($admin->id, $superAdminRole->id);
         $this->userIds['admin@test.com'] = $admin->id;

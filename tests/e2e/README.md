@@ -28,7 +28,7 @@ E2E tests are **not** part of `composer check` — they require a running app wi
 
 ## Authentication
 
-The `auth.setup.ts` file logs in as `admin@test.com` / `admin` once and saves the session to `.auth/user.json`. All tests in the `chromium` project start pre-authenticated.
+The `auth.setup.ts` file logs in as `admin@test.com` / `password` once and saves the session to `.auth/user.json`. All tests in the `chromium` project start pre-authenticated.
 
 For tests that need an unauthenticated (guest) context:
 
@@ -90,7 +90,7 @@ Each test gets its own browser context. No state leaks between tests. Don't rely
 
 ### Determinism
 
-- Use absolute fixtures: seeded user emails (`admin@test.com`), fixed passwords (`admin`)
+- Use absolute fixtures: seeded user emails (`admin@test.com`), fixed passwords (`password`)
 - Never generate random data in tests
 - Avoid asserting on locale-dependent text — use `data-testid` + visibility assertions instead
 - No `page.waitForTimeout()` — use web-first assertions or `page.waitForURL()` which auto-retry
@@ -112,9 +112,10 @@ Each test gets its own browser context. No state leaks between tests. Don't rely
 
 ```
 tests/e2e/
-├── .auth/           # Saved auth state (gitignored)
+├── .auth/                      # Saved auth state (gitignored)
 │   └── user.json
-├── auth.setup.ts    # Login setup — runs before all tests
-├── auth.spec.ts     # Login/logout tests
-└── README.md        # This file
+├── auth.setup.ts               # Login setup — runs before all tests
+├── auth.spec.ts                # Login/logout tests
+├── profile-password.spec.ts    # Profile password change tests
+└── README.md                   # This file
 ```

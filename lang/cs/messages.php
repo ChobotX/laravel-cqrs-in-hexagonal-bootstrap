@@ -36,7 +36,8 @@ return [
         'subtitle' => 'Aktualizujte své údaje',
         'info_title' => 'Osobní údaje',
         'password_title' => 'Změna hesla',
-        'password_subtitle' => 'Ponechte obě pole prázdná pro zachování stávajícího hesla',
+        'password_subtitle' => 'Zadejte aktuální heslo pro nastavení nového, nebo ponechte všechna pole prázdná',
+        'current_password' => 'Aktuální heslo',
         'updated' => 'Profil aktualizován.',
     ],
 

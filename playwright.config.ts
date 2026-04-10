@@ -47,6 +47,8 @@ export default defineConfig({
                 storageState: join(__dirname, 'tests/e2e/.auth/user.json'),
             },
             dependencies: ['setup'],
+            teardown: 'teardown',
         },
+        { name: 'teardown', testMatch: /.*\.teardown\.ts/ },
     ],
 });

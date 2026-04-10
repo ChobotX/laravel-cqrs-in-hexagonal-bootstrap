@@ -36,7 +36,8 @@ return [
         'subtitle' => 'Update your account information',
         'info_title' => 'Profile Information',
         'password_title' => 'Change Password',
-        'password_subtitle' => 'Leave both fields blank to keep your current password',
+        'password_subtitle' => 'Enter your current password to set a new one, or leave all fields blank',
+        'current_password' => 'Current Password',
         'updated' => 'Profile updated.',
     ],
 

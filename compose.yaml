@@ -22,6 +22,7 @@ services:
             - sail
         depends_on:
             - pgsql
+            - redis
             - mailpit
             - reverb
     reverb:
@@ -50,6 +51,21 @@ services:
             - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    redis:
+        image: 'redis:8-alpine'
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - 'sail-redis:/data'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - redis-cli
+                - ping
+            retries: 3
+            timeout: 5s
     pgsql:
         image: 'postgres:18-alpine'
         command: postgres -c max_connections=500
@@ -81,4 +97,6 @@ networks:
         driver: bridge
 volumes:
     sail-pgsql:
+        driver: local
+    sail-redis:
         driver: local
