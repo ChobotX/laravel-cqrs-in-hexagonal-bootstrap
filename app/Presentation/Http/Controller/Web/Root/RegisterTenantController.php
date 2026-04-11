@@ -6,7 +6,9 @@ namespace App\Presentation\Http\Controller\Web\Root;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\CommandBus;
+use App\Contract\IdGenerator;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
+use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Presentation\Http\Request\Root\RegisterTenantFormRequest;
 use Illuminate\Http\RedirectResponse;
 
@@ -15,6 +17,7 @@ final readonly class RegisterTenantController
 {
     public function __construct(
         private CommandBus $commandBus,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function __invoke(RegisterTenantFormRequest $registerTenantFormRequest): RedirectResponse
@@ -26,6 +29,13 @@ final readonly class RegisterTenantController
             name: $registerTenantFormRequest->string('name')->toString(),
             slug: $slug,
             domain: $domain,
+        ));
+
+        $this->commandBus->dispatch(new InitializeTenantAdminCommand(
+            tenantSlug: $slug,
+            adminId: $this->idGenerator->generate(),
+            adminName: $registerTenantFormRequest->string('admin_name')->toString(),
+            adminEmail: $registerTenantFormRequest->string('admin_email')->toString(),
         ));
 
         /** @var string $rootDomain */

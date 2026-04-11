@@ -261,11 +261,13 @@ use App\Domain\Team\Handler\Query\ListTeamsHandler;
 use App\Domain\Team\Handler\Query\SearchTeamsHandler;
 use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsHandler;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
+use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateAllTenantsCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
+use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
 use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsHandler;
@@ -408,6 +410,7 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteNotificationCommand::class => DeleteNotificationHandler::class,
                 UpdateNotificationPreferencesCommand::class => UpdateNotificationPreferencesHandler::class,
                 CreateTenantCommand::class => CreateTenantHandler::class,
+                InitializeTenantAdminCommand::class => InitializeTenantAdminHandler::class,
                 MigrateTenantCommand::class => MigrateTenantHandler::class,
                 MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
                 StoreFileCommand::class => StoreFileHandler::class,

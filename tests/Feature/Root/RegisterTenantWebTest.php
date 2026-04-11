@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Domain\Tenancy\Contract\Service\TenantAdminInitializer;
+use Tests\Helper\FakeTenantAdminInitializer;
+
 it('shows registration form', function (): void {
     app()->forgetScopedInstances();
 
@@ -9,24 +12,32 @@ it('shows registration form', function (): void {
         ->assertOk();
 });
 
-it('creates tenant via registration form', function (): void {
+it('creates tenant with admin via registration form', function (): void {
     app()->forgetScopedInstances();
+
+    $fake = new FakeTenantAdminInitializer;
+    $this->app->instance(TenantAdminInitializer::class, $fake);
 
     $this->post('http://laravel-bootstrap.local/register', [
         'name' => 'New Corp',
         'slug' => 'newcorp',
         'domain' => 'newcorp',
+        'admin_name' => 'Admin User',
+        'admin_email' => 'admin@newcorp.com',
     ])->assertRedirect();
 
     $this->assertDatabaseHas('tenants', ['slug' => 'newcorp'], 'landlord');
     $this->assertDatabaseHas('tenant_domains', ['domain' => 'newcorp'], 'landlord');
+
+    expect($fake->initializedAdminName)->toBe('Admin User')
+        ->and($fake->initializedAdminEmail)->toBe('admin@newcorp.com');
 });
 
 it('validates required fields', function (): void {
     app()->forgetScopedInstances();
 
     $this->post('http://laravel-bootstrap.local/register', [])
-        ->assertSessionHasErrors(['name', 'slug', 'domain']);
+        ->assertSessionHasErrors(['name', 'slug', 'domain', 'admin_name', 'admin_email']);
 });
 
 it('validates slug format', function (): void {
@@ -36,6 +47,8 @@ it('validates slug format', function (): void {
         'name' => 'Valid Name',
         'slug' => 'INVALID SLUG!',
         'domain' => 'valid',
+        'admin_name' => 'Admin',
+        'admin_email' => 'admin@test.com',
     ])->assertSessionHasErrors(['slug']);
 });
 
@@ -46,6 +59,8 @@ it('validates slug uniqueness', function (): void {
         'name' => 'Duplicate',
         'slug' => testTenantSlug(),
         'domain' => 'unique-domain',
+        'admin_name' => 'Admin',
+        'admin_email' => 'admin@test.com',
     ])->assertSessionHasErrors(['slug']);
 });
 
@@ -56,5 +71,19 @@ it('validates domain uniqueness', function (): void {
         'name' => 'Duplicate Domain',
         'slug' => 'unique-slug',
         'domain' => testTenantDomain(),
+        'admin_name' => 'Admin',
+        'admin_email' => 'admin@test.com',
     ])->assertSessionHasErrors(['domain']);
+});
+
+it('validates admin email format', function (): void {
+    app()->forgetScopedInstances();
+
+    $this->post('http://laravel-bootstrap.local/register', [
+        'name' => 'Test',
+        'slug' => 'test-email',
+        'domain' => 'test-email',
+        'admin_name' => 'Admin',
+        'admin_email' => 'not-an-email',
+    ])->assertSessionHasErrors(['admin_email']);
 });

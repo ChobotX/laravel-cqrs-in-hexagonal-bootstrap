@@ -11,7 +11,7 @@
 
     <form class="space-y-5"
           method="POST"
-          action="{{ url()->full() }}">
+          action="{{ request()->getRequestUri() }}">
         @csrf
 
         <div>
@@ -25,6 +25,7 @@
                 <input class="block w-full rounded-lg border border-gray-300 py-2.5 pl-11 pr-3.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                        id="password"
                        name="password"
+                       data-testid="invite-password-input"
                        type="password"
                        autocomplete="new-password"
                        required
@@ -49,6 +50,7 @@
                 <input class="block w-full rounded-lg border border-gray-300 py-2.5 pl-11 pr-3.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                        id="password_confirmation"
                        name="password_confirmation"
+                       data-testid="invite-password-confirmation-input"
                        type="password"
                        autocomplete="new-password"
                        required
@@ -63,6 +65,7 @@
 
         <x-primary-button skip-permission
                           variant="login"
+                          testId="invite-submit-button"
                           :label="__('messages.auth.set_password')" />
     </form>
 @endsection

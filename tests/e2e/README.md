@@ -86,7 +86,9 @@ Never pass `{ force: true }` to click or other actions. If an element isn't clic
 
 ### Test Isolation
 
-Each test gets its own browser context. No state leaks between tests. Don't rely on test execution order.
+Each test gets its own browser context by default. For multi-step flows that share state (e.g., password change + revert, tenant registration + invite acceptance), use `test.describe.configure({ mode: 'serial' })` — within those describes, order is intentional.
+
+Tests that mutate shared state (e.g., password) must include `afterAll` cleanup that resets via artisan, so subsequent projects start from a known state.
 
 ### Determinism
 
@@ -95,11 +97,52 @@ Each test gets its own browser context. No state leaks between tests. Don't rely
 - Avoid asserting on locale-dependent text — use `data-testid` + visibility assertions instead
 - No `page.waitForTimeout()` — use web-first assertions or `page.waitForURL()` which auto-retry
 
+### Execution Order
+
+Tests run in sequential project phases via Playwright dependencies (see `playwright.config.ts`):
+
+```
+setup → auth-tests → profile-tests → tenant-tests → teardown
+```
+
+Why sequential instead of parallel:
+- Shared admin user (`admin@test.com`) is rate-limited at 5 req/min on login
+- Profile tests mutate admin password (change + revert)
+- Tenant tests create/destroy schemas affecting server-side state
+
+As the suite grows, tests using independent users and non-shared endpoints can be grouped into parallel projects.
+
 ### Performance
 
-- Tests run in parallel by default (`fullyParallel: true`)
 - Auth is set up once and reused via `storageState` — no per-test login overhead
 - Only Chromium is configured (add Firefox/WebKit when cross-browser testing is needed)
+- `test:e2e:reset` script flushes Redis and resets admin password before each run
+
+## Mailpit Integration
+
+For tests that verify email delivery (e.g., invite acceptance), use Mailpit's REST API. Read `MAILPIT_API_URL` from the environment with a localhost fallback:
+
+```typescript
+const MAILPIT_API = process.env.MAILPIT_API_URL ?? 'http://localhost:8025/api/v1';
+
+// Clear messages before test
+await fetch(`${MAILPIT_API}/messages`, { method: 'DELETE' });
+
+// Poll for a message by recipient
+const res = await fetch(`${MAILPIT_API}/messages`);
+const data = await res.json();
+const msg = data.messages?.find(m => m.To.some(to => to.Address === 'user@example.com'));
+
+// Fetch full message with HTML body
+const detail = await fetch(`${MAILPIT_API}/message/${msg.ID}`);
+const body = (await detail.json()).HTML;
+```
+
+Since domain events are queued (`HandleDomainEventJob`), process the queue before polling Mailpit:
+
+```typescript
+execSync('./vendor/bin/sail php artisan queue:work --stop-when-empty --queue=default', { stdio: 'inherit' });
+```
 
 ## Debugging
 
@@ -115,7 +158,9 @@ tests/e2e/
 ├── .auth/                      # Saved auth state (gitignored)
 │   └── user.json
 ├── auth.setup.ts               # Login setup — runs before all tests
+├── auth.teardown.ts            # Cleanup stored auth state after tests
 ├── auth.spec.ts                # Login/logout tests
 ├── profile-password.spec.ts    # Profile password change tests
+├── tenant-invite.spec.ts       # Tenant registration + member invitation
 └── README.md                   # This file
 ```

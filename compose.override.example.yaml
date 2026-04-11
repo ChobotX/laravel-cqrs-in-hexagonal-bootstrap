@@ -1,7 +1,7 @@
 services:
     laravel.test:
         labels:
-            dev.orbstack.domains: "laravel-bootstrap.local,alpha.laravel-bootstrap.local,bravo.laravel-bootstrap.local"
+            dev.orbstack.domains: "laravel-bootstrap.local,alpha.laravel-bootstrap.local,bravo.laravel-bootstrap.local,e2etest.laravel-bootstrap.local"
     reverb:
         labels:
             dev.orbstack.domains: "reverb.laravel-bootstrap.local"

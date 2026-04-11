@@ -42,6 +42,7 @@
                     <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="name"
                            name="name"
+                           data-testid="user-create-name-input"
                            type="text"
                            value="{{ old('name') }}"
                            required
@@ -58,6 +59,7 @@
                     <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
                            id="email"
                            name="email"
+                           data-testid="user-create-email-input"
                            type="email"
                            value="{{ old('email') }}"
                            required
@@ -70,6 +72,7 @@
 
                 <div class="col-span-full flex items-center gap-3 pt-2">
                     <x-primary-button skip-permission
+                                      testId="user-create-submit-button"
                                       :label="__('messages.users.create_action')" />
                     <x-primary-button skip-permission
                                       variant="secondary"

@@ -16,7 +16,7 @@ it('shows accept invite form for non-activated user', function (): void {
 
     $url = URL::temporarySignedRoute('invite.accept', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440700',
-    ]);
+    ], absolute: false);
 
     $this->get($url)
         ->assertOk()
@@ -34,7 +34,7 @@ it('redirects to login when user is already activated', function (): void {
 
     $url = URL::temporarySignedRoute('invite.accept', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440701',
-    ]);
+    ], absolute: false);
 
     $this->get($url)
         ->assertRedirect('/login')
@@ -63,7 +63,7 @@ it('accepts invite and logs in user', function (): void {
 
     $url = URL::temporarySignedRoute('invite.accept.store', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440703',
-    ]);
+    ], absolute: false);
 
     $this->post($url, [
         'password' => 'password123',
@@ -88,7 +88,7 @@ it('validates password is required for invite acceptance', function (): void {
 
     $url = URL::temporarySignedRoute('invite.accept.store', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440704',
-    ]);
+    ], absolute: false);
 
     $this->post($url, [])
         ->assertSessionHasErrors(['password']);
@@ -104,7 +104,7 @@ it('validates password minimum length for invite acceptance', function (): void 
 
     $url = URL::temporarySignedRoute('invite.accept.store', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440705',
-    ]);
+    ], absolute: false);
 
     $this->post($url, [
         'password' => 'short',
@@ -122,7 +122,7 @@ it('validates password confirmation for invite acceptance', function (): void {
 
     $url = URL::temporarySignedRoute('invite.accept.store', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440706',
-    ]);
+    ], absolute: false);
 
     $this->post($url, [
         'password' => 'password123',
@@ -161,7 +161,7 @@ it('redirects authenticated user away from invite page', function (): void {
 
     $url = URL::temporarySignedRoute('invite.accept', now()->addHours(1), [
         'userId' => '550e8400-e29b-41d4-a716-446655440709',
-    ]);
+    ], absolute: false);
 
     $this->actingAs($user)
         ->get($url)

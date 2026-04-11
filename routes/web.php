@@ -82,8 +82,8 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/login', ShowLoginController::class)->name('login');
     Route::post('/login', LoginController::class)->middleware('throttle:login');
 
-    Route::get('/invite/{userId}', ShowAcceptInviteController::class)->name('invite.accept')->middleware('signed');
-    Route::post('/invite/{userId}', AcceptInviteController::class)->name('invite.accept.store')->middleware('signed');
+    Route::get('/invite/{userId}', ShowAcceptInviteController::class)->name('invite.accept')->middleware('signed:relative');
+    Route::post('/invite/{userId}', AcceptInviteController::class)->name('invite.accept.store')->middleware('signed:relative');
 
     Route::get('/forgot-password', ShowForgotPasswordController::class)->name('password.request');
     Route::post('/forgot-password', ForgotPasswordController::class)->name('password.email')->middleware('throttle:password-reset');

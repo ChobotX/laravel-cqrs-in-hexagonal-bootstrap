@@ -17,10 +17,13 @@ final readonly class LaravelInviteLinkGenerator implements InviteLinkGenerator
 
     public function generate(string $userId): string
     {
-        return $this->urlGenerator->temporarySignedRoute(
+        $relativePath = $this->urlGenerator->temporarySignedRoute(
             'invite.accept',
             now()->addHours(self::INVITE_EXPIRY_HOURS),
             ['userId' => $userId],
+            absolute: false,
         );
+
+        return $this->urlGenerator->to($relativePath);
     }
 }

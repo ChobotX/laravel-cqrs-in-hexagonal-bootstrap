@@ -28,10 +28,17 @@ test.describe('Authentication', () => {
     });
 
     test.describe('Logout', () => {
-        test('logout redirects to login page', async ({ page }) => {
-            await page.goto('/users');
+        // Use a fresh guest context and login manually so the logout does NOT
+        // destroy the shared admin session used by other test projects.
+        test.use({ storageState: { cookies: [], origins: [] } });
 
+        test('logout redirects to login page', async ({ page }) => {
+            await page.goto('/login');
+            await page.getByTestId('login-email-input').fill('admin@test.com');
+            await page.getByTestId('login-password-input').fill('password');
+            await page.getByTestId('login-submit-button').click();
             await expect(page.getByTestId('topbar-user-email')).toBeVisible();
+
             await page.getByTestId('logout-button').click();
 
             await expect(page).toHaveURL(/\/login/);
