@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\EmailTemplate\Constant\EmailTemplateFields;
 use App\Domain\EmailTemplate\Contract\Command\UpdateEmailTemplateCommand;
 use App\Domain\EmailTemplate\Contract\Entity\EmailTemplate;
 use App\Domain\EmailTemplate\Contract\Event\EmailTemplateUpdated;
@@ -65,7 +67,29 @@ it('collects EmailTemplateUpdated event', function (): void {
     assert($eventCollector->collected[0] instanceof EmailTemplateUpdated);
     expect($eventCollector->collected[0]->templateType)->toBe('user_invite')
         ->and($eventCollector->collected[0]->locale)->toBe('en')
+        ->and($eventCollector->collected[0]->changes())->toEqual([
+            new PropertyChange(EmailTemplateFields::SUBJECT_TEMPLATE, 'Original subject', 'New subject'),
+            new PropertyChange(EmailTemplateFields::BODY_TEMPLATE, 'Original body', 'New body'),
+        ])
         ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
+});
+
+it('does not save or collect event when content is unchanged', function (): void {
+    $emailTemplate = createEmailTemplate();
+    $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);
+
+    $handler->handle(new UpdateEmailTemplateCommand(
+        templateType: 'user_invite',
+        locale: 'en',
+        subjectTemplate: 'Original subject',
+        bodyTemplate: 'Original body',
+    ));
+
+    expect($repository->updated)->toBeEmpty()
+        ->and($eventCollector->collected)->toHaveCount(0);
 });
 
 it('throws EmailTemplateNotFoundException for non-existent template', function (): void {

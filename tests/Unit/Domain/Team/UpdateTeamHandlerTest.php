@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\Team\Constant\TeamFields;
 use App\Domain\Team\Contract\Command\UpdateTeamCommand;
 use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Event\TeamUpdated;
@@ -44,6 +46,64 @@ it('updates a team and emits event', function (): void {
         ->and($teamRepo->saved[0]->name->value)->toBe('Updated Engineering')
         ->and($eventCollector->collected)->toHaveCount(1)
         ->and($eventCollector->collected[0])->toBeInstanceOf(TeamUpdated::class);
+    assert($eventCollector->collected[0] instanceof TeamUpdated);
+    expect($eventCollector->collected[0]->teamId)->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($eventCollector->collected[0]->changes())->toEqual([
+            new PropertyChange(TeamFields::NAME, 'Engineering', 'Updated Engineering'),
+            new PropertyChange(TeamFields::DESCRIPTION, 'Original', 'Updated'),
+        ]);
+});
+
+it('does not save or collect event when data is unchanged', function (): void {
+    $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+
+    $handler->handle(new UpdateTeamCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'Engineering',
+        slug: 'engineering',
+        description: 'Original',
+        parentTeamId: null,
+    ));
+
+    expect($teamRepo->saved)->toHaveCount(0)
+        ->and($eventCollector->collected)->toHaveCount(0);
+});
+
+it('tracks parent team change', function (): void {
+    $parent = new Team(
+        new TeamId('770e8400-e29b-41d4-a716-446655440000'),
+        new TeamName('Parent'),
+        new TeamSlug('parent'),
+        'Parent team',
+        null,
+    );
+
+    $teamRepo = new FakeTeamRepository([
+        '550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting(),
+        '770e8400-e29b-41d4-a716-446655440000' => $parent,
+    ]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+
+    $handler->handle(new UpdateTeamCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'Engineering',
+        slug: 'engineering',
+        description: 'Original',
+        parentTeamId: '770e8400-e29b-41d4-a716-446655440000',
+    ));
+
+    expect($teamRepo->saved)->toHaveCount(1)
+        ->and($teamRepo->saved[0]->parentTeamId?->value)->toBe('770e8400-e29b-41d4-a716-446655440000')
+        ->and($eventCollector->collected)->toHaveCount(1);
+    assert($eventCollector->collected[0] instanceof TeamUpdated);
+    expect($eventCollector->collected[0]->changes())->toEqual([
+        new PropertyChange(TeamFields::PARENT_TEAM_ID, null, '770e8400-e29b-41d4-a716-446655440000'),
+    ]);
 });
 
 it('allows keeping the same slug for the same team', function (): void {

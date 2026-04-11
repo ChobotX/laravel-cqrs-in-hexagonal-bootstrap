@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\User\Constant\UserFields;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\UserUpdated;
@@ -39,7 +41,7 @@ it('saves an updated user via the repository', function (): void {
         ->and($repository->saved[0]->email->value)->toBe('jane@example.com');
 });
 
-it('collects an enriched UserUpdated event', function (): void {
+it('collects a UserUpdated event with changes', function (): void {
     $existing = new User(
         new UserId('550e8400-e29b-41d4-a716-446655440000'),
         new UserName('John Doe'),
@@ -61,9 +63,33 @@ it('collects an enriched UserUpdated event', function (): void {
     expect($eventCollector->collected[0])->toBeInstanceOf(UserUpdated::class);
     assert($eventCollector->collected[0] instanceof UserUpdated);
     expect($eventCollector->collected[0]->userId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($eventCollector->collected[0]->name)->toBe('Jane Doe')
-        ->and($eventCollector->collected[0]->email)->toBe('jane@example.com')
+        ->and($eventCollector->collected[0]->changes())->toEqual([
+            new PropertyChange(UserFields::NAME, 'John Doe', 'Jane Doe'),
+            new PropertyChange(UserFields::EMAIL, 'john@example.com', 'jane@example.com'),
+        ])
         ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
+});
+
+it('does not save or collect event when data is unchanged', function (): void {
+    $existing = new User(
+        new UserId('550e8400-e29b-41d4-a716-446655440000'),
+        new UserName('John Doe'),
+        new Email('john@example.com'),
+    );
+
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateUserHandler($repository, $eventCollector);
+
+    $handler->handle(new UpdateUserCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        email: 'john@example.com',
+    ));
+
+    expect($repository->saved)->toHaveCount(0)
+        ->and($eventCollector->collected)->toHaveCount(0);
 });
 
 it('saves an updated user with avatarFileId', function (): void {
@@ -90,7 +116,10 @@ it('saves an updated user with avatarFileId', function (): void {
 
     $event = $eventCollector->collected[0];
     assert($event instanceof UserUpdated);
-    expect($event->avatarFileId)->toBe('770e8400-e29b-41d4-a716-446655440000');
+    $avatarChange = array_values(array_filter($event->changes(), static fn (PropertyChange $propertyChange): bool => $propertyChange->property === UserFields::AVATAR_FILE_ID));
+    expect($avatarChange)->toHaveCount(1)
+        ->and($avatarChange[0]->old)->toBeNull()
+        ->and($avatarChange[0]->new)->toBe('770e8400-e29b-41d4-a716-446655440000');
 });
 
 it('clears avatarFileId when set to null', function (): void {
@@ -116,7 +145,10 @@ it('clears avatarFileId when set to null', function (): void {
 
     $event = $eventCollector->collected[0];
     assert($event instanceof UserUpdated);
-    expect($event->avatarFileId)->toBeNull();
+    $avatarChange = array_values(array_filter($event->changes(), static fn (PropertyChange $propertyChange): bool => $propertyChange->property === UserFields::AVATAR_FILE_ID));
+    expect($avatarChange)->toHaveCount(1)
+        ->and($avatarChange[0]->old)->toBe('770e8400-e29b-41d4-a716-446655440000')
+        ->and($avatarChange[0]->new)->toBeNull();
 });
 
 it('throws UserNotFoundException when user does not exist', function (): void {

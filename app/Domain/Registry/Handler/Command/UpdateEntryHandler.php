@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Handler\Command;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Constant\EntryFields;
 use App\Domain\Registry\Contract\Command\UpdateEntryCommand;
 use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Event\EntryUpdated;
@@ -39,6 +41,12 @@ final readonly class UpdateEntryHandler implements CommandHandler
         $entry = $this->entryRepository->findById(new EntryId($command->id))
             ?? throw new EntryNotFoundException($command->id);
 
+        $changes = $this->buildChanges($entry, $command);
+
+        if ($changes === []) {
+            return;
+        }
+
         $version = $this->definitionVersionRepository->findByDefinitionAndVersion($entry->definitionId, $entry->definitionVersion)
             ?? throw new DefinitionVersionNotFoundException($entry->definitionId->value.':v'.$entry->definitionVersion->value);
 
@@ -64,8 +72,32 @@ final readonly class UpdateEntryHandler implements CommandHandler
 
         $this->eventCollector->collect(new EntryUpdated(
             entryId: $entry->id->value,
-            title: $command->title,
+            changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    private function encodeData(array $data): string
+    {
+        return (string) json_encode($data);
+    }
+
+    /** @return list<PropertyChange> */
+    private function buildChanges(Entry $entry, UpdateEntryCommand $updateEntryCommand): array
+    {
+        $changes = [];
+
+        if ($entry->title->value !== $updateEntryCommand->title) {
+            $changes[] = new PropertyChange(EntryFields::TITLE, $entry->title->value, $updateEntryCommand->title);
+        }
+
+        if ($entry->data !== $updateEntryCommand->data) {
+            $changes[] = new PropertyChange(EntryFields::DATA, $this->encodeData($entry->data), $this->encodeData($updateEntryCommand->data));
+        }
+
+        return $changes;
     }
 }

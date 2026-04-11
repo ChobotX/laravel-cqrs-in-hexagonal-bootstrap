@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Command;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\File\Contract\ValueObject\FileId;
+use App\Domain\User\Constant\UserFields;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordChanged;
@@ -50,7 +52,16 @@ final readonly class UpdateProfileHandler implements CommandHandler
             avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : null,
         );
 
-        $this->userRepository->update($user);
+        $changes = $this->buildChanges($existing, $user);
+
+        if ($changes !== []) {
+            $this->userRepository->update($user);
+            $this->eventCollector->collect(new UserUpdated(
+                userId: $user->id->value,
+                changes: $changes,
+                occurredAt: new DateTimeImmutable,
+            ));
+        }
 
         if ($command->rawPassword !== null && $command->rawPassword !== '') {
             $this->passwordManager->setPassword($user->id->value, $command->rawPassword);
@@ -59,14 +70,26 @@ final readonly class UpdateProfileHandler implements CommandHandler
                 occurredAt: new DateTimeImmutable,
             ));
         }
+    }
 
-        $this->eventCollector->collect(new UserUpdated(
-            userId: $user->id->value,
-            name: $user->name->value,
-            email: $user->email->value,
-            occurredAt: new DateTimeImmutable,
-            avatarFileId: $user->avatarFileId?->value,
-        ));
+    /** @return list<PropertyChange> */
+    private function buildChanges(User $existing, User $updated): array
+    {
+        $changes = [];
+
+        if ($existing->name->value !== $updated->name->value) {
+            $changes[] = new PropertyChange(UserFields::NAME, $existing->name->value, $updated->name->value);
+        }
+
+        if ($existing->email->value !== $updated->email->value) {
+            $changes[] = new PropertyChange(UserFields::EMAIL, $existing->email->value, $updated->email->value);
+        }
+
+        if ($existing->avatarFileId?->value !== $updated->avatarFileId?->value) {
+            $changes[] = new PropertyChange(UserFields::AVATAR_FILE_ID, $existing->avatarFileId?->value, $updated->avatarFileId?->value);
+        }
+
+        return $changes;
     }
 
     private function resolveEmail(UpdateProfileCommand $updateProfileCommand, User $user): Email

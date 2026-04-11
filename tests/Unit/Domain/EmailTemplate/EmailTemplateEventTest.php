@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Contract\Event\EntityUpdated;
+use App\Domain\EmailTemplate\Constant\EmailTemplateFields;
 use App\Domain\EmailTemplate\Contract\Event\EmailTemplateReset;
 use App\Domain\EmailTemplate\Contract\Event\EmailTemplateUpdated;
 use App\Domain\EmailTemplate\Contract\Event\TemplatedEmailSent;
@@ -13,11 +16,14 @@ it('EmailTemplateReset exposes occurredAt', function (): void {
     expect($event->occurredAt())->toBe($occurredAt);
 });
 
-it('EmailTemplateUpdated exposes occurredAt', function (): void {
+it('EmailTemplateUpdated implements EntityUpdated and exposes changes', function (): void {
     $occurredAt = new DateTimeImmutable('2025-06-15 12:00:00');
-    $event = new EmailTemplateUpdated('user_invite', 'cs', $occurredAt);
+    $changes = [new PropertyChange(EmailTemplateFields::SUBJECT_TEMPLATE, 'Old', 'New')];
+    $event = new EmailTemplateUpdated('user_invite', 'cs', $changes, $occurredAt);
 
-    expect($event->occurredAt())->toBe($occurredAt);
+    expect($event)->toBeInstanceOf(EntityUpdated::class)
+        ->and($event->occurredAt())->toBe($occurredAt)
+        ->and($event->changes())->toEqual($changes);
 });
 
 it('TemplatedEmailSent exposes occurredAt', function (): void {

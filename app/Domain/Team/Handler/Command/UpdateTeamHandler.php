@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Handler\Command;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Team\Constant\TeamFields;
 use App\Domain\Team\Contract\Command\UpdateTeamCommand;
 use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Event\TeamUpdated;
@@ -43,20 +45,7 @@ final readonly class UpdateTeamHandler implements CommandHandler
             throw new TeamSlugAlreadyExistsException($command->slug);
         }
 
-        $parentTeamId = null;
-
-        if ($command->parentTeamId !== null) {
-            $parentTeamId = new TeamId($command->parentTeamId);
-            $parent = $this->teamRepository->findById($parentTeamId);
-
-            if (! $parent instanceof Team) {
-                throw new TeamNotFoundException($command->parentTeamId);
-            }
-
-            if ($parentTeamId->equals($teamId) || in_array($teamId->value, $this->teamRepository->ancestorTeamIds($parentTeamId), true)) {
-                throw new TeamCycleDetectedException($command->id, $command->parentTeamId);
-            }
-        }
+        $parentTeamId = $this->resolveParentTeamId($command, $teamId);
 
         $team = new Team(
             id: $teamId,
@@ -66,13 +55,62 @@ final readonly class UpdateTeamHandler implements CommandHandler
             parentTeamId: $parentTeamId,
         );
 
+        $changes = $this->buildChanges($existing, $team);
+
+        if ($changes === []) {
+            return;
+        }
+
         $this->teamRepository->update($team);
 
         $this->eventCollector->collect(new TeamUpdated(
             teamId: $team->id->value,
-            name: $team->name->value,
-            slug: $team->slug->value,
+            changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
+    }
+
+    private function resolveParentTeamId(UpdateTeamCommand $updateTeamCommand, TeamId $teamId): ?TeamId
+    {
+        if ($updateTeamCommand->parentTeamId === null) {
+            return null;
+        }
+
+        $parentTeamId = new TeamId($updateTeamCommand->parentTeamId);
+        $parent = $this->teamRepository->findById($parentTeamId);
+
+        if (! $parent instanceof Team) {
+            throw new TeamNotFoundException($updateTeamCommand->parentTeamId);
+        }
+
+        if ($parentTeamId->equals($teamId) || in_array($teamId->value, $this->teamRepository->ancestorTeamIds($parentTeamId), true)) {
+            throw new TeamCycleDetectedException($updateTeamCommand->id, $updateTeamCommand->parentTeamId);
+        }
+
+        return $parentTeamId;
+    }
+
+    /** @return list<PropertyChange> */
+    private function buildChanges(Team $existing, Team $updated): array
+    {
+        $changes = [];
+
+        if ($existing->name->value !== $updated->name->value) {
+            $changes[] = new PropertyChange(TeamFields::NAME, $existing->name->value, $updated->name->value);
+        }
+
+        if ($existing->slug->value !== $updated->slug->value) {
+            $changes[] = new PropertyChange(TeamFields::SLUG, $existing->slug->value, $updated->slug->value);
+        }
+
+        if ($existing->description !== $updated->description) {
+            $changes[] = new PropertyChange(TeamFields::DESCRIPTION, $existing->description, $updated->description);
+        }
+
+        if ($existing->parentTeamId?->value !== $updated->parentTeamId?->value) {
+            $changes[] = new PropertyChange(TeamFields::PARENT_TEAM_ID, $existing->parentTeamId?->value, $updated->parentTeamId?->value);
+        }
+
+        return $changes;
     }
 }

@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Tenancy\TenantContext;
+use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
@@ -79,7 +81,7 @@ it('increments auth version for all users on role updated', function (): void {
     UserRoleModel::create(['id' => Str::uuid()->toString(), 'user_id' => $user->id, 'role_id' => $role->id]);
 
     app(RefreshAuthorizationOnRoleUpdated::class)
-        ->handle(new RoleUpdated($role->id, 'R', new DateTimeImmutable));
+        ->handle(new RoleUpdated($role->id, [new PropertyChange(RoleFields::NAME, 'R', 'R2')], new DateTimeImmutable));
 
     expect(versionFor($repository, $user->id))->toBe(1);
 });

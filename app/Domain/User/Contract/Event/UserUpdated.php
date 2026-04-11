@@ -4,18 +4,25 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Contract\Event;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
+use App\Contract\Event\EntityUpdated;
 use DateTimeImmutable;
 
-final readonly class UserUpdated implements DomainEvent
+final readonly class UserUpdated implements DomainEvent, EntityUpdated
 {
+    /** @param list<PropertyChange> $changes */
     public function __construct(
         public string $userId,
-        public string $name,
-        public string $email,
+        public array $changes,
         public DateTimeImmutable $occurredAt,
-        public ?string $avatarFileId = null,
     ) {}
+
+    /** @return list<PropertyChange> */
+    public function changes(): array
+    {
+        return $this->changes;
+    }
 
     public function occurredAt(): DateTimeImmutable
     {

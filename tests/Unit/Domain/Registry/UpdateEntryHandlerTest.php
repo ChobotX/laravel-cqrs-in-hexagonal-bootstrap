@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\Registry\Constant\EntryFields;
 use App\Domain\Registry\Contract\Command\UpdateEntryCommand;
 use App\Domain\Registry\Contract\Entity\DefinitionVersion;
 use App\Domain\Registry\Contract\Entity\Entry;
@@ -78,7 +80,7 @@ it('updates an entry', function (): void {
         ->and($entryRepo->saved[0]->data)->toBe(['name' => 'New Name']);
 });
 
-it('collects an EntryUpdated event', function (): void {
+it('collects an EntryUpdated event with changes', function (): void {
     [$handler, $entryRepo, $eventCollector] = updateEntryHandlerFixtures();
 
     $handler->handle(new UpdateEntryCommand(
@@ -91,7 +93,23 @@ it('collects an EntryUpdated event', function (): void {
     expect($eventCollector->collected[0])->toBeInstanceOf(EntryUpdated::class);
     assert($eventCollector->collected[0] instanceof EntryUpdated);
     expect($eventCollector->collected[0]->entryId)->toBe('770e8400-e29b-41d4-a716-446655440000')
-        ->and($eventCollector->collected[0]->title)->toBe('New Title');
+        ->and($eventCollector->collected[0]->changes())->toEqual([
+            new PropertyChange(EntryFields::TITLE, 'Old Title', 'New Title'),
+            new PropertyChange(EntryFields::DATA, '{"name":"Old Name"}', '{"name":"New Name"}'),
+        ]);
+});
+
+it('does not save or collect event when data is unchanged', function (): void {
+    [$handler, $entryRepo, $eventCollector] = updateEntryHandlerFixtures();
+
+    $handler->handle(new UpdateEntryCommand(
+        id: '770e8400-e29b-41d4-a716-446655440000',
+        title: 'Old Title',
+        data: ['name' => 'Old Name'],
+    ));
+
+    expect($entryRepo->saved)->toHaveCount(0)
+        ->and($eventCollector->collected)->toHaveCount(0);
 });
 
 it('throws when entry not found', function (): void {

@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
+use App\Contract\Event\EntityUpdated;
+use App\Domain\Team\Constant\TeamFields;
 use App\Domain\Team\Contract\Event\TeamCreated;
 use App\Domain\Team\Contract\Event\TeamDeleted;
 use App\Domain\Team\Contract\Event\TeamMemberAdded;
@@ -25,19 +28,20 @@ it('TeamCreated implements DomainEvent and exposes occurredAt', function (): voi
         ->and($event->slug)->toBe('engineering');
 });
 
-it('TeamUpdated implements DomainEvent and exposes occurredAt', function (): void {
+it('TeamUpdated implements DomainEvent and EntityUpdated and exposes changes', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
+    $changes = [new PropertyChange(TeamFields::NAME, 'Old', 'Updated')];
     $event = new TeamUpdated(
         teamId: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Updated',
-        slug: 'updated',
+        changes: $changes,
         occurredAt: $occurredAt,
     );
 
     expect($event)->toBeInstanceOf(DomainEvent::class)
+        ->and($event)->toBeInstanceOf(EntityUpdated::class)
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->teamId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($event->name)->toBe('Updated');
+        ->and($event->changes())->toEqual($changes);
 });
 
 it('TeamDeleted implements DomainEvent and exposes occurredAt', function (): void {

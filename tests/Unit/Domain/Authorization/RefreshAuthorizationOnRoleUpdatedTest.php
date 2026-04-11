@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
 use Tests\Helper\FakeAuthorizationRefresher;
@@ -15,7 +17,7 @@ it('refreshes authorization for all users with the updated role', function (): v
     ];
 
     $handler = new RefreshAuthorizationOnRoleUpdated($refresher, $userPermissionRepo);
-    $handler->handle(new RoleUpdated('550e8400-e29b-41d4-a716-446655440000', 'Updated Role', new DateTimeImmutable('2026-01-15T10:00:00+00:00')));
+    $handler->handle(new RoleUpdated('550e8400-e29b-41d4-a716-446655440000', [new PropertyChange(RoleFields::NAME, 'Old', 'Updated Role')], new DateTimeImmutable('2026-01-15T10:00:00+00:00')));
 
     expect($refresher->refreshedUserIds)->toBe(['user-1', 'user-2', 'user-3']);
 });
@@ -25,7 +27,7 @@ it('does nothing when no users have the updated role', function (): void {
     $userPermissionRepo = new FakeUserPermissionRepository;
 
     $handler = new RefreshAuthorizationOnRoleUpdated($refresher, $userPermissionRepo);
-    $handler->handle(new RoleUpdated('550e8400-e29b-41d4-a716-446655440000', 'Updated Role', new DateTimeImmutable('2026-01-15T10:00:00+00:00')));
+    $handler->handle(new RoleUpdated('550e8400-e29b-41d4-a716-446655440000', [new PropertyChange(RoleFields::NAME, 'Old', 'Updated Role')], new DateTimeImmutable('2026-01-15T10:00:00+00:00')));
 
     expect($refresher->refreshedUserIds)->toBe([]);
 });

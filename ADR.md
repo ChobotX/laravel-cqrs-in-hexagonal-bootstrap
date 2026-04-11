@@ -146,6 +146,12 @@ Every `CommandHandler` must inject `EventCollector` and fire at least one domain
 **Why:** Domain events are the backbone of cross-domain communication, audit logging, and webhook delivery. Silent commands — those that mutate state without signaling — are invisible to the rest of the system. Requiring an explicit opt-out forces a conscious decision.
 **Enforced by:** PHPStan rule `CommandHandlerMustCollectEventsRule`. See [app/Domain/README.md](app/Domain/README.md).
 
+### Update events must carry changes and skip no-ops
+
+Update domain events (classes ending in "Updated" in `Contract/Event/`) must implement `EntityUpdated` and carry a `list<PropertyChange>` with only the changed fields (old/new values). Update handlers must compare old state vs new state and skip both the save and the event when nothing changes. The `PropertyChange` DTO lives in `App\Application\Event\` and supports a `sensitive` flag for redacting values of sensitive fields.
+**Why:** Unconditional update events cause unnecessary async job processing, make audit logs noisy (no-change updates are indistinguishable from real changes), and force event handlers to refresh caches even when nothing changed. Carrying old/new values enables consumers to react to specific field changes and provides a clear audit trail.
+**Enforced by:** PHPStan rule `UpdatedEventMustImplementEntityUpdatedRule` (structural enforcement). Change detection and no-op skipping enforced by handler unit tests with 100% coverage. See [app/Domain/README.md](app/Domain/README.md).
+
 ### Command bus transaction wrapper
 
 All command handler execution (including event job insertion) is wrapped in a database transaction by the `WrapInTransaction` bus middleware. Nested `DB::transaction()` calls (from repositories or inner command dispatches) create PostgreSQL SAVEPOINTs. Commands can opt out with `#[SkipTransaction(reason: '...')]` (e.g. tenancy commands that write to the `landlord` connection or run DDL/migrations).

@@ -2,7 +2,11 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
+use App\Contract\Event\EntityUpdated;
+use App\Domain\Registry\Constant\DefinitionFields;
+use App\Domain\Registry\Constant\EntryFields;
 use App\Domain\Registry\Contract\Event\DefinitionCreated;
 use App\Domain\Registry\Contract\Event\DefinitionDeleted;
 use App\Domain\Registry\Contract\Event\DefinitionUpdated;
@@ -31,18 +35,20 @@ it('DefinitionCreated implements DomainEvent and exposes all properties', functi
         ->and($event->name)->toBe('Employee Directory');
 });
 
-it('DefinitionUpdated implements DomainEvent and exposes all properties', function (): void {
+it('DefinitionUpdated implements DomainEvent and EntityUpdated and exposes changes', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
+    $changes = [new PropertyChange(DefinitionFields::NAME, 'Old Name', 'Updated Name')];
     $event = new DefinitionUpdated(
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Updated Name',
+        changes: $changes,
         occurredAt: $occurredAt,
     );
 
     expect($event)->toBeInstanceOf(DomainEvent::class)
+        ->and($event)->toBeInstanceOf(EntityUpdated::class)
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->definitionId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($event->name)->toBe('Updated Name');
+        ->and($event->changes())->toEqual($changes);
 });
 
 it('DefinitionDeleted implements DomainEvent and exposes all properties', function (): void {
@@ -125,18 +131,20 @@ it('EntryCreated implements DomainEvent and exposes all properties', function ()
         ->and($event->title)->toBe('John Doe');
 });
 
-it('EntryUpdated implements DomainEvent and exposes all properties', function (): void {
+it('EntryUpdated implements DomainEvent and EntityUpdated and exposes changes', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
+    $changes = [new PropertyChange(EntryFields::TITLE, 'Old Title', 'Updated Title')];
     $event = new EntryUpdated(
         entryId: '550e8400-e29b-41d4-a716-446655440000',
-        title: 'Updated Title',
+        changes: $changes,
         occurredAt: $occurredAt,
     );
 
     expect($event)->toBeInstanceOf(DomainEvent::class)
+        ->and($event)->toBeInstanceOf(EntityUpdated::class)
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->entryId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($event->title)->toBe('Updated Title');
+        ->and($event->changes())->toEqual($changes);
 });
 
 it('EntryDeleted implements DomainEvent and exposes all properties', function (): void {

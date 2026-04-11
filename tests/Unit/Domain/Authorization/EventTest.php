@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
+use App\Contract\Event\EntityUpdated;
+use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
 use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
@@ -160,16 +163,18 @@ it('RoleRevokedFromUser implements DomainEvent and exposes occurredAt', function
         ->and($event->roleId)->toBe('550e8400-e29b-41d4-a716-446655440000');
 });
 
-it('RoleUpdated implements DomainEvent and exposes occurredAt', function (): void {
+it('RoleUpdated implements DomainEvent and EntityUpdated and exposes changes', function (): void {
     $occurredAt = new DateTimeImmutable('2025-01-15T10:00:00+00:00');
+    $changes = [new PropertyChange(RoleFields::NAME, 'Old Name', 'Updated Name')];
     $event = new RoleUpdated(
         roleId: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'Updated Name',
+        changes: $changes,
         occurredAt: $occurredAt,
     );
 
     expect($event)->toBeInstanceOf(DomainEvent::class)
+        ->and($event)->toBeInstanceOf(EntityUpdated::class)
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->roleId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($event->name)->toBe('Updated Name');
+        ->and($event->changes())->toEqual($changes);
 });

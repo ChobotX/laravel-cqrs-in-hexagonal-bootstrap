@@ -88,6 +88,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\UpdatedEventMustImplementEntityUpdatedRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\ControllerRequiresPermissionRule
         tags:
             - phpstan.rules.rule

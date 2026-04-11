@@ -46,6 +46,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `EloquentModelRequiresTraitsRule` | Entity models must use `HasOptimisticLocking` and either `SoftDeletes` or `#[HardDelete(reason:)]` |
 | `EventHandlerRequiresRetryPolicyRule` | Every `DomainEventHandler` must declare `#[RetryPolicy]` |
 | `CommandHandlerMustCollectEventsRule` | Every `CommandHandler` must inject `EventCollector` or declare `#[SkipDomainEvent(reason:)]` |
+| `UpdatedEventMustImplementEntityUpdatedRule` | Every event class ending in "Updated" in `Contract/Event/` must implement `EntityUpdated` |
 | `NoDirectFilesystemAccessRule` | Bans `Storage::`, `storage_path()`, PHP file functions (`fopen`, `unlink`, etc.) outside `Infrastructure\Filesystem\` |
 | `NoDirectFilesystemImportRule` | Bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\Filesystem\` |
 | `FileStorageOnlyInFileDomainRule` | Bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\Filesystem` — forces bus usage |

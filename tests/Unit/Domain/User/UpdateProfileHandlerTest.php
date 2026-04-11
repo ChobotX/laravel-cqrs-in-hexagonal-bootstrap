@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\User\Constant\UserFields;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordChanged;
@@ -147,7 +149,7 @@ it('skips password when empty string', function (): void {
     expect($calls)->toBeEmpty();
 });
 
-it('collects UserUpdated event', function (): void {
+it('collects UserUpdated event with changes', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
     $eventCollector = new FakeEventCollector;
 
@@ -158,15 +160,54 @@ it('collects UserUpdated event', function (): void {
         name: 'Jane Doe',
     ));
 
+    $userUpdatedEvents = array_values(array_filter(
+        $eventCollector->collected,
+        static fn (App\Contract\Event\DomainEvent $domainEvent): bool => $domainEvent instanceof UserUpdated,
+    ));
+    expect($userUpdatedEvents)->toHaveCount(1);
+    expect($userUpdatedEvents[0]->changes())->toEqual([
+        new PropertyChange(UserFields::NAME, 'John Doe', 'Jane Doe'),
+    ]);
+});
+
+it('does not collect UserUpdated when only password changes', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+        rawPassword: 'new-password-123',
+    ));
+
     $userUpdatedEvents = array_filter(
         $eventCollector->collected,
-        fn (App\Contract\Event\DomainEvent $domainEvent): bool => $domainEvent instanceof UserUpdated,
+        static fn (App\Contract\Event\DomainEvent $domainEvent): bool => $domainEvent instanceof UserUpdated,
     );
-    expect($userUpdatedEvents)->toHaveCount(1);
-    /** @var UserUpdated $event */
-    $event = array_values($userUpdatedEvents)[0];
-    expect($event->name)->toBe('Jane Doe')
-        ->and($event->email)->toBe('john@example.com');
+    $passwordChangedEvents = array_filter(
+        $eventCollector->collected,
+        static fn (App\Contract\Event\DomainEvent $domainEvent): bool => $domainEvent instanceof PasswordChanged,
+    );
+    expect($userUpdatedEvents)->toHaveCount(0)
+        ->and($passwordChangedEvents)->toHaveCount(1)
+        ->and($repository->saved)->toHaveCount(0);
+});
+
+it('does not save or collect any event when nothing changes', function (): void {
+    $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => existingUser()]);
+    $eventCollector = new FakeEventCollector;
+
+    $updateProfileHandler = createProfileHandler($repository, $eventCollector);
+
+    $updateProfileHandler->handle(new UpdateProfileCommand(
+        userId: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'John Doe',
+    ));
+
+    expect($repository->saved)->toHaveCount(0)
+        ->and($eventCollector->collected)->toHaveCount(0);
 });
 
 it('throws UserNotFoundException when user does not exist', function (): void {
@@ -217,7 +258,7 @@ it('ignores email when user lacks users.list.update permission', function (): vo
 
     $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'John Doe',
+        name: 'Jane Doe',
         email: 'new@example.com',
     ));
 
@@ -233,7 +274,7 @@ it('ignores email when email is null', function (): void {
 
     $updateProfileHandler->handle(new UpdateProfileCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
-        name: 'John Doe',
+        name: 'Jane Doe',
     ));
 
     expect($repository->saved)->toHaveCount(1)

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\FeatureFlag\Constant\FeatureFlagFields;
 use App\Domain\FeatureFlag\Contract\Command\UpdateFeatureFlagCommand;
 use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
 use App\Domain\FeatureFlag\Contract\Enum\FlagType;
@@ -80,9 +82,28 @@ it('saves boolean override and collects event', function (): void {
 
     assert($eventCollector->collected[0] instanceof FeatureFlagUpdated);
     expect($eventCollector->collected[0]->key)->toBe('billing.stripe')
-        ->and($eventCollector->collected[0]->value)->toBe('1')
-        ->and($eventCollector->collected[0]->enabled)->toBeTrue()
+        ->and($eventCollector->collected[0]->changes())->toEqual([
+            new PropertyChange(FeatureFlagFields::VALUE, null, '1'),
+            new PropertyChange(FeatureFlagFields::ENABLED, null, true),
+        ])
         ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
+});
+
+it('does not save or collect event when data is unchanged', function (): void {
+    $provider = new FakeFeatureFlagDefinitionProvider([booleanDefinition()]);
+    $repository = new FakeFeatureFlagOverrideRepository([
+        'billing.stripe' => new FeatureFlagOverride('billing.stripe', '1', true),
+    ]);
+    $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+
+    $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.stripe', enabled: true));
+
+    expect($repository->saved)->toHaveCount(0)
+        ->and($eventCollector->collected)->toHaveCount(0)
+        ->and($cacheInvalidator->invalidateCount)->toBe(0);
 });
 
 it('disables boolean flag with auto-derived value', function (): void {

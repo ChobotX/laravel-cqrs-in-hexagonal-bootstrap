@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\PropertyChange;
+use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Command\UpdateRoleCommand;
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
@@ -41,6 +43,38 @@ it('updates a role and emits event', function (): void {
     expect($repository->saved[0]->permissions)->toHaveCount(1);
     expect($eventCollector->collected)->toHaveCount(1);
     expect($eventCollector->collected[0])->toBeInstanceOf(RoleUpdated::class);
+    assert($eventCollector->collected[0] instanceof RoleUpdated);
+    $changes = $eventCollector->collected[0]->changes();
+    expect($eventCollector->collected[0]->roleId)->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($changes)->toHaveCount(3)
+        ->and($changes[0])->toEqual(new PropertyChange(RoleFields::NAME, 'Editor', 'Senior Editor'))
+        ->and($changes[1])->toEqual(new PropertyChange(RoleFields::DESCRIPTION, 'Old description', 'Updated description'))
+        ->and($changes[2]->property)->toBe(RoleFields::PERMISSIONS);
+});
+
+it('does not save or collect event when data is unchanged', function (): void {
+    $role = new Role(
+        new RoleId('550e8400-e29b-41d4-a716-446655440000'),
+        new RoleName('Editor'),
+        'Same description',
+        false,
+        [],
+    );
+
+    $repository = new FakeRoleRepository(['550e8400-e29b-41d4-a716-446655440000' => $role]);
+    $eventCollector = new FakeEventCollector;
+
+    $handler = new UpdateRoleHandler($repository, $eventCollector);
+
+    $handler->handle(new UpdateRoleCommand(
+        id: '550e8400-e29b-41d4-a716-446655440000',
+        name: 'Editor',
+        description: 'Same description',
+        permissions: [],
+    ));
+
+    expect($repository->saved)->toHaveCount(0)
+        ->and($eventCollector->collected)->toHaveCount(0);
 });
 
 it('throws when role does not exist', function (): void {

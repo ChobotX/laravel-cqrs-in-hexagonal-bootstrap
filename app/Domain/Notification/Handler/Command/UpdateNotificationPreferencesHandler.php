@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Notification\Handler\Command;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -26,6 +27,8 @@ final readonly class UpdateNotificationPreferencesHandler implements CommandHand
 
     public function handle(Command $command): void
     {
+        $existing = $this->notificationPreferenceRepository->findByUserId($command->userId);
+
         $channelPreferences = [];
 
         foreach ($command->preferences as $levelValue => $channelValues) {
@@ -43,14 +46,67 @@ final readonly class UpdateNotificationPreferencesHandler implements CommandHand
             $channelPreferences[] = new ChannelPreference($level, $channels);
         }
 
-        $this->notificationPreferenceRepository->save(new NotificationPreferences(
+        $notificationPreferences = new NotificationPreferences(
             userId: $command->userId,
             preferences: $channelPreferences,
-        ));
+        );
+
+        $changes = $this->buildChanges($existing, $notificationPreferences);
+
+        if ($changes === []) {
+            return;
+        }
+
+        $this->notificationPreferenceRepository->save($notificationPreferences);
 
         $this->eventCollector->collect(new NotificationPreferencesUpdated(
             userId: $command->userId,
+            changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
+    }
+
+    /** @return list<PropertyChange> */
+    private function buildChanges(?NotificationPreferences $existing, NotificationPreferences $updated): array
+    {
+        $oldSerialized = $this->serializePreferences($existing);
+        $newSerialized = $this->serializePreferences($updated);
+
+        $changes = [];
+
+        $allLevels = array_unique(array_merge(array_keys($oldSerialized), array_keys($newSerialized)));
+        sort($allLevels);
+
+        foreach ($allLevels as $allLevel) {
+            $oldValue = $oldSerialized[$allLevel] ?? null;
+            $newValue = $newSerialized[$allLevel] ?? null;
+
+            if ($oldValue !== $newValue) {
+                $changes[] = new PropertyChange($allLevel, $oldValue, $newValue);
+            }
+        }
+
+        return $changes;
+    }
+
+    /** @return array<string, string> */
+    private function serializePreferences(?NotificationPreferences $notificationPreferences): array
+    {
+        if (! $notificationPreferences instanceof NotificationPreferences) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($notificationPreferences->preferences as $channelPreference) {
+            $channels = array_map(
+                static fn (NotificationChannel $notificationChannel): string => $notificationChannel->value,
+                $channelPreference->channels,
+            );
+            sort($channels);
+            $result[$channelPreference->level->value] = implode(',', $channels);
+        }
+
+        return $result;
     }
 }

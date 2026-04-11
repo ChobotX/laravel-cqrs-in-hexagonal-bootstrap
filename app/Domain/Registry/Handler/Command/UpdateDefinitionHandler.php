@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Handler\Command;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\Registry\Constant\DefinitionFields;
 use App\Domain\Registry\Contract\Command\UpdateDefinitionCommand;
 use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Event\DefinitionUpdated;
@@ -27,27 +29,45 @@ final readonly class UpdateDefinitionHandler implements CommandHandler
     public function handle(Command $command): void
     {
         $definitionId = new DefinitionId($command->id);
-        $definition = $this->definitionRepository->findById($definitionId);
+        $existing = $this->definitionRepository->findById($definitionId);
 
-        if (! $definition instanceof Definition) {
+        if (! $existing instanceof Definition) {
             throw new DefinitionNotFoundException($command->id);
         }
 
         $definitionName = new DefinitionName($command->name);
 
-        $updated = new Definition(
-            id: $definition->id,
-            namespace: $definition->namespace,
-            slug: $definition->slug,
+        $changes = $this->buildChanges($existing, $definitionName);
+
+        if ($changes === []) {
+            return;
+        }
+
+        $definition = new Definition(
+            id: $existing->id,
+            namespace: $existing->namespace,
+            slug: $existing->slug,
             name: $definitionName,
         );
 
-        $this->definitionRepository->update($updated);
+        $this->definitionRepository->update($definition);
 
         $this->eventCollector->collect(new DefinitionUpdated(
-            definitionId: $definition->id->value,
-            name: $definitionName->value,
+            definitionId: $existing->id->value,
+            changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
+    }
+
+    /** @return list<PropertyChange> */
+    private function buildChanges(Definition $definition, DefinitionName $definitionName): array
+    {
+        $changes = [];
+
+        if ($definition->name->value !== $definitionName->value) {
+            $changes[] = new PropertyChange(DefinitionFields::NAME, $definition->name->value, $definitionName->value);
+        }
+
+        return $changes;
     }
 }

@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\FeatureFlag\Handler\Command;
 
+use App\Application\Event\PropertyChange;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
+use App\Domain\FeatureFlag\Constant\FeatureFlagFields;
 use App\Domain\FeatureFlag\Contract\Command\UpdateFeatureFlagCommand;
 use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
 use App\Domain\FeatureFlag\Contract\Enum\FlagType;
@@ -39,10 +41,18 @@ final readonly class UpdateFeatureFlagHandler implements CommandHandler
             throw new FeatureFlagNotFoundException($command->key);
         }
 
-        $value = $this->resolveValue($command, $definition);
+        $existing = $this->featureFlagOverrideRepository->findByKey(new FlagKey($command->key));
+
+        $value = $this->resolveValue($command, $definition, $existing);
 
         $flagValueValidator = new FlagValueValidator;
         $flagValueValidator->validate($definition, $value);
+
+        $changes = $this->buildChanges($existing, $value, $command->enabled);
+
+        if ($changes === []) {
+            return;
+        }
 
         $this->featureFlagOverrideRepository->save(new FeatureFlagOverride(
             key: $command->key,
@@ -54,13 +64,12 @@ final readonly class UpdateFeatureFlagHandler implements CommandHandler
 
         $this->eventCollector->collect(new FeatureFlagUpdated(
             key: $command->key,
-            value: $value,
-            enabled: $command->enabled,
+            changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
     }
 
-    private function resolveValue(UpdateFeatureFlagCommand $updateFeatureFlagCommand, FlagDefinition $flagDefinition): string
+    private function resolveValue(UpdateFeatureFlagCommand $updateFeatureFlagCommand, FlagDefinition $flagDefinition, ?FeatureFlagOverride $featureFlagOverride): string
     {
         if ($updateFeatureFlagCommand->value !== null) {
             return $updateFeatureFlagCommand->value;
@@ -70,8 +79,25 @@ final readonly class UpdateFeatureFlagHandler implements CommandHandler
             return $updateFeatureFlagCommand->enabled ? ResolvedFlag::ENABLED : '0';
         }
 
-        $existing = $this->featureFlagOverrideRepository->findByKey(new FlagKey($updateFeatureFlagCommand->key));
+        return $featureFlagOverride->value ?? $flagDefinition->default;
+    }
 
-        return $existing->value ?? $flagDefinition->default;
+    /** @return list<PropertyChange> */
+    private function buildChanges(?FeatureFlagOverride $featureFlagOverride, string $value, bool $enabled): array
+    {
+        $changes = [];
+
+        $oldValue = $featureFlagOverride?->value;
+        $oldEnabled = $featureFlagOverride?->enabled;
+
+        if ($oldValue !== $value) {
+            $changes[] = new PropertyChange(FeatureFlagFields::VALUE, $oldValue, $value);
+        }
+
+        if ($oldEnabled !== $enabled) {
+            $changes[] = new PropertyChange(FeatureFlagFields::ENABLED, $oldEnabled, $enabled);
+        }
+
+        return $changes;
     }
 }

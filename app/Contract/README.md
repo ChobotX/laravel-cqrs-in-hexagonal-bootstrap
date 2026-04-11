@@ -8,7 +8,7 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 
 - `Bus/` — `Middleware` interface for bus middleware pipeline (`@template TResult` for type-safe return propagation through the pipeline)
 - `Command/` — `Command`, `CommandHandler` interfaces
-- `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces
+- `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted`, `EntityUpdated` interfaces
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)
 - `Http/` — `HttpStatus` interface with HTTP status code constants (`BAD_REQUEST`, `NOT_FOUND`, `FORBIDDEN`, `CONFLICT`, `UNPROCESSABLE_ENTITY`, `CREATED`, `NO_CONTENT`)
 - `IdGenerator` — generates unique identifiers

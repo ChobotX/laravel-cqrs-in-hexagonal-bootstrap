@@ -36,6 +36,10 @@ Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus
 
 - `App\Application\Bus\SkipDomainEvent` — attribute opting a command handler out of the `CommandHandlerMustCollectEventsRule` enforcement. Requires a `reason` string. Use for handlers that legitimately produce no domain events (infrastructure provisioning, data initialization).
 
+## Property changes for update events
+
+- `App\Application\Event\PropertyChange` — typesafe DTO representing a single field change in an update domain event. Properties: `property` (field name constant), `old` (previous value), `new` (new value), `sensitive` (boolean, defaults to false). For sensitive fields, use `PropertyChange::redacted($field)` (outside Domain) or `new PropertyChange($field, null, null, sensitive: true)` (inside Domain, where static calls are forbidden). Used by all `EntityUpdated` events.
+
 ## Authorization attributes and interfaces
 
 - `App\Application\Authorization\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.
