@@ -9,6 +9,9 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when a password-reset token is missing, malformed, expired, or already consumed.
+ */
 final class InvalidPasswordResetTokenException extends RuntimeException implements DomainException
 {
     public function __construct()

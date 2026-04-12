@@ -9,6 +9,8 @@ use App\Contract\Query\Query;
 use App\Domain\FeatureFlag\Contract\ValueObject\ResolvedFlag;
 
 /**
+ * Query for list feature flags in the FeatureFlag bounded context; dispatched through the query bus.
+ *
  * @implements Query<list<ResolvedFlag>>
  */
 #[RequiresPermission('feature_flags.management.read')]

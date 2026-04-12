@@ -11,7 +11,11 @@ use App\Application\Authorization\ScopeTarget;
 use App\Contract\Query\Query;
 use App\Domain\Team\Contract\ValueObject\TeamTreeNode;
 
-/** @implements Query<list<TeamTreeNode>> */
+/**
+ * Query for get team tree in the Team bounded context; dispatched through the query bus.
+ *
+ * @implements Query<list<TeamTreeNode>>
+ */
 #[RequiresPermission('teams.management.read')]
 final readonly class GetTeamTreeQuery implements Query, ScopeAwareQuery
 {

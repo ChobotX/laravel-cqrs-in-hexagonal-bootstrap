@@ -8,11 +8,16 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 
-/** @implements Query<TenantSettings> */
+/**
+ * Query for get tenant settings in the Tenancy bounded context; dispatched through the query bus.
+ *
+ * @implements Query<TenantSettings>
+ */
 #[RequiresPermission('settings.tenant.read')]
 final readonly class GetTenantSettingsQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $tenantId,
     ) {}
 }

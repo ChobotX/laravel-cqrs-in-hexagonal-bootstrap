@@ -10,14 +10,20 @@ use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
 use DateTimeImmutable;
 
+/**
+ * Domain event emitted when entry updated in the Registry context; handled by registered domain event handlers.
+ */
 final readonly class EntryUpdated implements DomainEvent, EntityUpdated
 {
     use DescribesAction;
 
     /** @param list<PropertyChange> $changes */
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $entryId,
+        /** Array for `changes`; see constructor PHPDoc for structural tags when present. */
         public array $changes,
+        /** Point in time for auditing or ordering. */
         public DateTimeImmutable $occurredAt,
     ) {}
 

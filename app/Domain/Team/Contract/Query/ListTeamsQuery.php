@@ -19,6 +19,8 @@ use App\Contract\Query\Query;
 use App\Domain\Team\Contract\Entity\Team;
 
 /**
+ * Query for list teams in the Team bounded context; dispatched through the query bus.
+ *
  * @implements Query<PaginatedResult<Team>>
  */
 #[RequiresPermission('teams.management.read')]

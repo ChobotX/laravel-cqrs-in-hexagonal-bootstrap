@@ -9,10 +9,15 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when no tenant matches the supplied slug, domain, or other resolution input.
+ */
 final class TenantNotFoundException extends RuntimeException implements DomainException
 {
-    public function __construct(public readonly string $identifier)
-    {
+    public function __construct(
+        /** Value used during resolution (slug, host, or id depending on caller). */
+        public readonly string $identifier,
+    ) {
         parent::__construct(sprintf('Tenant not found for identifier [%s].', $identifier));
     }
 

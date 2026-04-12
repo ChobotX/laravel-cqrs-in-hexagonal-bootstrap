@@ -8,11 +8,16 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
 use App\Domain\GridPreset\Contract\ValueObject\PresetShareCapabilities;
 
-/** @implements Query<PresetShareCapabilities> */
+/**
+ * Query for get preset share capabilities in the GridPreset bounded context; dispatched through the query bus.
+ *
+ * @implements Query<PresetShareCapabilities>
+ */
 #[SkipPermissionCheck(reason: 'Capabilities are resolved for the authenticated user only')]
 final readonly class GetPresetShareCapabilitiesQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $userId,
     ) {}
 }

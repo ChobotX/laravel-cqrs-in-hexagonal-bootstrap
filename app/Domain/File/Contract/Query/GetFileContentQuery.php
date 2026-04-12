@@ -7,11 +7,16 @@ namespace App\Domain\File\Contract\Query;
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
-/** @implements Query<string> */
+/**
+ * Query for get file content in the File bounded context; dispatched through the query bus.
+ *
+ * @implements Query<string>
+ */
 #[RequiresPermission('files.storage.read')]
 final readonly class GetFileContentQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $id,
     ) {}
 }

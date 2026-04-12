@@ -7,11 +7,15 @@ namespace App\Domain\File\Contract\ValueObject;
 use App\Domain\File\Exception\InvalidFileIdException;
 use Stringable;
 
+/**
+ * Contract-level value object for file id used across File commands, queries, and events.
+ */
 final readonly class FileId implements Stringable
 {
     private const string UUID_PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
     public function __construct(
+        /** Canonical file id as a lowercase UUID string (validated against the pattern in this class). */
         public string $value,
     ) {
         if (preg_match(self::UUID_PATTERN, $value) !== 1) {

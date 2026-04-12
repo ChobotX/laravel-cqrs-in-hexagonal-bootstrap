@@ -9,10 +9,15 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when activation or invite acceptance targets a user who is already active.
+ */
 final class UserAlreadyActivatedException extends RuntimeException implements DomainException
 {
-    public function __construct(public readonly string $id)
-    {
+    public function __construct(
+        /** User id that was already activated (UUID). */
+        public readonly string $id,
+    ) {
         parent::__construct(sprintf('User with id [%s] has already been activated.', $id));
     }
 

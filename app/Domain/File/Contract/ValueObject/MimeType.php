@@ -7,11 +7,15 @@ namespace App\Domain\File\Contract\ValueObject;
 use App\Domain\File\Exception\InvalidMimeTypeException;
 use Stringable;
 
+/**
+ * Contract-level value object for mime type used across File commands, queries, and events.
+ */
 final readonly class MimeType implements Stringable
 {
     public const string MIME_PATTERN = '/^[a-z0-9][a-z0-9!#$&\-^_]*\/[a-z0-9][a-z0-9!#$&\-^_.+]*$/i';
 
     public function __construct(
+        /** Field `value` for this contract; see module docs for validation rules. */
         public string $value,
     ) {
         if (preg_match(self::MIME_PATTERN, $value) !== 1) {

@@ -10,15 +10,22 @@ use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
 use DateTimeImmutable;
 
+/**
+ * Domain event emitted when email template updated in the EmailTemplate context; handled by registered domain event handlers.
+ */
 final readonly class EmailTemplateUpdated implements DomainEvent, EntityUpdated
 {
     use DescribesAction;
 
     /** @param list<PropertyChange> $changes */
     public function __construct(
+        /** Classifier string or type discriminator. */
         public string $templateType,
+        /** BCP 47 locale code controlling formatting or translations. */
         public string $locale,
+        /** Array for `changes`; see constructor PHPDoc for structural tags when present. */
         public array $changes,
+        /** Point in time for auditing or ordering. */
         public DateTimeImmutable $occurredAt,
     ) {}
 

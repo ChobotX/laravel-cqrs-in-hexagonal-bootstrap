@@ -8,11 +8,16 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\User\Contract\Entity\User;
 
-/** @implements Query<User> */
+/**
+ * Query for get user by id in the User bounded context; dispatched through the query bus.
+ *
+ * @implements Query<User>
+ */
 #[RequiresPermission('users.list.read')]
 final readonly class GetUserByIdQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $id,
     ) {}
 }

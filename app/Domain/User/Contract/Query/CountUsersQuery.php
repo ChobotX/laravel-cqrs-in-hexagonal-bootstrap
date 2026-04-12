@@ -7,6 +7,10 @@ namespace App\Domain\User\Contract\Query;
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
-/** @implements Query<int> */
+/**
+ * Query for count users in the User bounded context; dispatched through the query bus.
+ *
+ * @implements Query<int>
+ */
 #[RequiresPermission('users.list.read')]
 final readonly class CountUsersQuery implements Query {}

@@ -8,6 +8,7 @@ namespace App\Domain\Registry\Contract\ValueObject;
 final readonly class JsonSchema
 {
     public function __construct(
+        /** JSON Schema document serialized to a UTF-8 string for storage and validation. */
         public string $encoded,
     ) {}
 }

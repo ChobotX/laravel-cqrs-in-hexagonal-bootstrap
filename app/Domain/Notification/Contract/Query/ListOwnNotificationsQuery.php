@@ -14,6 +14,8 @@ use App\Contract\Query\Query;
 use App\Domain\Notification\Contract\Entity\Notification;
 
 /**
+ * Query for list own notifications in the Notification bounded context; dispatched through the query bus.
+ *
  * @implements Query<PaginatedResult<Notification>>
  */
 #[SkipPermissionCheck(reason: 'Users view only their own notifications')]
@@ -23,7 +25,9 @@ final readonly class ListOwnNotificationsQuery implements PaginableQuery, Query,
      * @param  list<Sorting>  $sortings
      */
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $userId,
+        /** Boolean flag for this state or capability. */
         public ?bool $isRead = null,
         private ?Pagination $pagination = null,
         private array $sortings = [],

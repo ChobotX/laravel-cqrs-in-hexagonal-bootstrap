@@ -12,6 +12,8 @@ use App\Contract\Query\Query;
 use App\Domain\User\Contract\Entity\User;
 
 /**
+ * Query for search users in the User bounded context; dispatched through the query bus.
+ *
  * @implements Query<list<User>>
  */
 #[RequiresPermission('users.list.read')]
@@ -23,8 +25,11 @@ final readonly class SearchUsersQuery implements Query, ScopeAwareQuery
      * @param  list<string>  $excludeUserIds
      */
     public function __construct(
+        /** Field `term` for this contract; see module docs for validation rules. */
         public string $term,
+        /** List of stable identifiers for batch operations. */
         public array $excludeUserIds,
+        /** Field `limit` for this contract; see module docs for validation rules. */
         public int $limit = self::DEFAULT_LIMIT,
         private ?AccessContext $accessContext = null,
     ) {}

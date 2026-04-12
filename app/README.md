@@ -28,6 +28,7 @@ Enforced by Pint (`pint.json`) and Rector (`rector.php`). Key rules:
 - Class member order: traits → constants → properties → constructor → methods
 - `protected` → `private` — use `private` unless interface requires otherwise
 - No empty phpdoc, no superfluous phpdoc tags
+- **`App\Contract` and `App\Domain\*\Contract`** — every public interface and every contract DTO (`Command`, `Query`, `Event`, `Entity`, `ValueObject`, etc.) must have **non-empty intent docblocks** (class + promoted-parameter docs where applicable); prose must explain semantics, not duplicate native types or redundant `@param`/`@return`
 - `DateTimeImmutable` over `DateTime`
 - Single quotes for strings
 - Trailing commas in multiline

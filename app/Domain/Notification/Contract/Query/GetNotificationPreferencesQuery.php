@@ -8,11 +8,16 @@ use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
 use App\Domain\Notification\ValueObject\NotificationPreferences;
 
-/** @implements Query<NotificationPreferences> */
+/**
+ * Query for get notification preferences in the Notification bounded context; dispatched through the query bus.
+ *
+ * @implements Query<NotificationPreferences>
+ */
 #[SkipPermissionCheck(reason: 'Users view only their own notification preferences')]
 final readonly class GetNotificationPreferencesQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $userId,
     ) {}
 }

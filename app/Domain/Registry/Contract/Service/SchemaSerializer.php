@@ -6,6 +6,9 @@ namespace App\Domain\Registry\Contract\Service;
 
 use App\Domain\Registry\Schema\Schema;
 
+/**
+ * Domain service contract for schema serializer in the Registry bounded context.
+ */
 interface SchemaSerializer
 {
     /** @return array<string, mixed> */

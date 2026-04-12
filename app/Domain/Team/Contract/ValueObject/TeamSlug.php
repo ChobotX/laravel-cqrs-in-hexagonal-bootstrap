@@ -7,6 +7,9 @@ namespace App\Domain\Team\Contract\ValueObject;
 use App\Domain\Team\Exception\InvalidTeamSlugException;
 use Stringable;
 
+/**
+ * Contract-level value object for team slug used across Team commands, queries, and events.
+ */
 final readonly class TeamSlug implements Stringable
 {
     public const string SLUG_PATTERN = '/^[a-z0-9]([a-z0-9-]*[a-z0-9])?$/';
@@ -16,6 +19,7 @@ final readonly class TeamSlug implements Stringable
     public const int MAX_LENGTH = 63;
 
     public function __construct(
+        /** Field `value` for this contract; see module docs for validation rules. */
         public string $value,
     ) {
         $length = strlen($value);

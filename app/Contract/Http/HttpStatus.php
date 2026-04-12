@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Contract\Http;
 
+/**
+ * Shared numeric HTTP status constants for domain exceptions and presentation mappers (single source of truth).
+ */
 interface HttpStatus
 {
     public const int BAD_REQUEST = 400;

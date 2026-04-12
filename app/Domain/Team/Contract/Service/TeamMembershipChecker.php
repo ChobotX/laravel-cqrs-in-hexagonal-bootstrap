@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Contract\Service;
 
+/**
+ * Domain service contract for team membership in the Team bounded context.
+ */
 interface TeamMembershipChecker
 {
+    /** Evaluates the rule without mutating domain state. */
     public function isTeamMember(string $userId, string $teamId): bool;
 
     /** @return list<string> */

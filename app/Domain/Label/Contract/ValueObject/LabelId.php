@@ -7,11 +7,15 @@ namespace App\Domain\Label\Contract\ValueObject;
 use App\Domain\Label\Exception\InvalidLabelIdException;
 use Stringable;
 
+/**
+ * Contract-level value object for label id used across Label commands, queries, and events.
+ */
 final readonly class LabelId implements Stringable
 {
     private const string UUID_PATTERN = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
     public function __construct(
+        /** Field `value` for this contract; see module docs for validation rules. */
         public string $value,
     ) {
         if (preg_match(self::UUID_PATTERN, $value) !== 1) {

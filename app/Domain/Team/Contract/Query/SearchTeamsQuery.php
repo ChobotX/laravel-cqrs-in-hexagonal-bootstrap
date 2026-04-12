@@ -8,7 +8,11 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Team\Contract\Entity\Team;
 
-/** @implements Query<list<Team>> */
+/**
+ * Query for search teams in the Team bounded context; dispatched through the query bus.
+ *
+ * @implements Query<list<Team>>
+ */
 #[RequiresPermission('teams.management.read')]
 final readonly class SearchTeamsQuery implements Query
 {
@@ -18,8 +22,11 @@ final readonly class SearchTeamsQuery implements Query
      * @param  list<string>  $excludeTeamIds
      */
     public function __construct(
+        /** Field `term` for this contract; see module docs for validation rules. */
         public string $term,
+        /** List of stable identifiers for batch operations. */
         public array $excludeTeamIds,
+        /** Field `limit` for this contract; see module docs for validation rules. */
         public int $limit = self::DEFAULT_LIMIT,
     ) {}
 }

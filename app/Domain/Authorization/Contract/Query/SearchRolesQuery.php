@@ -8,7 +8,11 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\Entity\Role;
 
-/** @implements Query<list<Role>> */
+/**
+ * Query for search roles in the Authorization bounded context; dispatched through the query bus.
+ *
+ * @implements Query<list<Role>>
+ */
 #[RequiresPermission('users.roles.read')]
 final readonly class SearchRolesQuery implements Query
 {
@@ -16,7 +20,9 @@ final readonly class SearchRolesQuery implements Query
      * @param  list<string>  $excludeRoleIds
      */
     public function __construct(
+        /** Field `term` for this contract; see module docs for validation rules. */
         public string $term,
+        /** List of stable identifiers for batch operations. */
         public array $excludeRoleIds,
     ) {}
 }

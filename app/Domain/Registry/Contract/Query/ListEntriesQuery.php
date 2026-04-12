@@ -14,6 +14,8 @@ use App\Contract\Query\Query;
 use App\Domain\Registry\Contract\Entity\Entry;
 
 /**
+ * Query for list entries in the Registry bounded context; dispatched through the query bus.
+ *
  * @implements Query<PaginatedResult<Entry>>
  */
 #[RequiresPermission('registry.entries.read')]
@@ -26,8 +28,11 @@ final readonly class ListEntriesQuery implements FilterableQuery, Query, Sortabl
      * @param  list<Sorting>  $sortings
      */
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $definitionId,
+        /** Field `page` for this contract; see module docs for validation rules. */
         public int $page = 1,
+        /** Field `perPage` for this contract; see module docs for validation rules. */
         public int $perPage = self::DEFAULT_PER_PAGE,
         private array $filters = [],
         private array $sortings = [],

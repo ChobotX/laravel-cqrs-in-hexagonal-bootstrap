@@ -8,11 +8,16 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
 
-/** @implements Query<list<EffectivePermission>> */
+/**
+ * Query for get effective permissions in the Authorization bounded context; dispatched through the query bus.
+ *
+ * @implements Query<list<EffectivePermission>>
+ */
 #[RequiresPermission('users.roles.read')]
 final readonly class GetEffectivePermissionsQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $userId,
     ) {}
 }

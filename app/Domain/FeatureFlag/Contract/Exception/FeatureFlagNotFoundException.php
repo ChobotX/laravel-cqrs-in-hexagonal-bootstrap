@@ -9,10 +9,15 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when a feature flag key is unknown or has no definition for the current tenant.
+ */
 final class FeatureFlagNotFoundException extends RuntimeException implements DomainException
 {
-    public function __construct(public readonly string $key)
-    {
+    public function __construct(
+        /** Flag key that was resolved but not found. */
+        public readonly string $key,
+    ) {
         parent::__construct(sprintf('Feature flag with key [%s] not found.', $key));
     }
 

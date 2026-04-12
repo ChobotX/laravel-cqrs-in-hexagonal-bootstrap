@@ -19,6 +19,8 @@ use App\Contract\Query\Query;
 use App\Domain\User\Contract\Entity\User;
 
 /**
+ * Query for list users in the User bounded context; dispatched through the query bus.
+ *
  * @implements Query<PaginatedResult<User>>
  */
 #[RequiresPermission('users.list.read')]

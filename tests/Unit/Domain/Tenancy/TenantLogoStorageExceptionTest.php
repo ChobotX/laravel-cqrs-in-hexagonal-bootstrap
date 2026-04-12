@@ -8,7 +8,8 @@ use App\Domain\Tenancy\Contract\Exception\TenantLogoStorageException;
 it('creates exception with tenant id in message', function (): void {
     $exception = new TenantLogoStorageException('tenant-123');
 
-    expect($exception->getMessage())->toContain('tenant-123');
+    expect($exception->tenantId)->toBe('tenant-123')
+        ->and($exception->getMessage())->toContain('tenant-123');
 });
 
 it('returns internal server error status code', function (): void {

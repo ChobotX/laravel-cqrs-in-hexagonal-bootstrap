@@ -42,11 +42,17 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 
 ### Adding a command
 
+Document contract types for consumers (class + property intent, no redundant tags) — see [Contract README](../Contract/README.md#documentation).
+
 1. Create `app/Domain/{Context}/Contract/Command/{Name}Command.php` (in Contract — it's the public API):
    ```php
+   /**
+    * Describes what the command does in one or two sentences.
+    */
    final readonly class {Name}Command implements \App\Contract\Command\Command
    {
        public function __construct(
+           /** Meaning of this field for handlers and API callers. */
            public string $field,
        ) {}
    }
@@ -92,10 +98,15 @@ All commands are automatically wrapped in a database transaction by the `WrapInT
 
 1. Create `app/Domain/{Context}/Contract/Query/{Name}Query.php` (in Contract — it's the public API):
    ```php
-   /** @implements Query<ReturnType> */
+   /**
+    * Describes what the query returns and when to use it.
+    *
+    * @implements Query<ReturnType>
+    */
    final readonly class {Name}Query implements \App\Contract\Query\Query
    {
        public function __construct(
+           /** Meaning of this field for handlers and API callers. */
            public string $field,
        ) {}
    }

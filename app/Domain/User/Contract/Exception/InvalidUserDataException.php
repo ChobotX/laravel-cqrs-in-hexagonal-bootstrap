@@ -9,6 +9,9 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when submitted user input fails domain validation before persistence (e.g. empty display name).
+ */
 final class InvalidUserDataException extends RuntimeException implements DomainException
 {
     public function userMessage(Translator $translator): string

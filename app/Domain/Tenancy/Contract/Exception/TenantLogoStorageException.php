@@ -9,10 +9,15 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when infrastructure cannot persist a tenant logo after upload (storage adapter or validation failure).
+ */
 final class TenantLogoStorageException extends RuntimeException implements DomainException
 {
-    public function __construct(string $tenantId)
-    {
+    public function __construct(
+        /** Primary tenant id whose logo file could not be stored. */
+        public readonly string $tenantId,
+    ) {
         parent::__construct(sprintf('Failed to store logo for tenant [%s].', $tenantId));
     }
 

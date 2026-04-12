@@ -8,11 +8,16 @@ use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\ValueObject\UserPermissionOverride;
 
-/** @implements Query<list<UserPermissionOverride>> */
+/**
+ * Query for get user overrides in the Authorization bounded context; dispatched through the query bus.
+ *
+ * @implements Query<list<UserPermissionOverride>>
+ */
 #[RequiresPermission('users.roles.read')]
 final readonly class GetUserOverridesQuery implements Query
 {
     public function __construct(
+        /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $userId,
     ) {}
 }

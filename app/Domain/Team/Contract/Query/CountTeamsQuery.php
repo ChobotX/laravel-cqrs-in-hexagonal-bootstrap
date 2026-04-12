@@ -7,6 +7,10 @@ namespace App\Domain\Team\Contract\Query;
 use App\Application\Authorization\RequiresPermission;
 use App\Contract\Query\Query;
 
-/** @implements Query<int> */
+/**
+ * Query for count teams in the Team bounded context; dispatched through the query bus.
+ *
+ * @implements Query<int>
+ */
 #[RequiresPermission('teams.management.read')]
 final readonly class CountTeamsQuery implements Query {}

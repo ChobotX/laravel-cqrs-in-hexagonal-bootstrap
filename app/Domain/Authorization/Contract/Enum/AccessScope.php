@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Contract\Enum;
 
+/**
+ * Enumerates allowed values for access scope in the Authorization context.
+ */
 enum AccessScope: string
 {
     case All = 'all';

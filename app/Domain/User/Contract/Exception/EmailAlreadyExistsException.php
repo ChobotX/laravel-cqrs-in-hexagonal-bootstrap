@@ -9,10 +9,15 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\Translation\Translator;
 use RuntimeException;
 
+/**
+ * Thrown when registering or updating a user would reuse an email that is already taken.
+ */
 final class EmailAlreadyExistsException extends RuntimeException implements DomainException
 {
-    public function __construct(public readonly string $email)
-    {
+    public function __construct(
+        /** Email address that conflicts with an existing user. */
+        public readonly string $email,
+    ) {
         parent::__construct(sprintf('A user with email [%s] already exists.', $email));
     }
 

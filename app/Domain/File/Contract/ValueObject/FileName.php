@@ -7,6 +7,9 @@ namespace App\Domain\File\Contract\ValueObject;
 use App\Domain\File\Exception\InvalidFileNameException;
 use Stringable;
 
+/**
+ * Contract-level value object for file name used across File commands, queries, and events.
+ */
 final readonly class FileName implements Stringable
 {
     public const int MAX_LENGTH = 255;

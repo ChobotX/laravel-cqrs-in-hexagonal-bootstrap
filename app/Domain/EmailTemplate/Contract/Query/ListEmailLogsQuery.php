@@ -12,13 +12,17 @@ use App\Contract\Query\Query;
 use App\Domain\EmailTemplate\Contract\Entity\EmailLog;
 
 /**
+ * Query for list email logs in the EmailTemplate bounded context; dispatched through the query bus.
+ *
  * @implements Query<PaginatedResult<EmailLog>>
  */
 #[RequiresPermission('email_templates.logs.read')]
 final readonly class ListEmailLogsQuery implements PaginableQuery, Query
 {
     public function __construct(
+        /** Classifier string or type discriminator. */
         public ?string $templateType = null,
+        /** Optional recipient identifier when absent. */
         public ?string $recipientId = null,
         private ?Pagination $pagination = null,
     ) {}

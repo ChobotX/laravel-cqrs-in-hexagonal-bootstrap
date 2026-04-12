@@ -7,6 +7,10 @@ namespace App\Domain\Authorization\Contract\Query;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
 
-/** @implements Query<array<string, array{label: string, features: array<string, array{label: string, actions: list<string>}>}>> */
+/**
+ * Query for get available modules in the Authorization bounded context; dispatched through the query bus.
+ *
+ * @implements Query<array<string, array{label: string, features: array<string, array{label: string, actions: list<string>}>}>>
+ */
 #[SkipPermissionCheck(reason: 'Module listing is public configuration')]
 final readonly class GetAvailableModulesQuery implements Query {}

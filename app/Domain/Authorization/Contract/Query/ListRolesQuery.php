@@ -16,6 +16,8 @@ use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\Entity\Role;
 
 /**
+ * Query for list roles in the Authorization bounded context; dispatched through the query bus.
+ *
  * @implements Query<PaginatedResult<Role>>
  */
 #[RequiresPermission('users.roles.read')]
