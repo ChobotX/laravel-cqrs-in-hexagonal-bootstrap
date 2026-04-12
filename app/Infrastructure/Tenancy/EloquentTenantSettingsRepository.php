@@ -8,6 +8,7 @@ use App\Contract\Tenancy\TenantLogoStorage;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use Illuminate\Http\UploadedFile;
 use SplFileInfo;
 
@@ -28,7 +29,7 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         return new TenantSettings(
             name: $tenant->name,
             logoUrl: $this->resolveLogoUrl($tenant->logo_path),
-            displayTimezone: $tenant->display_timezone,
+            displayTimezone: TenantPreferenceModel::readDisplayTimezone(),
         );
     }
 
@@ -62,8 +63,9 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         }
 
         $tenant->name = $name;
-        $tenant->display_timezone = $displayTimezone;
         $tenant->save();
+
+        TenantPreferenceModel::writeDisplayTimezone($displayTimezone);
     }
 
     private function resolveLogoUrl(?string $logoPath): ?string

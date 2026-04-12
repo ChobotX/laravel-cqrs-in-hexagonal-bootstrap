@@ -29,7 +29,6 @@ final class TenantModel extends Model
         'id',
         'name',
         'logo_path',
-        'display_timezone',
         'slug',
         'schema_name',
         'database_host',

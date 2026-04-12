@@ -8,8 +8,9 @@ PostgreSQL schema-based multi-tenancy. Each tenant is a self-contained schema wi
 Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation)
 +------------------------------+       +----------------------------------+
 | tenants                      |       | users, personal_access_tokens    |
-| tenant_domains               |       | teams, team_members              |
-+------------------------------+       | roles, role_permissions          |
+| tenant_domains               |       | tenant_preferences               |
++------------------------------+       | teams, team_members              |
+                                       | roles, role_permissions          |
                                        | user_roles, user_permission_...  |
                                        | record_shares, permission_audit  |
                                        | impersonation_sessions           |
@@ -40,7 +41,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 | `TenantMigrator` | Infrastructure | Creates schema + runs tenant migrations |
 | `ConsoleTenantBootstrap` | Infrastructure | Event listener for CLI tenant resolution |
 | `TenantBootstrapperImpl` | Infrastructure | Implements TenantBootstrapper contract |
-| `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes tenant name, logo, and display timezone via landlord DB + public disk |
+| `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes tenant name and logo via landlord `tenants` + public disk; reads/writes display timezone in tenant schema (`tenant_preferences`) |
 
 ## Console Commands
 

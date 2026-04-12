@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
@@ -178,8 +179,7 @@ it('persists display timezone from settings form', function (): void {
             'display_timezone' => 'UTC',
         ])->assertRedirect(route('settings.index'));
 
-    $tenant = TenantModel::findOrFail(test()->tenantId());
-    expect($tenant->display_timezone)->toBe('UTC');
+    expect(TenantPreferenceModel::readDisplayTimezone())->toBe('UTC');
 });
 
 it('validates display timezone is a known IANA identifier', function (): void {

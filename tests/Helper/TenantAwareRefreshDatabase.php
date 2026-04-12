@@ -6,6 +6,7 @@ namespace Tests\Helper;
 
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
 use Database\Seeders\EmailTemplateSeeder;
 use Illuminate\Support\Facades\Context;
@@ -135,7 +136,7 @@ trait TenantAwareRefreshDatabase
     private function setTenantContext(): void
     {
         $resolvedTenantContext = app(ResolvedTenantContext::class);
-        $displayTimezone = TenantModel::query()->whereKey($this->tenantId())->value('display_timezone');
+        $displayTimezone = TenantPreferenceModel::readDisplayTimezone();
         $resolvedTenantContext->set(
             $this->tenantId(),
             'test-'.$this->workerToken(),

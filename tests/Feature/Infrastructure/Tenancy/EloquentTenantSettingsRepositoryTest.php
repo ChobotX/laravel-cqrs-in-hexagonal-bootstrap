@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use App\Infrastructure\Filesystem\TenantLogoFileStorage;
 use App\Infrastructure\Tenancy\EloquentTenantSettingsRepository;
 use Illuminate\Http\UploadedFile;
@@ -152,7 +153,7 @@ it('persists display timezone', function (): void {
     $eloquentTenantSettingsRepository->updateSettings($tenant->id, 'Acme', null, false, 'Europe/Prague');
 
     $tenant->refresh();
-    expect($tenant->display_timezone)->toBe('Europe/Prague');
+    expect(TenantPreferenceModel::readDisplayTimezone())->toBe('Europe/Prague');
 
     $read = $eloquentTenantSettingsRepository->findByTenantId($tenant->id);
     expect($read)->not->toBeNull()

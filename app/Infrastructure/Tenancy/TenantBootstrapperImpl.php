@@ -7,6 +7,7 @@ namespace App\Infrastructure\Tenancy;
 use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantLogoStorage;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 
 final readonly class TenantBootstrapperImpl implements TenantBootstrapper
 {
@@ -36,14 +37,15 @@ final readonly class TenantBootstrapperImpl implements TenantBootstrapper
 
     private function bootstrap(TenantModel $tenantModel): void
     {
+        $this->tenantSchemaManager->switchTo($tenantModel);
+
         $this->resolvedTenantContext->set(
             $tenantModel->id,
             $tenantModel->slug,
             $tenantModel->name,
             $this->resolveLogoUrl($tenantModel->logo_path),
-            $tenantModel->display_timezone,
+            TenantPreferenceModel::readDisplayTimezone(),
         );
-        $this->tenantSchemaManager->switchTo($tenantModel);
     }
 
     private function resolveLogoUrl(?string $logoPath): ?string
