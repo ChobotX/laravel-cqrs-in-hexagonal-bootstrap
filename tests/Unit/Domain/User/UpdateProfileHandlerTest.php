@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\User\Constant\UserFields;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Entity\User;
@@ -51,6 +52,7 @@ function createProfileHandler(
             $hasUserUpdatePermission ? ['users.list.update'] : [],
         ),
         $fakeEventCollector,
+        new PropertyChangeBuilder,
     );
 }
 

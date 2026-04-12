@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -27,6 +27,7 @@ final readonly class UpdateTeamHandler implements CommandHandler
     public function __construct(
         private TeamRepository $teamRepository,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -55,7 +56,12 @@ final readonly class UpdateTeamHandler implements CommandHandler
             parentTeamId: $parentTeamId,
         );
 
-        $changes = $this->buildChanges($existing, $team);
+        $changes = $this->propertyChangeBuilder->diff([
+            TeamFields::NAME => [$existing->name->value, $team->name->value],
+            TeamFields::SLUG => [$existing->slug->value, $team->slug->value],
+            TeamFields::DESCRIPTION => [$existing->description, $team->description],
+            TeamFields::PARENT_TEAM_ID => [$existing->parentTeamId?->value, $team->parentTeamId?->value],
+        ]);
 
         if ($changes === []) {
             return;
@@ -88,29 +94,5 @@ final readonly class UpdateTeamHandler implements CommandHandler
         }
 
         return $parentTeamId;
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(Team $existing, Team $updated): array
-    {
-        $changes = [];
-
-        if ($existing->name->value !== $updated->name->value) {
-            $changes[] = new PropertyChange(TeamFields::NAME, $existing->name->value, $updated->name->value);
-        }
-
-        if ($existing->slug->value !== $updated->slug->value) {
-            $changes[] = new PropertyChange(TeamFields::SLUG, $existing->slug->value, $updated->slug->value);
-        }
-
-        if ($existing->description !== $updated->description) {
-            $changes[] = new PropertyChange(TeamFields::DESCRIPTION, $existing->description, $updated->description);
-        }
-
-        if ($existing->parentTeamId?->value !== $updated->parentTeamId?->value) {
-            $changes[] = new PropertyChange(TeamFields::PARENT_TEAM_ID, $existing->parentTeamId?->value, $updated->parentTeamId?->value);
-        }
-
-        return $changes;
     }
 }

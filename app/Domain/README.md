@@ -33,7 +33,7 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 - **Domain subdirectory types enforced** — `Enum/` must contain enums, `Handler/Command/` must implement `CommandHandler`, `Handler/Query/` must implement `QueryHandler`, `EventHandler/` must implement `DomainEventHandler`, `Middleware/` must implement `Middleware`, `Exception/` must implement `DomainException`. `Registry/Schema/` is exempt (`DomainSubdirectoryTypeEnforcementRule`)
 - **All handlers in Domain** — `CommandHandler`, `QueryHandler`, and `DomainEventHandler` implementations must live in `App\Domain\`; if a handler needs infrastructure, use a `Contract` interface (`HandlersInDomainRule`)
 - **Every command handler must collect domain events** — `CommandHandler` implementations must inject `EventCollector` and fire at least one event. Handlers that legitimately produce no events (infrastructure provisioning, data initialization) must declare `#[SkipDomainEvent(reason: '...')]` from `App\Application\Bus\SkipDomainEvent` (`CommandHandlerMustCollectEventsRule`)
-- **Update events must implement EntityUpdated** — every event class in `Contract/Event/` with a name ending in "Updated" must implement `App\Contract\Event\EntityUpdated`. Update events carry a `list<PropertyChange>` with only the changed fields (old/new values). Handlers must not fire update events when nothing changes — compare old vs new state and skip the event if `$changes === []`. (`UpdatedEventMustImplementEntityUpdatedRule`)
+- **Update events must implement EntityUpdated** — every event class in `Contract/Event/` with a name ending in "Updated" must implement `App\Application\Event\EntityUpdated`. Update events carry a `list<PropertyChange>` with only the changed fields (old/new values). Handlers must not fire update events when nothing changes — compare old vs new state and skip the event if `$changes === []`. (`UpdatedEventMustImplementEntityUpdatedRule`)
 - **No `assert()` calls** in `App\` namespace — use proper exceptions (`NoAssertInAppRule`)
 - **No `mixed` native type** in `App\Domain` — parameters, return types, and properties must use specific types (`NoMixedInDomainRule`)
 - **100% test coverage** of `app/Domain/` enforced by `phpunit.domain-coverage.xml`
@@ -226,7 +226,7 @@ Update events carry a `list<PropertyChange>` instead of individual fields. Each 
 1. Create `app/Domain/{Context}/Constant/{Context}Fields.php` with field name constants.
 2. Create the event implementing both `DomainEvent` and `EntityUpdated`:
    ```php
-   final readonly class {Name}Updated implements \App\Contract\Event\DomainEvent, \App\Contract\Event\EntityUpdated
+   final readonly class {Name}Updated implements \App\Contract\Event\DomainEvent, \App\Application\Event\EntityUpdated
    {
        /** @param list<\App\Application\Event\PropertyChange> $changes */
        public function __construct(

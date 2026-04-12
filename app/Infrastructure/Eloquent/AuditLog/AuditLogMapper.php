@@ -22,6 +22,7 @@ final readonly class AuditLogMapper
             entityType: $auditLogModel->entity_type,
             entityId: $auditLogModel->entity_id,
             payload: $auditLogModel->payload,
+            changes: $auditLogModel->changes,
             status: AuditLogStatus::from($auditLogModel->status),
             ipAddress: $auditLogModel->ip_address,
             occurredAt: $auditLogModel->occurred_at,

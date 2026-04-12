@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -26,6 +26,7 @@ final readonly class UpdateRoleHandler implements CommandHandler
     public function __construct(
         private RoleRepository $roleRepository,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -47,7 +48,14 @@ final readonly class UpdateRoleHandler implements CommandHandler
             permissions: $rolePermissions,
         );
 
-        $changes = $this->buildChanges($existing, $updatedRole);
+        $changes = $this->propertyChangeBuilder->diff([
+            RoleFields::NAME => [$existing->name->value, $updatedRole->name->value],
+            RoleFields::DESCRIPTION => [$existing->description, $updatedRole->description],
+            RoleFields::PERMISSIONS => [
+                $this->serializePermissions($existing->permissions),
+                $this->serializePermissions($updatedRole->permissions),
+            ],
+        ]);
 
         if ($changes === []) {
             return;
@@ -60,29 +68,6 @@ final readonly class UpdateRoleHandler implements CommandHandler
             changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(Role $existing, Role $updated): array
-    {
-        $changes = [];
-
-        if ($existing->name->value !== $updated->name->value) {
-            $changes[] = new PropertyChange(RoleFields::NAME, $existing->name->value, $updated->name->value);
-        }
-
-        if ($existing->description !== $updated->description) {
-            $changes[] = new PropertyChange(RoleFields::DESCRIPTION, $existing->description, $updated->description);
-        }
-
-        $oldPermissions = $this->serializePermissions($existing->permissions);
-        $newPermissions = $this->serializePermissions($updated->permissions);
-
-        if ($oldPermissions !== $newPermissions) {
-            $changes[] = new PropertyChange(RoleFields::PERMISSIONS, $oldPermissions, $newPermissions);
-        }
-
-        return $changes;
     }
 
     /** @param list<RolePermission> $permissions */

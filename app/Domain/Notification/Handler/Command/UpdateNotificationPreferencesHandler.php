@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Notification\Handler\Command;
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -23,6 +24,7 @@ final readonly class UpdateNotificationPreferencesHandler implements CommandHand
     public function __construct(
         private NotificationPreferenceRepository $notificationPreferenceRepository,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -72,21 +74,15 @@ final readonly class UpdateNotificationPreferencesHandler implements CommandHand
         $oldSerialized = $this->serializePreferences($existing);
         $newSerialized = $this->serializePreferences($updated);
 
-        $changes = [];
-
         $allLevels = array_unique(array_merge(array_keys($oldSerialized), array_keys($newSerialized)));
         sort($allLevels);
 
+        $pairs = [];
         foreach ($allLevels as $allLevel) {
-            $oldValue = $oldSerialized[$allLevel] ?? null;
-            $newValue = $newSerialized[$allLevel] ?? null;
-
-            if ($oldValue !== $newValue) {
-                $changes[] = new PropertyChange($allLevel, $oldValue, $newValue);
-            }
+            $pairs[$allLevel] = [$oldSerialized[$allLevel] ?? null, $newSerialized[$allLevel] ?? null];
         }
 
-        return $changes;
+        return $this->propertyChangeBuilder->diff($pairs);
     }
 
     /** @return array<string, string> */

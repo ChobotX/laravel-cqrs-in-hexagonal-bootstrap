@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\EmailTemplate\Constant\EmailTemplateFields;
 use App\Domain\EmailTemplate\Contract\Command\UpdateEmailTemplateCommand;
 use App\Domain\EmailTemplate\Contract\Entity\EmailTemplate;
@@ -33,7 +34,7 @@ it('updates existing template content', function (): void {
     $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);
+    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateEmailTemplateCommand(
         templateType: 'user_invite',
@@ -52,7 +53,7 @@ it('collects EmailTemplateUpdated event', function (): void {
     $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);
+    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateEmailTemplateCommand(
         templateType: 'user_invite',
@@ -79,7 +80,7 @@ it('does not save or collect event when content is unchanged', function (): void
     $repository = new FakeEmailTemplateRepository(['user_invite:en' => $emailTemplate]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);
+    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateEmailTemplateCommand(
         templateType: 'user_invite',
@@ -96,7 +97,7 @@ it('throws EmailTemplateNotFoundException for non-existent template', function (
     $repository = new FakeEmailTemplateRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector);
+    $handler = new UpdateEmailTemplateHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateEmailTemplateCommand(
         templateType: 'nonexistent',

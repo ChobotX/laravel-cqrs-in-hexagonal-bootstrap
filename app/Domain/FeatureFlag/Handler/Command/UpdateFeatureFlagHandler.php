@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\FeatureFlag\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -31,6 +31,7 @@ final readonly class UpdateFeatureFlagHandler implements CommandHandler
         private FeatureFlagOverrideRepository $featureFlagOverrideRepository,
         private FeatureFlagCacheInvalidator $featureFlagCacheInvalidator,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -48,7 +49,10 @@ final readonly class UpdateFeatureFlagHandler implements CommandHandler
         $flagValueValidator = new FlagValueValidator;
         $flagValueValidator->validate($definition, $value);
 
-        $changes = $this->buildChanges($existing, $value, $command->enabled);
+        $changes = $this->propertyChangeBuilder->diff([
+            FeatureFlagFields::VALUE => [$existing?->value, $value],
+            FeatureFlagFields::ENABLED => [$existing?->enabled, $command->enabled],
+        ]);
 
         if ($changes === []) {
             return;
@@ -80,24 +84,5 @@ final readonly class UpdateFeatureFlagHandler implements CommandHandler
         }
 
         return $featureFlagOverride->value ?? $flagDefinition->default;
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(?FeatureFlagOverride $featureFlagOverride, string $value, bool $enabled): array
-    {
-        $changes = [];
-
-        $oldValue = $featureFlagOverride?->value;
-        $oldEnabled = $featureFlagOverride?->enabled;
-
-        if ($oldValue !== $value) {
-            $changes[] = new PropertyChange(FeatureFlagFields::VALUE, $oldValue, $value);
-        }
-
-        if ($oldEnabled !== $enabled) {
-            $changes[] = new PropertyChange(FeatureFlagFields::ENABLED, $oldEnabled, $enabled);
-        }
-
-        return $changes;
     }
 }

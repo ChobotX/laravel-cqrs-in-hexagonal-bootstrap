@@ -70,6 +70,21 @@ it('ignores unrecognized events', function (): void {
         {
             return $this->occurredAt;
         }
+
+        public function entityType(): string
+        {
+            return 'test';
+        }
+
+        public function entityId(): string
+        {
+            return 'test-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Test';
+        }
     };
 
     $handler->handle($unknownEvent);

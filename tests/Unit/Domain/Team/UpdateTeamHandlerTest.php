@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\Team\Constant\TeamFields;
 use App\Domain\Team\Contract\Command\UpdateTeamCommand;
 use App\Domain\Team\Contract\Entity\Team;
@@ -32,7 +33,7 @@ it('updates a team and emits event', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -58,7 +59,7 @@ it('does not save or collect event when data is unchanged', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -87,7 +88,7 @@ it('tracks parent team change', function (): void {
     ]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -110,7 +111,7 @@ it('allows keeping the same slug for the same team', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -129,7 +130,7 @@ it('throws when team not found', function (): void {
     $teamRepo = new FakeTeamRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -155,7 +156,7 @@ it('throws when slug already taken by another team', function (): void {
     ]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -170,7 +171,7 @@ it('throws when setting self as parent', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -211,7 +212,7 @@ it('throws when setting descendant as parent creates cycle', function (): void {
     ]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -226,7 +227,7 @@ it('throws when parent team not found', function (): void {
     $teamRepo = new FakeTeamRepository(['550e8400-e29b-41d4-a716-446655440000' => updateTeamExisting()]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateTeamHandler($teamRepo, $eventCollector);
+    $handler = new UpdateTeamHandler($teamRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateTeamCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',

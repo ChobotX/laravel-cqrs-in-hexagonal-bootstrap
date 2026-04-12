@@ -22,6 +22,21 @@ it('resolves handler and calls it with the domain event', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $handler = new FakeDomainEventHandler;
@@ -50,6 +65,21 @@ it('throws InvalidHandlerException when container resolves wrong type', function
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $container = new Container;
@@ -69,6 +99,21 @@ it('bootstraps tenant when tenant slug is provided', function (): void {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
         }
     };
 
@@ -112,6 +157,21 @@ it('skips tenant bootstrap when tenant slug is null', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $handler = new FakeDomainEventHandler;
@@ -140,6 +200,21 @@ it('reads retry policy from handler attribute', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $job = new HandleDomainEventJob(
@@ -159,6 +234,21 @@ it('throws when handler lacks RetryPolicy attribute', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     new HandleDomainEventJob(
@@ -173,6 +263,21 @@ it('logs error when job fails permanently', function (): void {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
         }
     };
 
@@ -200,6 +305,21 @@ it('logs info with context when handler executes successfully', function (): voi
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
         }
     };
 
@@ -245,6 +365,21 @@ it('logs error and re-throws when handler fails during execution', function (): 
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $logger = createJobLoggerSpy();
@@ -286,6 +421,21 @@ it('logs debug with event data before handler execution', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'user';
+        }
+
+        public function entityId(): string
+        {
+            return $this->userId;
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $handler = new FakeDomainEventHandler;
@@ -324,6 +474,21 @@ it('masks sensitive properties in debug event log', function (): void {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'user';
+        }
+
+        public function entityId(): string
+        {
+            return $this->userId;
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
         }
     };
 

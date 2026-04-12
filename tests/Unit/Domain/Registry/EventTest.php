@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\EntityUpdated;
 use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
-use App\Contract\Event\EntityUpdated;
 use App\Domain\Registry\Constant\DefinitionFields;
 use App\Domain\Registry\Constant\EntryFields;
 use App\Domain\Registry\Contract\Event\DefinitionCreated;
@@ -108,7 +108,9 @@ it('DefinitionVersionDeprecated implements DomainEvent and exposes all propertie
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->versionId)->toBe('550e8400-e29b-41d4-a716-446655440000')
         ->and($event->definitionId)->toBe('660e8400-e29b-41d4-a716-446655440000')
-        ->and($event->version)->toBe(3);
+        ->and($event->version)->toBe(3)
+        ->and($event->entityType())->toBe('definition_version')
+        ->and($event->entityId())->toBe('550e8400-e29b-41d4-a716-446655440000');
 });
 
 it('EntryCreated implements DomainEvent and exposes all properties', function (): void {

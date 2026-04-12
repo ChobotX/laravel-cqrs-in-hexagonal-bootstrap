@@ -17,6 +17,7 @@ it('maps model to domain entry', function (): void {
     $model->entity_type = 'user';
     $model->entity_id = '770e8400-e29b-41d4-a716-446655440000';
     $model->payload = ['name' => 'John', 'email' => 'john@example.com'];
+    $model->changes = [['property' => 'name', 'old' => null, 'new' => 'John', 'sensitive' => false]];
     $model->status = 'success';
     $model->ip_address = '127.0.0.1';
     $model->occurred_at = new DateTimeImmutable('2026-04-08 10:00:00');
@@ -33,6 +34,7 @@ it('maps model to domain entry', function (): void {
         ->and($auditLogEntry->entityType)->toBe('user')
         ->and($auditLogEntry->entityId)->toBe('770e8400-e29b-41d4-a716-446655440000')
         ->and($auditLogEntry->payload)->toBe(['name' => 'John', 'email' => 'john@example.com'])
+        ->and($auditLogEntry->changes)->toBe([['property' => 'name', 'old' => null, 'new' => 'John', 'sensitive' => false]])
         ->and($auditLogEntry->status)->toBe(AuditLogStatus::Success)
         ->and($auditLogEntry->ipAddress)->toBe('127.0.0.1');
 });
@@ -48,6 +50,7 @@ it('maps model with null fields', function (): void {
     $model->entity_type = null;
     $model->entity_id = null;
     $model->payload = [];
+    $model->changes = [];
     $model->status = 'failure';
     $model->ip_address = null;
     $model->occurred_at = new DateTimeImmutable('2026-04-08 10:00:00');

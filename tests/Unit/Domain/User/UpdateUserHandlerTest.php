@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\User\Constant\UserFields;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
 use App\Domain\User\Contract\Entity\User;
@@ -27,7 +28,7 @@ it('saves an updated user via the repository', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -51,7 +52,7 @@ it('collects a UserUpdated event with changes', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -80,7 +81,7 @@ it('does not save or collect event when data is unchanged', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -102,7 +103,7 @@ it('saves an updated user with avatarFileId', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -133,7 +134,7 @@ it('clears avatarFileId when set to null', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -155,7 +156,7 @@ it('throws UserNotFoundException when user does not exist', function (): void {
     $repository = new FakeUserRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -174,7 +175,7 @@ it('throws when name is empty', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -201,7 +202,7 @@ it('throws when email belongs to another user', function (): void {
     ]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -228,7 +229,7 @@ it('throws when email matches another user case-insensitively', function (): voi
     ]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -247,7 +248,7 @@ it('allows keeping the same email for the same user', function (): void {
     $repository = new FakeUserRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateUserHandler($repository, $eventCollector);
+    $handler = new UpdateUserHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateUserCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',

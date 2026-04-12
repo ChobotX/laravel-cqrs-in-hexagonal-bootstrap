@@ -36,6 +36,16 @@ it('removes assignments and deletes orphaned labels', function (): void {
         {
             return new DateTimeImmutable('2026-01-15T10:00:00+00:00');
         }
+
+        public function entityType(): string
+        {
+            return 'test';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Test Delete';
+        }
     };
 
     $handler->handle($event);
@@ -71,6 +81,16 @@ it('leaves labels that are still assigned to other entities', function (): void 
         {
             return new DateTimeImmutable('2026-01-15T10:00:00+00:00');
         }
+
+        public function entityType(): string
+        {
+            return 'test';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Test Delete';
+        }
     };
 
     $handler->handle($event);
@@ -94,6 +114,16 @@ it('does nothing when entity has no labels', function (): void {
         {
             return new DateTimeImmutable('2026-01-15T10:00:00+00:00');
         }
+
+        public function entityType(): string
+        {
+            return 'test';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Test Delete';
+        }
     };
 
     $handler->handle($event);
@@ -111,6 +141,21 @@ it('ignores events that do not implement EntityDeleted', function (): void {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable('2026-01-15T10:00:00+00:00');
+        }
+
+        public function entityType(): string
+        {
+            return 'test';
+        }
+
+        public function entityId(): string
+        {
+            return 'test-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Test';
         }
     };
 

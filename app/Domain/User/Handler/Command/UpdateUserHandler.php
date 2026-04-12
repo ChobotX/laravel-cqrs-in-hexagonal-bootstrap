@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -27,6 +27,7 @@ final readonly class UpdateUserHandler implements CommandHandler
     public function __construct(
         private UserRepository $userRepository,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -54,7 +55,11 @@ final readonly class UpdateUserHandler implements CommandHandler
             avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : null,
         );
 
-        $changes = $this->buildChanges($existing, $user);
+        $changes = $this->propertyChangeBuilder->diff([
+            UserFields::NAME => [$existing->name->value, $user->name->value],
+            UserFields::EMAIL => [$existing->email->value, $user->email->value],
+            UserFields::AVATAR_FILE_ID => [$existing->avatarFileId?->value, $user->avatarFileId?->value],
+        ]);
 
         if ($changes === []) {
             return;
@@ -67,25 +72,5 @@ final readonly class UpdateUserHandler implements CommandHandler
             changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(User $existing, User $updated): array
-    {
-        $changes = [];
-
-        if ($existing->name->value !== $updated->name->value) {
-            $changes[] = new PropertyChange(UserFields::NAME, $existing->name->value, $updated->name->value);
-        }
-
-        if ($existing->email->value !== $updated->email->value) {
-            $changes[] = new PropertyChange(UserFields::EMAIL, $existing->email->value, $updated->email->value);
-        }
-
-        if ($existing->avatarFileId?->value !== $updated->avatarFileId?->value) {
-            $changes[] = new PropertyChange(UserFields::AVATAR_FILE_ID, $existing->avatarFileId?->value, $updated->avatarFileId?->value);
-        }
-
-        return $changes;
     }
 }

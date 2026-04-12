@@ -335,6 +335,10 @@ return [
         'clear' => 'Vymazat',
         'trace_title' => 'Stopa :traceId',
         'back' => 'Zpět na auditní protokol',
+        'changes' => 'Změny',
+        'no_changes' => 'Žádné změny',
+        'redacted' => 'skryto',
+        'changes_count' => ':count změna|:count změny|:count změn',
         'grouped_entries' => '{1} akce v tomto požadavku|[2,4] akce v tomto požadavku|[5,*] akcí v tomto požadavku',
     ],
 

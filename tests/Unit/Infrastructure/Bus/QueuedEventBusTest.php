@@ -18,6 +18,21 @@ it('dispatches a job for each handler registered for an event', function (): voi
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $bus = new QueuedEventBus(
@@ -42,6 +57,21 @@ it('dispatches no jobs when no handlers are registered', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $bus = new QueuedEventBus(
@@ -64,12 +94,42 @@ it('dispatches jobs for multiple events', function (): void {
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id-1';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub 1';
+        }
     };
     $event2 = new readonly class implements DomainEvent
     {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id-2';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub 2';
         }
     };
 
@@ -95,6 +155,21 @@ it('passes tenant slug to job when tenant is resolved', function (): void {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
         }
     };
 
@@ -125,6 +200,21 @@ it('passes null tenant slug when tenant is not resolved', function (): void {
         public function occurredAt(): DateTimeImmutable
         {
             return new DateTimeImmutable;
+        }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
         }
     };
 

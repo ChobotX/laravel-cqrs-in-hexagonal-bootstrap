@@ -20,6 +20,12 @@ final class InMemoryEventCollector implements EventCollector
     }
 
     /** @return list<DomainEvent> */
+    public function peek(): array
+    {
+        return $this->events;
+    }
+
+    /** @return list<DomainEvent> */
     public function flush(): array
     {
         $events = $this->events;

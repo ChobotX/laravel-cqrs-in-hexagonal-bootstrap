@@ -40,5 +40,6 @@ it('FileDeleted implements DomainEvent and EntityDeleted', function (): void {
         ->and($event)->toBeInstanceOf(EntityDeleted::class)
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->entityId())->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($event->entityType())->toBe('file')
         ->and($event->fileId)->toBe('550e8400-e29b-41d4-a716-446655440000');
 });

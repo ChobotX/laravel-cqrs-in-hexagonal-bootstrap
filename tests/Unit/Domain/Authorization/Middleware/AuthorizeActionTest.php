@@ -109,5 +109,4 @@ it('allows when permission is granted', function (): void {
 });
 
 #[RequiresPermission('users.list.read')]
-#[App\Application\Bus\SkipAuditLog(reason: 'Test stub')]
 final readonly class AuthorizeActionTestPermissionMessage implements Command {}

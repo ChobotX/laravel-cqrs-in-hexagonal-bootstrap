@@ -12,6 +12,7 @@ final readonly class AuditLogEntry
 {
     /**
      * @param  array<string, mixed>  $payload
+     * @param  list<array<string, mixed>>  $changes
      */
     public function __construct(
         public AuditLogId $id,
@@ -23,6 +24,7 @@ final readonly class AuditLogEntry
         public ?string $entityType,
         public ?string $entityId,
         public array $payload,
+        public array $changes,
         public AuditLogStatus $status,
         public ?string $ipAddress,
         public DateTimeImmutable $occurredAt,

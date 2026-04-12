@@ -14,6 +14,21 @@ it('flushes collected events and dispatches them after handler success', functio
         {
             return new DateTimeImmutable;
         }
+
+        public function entityType(): string
+        {
+            return 'stub';
+        }
+
+        public function entityId(): string
+        {
+            return 'stub-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Stub';
+        }
     };
 
     $collector = new readonly class($event) implements EventCollector
@@ -21,6 +36,12 @@ it('flushes collected events and dispatches them after handler success', functio
         public function __construct(private DomainEvent $domainEvent) {}
 
         public function collect(DomainEvent ...$events): void {}
+
+        /** @return list<DomainEvent> */
+        public function peek(): array
+        {
+            return [$this->domainEvent];
+        }
 
         /** @return list<DomainEvent> */
         public function flush(): array
@@ -61,6 +82,12 @@ it('does not dispatch events when handler throws', function (): void {
     $collector = new class implements EventCollector
     {
         public function collect(DomainEvent ...$events): void {}
+
+        /** @return list<DomainEvent> */
+        public function peek(): array
+        {
+            return [];
+        }
 
         /** @return list<DomainEvent> */
         public function flush(): array

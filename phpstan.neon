@@ -187,10 +187,6 @@ services:
         class: Tests\Architecture\PHPStan\NoDomainSpecificContractsInGlobalContractRule
         tags:
             - phpstan.rules.rule
-    -
-        class: Tests\Architecture\PHPStan\CommandRequiresAuditableRule
-        tags:
-            - phpstan.rules.rule
 
 parameters:
     paths:

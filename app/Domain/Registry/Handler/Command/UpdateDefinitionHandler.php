@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -24,6 +24,7 @@ final readonly class UpdateDefinitionHandler implements CommandHandler
     public function __construct(
         private DefinitionRepository $definitionRepository,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -37,7 +38,9 @@ final readonly class UpdateDefinitionHandler implements CommandHandler
 
         $definitionName = new DefinitionName($command->name);
 
-        $changes = $this->buildChanges($existing, $definitionName);
+        $changes = $this->propertyChangeBuilder->diff([
+            DefinitionFields::NAME => [$existing->name->value, $definitionName->value],
+        ]);
 
         if ($changes === []) {
             return;
@@ -57,17 +60,5 @@ final readonly class UpdateDefinitionHandler implements CommandHandler
             changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(Definition $definition, DefinitionName $definitionName): array
-    {
-        $changes = [];
-
-        if ($definition->name->value !== $definitionName->value) {
-            $changes[] = new PropertyChange(DefinitionFields::NAME, $definition->name->value, $definitionName->value);
-        }
-
-        return $changes;
     }
 }

@@ -337,6 +337,10 @@ return [
         'clear' => 'Clear',
         'trace_title' => 'Trace :traceId',
         'back' => 'Back to Audit Log',
+        'changes' => 'Changes',
+        'no_changes' => 'No changes',
+        'redacted' => 'redacted',
+        'changes_count' => ':count change|:count changes',
         'grouped_entries' => '{1} action in this request|[2,*] actions in this request',
     ],
 

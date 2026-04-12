@@ -21,6 +21,7 @@ final readonly class EloquentAuditLogWriter implements AuditLogWriter
         $auditLogModel->entity_type = $auditLogEntry->entityType;
         $auditLogModel->entity_id = $auditLogEntry->entityId;
         $auditLogModel->payload = $auditLogEntry->payload;
+        $auditLogModel->changes = $auditLogEntry->changes;
         $auditLogModel->status = $auditLogEntry->status->value;
         $auditLogModel->ip_address = $auditLogEntry->ipAddress;
         $auditLogModel->occurred_at = $auditLogEntry->occurredAt;

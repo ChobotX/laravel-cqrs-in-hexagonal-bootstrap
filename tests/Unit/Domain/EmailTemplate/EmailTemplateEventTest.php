@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\EntityUpdated;
 use App\Application\Event\PropertyChange;
-use App\Contract\Event\EntityUpdated;
 use App\Domain\EmailTemplate\Constant\EmailTemplateFields;
 use App\Domain\EmailTemplate\Contract\Event\EmailTemplateReset;
 use App\Domain\EmailTemplate\Contract\Event\EmailTemplateUpdated;

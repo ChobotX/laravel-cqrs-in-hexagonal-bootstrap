@@ -44,6 +44,7 @@ function makeTraceEntry(string $id, string $traceId): AuditLogEntry
         entityType: null,
         entityId: null,
         payload: [],
+        changes: [],
         status: AuditLogStatus::Success,
         ipAddress: null,
         occurredAt: new DateTimeImmutable('2026-04-08 10:00:00'),

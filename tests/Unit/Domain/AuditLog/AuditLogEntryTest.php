@@ -19,6 +19,7 @@ it('constructs with all properties', function (): void {
         entityType: 'user',
         entityId: '770e8400-e29b-41d4-a716-446655440000',
         payload: ['name' => 'John', 'email' => 'john@example.com'],
+        changes: [['property' => 'name', 'old' => null, 'new' => 'John', 'sensitive' => false]],
         status: AuditLogStatus::Success,
         ipAddress: '127.0.0.1',
         occurredAt: $occurredAt,
@@ -33,6 +34,7 @@ it('constructs with all properties', function (): void {
         ->and($entry->entityType)->toBe('user')
         ->and($entry->entityId)->toBe('770e8400-e29b-41d4-a716-446655440000')
         ->and($entry->payload)->toBe(['name' => 'John', 'email' => 'john@example.com'])
+        ->and($entry->changes)->toBe([['property' => 'name', 'old' => null, 'new' => 'John', 'sensitive' => false]])
         ->and($entry->status)->toBe(AuditLogStatus::Success)
         ->and($entry->ipAddress)->toBe('127.0.0.1')
         ->and($entry->occurredAt)->toBe($occurredAt);
@@ -49,6 +51,7 @@ it('allows nullable fields', function (): void {
         entityType: null,
         entityId: null,
         payload: [],
+        changes: [],
         status: AuditLogStatus::Failure,
         ipAddress: null,
         occurredAt: new DateTimeImmutable('2026-04-08 10:00:00'),

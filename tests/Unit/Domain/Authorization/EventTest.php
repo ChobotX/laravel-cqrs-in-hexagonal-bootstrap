@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\EntityUpdated;
 use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
-use App\Contract\Event\EntityUpdated;
 use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Event\ImpersonationStarted;
 use App\Domain\Authorization\Contract\Event\ImpersonationStopped;
@@ -91,7 +91,9 @@ it('RecordShared implements DomainEvent and exposes occurredAt', function (): vo
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->granteeUserId)->toBe('00000000-0000-0000-0000-000000000010')
         ->and($event->resourceType)->toBe('contact')
-        ->and($event->action)->toBe('read');
+        ->and($event->action)->toBe('read')
+        ->and($event->entityType())->toBe('contact')
+        ->and($event->entityId())->toBe('00000000-0000-0000-0000-000000000099');
 });
 
 it('RecordShareRevoked implements DomainEvent and exposes occurredAt', function (): void {
@@ -106,7 +108,9 @@ it('RecordShareRevoked implements DomainEvent and exposes occurredAt', function 
     expect($event)->toBeInstanceOf(DomainEvent::class)
         ->and($event->occurredAt())->toBe($occurredAt)
         ->and($event->granteeUserId)->toBe('00000000-0000-0000-0000-000000000010')
-        ->and($event->resourceType)->toBe('contact');
+        ->and($event->resourceType)->toBe('contact')
+        ->and($event->entityType())->toBe('contact')
+        ->and($event->entityId())->toBe('00000000-0000-0000-0000-000000000099');
 });
 
 it('RoleAssignedToUser implements DomainEvent and exposes occurredAt', function (): void {

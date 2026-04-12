@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -34,6 +34,7 @@ final readonly class UpdateEntryHandler implements CommandHandler
         private SchemaSerializer $schemaSerializer,
         private EventCollector $eventCollector,
         private ReferenceValidator $referenceValidator,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -41,7 +42,10 @@ final readonly class UpdateEntryHandler implements CommandHandler
         $entry = $this->entryRepository->findById(new EntryId($command->id))
             ?? throw new EntryNotFoundException($command->id);
 
-        $changes = $this->buildChanges($entry, $command);
+        $changes = $this->propertyChangeBuilder->diff([
+            EntryFields::TITLE => [$entry->title->value, $command->title],
+            EntryFields::DATA => [$this->encodeData($entry->data), $this->encodeData($command->data)],
+        ]);
 
         if ($changes === []) {
             return;
@@ -83,21 +87,5 @@ final readonly class UpdateEntryHandler implements CommandHandler
     private function encodeData(array $data): string
     {
         return (string) json_encode($data);
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(Entry $entry, UpdateEntryCommand $updateEntryCommand): array
-    {
-        $changes = [];
-
-        if ($entry->title->value !== $updateEntryCommand->title) {
-            $changes[] = new PropertyChange(EntryFields::TITLE, $entry->title->value, $updateEntryCommand->title);
-        }
-
-        if ($entry->data !== $updateEntryCommand->data) {
-            $changes[] = new PropertyChange(EntryFields::DATA, $this->encodeData($entry->data), $this->encodeData($updateEntryCommand->data));
-        }
-
-        return $changes;
     }
 }

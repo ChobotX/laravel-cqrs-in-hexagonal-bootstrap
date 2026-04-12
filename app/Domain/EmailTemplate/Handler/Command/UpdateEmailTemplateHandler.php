@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\EmailTemplate\Handler\Command;
 
-use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -22,6 +22,7 @@ final readonly class UpdateEmailTemplateHandler implements CommandHandler
     public function __construct(
         private EmailTemplateRepository $emailTemplateRepository,
         private EventCollector $eventCollector,
+        private PropertyChangeBuilder $propertyChangeBuilder,
     ) {}
 
     public function handle(Command $command): void
@@ -32,7 +33,10 @@ final readonly class UpdateEmailTemplateHandler implements CommandHandler
             throw new EmailTemplateNotFoundException($command->templateType, $command->locale);
         }
 
-        $changes = $this->buildChanges($existing, $command);
+        $changes = $this->propertyChangeBuilder->diff([
+            EmailTemplateFields::SUBJECT_TEMPLATE => [$existing->subjectTemplate, $command->subjectTemplate],
+            EmailTemplateFields::BODY_TEMPLATE => [$existing->bodyTemplate, $command->bodyTemplate],
+        ]);
 
         if ($changes === []) {
             return;
@@ -51,21 +55,5 @@ final readonly class UpdateEmailTemplateHandler implements CommandHandler
             changes: $changes,
             occurredAt: new DateTimeImmutable,
         ));
-    }
-
-    /** @return list<PropertyChange> */
-    private function buildChanges(EmailTemplate $emailTemplate, UpdateEmailTemplateCommand $updateEmailTemplateCommand): array
-    {
-        $changes = [];
-
-        if ($emailTemplate->subjectTemplate !== $updateEmailTemplateCommand->subjectTemplate) {
-            $changes[] = new PropertyChange(EmailTemplateFields::SUBJECT_TEMPLATE, $emailTemplate->subjectTemplate, $updateEmailTemplateCommand->subjectTemplate);
-        }
-
-        if ($emailTemplate->bodyTemplate !== $updateEmailTemplateCommand->bodyTemplate) {
-            $changes[] = new PropertyChange(EmailTemplateFields::BODY_TEMPLATE, $emailTemplate->bodyTemplate, $updateEmailTemplateCommand->bodyTemplate);
-        }
-
-        return $changes;
     }
 }

@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Contract\Event;
 
+use App\Application\Event\DescribesAction;
 use App\Contract\Event\DomainEvent;
 use DateTimeImmutable;
 
 final readonly class TeamMemberAdded implements DomainEvent
 {
+    use DescribesAction;
+
     public function __construct(
         public string $userId,
         public string $teamId,
@@ -18,5 +21,15 @@ final readonly class TeamMemberAdded implements DomainEvent
     public function occurredAt(): DateTimeImmutable
     {
         return $this->occurredAt;
+    }
+
+    public function entityType(): string
+    {
+        return 'team';
+    }
+
+    public function entityId(): string
+    {
+        return $this->teamId;
     }
 }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\Registry\Constant\EntryFields;
 use App\Domain\Registry\Contract\Command\UpdateEntryCommand;
 use App\Domain\Registry\Contract\Entity\DefinitionVersion;
@@ -61,7 +62,7 @@ function updateEntryHandlerFixtures(array $overrides = []): array
     $eventCollector = new FakeEventCollector;
 
     $referenceValidator = new ReferenceValidator($entryRepo);
-    $handler = new UpdateEntryHandler($entryRepo, $versionRepo, $validator, $serializer, $eventCollector, $referenceValidator);
+    $handler = new UpdateEntryHandler($entryRepo, $versionRepo, $validator, $serializer, $eventCollector, $referenceValidator, new PropertyChangeBuilder);
 
     return [$handler, $entryRepo, $eventCollector];
 }

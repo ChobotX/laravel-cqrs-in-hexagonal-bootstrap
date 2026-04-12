@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\Registry\Contract\Command;
 
 use App\Application\Authorization\RequiresPermission;
-use App\Contract\Command\AuditableCommand;
 use App\Contract\Command\Command;
 
 #[RequiresPermission('registry.entries.create')]
-final readonly class CreateEntryCommand implements AuditableCommand, Command
+final readonly class CreateEntryCommand implements Command
 {
     /** @param array<string, mixed> $data */
     public function __construct(
@@ -18,14 +17,4 @@ final readonly class CreateEntryCommand implements AuditableCommand, Command
         public string $title,
         public array $data,
     ) {}
-
-    public function auditEntityType(): string
-    {
-        return 'entry';
-    }
-
-    public function auditEntityId(): string
-    {
-        return $this->id;
-    }
 }

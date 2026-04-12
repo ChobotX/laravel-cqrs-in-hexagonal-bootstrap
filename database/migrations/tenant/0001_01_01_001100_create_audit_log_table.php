@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('entity_type', 100)->nullable();
             $table->uuid('entity_id')->nullable();
             $table->jsonb('payload');
+            $table->jsonb('changes')->default('[]');
             $table->string('status', 10);
             $table->string('ip_address', 45)->nullable();
             $table->timestampTz('occurred_at');

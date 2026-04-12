@@ -61,6 +61,7 @@ function makeAuditLogEntry(
         entityType: $entityType,
         entityId: $entityId,
         payload: [],
+        changes: [],
         status: AuditLogStatus::Success,
         ipAddress: '127.0.0.1',
         occurredAt: new DateTimeImmutable('2026-04-08 10:00:00'),

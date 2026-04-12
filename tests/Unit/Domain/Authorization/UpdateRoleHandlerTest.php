@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Command\UpdateRoleCommand;
 use App\Domain\Authorization\Contract\Entity\Role;
@@ -26,7 +27,7 @@ it('updates a role and emits event', function (): void {
     $repository = new FakeRoleRepository(['550e8400-e29b-41d4-a716-446655440000' => $role]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateRoleHandler($repository, $eventCollector);
+    $handler = new UpdateRoleHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateRoleCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -64,7 +65,7 @@ it('does not save or collect event when data is unchanged', function (): void {
     $repository = new FakeRoleRepository(['550e8400-e29b-41d4-a716-446655440000' => $role]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateRoleHandler($repository, $eventCollector);
+    $handler = new UpdateRoleHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateRoleCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -81,7 +82,7 @@ it('throws when role does not exist', function (): void {
     $repository = new FakeRoleRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateRoleHandler($repository, $eventCollector);
+    $handler = new UpdateRoleHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateRoleCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -103,7 +104,7 @@ it('preserves isSystem from existing role', function (): void {
     $repository = new FakeRoleRepository(['550e8400-e29b-41d4-a716-446655440000' => $role]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateRoleHandler($repository, $eventCollector);
+    $handler = new UpdateRoleHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateRoleCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',

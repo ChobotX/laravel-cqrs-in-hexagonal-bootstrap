@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\FeatureFlag\Constant\FeatureFlagFields;
 use App\Domain\FeatureFlag\Contract\Command\UpdateFeatureFlagCommand;
 use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
@@ -68,7 +69,7 @@ it('saves boolean override and collects event', function (): void {
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.stripe', enabled: true));
 
@@ -97,7 +98,7 @@ it('does not save or collect event when data is unchanged', function (): void {
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.stripe', enabled: true));
 
@@ -112,7 +113,7 @@ it('disables boolean flag with auto-derived value', function (): void {
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.stripe', enabled: false));
 
@@ -126,7 +127,7 @@ it('saves select override with explicit value', function (): void {
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.gateway', enabled: true, value: 'stripe'));
 
@@ -143,7 +144,7 @@ it('toggles select flag off keeping existing value', function (): void {
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.gateway', enabled: false));
 
@@ -157,7 +158,7 @@ it('toggles select flag off using default when no override exists', function ():
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.gateway', enabled: false));
 
@@ -171,7 +172,7 @@ it('saves input override matching pattern', function (): void {
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.prefix', enabled: true, value: 'FAK-'));
 
@@ -186,7 +187,7 @@ it('throws FeatureFlagNotFoundException when key does not exist', function (): v
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'nonexistent.flag', enabled: true));
 })->throws(FeatureFlagNotFoundException::class);
@@ -197,7 +198,7 @@ it('throws InvalidFlagValueException for invalid boolean value', function (): vo
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.stripe', enabled: true, value: 'yes'));
 })->throws(InvalidFlagValueException::class);
@@ -208,7 +209,7 @@ it('throws InvalidFlagValueException for invalid select value', function (): voi
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.gateway', enabled: true, value: 'paypal'));
 })->throws(InvalidFlagValueException::class);
@@ -219,7 +220,7 @@ it('throws InvalidFlagValueException for invalid input pattern', function (): vo
     $cacheInvalidator = new FakeFeatureFlagCacheInvalidator;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector);
+    $handler = new UpdateFeatureFlagHandler($provider, $repository, $cacheInvalidator, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateFeatureFlagCommand(key: 'billing.prefix', enabled: true, value: 'invalid'));
 })->throws(InvalidFlagValueException::class);

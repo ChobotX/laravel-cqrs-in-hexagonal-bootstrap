@@ -34,6 +34,21 @@ it('ignores events that do not implement EntityDeleted', function (): void {
         {
             return $this->occurredAt;
         }
+
+        public function entityType(): string
+        {
+            return 'test';
+        }
+
+        public function entityId(): string
+        {
+            return 'test-id';
+        }
+
+        public function actionLabel(): string
+        {
+            return 'Test';
+        }
     };
 
     $handler->handle($nonEntityDeletedEvent);

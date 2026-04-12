@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\Notification\Contract\Command\UpdateNotificationPreferencesCommand;
 use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Event\NotificationPreferencesUpdated;
@@ -17,7 +18,7 @@ it('saves preferences from command data', function (): void {
     $prefRepo = new FakeNotificationPreferenceRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector);
+    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateNotificationPreferencesCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
@@ -41,7 +42,7 @@ it('emits NotificationPreferencesUpdated event', function (): void {
     $prefRepo = new FakeNotificationPreferenceRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector);
+    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateNotificationPreferencesCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
@@ -73,7 +74,7 @@ it('does not save or collect event when preferences are unchanged', function ():
     ]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector);
+    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateNotificationPreferencesCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
@@ -90,7 +91,7 @@ it('enforces in_app channel is always present', function (): void {
     $prefRepo = new FakeNotificationPreferenceRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector);
+    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateNotificationPreferencesCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
@@ -110,7 +111,7 @@ it('throws on invalid level', function (): void {
     $prefRepo = new FakeNotificationPreferenceRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector);
+    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateNotificationPreferencesCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',
@@ -124,7 +125,7 @@ it('throws on invalid channel', function (): void {
     $prefRepo = new FakeNotificationPreferenceRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector);
+    $handler = new UpdateNotificationPreferencesHandler($prefRepo, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateNotificationPreferencesCommand(
         userId: '550e8400-e29b-41d4-a716-446655440000',

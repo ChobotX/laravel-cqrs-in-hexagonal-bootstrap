@@ -90,7 +90,8 @@
                     @forelse ($entries as $entry)
                         <tr class="transition-colors hover:bg-gray-50/50">
                             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                {{ $entry->occurredAt->format('Y-m-d H:i:s') }}
+                                <time data-local-datetime
+                                      datetime="{{ $entry->occurredAt->format(DATE_ATOM) }}">{{ $entry->occurredAt->format('Y-m-d H:i:s') }}</time>
                             </td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900">
                                 {{ $entry->actionLabel }}
@@ -127,6 +128,12 @@
                                 <a class="cursor-pointer font-mono text-xs text-indigo-600 hover:text-indigo-800"
                                    href="{{ route('audit-log.trace', $entry->traceId) }}"
                                    title="{{ $entry->traceId }}">{{ Str::limit($entry->traceId, 12, '...') }}</a>
+                                @if (count($entry->changes) > 0)
+                                    <span
+                                          class="ml-2 inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-amber-600/10">
+                                        {{ trans_choice('messages.audit_log.changes_count', count($entry->changes), ['count' => count($entry->changes)]) }}
+                                    </span>
+                                @endif
                             </td>
                         </tr>
                     @empty

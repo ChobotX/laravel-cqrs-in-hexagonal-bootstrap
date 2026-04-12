@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Contract\Event\EntityUpdated;
+use App\Application\Event\EntityUpdated;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
@@ -20,7 +20,7 @@ use function str_starts_with;
 
 /**
  * Every event class with a name ending in "Updated" in Domain/{Module}/Contract/Event/
- * must implement App\Contract\Event\EntityUpdated.
+ * must implement App\Application\Event\EntityUpdated.
  *
  * @implements Rule<Class_>
  */

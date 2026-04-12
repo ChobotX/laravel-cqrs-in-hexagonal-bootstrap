@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Event;
+namespace App\Application\Event;
 
 interface EntityUpdated
 {
-    /** @return list<object> */
+    /** @return list<PropertyChange> */
     public function changes(): array;
 }

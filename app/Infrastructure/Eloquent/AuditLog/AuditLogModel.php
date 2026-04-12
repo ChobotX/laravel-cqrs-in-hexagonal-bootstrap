@@ -20,6 +20,7 @@ use Override;
  * @property string|null $entity_type
  * @property string|null $entity_id
  * @property array<string, mixed> $payload
+ * @property list<array<string, mixed>> $changes
  * @property string $status
  * @property string|null $ip_address
  * @property DateTimeImmutable $occurred_at
@@ -46,6 +47,7 @@ final class AuditLogModel extends Model
         'entity_type',
         'entity_id',
         'payload',
+        'changes',
         'status',
         'ip_address',
         'occurred_at',
@@ -73,6 +75,7 @@ final class AuditLogModel extends Model
     {
         return [
             'payload' => 'array',
+            'changes' => 'array',
             'occurred_at' => 'immutable_datetime',
         ];
     }

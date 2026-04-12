@@ -8,7 +8,7 @@ use App\Application\Bus\CommandBus;
 use App\Application\Bus\EventBus;
 use App\Application\Bus\Middleware\DispatchCollectedEvents;
 use App\Application\Bus\Middleware\LogBusMessage;
-use App\Application\Bus\Middleware\RecordAuditLog;
+use App\Application\Bus\Middleware\ProjectAuditLog;
 use App\Application\Bus\Middleware\WrapInTransaction;
 use App\Application\Bus\QueryBus;
 use App\Contract\Event\EventCollector;
@@ -265,6 +265,7 @@ use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateAllTenantsCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
+use App\Domain\Tenancy\Contract\Event\TenantSettingsUpdated;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
@@ -364,6 +365,7 @@ final class BusServiceProvider extends ServiceProvider
                 TemplatedEmailSent::class => [LogEmailOnSent::class],
                 EmailTemplateUpdated::class => [],
                 EmailTemplateReset::class => [],
+                TenantSettingsUpdated::class => [],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
@@ -438,9 +440,9 @@ final class BusServiceProvider extends ServiceProvider
             middleware: [
                 $this->app->make(LogBusMessage::class),
                 $this->app->make(AuthorizeAction::class),
-                $this->app->make(RecordAuditLog::class),
-                $this->app->make(WrapInTransaction::class),
                 $this->app->make(DispatchCollectedEvents::class),
+                $this->app->make(WrapInTransaction::class),
+                $this->app->make(ProjectAuditLog::class),
             ],
         ));
 

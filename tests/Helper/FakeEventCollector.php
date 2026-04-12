@@ -20,6 +20,12 @@ final class FakeEventCollector implements EventCollector
     }
 
     /** @return list<DomainEvent> */
+    public function peek(): array
+    {
+        return $this->collected;
+    }
+
+    /** @return list<DomainEvent> */
     public function flush(): array
     {
         $events = $this->collected;

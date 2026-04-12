@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
+use App\Application\Event\PropertyChangeBuilder;
 use App\Domain\Registry\Constant\DefinitionFields;
 use App\Domain\Registry\Contract\Command\UpdateDefinitionCommand;
 use App\Domain\Registry\Contract\Entity\Definition;
@@ -27,7 +28,7 @@ it('updates the definition name', function (): void {
     $repository = new FakeDefinitionRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateDefinitionHandler($repository, $eventCollector);
+    $handler = new UpdateDefinitionHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateDefinitionCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -51,7 +52,7 @@ it('collects a DefinitionUpdated event with changes', function (): void {
     $repository = new FakeDefinitionRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateDefinitionHandler($repository, $eventCollector);
+    $handler = new UpdateDefinitionHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateDefinitionCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -78,7 +79,7 @@ it('does not save or collect event when data is unchanged', function (): void {
     $repository = new FakeDefinitionRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateDefinitionHandler($repository, $eventCollector);
+    $handler = new UpdateDefinitionHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateDefinitionCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',
@@ -93,7 +94,7 @@ it('throws when definition not found', function (): void {
     $repository = new FakeDefinitionRepository;
     $eventCollector = new FakeEventCollector;
 
-    $handler = new UpdateDefinitionHandler($repository, $eventCollector);
+    $handler = new UpdateDefinitionHandler($repository, $eventCollector, new PropertyChangeBuilder);
 
     $handler->handle(new UpdateDefinitionCommand(
         id: '550e8400-e29b-41d4-a716-446655440000',

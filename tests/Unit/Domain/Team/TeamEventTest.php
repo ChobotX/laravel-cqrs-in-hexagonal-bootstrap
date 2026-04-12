@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Event\EntityUpdated;
 use App\Application\Event\PropertyChange;
 use App\Contract\Event\DomainEvent;
-use App\Contract\Event\EntityUpdated;
 use App\Domain\Team\Constant\TeamFields;
 use App\Domain\Team\Contract\Event\TeamCreated;
 use App\Domain\Team\Contract\Event\TeamDeleted;
