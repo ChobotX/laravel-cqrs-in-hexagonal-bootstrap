@@ -78,10 +78,10 @@ it('returns only dashboard when user is not authenticated', function (): void {
         sidebarRequestWithRouteName('dashboard'),
     );
 
-    $nav = $sidebarNavigationBuilder->build();
+    $sidebarNavViewData = $sidebarNavigationBuilder->build();
 
-    expect($nav->sections)->toBeEmpty()
-        ->and($nav->dashboard->active)->toBeTrue();
+    expect($sidebarNavViewData->sections)->toBeEmpty()
+        ->and($sidebarNavViewData->dashboard->active)->toBeTrue();
 });
 
 it('omits management and system sections when user has no matching permissions', function (): void {
@@ -103,13 +103,14 @@ it('builds collapsible access group when at least two access links are visible',
         sidebarRequestWithRouteName('roles.index'),
     );
 
-    $nav = $sidebarNavigationBuilder->build();
+    $sidebarNavViewData = $sidebarNavigationBuilder->build();
 
-    expect($nav->sections)->toHaveCount(1)
-        ->and($nav->sections[0]->blocks)->toHaveCount(1)
-        ->and($nav->sections[0]->blocks[0]->collapsible)->toBeTrue()
-        ->and($nav->sections[0]->blocks[0]->open)->toBeTrue()
-        ->and($nav->sections[0]->blocks[0]->items)->toHaveCount(2);
+    expect($sidebarNavViewData->sections)->toHaveCount(1)
+        ->and($sidebarNavViewData->sections[0]->blocks)->toHaveCount(1)
+        ->and($sidebarNavViewData->sections[0]->blocks[0]->collapsible)->toBeTrue()
+        ->and($sidebarNavViewData->sections[0]->blocks[0]->open)->toBeTrue()
+        ->and($sidebarNavViewData->sections[0]->blocks[0]->items)->toHaveCount(2)
+        ->and($sidebarNavViewData->sections[0]->blocks[0]->groupIcon)->toBe('heroicon-o-users');
 });
 
 it('flattens access links when only one is visible', function (): void {
@@ -124,6 +125,7 @@ it('flattens access links when only one is visible', function (): void {
 
     expect($block->collapsible)->toBeFalse()
         ->and($block->label)->toBe('')
+        ->and($block->groupIcon)->toBeNull()
         ->and($block->items)->toHaveCount(1)
         ->and($block->items[0]->active)->toBeTrue();
 });
@@ -143,6 +145,7 @@ it('adds registry block when feature flag and permission allow', function (): vo
     expect($blocks)->toHaveCount(1)
         ->and($blocks[0]->id)->toBe('mgmt-registry')
         ->and($blocks[0]->collapsible)->toBeFalse()
+        ->and($blocks[0]->groupIcon)->toBeNull()
         ->and($blocks[0]->items[0]->active)->toBeTrue();
 });
 
@@ -174,7 +177,8 @@ it('builds collapsible email group when two email links are visible', function (
 
     expect($system->blocks[0]->id)->toBe('sys-email')
         ->and($system->blocks[0]->collapsible)->toBeTrue()
-        ->and($system->blocks[0]->open)->toBeTrue();
+        ->and($system->blocks[0]->open)->toBeTrue()
+        ->and($system->blocks[0]->groupIcon)->toBe('heroicon-o-envelope');
 });
 
 it('omits system section when no system permissions are granted', function (): void {
@@ -218,7 +222,8 @@ it('keeps collapsible group closed when no child route is active', function (): 
     $emailBlock = $sidebarNavigationBuilder->build()->sections[0]->blocks[0];
 
     expect($emailBlock->collapsible)->toBeTrue()
-        ->and($emailBlock->open)->toBeFalse();
+        ->and($emailBlock->open)->toBeFalse()
+        ->and($emailBlock->groupIcon)->toBe('heroicon-o-envelope');
 });
 
 it('runs view composer so sidebar-nav receives SidebarNavViewData', function (): void {
@@ -247,13 +252,20 @@ it('orders system blocks as platform then email then audit', function (): void {
         sidebarRequestWithRouteName('dashboard'),
     );
 
+    $blocks = $sidebarNavigationBuilder->build()->sections[0]->blocks;
+
     $ids = [];
 
-    foreach ($sidebarNavigationBuilder->build()->sections[0]->blocks as $block) {
+    foreach ($blocks as $block) {
         $ids[] = $block->id;
     }
 
-    expect($ids)->toBe(['sys-platform', 'sys-email', 'sys-audit']);
+    expect($ids)->toBe(['sys-platform', 'sys-email', 'sys-audit'])
+        ->and($blocks[0]->groupIcon)->toBe('heroicon-o-cog-6-tooth')
+        ->and($blocks[0]->items[0]->label)->toBe(__('messages.nav.settings'))
+        ->and($blocks[0]->items[1]->label)->toBe(__('messages.nav.feature_flags'))
+        ->and($blocks[1]->groupIcon)->toBe('heroicon-o-envelope')
+        ->and($blocks[2]->groupIcon)->toBeNull();
 });
 
 it('renders audit as a flat block when it is the only system link', function (): void {
@@ -269,5 +281,6 @@ it('renders audit as a flat block when it is the only system link', function ():
     expect($blocks)->toHaveCount(1)
         ->and($blocks[0]->id)->toBe('sys-audit')
         ->and($blocks[0]->collapsible)->toBeFalse()
+        ->and($blocks[0]->groupIcon)->toBeNull()
         ->and($blocks[0]->items[0]->active)->toBeTrue();
 });

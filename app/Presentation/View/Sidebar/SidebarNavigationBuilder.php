@@ -98,6 +98,7 @@ final readonly class SidebarNavigationBuilder
                 id: 'mgmt-access',
                 groupLabelKey: 'messages.nav.group_users_access',
                 items: $accessItems,
+                groupIcon: 'heroicon-o-users',
             );
         }
 
@@ -107,6 +108,7 @@ final readonly class SidebarNavigationBuilder
                 id: 'mgmt-registry',
                 groupLabelKey: '',
                 items: [$registryItem],
+                groupIcon: null,
             );
         }
 
@@ -123,19 +125,19 @@ final readonly class SidebarNavigationBuilder
         $platformItems = $this->filterItems([
             $this->maybeItem(
                 userId: $userId,
-                permission: 'feature_flags.management.read',
-                routeName: 'feature-flags.index',
-                routeIsPatterns: ['feature-flags.*'],
-                icon: 'heroicon-o-flag',
-                labelKey: 'messages.nav.feature_flags',
-            ),
-            $this->maybeItem(
-                userId: $userId,
                 permission: 'settings.tenant.read',
                 routeName: 'settings.index',
                 routeIsPatterns: ['settings.index', 'settings.update'],
                 icon: 'heroicon-o-cog-6-tooth',
                 labelKey: 'messages.nav.settings',
+            ),
+            $this->maybeItem(
+                userId: $userId,
+                permission: 'feature_flags.management.read',
+                routeName: 'feature-flags.index',
+                routeIsPatterns: ['feature-flags.*'],
+                icon: 'heroicon-o-flag',
+                labelKey: 'messages.nav.feature_flags',
             ),
         ]);
 
@@ -144,6 +146,7 @@ final readonly class SidebarNavigationBuilder
                 id: 'sys-platform',
                 groupLabelKey: 'messages.nav.group_platform',
                 items: $platformItems,
+                groupIcon: 'heroicon-o-cog-6-tooth',
             );
         }
 
@@ -171,6 +174,7 @@ final readonly class SidebarNavigationBuilder
                 id: 'sys-email',
                 groupLabelKey: 'messages.nav.group_email',
                 items: $emailItems,
+                groupIcon: 'heroicon-o-envelope',
             );
         }
 
@@ -188,6 +192,7 @@ final readonly class SidebarNavigationBuilder
                 id: 'sys-audit',
                 groupLabelKey: '',
                 items: [$auditItem],
+                groupIcon: null,
             );
         }
 
@@ -228,6 +233,7 @@ final readonly class SidebarNavigationBuilder
         if (! $this->authorizationChecker->can($userId, $permission)) {
             return null;
         }
+
         $active = array_any($routeIsPatterns, fn ($routeIPattern) => $this->request->routeIs($routeIPattern));
 
         return new SidebarNavItemViewData(
@@ -258,12 +264,13 @@ final readonly class SidebarNavigationBuilder
     /**
      * @param  list<SidebarNavItemViewData>  $items
      */
-    private function blockFromItems(string $id, string $groupLabelKey, array $items): SidebarNavBlockViewData
+    private function blockFromItems(string $id, string $groupLabelKey, array $items, ?string $groupIcon): SidebarNavBlockViewData
     {
         $count = count($items);
         $collapsible = $count >= self::COLLAPSIBLE_MIN_ITEMS;
         $label = $collapsible && $groupLabelKey !== '' ? $this->translator->translate($groupLabelKey) : '';
         $anyActive = array_any($items, fn ($item) => $item->active);
+        $resolvedGroupIcon = $collapsible ? $groupIcon : null;
 
         return new SidebarNavBlockViewData(
             id: $id,
@@ -271,6 +278,7 @@ final readonly class SidebarNavigationBuilder
             collapsible: $collapsible,
             open: $collapsible && $anyActive,
             items: $items,
+            groupIcon: $resolvedGroupIcon,
         );
     }
 }

@@ -15,5 +15,6 @@ final readonly class SidebarNavBlockViewData
         public bool $collapsible,
         public bool $open,
         public array $items,
+        public ?string $groupIcon,
     ) {}
 }

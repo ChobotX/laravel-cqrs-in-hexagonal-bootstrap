@@ -19,7 +19,14 @@
                              @if ($block->open) open @endif>
                         <summary
                                  class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-3 py-2 text-base font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white sm:text-sm [&::-webkit-details-marker]:hidden">
-                            <span class="select-none">{{ $block->label }}</span>
+                            <span class="flex min-w-0 flex-1 items-center gap-3">
+                                @if ($block->groupIcon)
+                                    <x-dynamic-component class="h-5 w-5 shrink-0 text-gray-400 group-open/nav-block:text-gray-200"
+                                                         aria-hidden="true"
+                                                         :component="$block->groupIcon" />
+                                @endif
+                                <span class="min-w-0 flex-1 select-none truncate">{{ $block->label }}</span>
+                            </span>
                             <x-heroicon-s-chevron-down class="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open/nav-block:rotate-180"
                                                        aria-hidden="true" />
                         </summary>
