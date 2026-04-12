@@ -8,6 +8,9 @@ return [
     ],
 
     'nav' => [
+        'group_users_access' => 'Users & access',
+        'group_email' => 'Email',
+        'group_platform' => 'Feature flags & settings',
         'management' => 'Management',
         'users' => 'Users',
         'roles' => 'Roles',

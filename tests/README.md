@@ -6,6 +6,7 @@
 - `tests/Architecture/PHPStan/` — custom PHPStan rules
 - `tests/Unit/Domain/` — domain unit tests (100% coverage required)
 - `tests/Unit/Infrastructure/` — infrastructure unit tests
+- `tests/Unit/Presentation/` — presentation unit tests (e.g. `View/` for Blade view models and composers)
 - `tests/Feature/` — integration/feature tests
 - `tests/Helper/` — shared test utilities
 - `tests/e2e/` — Playwright end-to-end tests (browser-based, against running app)

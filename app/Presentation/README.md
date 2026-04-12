@@ -65,7 +65,7 @@ Enforced by PHPStan rule `NoBusDispatchInControllerLoopsRule`.
 
 ## View rules
 
-- **Dumb templates** — Blade views must contain zero business logic. All computation, formatting, and decision-making happens in controllers or dedicated view models before data reaches the template.
+- **Dumb templates** — Blade views must contain zero business logic. All computation, formatting, and decision-making happens in controllers, `View::composer` callbacks, or Presentation-layer view models (e.g. `App\Presentation\View\Sidebar\SidebarNavigationBuilder`) before data reaches the template.
 - **No non-Presentation references** — Blade templates must not reference any `App\*` namespace except `App\Presentation\*`. All data from other layers (authenticated user, tenant slug, access scopes) must be passed from controllers or shared via middleware using `View::share`. Enforced by `bin/lint-blade-layers.sh`.
 - **Backend over frontend** — prefer server-side calculations over client-side. Templates receive ready-to-render data.
 - **Reusable components** — split views into small, single-responsibility Blade partials/components (`resources/views/components/`). Follow SRP and DRY — extract shared UI into components rather than duplicating markup across pages.

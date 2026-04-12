@@ -2,64 +2,47 @@
      aria-label="{{ __('messages.a11y.main_navigation') }}">
     <div class="flex-1">
         <x-nav-link skip-permission
-                    :href="route('dashboard')"
-                    icon="heroicon-o-home"
-                    :label="__('messages.nav.dashboard')"
-                    :active="request()->routeIs('dashboard')" />
+                    :href="$sidebarNav->dashboard->href"
+                    :icon="$sidebarNav->dashboard->icon"
+                    :label="$sidebarNav->dashboard->label"
+                    :active="$sidebarNav->dashboard->active" />
 
-        <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-            {{ __('messages.nav.management') }}
-        </p>
-        <x-nav-link permission="users.list.read"
-                    :href="route('users.index')"
-                    icon="heroicon-o-users"
-                    :label="__('messages.nav.users')"
-                    :active="request()->routeIs('users.*')" />
-        <x-nav-link permission="users.roles.read"
-                    :href="route('roles.index')"
-                    icon="heroicon-o-shield-check"
-                    :label="__('messages.nav.roles')"
-                    :active="request()->routeIs('roles.*')" />
-        <x-nav-link permission="teams.management.read"
-                    :href="route('teams.index')"
-                    icon="heroicon-o-user-group"
-                    :label="__('messages.nav.teams')"
-                    :active="request()->routeIs('teams.*')" />
-        @feature('registry.schema-builder')
-            <x-nav-link permission="registry.definitions.read"
-                        :href="route('registry.definitions.index')"
-                        icon="heroicon-o-rectangle-stack"
-                        :label="__('messages.nav.registry')"
-                        :active="request()->routeIs('registry.*')" />
-        @endfeature
+        @foreach ($sidebarNav->sections as $section)
+            <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
+                {{ $section->label }}
+            </p>
 
-        <p class="mb-2 mt-4 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400">
-            {{ __('messages.nav.system') }}
-        </p>
-        <x-nav-link permission="feature_flags.management.read"
-                    :href="route('feature-flags.index')"
-                    icon="heroicon-o-flag"
-                    :label="__('messages.nav.feature_flags')"
-                    :active="request()->routeIs('feature-flags.*')" />
-        <x-nav-link permission="settings.tenant.read"
-                    :href="route('settings.index')"
-                    icon="heroicon-o-cog-6-tooth"
-                    :label="__('messages.nav.settings')"
-                    :active="request()->routeIs('settings.index', 'settings.update')" />
-        <x-nav-link permission="email_templates.templates.read"
-                    :href="route('settings.email-templates.index')"
-                    icon="heroicon-o-envelope"
-                    :label="__('messages.nav.email_templates')"
-                    :active="request()->routeIs('settings.email-templates.*')" />
-        <x-nav-link permission="email_templates.logs.read"
-                    :href="route('settings.email-logs.index')"
-                    icon="heroicon-o-paper-airplane"
-                    :label="__('messages.nav.email_logs')"
-                    :active="request()->routeIs('settings.email-logs.*')" />
-        <x-nav-link permission="audit_log.history.read"
-                    :href="route('audit-log.index')"
-                    icon="heroicon-o-clipboard-document-list"
-                    :label="__('messages.nav.audit_log')"
-                    :active="request()->routeIs('audit-log.*')" />
+            @foreach ($section->blocks as $block)
+                @if ($block->collapsible)
+                    <details class="group/nav-block mb-1"
+                             id="{{ $sidebarNavInstance ?? 'sidebar' }}-{{ $block->id }}"
+                             @if ($block->open) open @endif>
+                        <summary
+                                 class="flex cursor-pointer list-none items-center justify-between gap-2 rounded-lg px-3 py-2 text-base font-medium text-gray-300 transition-colors hover:bg-white/10 hover:text-white sm:text-sm [&::-webkit-details-marker]:hidden">
+                            <span class="select-none">{{ $block->label }}</span>
+                            <x-heroicon-s-chevron-down class="h-4 w-4 shrink-0 text-gray-400 transition-transform group-open/nav-block:rotate-180"
+                                                       aria-hidden="true" />
+                        </summary>
+                        <div class="mb-1 ml-2 mt-1 space-y-0.5 border-l border-white/10 pl-3">
+                            @foreach ($block->items as $item)
+                                <x-nav-link skip-permission
+                                            :href="$item->href"
+                                            :icon="$item->icon"
+                                            :label="$item->label"
+                                            :active="$item->active" />
+                            @endforeach
+                        </div>
+                    </details>
+                @else
+                    @foreach ($block->items as $item)
+                        <x-nav-link skip-permission
+                                    :href="$item->href"
+                                    :icon="$item->icon"
+                                    :label="$item->label"
+                                    :active="$item->active" />
+                    @endforeach
+                @endif
+            @endforeach
+        @endforeach
     </div>
 </nav>

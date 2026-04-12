@@ -22,5 +22,5 @@
         <span class="text-base font-semibold">{{ $tenantName ?? 'Bootstrap' }}</span>
     </div>
 
-    @include('components.sidebar-nav')
+    @include('components.sidebar-nav', ['sidebarNavInstance' => 'desktop'])
 </aside>

@@ -20,6 +20,7 @@
             <directory>app/Presentation/Http/Request</directory>
             <directory>app/Presentation/Http/Resource</directory>
             <directory>app/Presentation/Http/Security</directory>
+            <directory>app/Presentation/View</directory>
         </include>
         <exclude>
             <file>app/Presentation/Console/Tenancy/DropSchemasCommand.php</file>

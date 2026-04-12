@@ -8,6 +8,9 @@ return [
     ],
 
     'nav' => [
+        'group_users_access' => 'Uživatelé a přístup',
+        'group_email' => 'E-mail',
+        'group_platform' => 'Přepínače a nastavení',
         'management' => 'Správa',
         'users' => 'Uživatelé',
         'roles' => 'Role',

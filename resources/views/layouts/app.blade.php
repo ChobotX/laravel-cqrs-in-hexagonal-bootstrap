@@ -69,7 +69,7 @@
                     </svg>
                 </x-control-button>
             </div>
-            @include('components.sidebar-nav')
+            @include('components.sidebar-nav', ['sidebarNavInstance' => 'mobile'])
         </aside>
     </div>
 
