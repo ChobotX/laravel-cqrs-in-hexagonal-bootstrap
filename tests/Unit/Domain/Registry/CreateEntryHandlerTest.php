@@ -73,6 +73,7 @@ it('creates an entry via the repository', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'John Doe',
         data: ['name' => 'John Doe'],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 
     expect($entryRepo->saved)->toHaveCount(1)
@@ -81,7 +82,8 @@ it('creates an entry via the repository', function (): void {
         ->and($entryRepo->saved[0]->definitionVersion->value)->toBe(1)
         ->and($entryRepo->saved[0]->namespace->value)->toBe('crm')
         ->and($entryRepo->saved[0]->title->value)->toBe('John Doe')
-        ->and($entryRepo->saved[0]->data)->toBe(['name' => 'John Doe']);
+        ->and($entryRepo->saved[0]->data)->toBe(['name' => 'John Doe'])
+        ->and($entryRepo->saved[0]->createdByUserId)->toBe('550e8400-e29b-41d4-a716-446655440001');
 });
 
 it('collects an EntryCreated event', function (): void {
@@ -92,6 +94,7 @@ it('collects an EntryCreated event', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'John Doe',
         data: ['name' => 'John Doe'],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 
     expect($eventCollector->collected)->toHaveCount(1);
@@ -112,6 +115,7 @@ it('throws when definition not found', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'John Doe',
         data: ['name' => 'John Doe'],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 })->throws(DefinitionNotFoundException::class);
 
@@ -123,6 +127,7 @@ it('throws when no active version', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'John Doe',
         data: ['name' => 'John Doe'],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 })->throws(NoActiveVersionException::class);
 
@@ -134,6 +139,7 @@ it('throws on validation error', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'John Doe',
         data: [],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 })->throws(EntryValidationException::class);
 
@@ -149,6 +155,7 @@ it('throws on invalid reference', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'John Doe',
         data: ['author' => '880e8400-e29b-41d4-a716-446655440000'],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 })->throws(InvalidReferenceException::class);
 
@@ -164,6 +171,7 @@ it('skips reference validation for empty value', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Empty Ref',
         data: ['author' => ''],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 
     expect($entryRepo->saved)->toHaveCount(1);
@@ -183,6 +191,7 @@ it('validates references inside a repeater field', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Repeater Ref',
         data: ['items' => [['ref' => '880e8400-e29b-41d4-a716-446655440000']]],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 })->throws(InvalidReferenceException::class);
 
@@ -200,6 +209,7 @@ it('validates references inside an object field', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Object Ref',
         data: ['details' => ['ref' => '880e8400-e29b-41d4-a716-446655440000']],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 })->throws(InvalidReferenceException::class);
 
@@ -217,6 +227,7 @@ it('skips repeater validation when items is not an array', function (): void {
         definitionId: '550e8400-e29b-41d4-a716-446655440000',
         title: 'Non-array repeater',
         data: ['items' => 'not-an-array'],
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     ));
 
     expect($entryRepo->saved)->toHaveCount(1);

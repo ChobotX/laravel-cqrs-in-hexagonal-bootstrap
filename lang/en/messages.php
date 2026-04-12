@@ -259,6 +259,22 @@ return [
         'search_failed' => 'Failed to load labels.',
     ],
 
+    'sharing' => [
+        'title' => 'Sharing',
+        'subtitle' => 'Share this record with other users. Shared users can view and edit it.',
+        'loading' => 'Loading shares...',
+        'search_placeholder' => 'Search users to share with...',
+        'no_shares' => 'This record is not shared with anyone.',
+        'revoke' => 'Revoke',
+        'revoke_confirm' => "Remove :name's access to this record?",
+        'shared_success' => 'Record shared successfully.',
+        'revoked_success' => 'Access revoked.',
+        'share_failed' => 'Failed to share record.',
+        'revoke_failed' => 'Failed to revoke access.',
+        'load_failed' => 'Failed to load shares.',
+        'search_failed' => 'Failed to search users.',
+    ],
+
     'feature_flags' => [
         'title' => 'Feature Flags',
         'flag' => 'Flag',

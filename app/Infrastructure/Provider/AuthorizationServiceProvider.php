@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
+use App\Application\Authorization\ShareableResourceRegistry;
 use App\Contract\Tenancy\TenantContext;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
@@ -54,6 +55,7 @@ final class AuthorizationServiceProvider extends ServiceProvider
                 userPermissionRepository: $this->app->make(UserPermissionRepository::class),
                 recordShareRepository: $this->app->make(RecordShareRepository::class),
                 permissionResolver: new PermissionResolver,
+                shareableResourceRegistry: $this->app->make(ShareableResourceRegistry::class),
                 availableModules: $modules,
             );
 
@@ -68,6 +70,10 @@ final class AuthorizationServiceProvider extends ServiceProvider
         $this->app->bind(AuthorizationRefresher::class, CacheAuthorizationRefresher::class);
         $this->app->bind(AuthenticatedUser::class, RequestAuthenticatedUser::class);
         $this->app->bind(ImpersonationManager::class, SessionImpersonationManager::class);
+
+        $this->app->singleton(ShareableResourceRegistry::class, fn (): ShareableResourceRegistry => new ShareableResourceRegistry([
+            'entry' => 'registry.entries',
+        ]));
 
         $this->app->bind(EloquentTeamMembershipChecker::class);
         $this->app->scoped(TeamMembershipChecker::class, fn (): CachedTeamMembershipChecker => new CachedTeamMembershipChecker(

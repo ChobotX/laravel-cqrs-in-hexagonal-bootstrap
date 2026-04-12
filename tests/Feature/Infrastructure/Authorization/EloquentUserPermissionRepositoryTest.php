@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 use App\Domain\Authorization\Contract\Enum\AccessScope;
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
-use App\Domain\Authorization\Enum\Action;
 use App\Domain\Authorization\Enum\OverrideType;
 use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\Module;

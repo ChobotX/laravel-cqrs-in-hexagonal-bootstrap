@@ -29,5 +29,7 @@ final readonly class Entry
         public EntryTitle $title,
         /** Array for `data`; see constructor PHPDoc for structural tags when present. */
         public array $data,
+        /** User ID of the entry's creator (ownership anchor for scope + sharing). */
+        public string $createdByUserId,
     ) {}
 }

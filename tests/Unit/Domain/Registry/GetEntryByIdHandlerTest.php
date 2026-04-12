@@ -20,6 +20,7 @@ it('returns an entry when found', function (): void {
         new DefinitionNamespace('crm'),
         new EntryTitle('John Doe'),
         ['name' => 'John Doe'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     $repo = new FakeEntryRepository(['770e8400-e29b-41d4-a716-446655440000' => $entry]);

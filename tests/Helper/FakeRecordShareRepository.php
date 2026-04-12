@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
-use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\ValueObject\RecordShare;
+use App\Domain\Authorization\Contract\ValueObject\RecordShare;
 
 final class FakeRecordShareRepository implements RecordShareRepository
 {
@@ -48,6 +48,30 @@ final class FakeRecordShareRepository implements RecordShareRepository
             fn (RecordShare $recordShare): bool => $recordShare->granteeUserId === $granteeUserId
                 && ($resourceType === null || $recordShare->resourceType === $resourceType),
         ));
+    }
+
+    /** @return list<RecordShare> */
+    public function findByResource(string $resourceType, string $resourceId): array
+    {
+        return array_values(array_filter(
+            $this->shared,
+            fn (RecordShare $recordShare): bool => $recordShare->resourceType === $resourceType
+                && $recordShare->resourceId === $resourceId,
+        ));
+    }
+
+    public function revokeAllForResource(string $resourceType, string $resourceId): void
+    {
+        $this->shared = array_values(array_filter(
+            $this->shared,
+            fn (RecordShare $recordShare): bool => ! ($recordShare->resourceType === $resourceType
+                && $recordShare->resourceId === $resourceId),
+        ));
+        $this->revoked[] = [
+            'granteeUserId' => '*',
+            'resourceType' => $resourceType,
+            'resourceId' => $resourceId,
+        ];
     }
 
     /** @return list<string> */

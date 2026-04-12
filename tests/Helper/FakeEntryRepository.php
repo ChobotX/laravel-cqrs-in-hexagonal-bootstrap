@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use App\Application\Authorization\AccessContext;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Repository\EntryRepository;
 use App\Domain\Registry\Contract\ValueObject\DefinitionId;
@@ -51,12 +53,14 @@ final class FakeEntryRepository implements EntryRepository
     }
 
     /** @return PaginatedResult<Entry> */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = []): PaginatedResult
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = [], ?AccessContext $accessContext = null): PaginatedResult
     {
         $items = array_values(array_filter(
             $this->entries,
             fn (Entry $entry): bool => $entry->definitionId->value === $definitionId->value,
         ));
+
+        $items = $this->applyAccessContext($items, $accessContext);
 
         $items = $this->filterArray($items, $filters, $this->filterValueExtractor(...), $this->searchMatcher(...));
 
@@ -74,6 +78,26 @@ final class FakeEntryRepository implements EntryRepository
         return array_values(array_filter(
             $this->entries,
             fn (Entry $entry): bool => $entry->namespace->value === $definitionNamespace->value,
+        ));
+    }
+
+    /**
+     * @param  list<Entry>  $items
+     * @return list<Entry>
+     */
+    private function applyAccessContext(array $items, ?AccessContext $accessContext): array
+    {
+        if (! $accessContext instanceof AccessContext || $accessContext->scope === AccessScope::All) {
+            return $items;
+        }
+
+        $visibleIds = $accessContext->visibleIds ?? [];
+        $sharedIds = $accessContext->sharedResourceIds ?? [];
+
+        return array_values(array_filter(
+            $items,
+            fn (Entry $entry): bool => in_array($entry->createdByUserId, $visibleIds, true)
+                || in_array($entry->id->value, $sharedIds, true),
         ));
     }
 

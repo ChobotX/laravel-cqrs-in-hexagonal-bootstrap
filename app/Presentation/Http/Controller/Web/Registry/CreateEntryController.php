@@ -11,6 +11,7 @@ use App\Contract\Http\HttpStatus;
 use App\Contract\IdGenerator;
 use App\Domain\Registry\Contract\Command\CreateEntryCommand;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
+use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Registry\CreateEntryRequest;
 use Illuminate\Http\RedirectResponse;
 
@@ -21,6 +22,7 @@ final readonly class CreateEntryController
         private CommandBus $commandBus,
         private QueryBus $queryBus,
         private IdGenerator $idGenerator,
+        private AuthenticatedUser $authenticatedUser,
     ) {}
 
     public function __invoke(CreateEntryRequest $createEntryRequest, string $namespace, string $slug): RedirectResponse
@@ -29,11 +31,15 @@ final readonly class CreateEntryController
 
         abort_unless($definition !== null, HttpStatus::NOT_FOUND);
 
+        $userId = $this->authenticatedUser->id() ?? '';
+        abort_if($userId === '', HttpStatus::FORBIDDEN);
+
         $this->commandBus->dispatch(new CreateEntryCommand(
             id: $this->idGenerator->generate(),
             definitionId: $definition->id->value,
             title: $createEntryRequest->title(),
             data: $createEntryRequest->entryData(),
+            createdByUserId: $userId,
         ));
 
         return redirect()->route('registry.entries.index', [

@@ -6,12 +6,13 @@ namespace App\Domain\Registry\Contract\Event;
 
 use App\Application\Event\DescribesAction;
 use App\Contract\Event\DomainEvent;
+use App\Contract\Event\EntityDeleted;
 use DateTimeImmutable;
 
 /**
  * Domain event emitted when entry deleted in the Registry context; handled by registered domain event handlers.
  */
-final readonly class EntryDeleted implements DomainEvent
+final readonly class EntryDeleted implements DomainEvent, EntityDeleted
 {
     use DescribesAction;
 

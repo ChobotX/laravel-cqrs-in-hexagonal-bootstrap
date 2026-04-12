@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization\Enum;
+namespace App\Domain\Authorization\Contract\Enum;
 
 enum Action: string
 {

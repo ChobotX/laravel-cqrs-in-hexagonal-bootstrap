@@ -32,6 +32,7 @@ final readonly class ListEntriesHandler implements QueryHandler
             $pagination,
             $query->filters(),
             $query->sorting(),
+            $query->accessContext(),
         );
     }
 }

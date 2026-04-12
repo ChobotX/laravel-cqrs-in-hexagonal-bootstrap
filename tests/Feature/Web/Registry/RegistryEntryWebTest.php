@@ -50,7 +50,7 @@ function seedEntryDefinition(): DefinitionModel
     return $definition;
 }
 
-function seedEntry(string $id, string $definitionId, string $title): EntryModel
+function seedEntry(string $id, string $definitionId, string $title, string $createdByUserId = '550e8400-e29b-41d4-a716-446655440e00'): EntryModel
 {
     return EntryModel::create([
         'id' => $id,
@@ -59,6 +59,7 @@ function seedEntry(string $id, string $definitionId, string $title): EntryModel
         'namespace' => 'enumerations',
         'title' => $title,
         'data' => ['country' => 'Germany'],
+        'created_by_user_id' => $createdByUserId,
     ]);
 }
 

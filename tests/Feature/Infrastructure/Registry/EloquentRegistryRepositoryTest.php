@@ -2,7 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Application\Authorization\AccessContext;
 use App\Application\Pagination\Pagination;
+use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Entity\DefinitionVersion;
 use App\Domain\Registry\Contract\Entity\Entry;
@@ -24,6 +26,28 @@ use App\Infrastructure\Eloquent\Registry\EloquentDefinitionRepository;
 use App\Infrastructure\Eloquent\Registry\EloquentDefinitionVersionRepository;
 use App\Infrastructure\Eloquent\Registry\EloquentEntryRepository;
 use App\Infrastructure\Eloquent\Registry\EntryModel;
+use App\Infrastructure\Eloquent\User\UserModel;
+use Illuminate\Support\Facades\Hash;
+
+beforeEach(function (): void {
+    if (! UserModel::query()->where('id', '550e8400-e29b-41d4-a716-446655440001')->exists()) {
+        UserModel::create([
+            'id' => '550e8400-e29b-41d4-a716-446655440001',
+            'name' => 'Registry Repo Test User',
+            'email' => 'registry-repo-test@test.com',
+            'password' => Hash::make('password'),
+        ]);
+    }
+
+    if (! UserModel::query()->where('id', '550e8400-e29b-41d4-a716-446655440e00')->exists()) {
+        UserModel::create([
+            'id' => '550e8400-e29b-41d4-a716-446655440e00',
+            'name' => 'Registry Repo Test Owner',
+            'email' => 'registry-repo-test-owner@test.com',
+            'password' => Hash::make('password'),
+        ]);
+    }
+});
 
 function defRepo(): EloquentDefinitionRepository
 {
@@ -180,6 +204,7 @@ it('creates and finds an entry', function (): void {
         new DefinitionNamespace('test'),
         new EntryTitle('Test Entry'),
         ['x' => 'val'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     entryRepo()->create($entry);
@@ -201,6 +226,7 @@ it('silently returns when updating non-existent entry', function (): void {
         new DefinitionNamespace('test'),
         new EntryTitle('Ghost'),
         ['x' => 'val'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     entryRepo()->update($entry);
@@ -224,6 +250,7 @@ it('paginates entries with default sort when no sortings provided', function ():
         'namespace' => 'test',
         'title' => 'Zebra',
         'data' => ['x' => 'z'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
     ]);
     EntryModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440c53',
@@ -232,6 +259,7 @@ it('paginates entries with default sort when no sortings provided', function ():
         'namespace' => 'test',
         'title' => 'Alpha',
         'data' => ['x' => 'a'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
     ]);
 
     $paginatedResult = entryRepo()->findByDefinitionPaginated(
@@ -263,7 +291,227 @@ it('checks if entries exist by definition', function (): void {
         'namespace' => 'test',
         'title' => 'X',
         'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
     ]);
 
     expect(entryRepo()->existsByDefinition(new DefinitionId('550e8400-e29b-41d4-a716-446655440c30')))->toBeTrue();
+});
+
+// --- ScopesOwnedQuery trait via EloquentEntryRepository ---
+
+it('returns all entries when accessContext is null (no filter)', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440d00', 'namespace' => 'test', 'slug' => 'scope-null', 'name' => 'ScopeNull']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d01',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d00',
+        'version' => 1,
+        'body' => ['type' => 'object', 'properties' => [], 'required' => []],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d02',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d00',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Entry A',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440001',
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d03',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d00',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Entry B',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
+    ]);
+
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440d00'),
+        new Pagination(1, 15),
+        accessContext: null,
+    );
+
+    expect($paginatedResult->total)->toBe(2);
+});
+
+it('returns all entries when scope is All (no filter)', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440d10', 'namespace' => 'test', 'slug' => 'scope-all', 'name' => 'ScopeAll']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d11',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d10',
+        'version' => 1,
+        'body' => ['type' => 'object', 'properties' => [], 'required' => []],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d12',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d10',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Entry C',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440001',
+    ]);
+
+    $context = new AccessContext(AccessScope::All, null);
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440d10'),
+        new Pagination(1, 15),
+        accessContext: $context,
+    );
+
+    expect($paginatedResult->total)->toBe(1);
+});
+
+it('filters entries by owner with Own scope', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440d20', 'namespace' => 'test', 'slug' => 'scope-own', 'name' => 'ScopeOwn']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d21',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d20',
+        'version' => 1,
+        'body' => ['type' => 'object', 'properties' => [], 'required' => []],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d22',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d20',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'My Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440001',
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d23',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d20',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Other Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
+    ]);
+
+    $context = new AccessContext(AccessScope::Own, ['550e8400-e29b-41d4-a716-446655440001'], []);
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440d20'),
+        new Pagination(1, 15),
+        accessContext: $context,
+    );
+
+    expect($paginatedResult->total)->toBe(1)
+        ->and($paginatedResult->items[0]->title->value)->toBe('My Entry');
+});
+
+it('includes shared entries via Own scope sharedResourceIds', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440d30', 'namespace' => 'test', 'slug' => 'scope-shared', 'name' => 'ScopeShared']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d31',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d30',
+        'version' => 1,
+        'body' => ['type' => 'object', 'properties' => [], 'required' => []],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d32',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d30',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'My Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440001',
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d33',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d30',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Shared Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
+    ]);
+
+    // User 001 owns one, and has shared access to d33
+    $context = new AccessContext(
+        AccessScope::Own,
+        ['550e8400-e29b-41d4-a716-446655440001'],
+        ['550e8400-e29b-41d4-a716-446655440d33'],
+    );
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440d30'),
+        new Pagination(1, 15),
+        accessContext: $context,
+    );
+
+    expect($paginatedResult->total)->toBe(2);
+});
+
+it('returns no entries when Own scope with empty visibleIds and empty sharedIds', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440d40', 'namespace' => 'test', 'slug' => 'scope-empty', 'name' => 'ScopeEmpty']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d41',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d40',
+        'version' => 1,
+        'body' => ['type' => 'object', 'properties' => [], 'required' => []],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d42',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d40',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Invisible Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
+    ]);
+
+    $context = new AccessContext(AccessScope::Own, [], []);
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440d40'),
+        new Pagination(1, 15),
+        accessContext: $context,
+    );
+
+    expect($paginatedResult->total)->toBe(0);
+});
+
+it('filters entries by team scope with visibleIds', function (): void {
+    DefinitionModel::create(['id' => '550e8400-e29b-41d4-a716-446655440d50', 'namespace' => 'test', 'slug' => 'scope-team', 'name' => 'ScopeTeam']);
+    DefinitionVersionModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d51',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d50',
+        'version' => 1,
+        'body' => ['type' => 'object', 'properties' => [], 'required' => []],
+        'status' => VersionStatus::Active,
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d52',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d50',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Team Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440001',
+    ]);
+    EntryModel::create([
+        'id' => '550e8400-e29b-41d4-a716-446655440d53',
+        'definition_id' => '550e8400-e29b-41d4-a716-446655440d50',
+        'definition_version' => 1,
+        'namespace' => 'test',
+        'title' => 'Outside Team Entry',
+        'data' => [],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440e00',
+    ]);
+
+    // Team scope with only user 001 visible
+    $context = new AccessContext(AccessScope::Team, ['550e8400-e29b-41d4-a716-446655440001'], []);
+    $paginatedResult = entryRepo()->findByDefinitionPaginated(
+        new DefinitionId('550e8400-e29b-41d4-a716-446655440d50'),
+        new Pagination(1, 15),
+        accessContext: $context,
+    );
+
+    expect($paginatedResult->total)->toBe(1)
+        ->and($paginatedResult->items[0]->title->value)->toBe('Team Entry');
 });

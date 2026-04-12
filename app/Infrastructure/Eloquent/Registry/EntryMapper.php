@@ -22,6 +22,7 @@ final readonly class EntryMapper
             namespace: new DefinitionNamespace($entryModel->namespace),
             title: new EntryTitle($entryModel->title),
             data: $entryModel->data,
+            createdByUserId: $entryModel->created_by_user_id,
         );
     }
 }

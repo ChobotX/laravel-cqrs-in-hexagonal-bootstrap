@@ -6,7 +6,7 @@ namespace App\Domain\Authorization\Contract\Query;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
-use App\Domain\Authorization\ValueObject\RecordShare;
+use App\Domain\Authorization\Contract\ValueObject\RecordShare;
 
 /**
  * Query for get record shares in the Authorization bounded context; dispatched through the query bus.

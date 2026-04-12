@@ -17,6 +17,7 @@ use Override;
  * @property string $namespace
  * @property string $title
  * @property array<string, mixed> $data
+ * @property string $created_by_user_id
  */
 #[HardDelete(reason: 'Entries are deleted explicitly')]
 final class EntryModel extends Model
@@ -28,7 +29,7 @@ final class EntryModel extends Model
 
     protected $table = 'entries';
 
-    protected $fillable = ['id', 'definition_id', 'definition_version', 'namespace', 'title', 'data'];
+    protected $fillable = ['id', 'definition_id', 'definition_version', 'namespace', 'title', 'data', 'created_by_user_id'];
 
     protected $keyType = 'string';
 

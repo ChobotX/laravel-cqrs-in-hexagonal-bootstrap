@@ -17,13 +17,16 @@ return new class extends Migration
             $table->string('namespace');
             $table->string('title');
             $table->jsonb('data');
+            $table->uuid('created_by_user_id');
             $table->integer('lock_version')->default(1);
             $table->timestamps();
 
             $table->index(['namespace', 'definition_id']);
             $table->index('definition_id');
             $table->index('title');
+            $table->index('created_by_user_id');
             $table->foreign('definition_id')->references('id')->on('definitions');
+            $table->foreign('created_by_user_id')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 

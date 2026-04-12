@@ -56,6 +56,7 @@ it('returns entries as json', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Toyota',
         'data' => ['brand' => 'Toyota'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
 
     $this->actingAs($userModel)
@@ -93,6 +94,7 @@ it('filters entries by search', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Toyota',
         'data' => ['brand' => 'Toyota'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
     EntryModel::create([
         'id' => '550e8400-e29b-41d4-a716-44665544d311',
@@ -101,6 +103,7 @@ it('filters entries by search', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Honda',
         'data' => ['brand' => 'Honda'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
 
     $response = $this->actingAs($userModel)
@@ -124,6 +127,7 @@ it('paginates results', function (): void {
             'namespace' => 'enumerations',
             'title' => 'Entry '.$i,
             'data' => ['brand' => 'Brand '.$i],
+            'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
         ]);
     }
 
@@ -145,6 +149,7 @@ it('sorts entries by title ascending', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Zebra',
         'data' => ['brand' => 'Zebra'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
     EntryModel::create([
         'id' => '550e8400-e29b-41d4-a716-44665544d341',
@@ -153,6 +158,7 @@ it('sorts entries by title ascending', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Alpha',
         'data' => ['brand' => 'Alpha'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
 
     $response = $this->actingAs($userModel)
@@ -174,6 +180,7 @@ it('sorts entries by title descending', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Alpha',
         'data' => ['brand' => 'Alpha'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
     EntryModel::create([
         'id' => '550e8400-e29b-41d4-a716-44665544d351',
@@ -182,6 +189,7 @@ it('sorts entries by title descending', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Zebra',
         'data' => ['brand' => 'Zebra'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
 
     $response = $this->actingAs($userModel)
@@ -213,6 +221,7 @@ it('sorts entries by version', function (): void {
         'namespace' => 'enumerations',
         'title' => 'BMW',
         'data' => ['brand' => 'BMW'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
     EntryModel::create([
         'id' => '550e8400-e29b-41d4-a716-44665544d361',
@@ -221,6 +230,7 @@ it('sorts entries by version', function (): void {
         'namespace' => 'enumerations',
         'title' => 'Toyota',
         'data' => ['brand' => 'Toyota'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
 
     $response = $this->actingAs($userModel)
@@ -242,6 +252,7 @@ it('includes version in entry data', function (): void {
         'namespace' => 'enumerations',
         'title' => 'BMW',
         'data' => ['brand' => 'BMW'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-44665544d000',
     ]);
 
     $response = $this->actingAs($userModel)

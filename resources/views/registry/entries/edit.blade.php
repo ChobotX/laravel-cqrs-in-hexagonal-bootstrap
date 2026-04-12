@@ -62,6 +62,16 @@
                                       :label="__('messages.registry.entries.cancel')" />
                 </div>
             </form>
+
+            @if ($canShareEntry)
+                <div class="border-t border-gray-200 p-6">
+                    <div data-share-panel
+                         data-resource-type="entry"
+                         data-resource-id="{{ $entry->id }}"
+                         data-shares-url="{{ route('internal-api.shares.index', ['resourceType' => 'entry', 'resourceId' => $entry->id]) }}"
+                         data-search-url="{{ route('internal-api.users.search') }}"></div>
+                </div>
+            @endif
         </div>
     </div>
 @endsection

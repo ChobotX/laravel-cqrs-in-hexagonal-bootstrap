@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Authorization;
 
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
-use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\ValueObject\RecordShare;
+use App\Domain\Authorization\Contract\ValueObject\RecordShare;
 
 final readonly class EloquentRecordShareRepository implements RecordShareRepository
 {
@@ -55,6 +55,25 @@ final readonly class EloquentRecordShareRepository implements RecordShareReposit
                 ->map(fn (RecordShareModel $recordShareModel): RecordShare => $this->recordShareMapper->toDomain($recordShareModel))
                 ->all(),
         );
+    }
+
+    /** @return list<RecordShare> */
+    public function findByResource(string $resourceType, string $resourceId): array
+    {
+        return array_values(
+            RecordShareModel::where('resource_type', $resourceType)
+                ->where('resource_id', $resourceId)
+                ->get()
+                ->map(fn (RecordShareModel $recordShareModel): RecordShare => $this->recordShareMapper->toDomain($recordShareModel))
+                ->all(),
+        );
+    }
+
+    public function revokeAllForResource(string $resourceType, string $resourceId): void
+    {
+        RecordShareModel::where('resource_type', $resourceType)
+            ->where('resource_id', $resourceId)
+            ->delete();
     }
 
     /** @return list<string> */

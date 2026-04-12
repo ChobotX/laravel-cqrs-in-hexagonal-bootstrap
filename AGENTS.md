@@ -54,6 +54,7 @@ When you change **one** of these, check **all** listed files:
 | Add/change CQRS pattern | `app/Domain/README.md`, `app/Infrastructure/README.md` (registration), `QUICKSTART.md` (adding a context) |
 | Add/change authorization module/feature | `app/Domain/Authorization/README.md`, `config/authorization.php`, `QUICKSTART.md` |
 | Add/change label module/feature | `app/Domain/Label/README.md`, `config/authorization.php` |
+| Add/change shareable resource type or sharing mechanism | `app/Domain/Authorization/README.md` (Record Sharing section), `app/Infrastructure/Provider/AuthorizationServiceProvider.php` (`ShareableResourceRegistry` binding), owning entity's domain README, `ADR.md` if pattern changes |
 | Add/change code style rule | `app/README.md`, `pint.json` or `rector.php` (whichever enforces it) |
 | Add/change class structural rule | `app/README.md` (class rules table), `ADR.md` if it's a new decision |
 | Add/change presentation pattern | `app/Presentation/README.md` |

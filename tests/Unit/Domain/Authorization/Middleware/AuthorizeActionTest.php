@@ -58,6 +58,21 @@ function buildTestMiddleware(
         {
             return [];
         }
+
+        public function supportsResourceSharing(string $resourceType): bool
+        {
+            return false;
+        }
+
+        public function canShareResource(string $userId, string $resourceType): bool
+        {
+            return false;
+        }
+
+        public function canViewResourceShares(string $userId, string $resourceType): bool
+        {
+            return false;
+        }
     };
 
     return new AuthorizeAction($authenticatedUser, $authorizationChecker);

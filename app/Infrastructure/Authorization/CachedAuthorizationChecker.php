@@ -64,6 +64,21 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
         );
     }
 
+    public function supportsResourceSharing(string $resourceType): bool
+    {
+        return $this->authorizationChecker->supportsResourceSharing($resourceType);
+    }
+
+    public function canShareResource(string $userId, string $resourceType): bool
+    {
+        return $this->authorizationChecker->canShareResource($userId, $resourceType);
+    }
+
+    public function canViewResourceShares(string $userId, string $resourceType): bool
+    {
+        return $this->authorizationChecker->canViewResourceShares($userId, $resourceType);
+    }
+
     private function canCacheKey(string $userId, string $permission): string
     {
         return sprintf('%s:auth:can:%s:%s:v%d', $this->tenantPrefix(), $userId, $permission, $this->authVersion($userId));

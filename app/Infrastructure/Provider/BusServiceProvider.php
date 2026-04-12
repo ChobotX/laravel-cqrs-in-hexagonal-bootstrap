@@ -32,6 +32,8 @@ use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\Authorization\Contract\Command\UpdateRoleCommand;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
+use App\Domain\Authorization\Contract\Event\RecordShared;
+use App\Domain\Authorization\Contract\Event\RecordShareRevoked;
 use App\Domain\Authorization\Contract\Event\RoleAssignedToUser;
 use App\Domain\Authorization\Contract\Event\RoleDeleted;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
@@ -46,12 +48,16 @@ use App\Domain\Authorization\Contract\Query\GetOwnOverridesQuery;
 use App\Domain\Authorization\Contract\Query\GetRecordSharesQuery;
 use App\Domain\Authorization\Contract\Query\GetRoleByIdQuery;
 use App\Domain\Authorization\Contract\Query\GetRolesForUsersQuery;
+use App\Domain\Authorization\Contract\Query\GetSharesForResourceQuery;
 use App\Domain\Authorization\Contract\Query\GetUserOverridesQuery;
 use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;
 use App\Domain\Authorization\Contract\Query\ListRolesQuery;
 use App\Domain\Authorization\Contract\Query\SearchRolesQuery;
+use App\Domain\Authorization\EventHandler\CleanupSharesOnEntityDeleted;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideRemoved;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnOverrideSet;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRecordShared;
+use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRecordShareRevoked;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleAssigned;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleDeleted;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleRevoked;
@@ -79,6 +85,7 @@ use App\Domain\Authorization\Handler\Query\GetOwnOverridesHandler;
 use App\Domain\Authorization\Handler\Query\GetRecordSharesHandler;
 use App\Domain\Authorization\Handler\Query\GetRoleByIdHandler;
 use App\Domain\Authorization\Handler\Query\GetRolesForUsersHandler;
+use App\Domain\Authorization\Handler\Query\GetSharesForResourceHandler;
 use App\Domain\Authorization\Handler\Query\GetUserOverridesHandler;
 use App\Domain\Authorization\Handler\Query\GetUserRolesHandler;
 use App\Domain\Authorization\Handler\Query\ListRolesHandler;
@@ -293,6 +300,7 @@ use App\Domain\User\Contract\Query\CountUsersQuery;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
+use App\Domain\User\Contract\Query\GetUsersByIdsQuery;
 use App\Domain\User\Contract\Query\ListUsersQuery;
 use App\Domain\User\Contract\Query\SearchUsersQuery;
 use App\Domain\User\EventHandler\SendInviteOnUserCreated;
@@ -310,6 +318,7 @@ use App\Domain\User\Handler\Query\CountUsersHandler;
 use App\Domain\User\Handler\Query\GetOwnProfileHandler;
 use App\Domain\User\Handler\Query\GetUserByEmailHandler;
 use App\Domain\User\Handler\Query\GetUserByIdHandler;
+use App\Domain\User\Handler\Query\GetUsersByIdsHandler;
 use App\Domain\User\Handler\Query\ListUsersHandler;
 use App\Domain\User\Handler\Query\SearchUsersHandler;
 use App\Infrastructure\Bus\InMemoryEventCollector;
@@ -336,13 +345,15 @@ final class BusServiceProvider extends ServiceProvider
                 PermissionOverrideRemoved::class => [RefreshAuthorizationOnOverrideRemoved::class],
                 RoleUpdated::class => [RefreshAuthorizationOnRoleUpdated::class],
                 RoleDeleted::class => [RefreshAuthorizationOnRoleDeleted::class],
+                RecordShared::class => [RefreshAuthorizationOnRecordShared::class],
+                RecordShareRevoked::class => [RefreshAuthorizationOnRecordShareRevoked::class],
                 UserCreated::class => [SendWelcomeNotificationOnUserCreated::class, SendInviteOnUserCreated::class],
                 UserInviteSent::class => [],
                 UserInviteAccepted::class => [],
                 PasswordResetRequested::class => [],
                 PasswordResetCompleted::class => [],
-                UserDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupNotificationsOnUserDeleted::class],
-                TeamDeleted::class => [CleanupLabelsOnEntityDeleted::class],
+                UserDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupSharesOnEntityDeleted::class, CleanupNotificationsOnUserDeleted::class],
+                TeamDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupSharesOnEntityDeleted::class],
                 NotificationCreated::class => [DeliverNotificationOnCreated::class],
                 NotificationRead::class => [UpdateUnreadCountOnNotificationChange::class],
                 AllNotificationsRead::class => [UpdateUnreadCountOnNotificationChange::class],
@@ -350,7 +361,7 @@ final class BusServiceProvider extends ServiceProvider
                 NotificationPreferencesUpdated::class => [],
                 PasswordChanged::class => [],
                 FileStored::class => [],
-                FileDeleted::class => [CleanupLabelsOnEntityDeleted::class],
+                FileDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupSharesOnEntityDeleted::class],
                 DefinitionCreated::class => [],
                 DefinitionUpdated::class => [],
                 DefinitionDeleted::class => [],
@@ -359,7 +370,7 @@ final class BusServiceProvider extends ServiceProvider
                 DefinitionVersionDeprecated::class => [],
                 EntryCreated::class => [],
                 EntryUpdated::class => [],
-                EntryDeleted::class => [],
+                EntryDeleted::class => [CleanupLabelsOnEntityDeleted::class, CleanupSharesOnEntityDeleted::class],
                 FeatureFlagUpdated::class => [],
                 FeatureFlagReset::class => [],
                 TemplatedEmailSent::class => [LogEmailOnSent::class],
@@ -450,6 +461,7 @@ final class BusServiceProvider extends ServiceProvider
             container: $this->app,
             handlers: [
                 GetUserByIdQuery::class => GetUserByIdHandler::class,
+                GetUsersByIdsQuery::class => GetUsersByIdsHandler::class,
                 GetOwnProfileQuery::class => GetOwnProfileHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
@@ -465,6 +477,7 @@ final class BusServiceProvider extends ServiceProvider
                 GetEffectivePermissionsQuery::class => GetEffectivePermissionsHandler::class,
                 GetOwnEffectivePermissionsQuery::class => GetOwnEffectivePermissionsHandler::class,
                 GetRecordSharesQuery::class => GetRecordSharesHandler::class,
+                GetSharesForResourceQuery::class => GetSharesForResourceHandler::class,
                 GetAvailableModulesQuery::class => GetAvailableModulesHandler::class,
                 GetActiveImpersonationQuery::class => GetActiveImpersonationHandler::class,
                 ListTeamsQuery::class => ListTeamsHandler::class,

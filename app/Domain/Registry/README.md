@@ -10,7 +10,7 @@ Definitions describe what an entry looks like — a namespace + slug identity wi
 
 - `definitions` — id, namespace, slug, name (unique per namespace+slug)
 - `definition_versions` — id, definition_id FK, version, body (JSONB), status (draft/active/deprecated)
-- `entries` — id, definition_id FK, definition_version, namespace, title, data (JSONB)
+- `entries` — id, definition_id FK, definition_version, namespace, title, data (JSONB), created_by_user_id (FK users.id, cascade delete), lock_version
 
 ### Type-Safe Schema Objects
 
@@ -93,4 +93,15 @@ Selects always reference another definition's entries (no inline options). A `Ca
 
 - `DefinitionCreated`, `DefinitionUpdated`, `DefinitionDeleted`
 - `DefinitionVersionCreated`, `DefinitionVersionActivated`, `DefinitionVersionDeprecated`
-- `EntryCreated`, `EntryUpdated`, `EntryDeleted`
+- `EntryCreated`, `EntryUpdated`, `EntryDeleted` (implements `App\Contract\Event\EntityDeleted` → triggers generic share/label cleanup)
+
+## Ownership & Sharing
+
+Every entry carries a required `created_by_user_id` (FK `users.id`, cascade delete). `CreateEntryController` injects the authenticated user's id into the `CreateEntryCommand`; the handler persists it on the entry.
+
+Ownership unlocks two things:
+
+- **Scope-filtered listing**: `ListEntriesQuery` implements `ScopeAwareQuery` + `ShareableScopeQuery` with resource type `'entry'`. Under `Own` scope the user sees entries they created plus entries explicitly shared with them; under `Team` scope they also see entries owned by users in their team hierarchy. Filtering happens at the DB level via `App\Infrastructure\Eloquent\ScopesOwnedQuery` (used by `EloquentEntryRepository`).
+- **Per-record sharing**: Any user with `registry.entries.update` can share an entry with any user they can see via the generic share API. See [Authorization module — Record Sharing](../Authorization/README.md#record-sharing) for the end-to-end contract.
+
+When an entry is deleted, its shares are revoked automatically via the generic `CleanupSharesOnEntityDeleted` event handler (no entry-specific code needed).

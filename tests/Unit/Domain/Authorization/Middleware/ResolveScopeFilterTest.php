@@ -6,6 +6,7 @@ use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
+use App\Application\Authorization\ShareableScopeQuery;
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
@@ -18,12 +19,14 @@ use App\Domain\User\Contract\Service\AuthenticatedUser;
 /**
  * @param  list<string>|null  $teamVisibleUserIds
  * @param  list<string>|null  $memberTeamIds
+ * @param  list<string>  $sharedResourceIds
  */
 function buildScopeMiddleware(
     ?string $userId = 'user-1',
     string $scope = 'all',
     ?array $teamVisibleUserIds = null,
     ?array $memberTeamIds = null,
+    array $sharedResourceIds = [],
 ): ResolveScopeFilter {
     $authenticatedUser = new readonly class($userId) implements AuthenticatedUser
     {
@@ -50,9 +53,13 @@ function buildScopeMiddleware(
         }
     };
 
-    $authorizationChecker = new readonly class($scope) implements AuthorizationChecker
+    $authorizationChecker = new readonly class($scope, $sharedResourceIds) implements AuthorizationChecker
     {
-        public function __construct(private string $scope) {}
+        /** @param list<string> $sharedResourceIds */
+        public function __construct(
+            private string $scope,
+            private array $sharedResourceIds,
+        ) {}
 
         public function can(string $userId, string $permission): bool
         {
@@ -80,7 +87,22 @@ function buildScopeMiddleware(
         /** @return list<string> */
         public function accessibleResourceIds(string $userId, string $resourceType, string $action): array
         {
-            return [];
+            return $this->sharedResourceIds;
+        }
+
+        public function supportsResourceSharing(string $resourceType): bool
+        {
+            return true;
+        }
+
+        public function canShareResource(string $userId, string $resourceType): bool
+        {
+            return true;
+        }
+
+        public function canViewResourceShares(string $userId, string $resourceType): bool
+        {
+            return true;
         }
     };
 
@@ -243,6 +265,64 @@ it('resolves Team scope with member team ids for Team target', function (): void
     expect($context->visibleIds)->toBe(['team-1', 'team-2']);
 });
 
+it('leaves sharedResourceIds null for non-shareable queries', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(userId: 'user-1', scope: 'own', sharedResourceIds: ['res-1']);
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    assert($result instanceof ResolveScopeFilterTestQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->sharedResourceIds)->toBeNull();
+});
+
+it('leaves sharedResourceIds null for shareable queries under All scope', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(userId: 'user-1', scope: 'all', sharedResourceIds: ['res-1']);
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestShareableQuery);
+    assert($result instanceof ResolveScopeFilterTestShareableQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::All);
+    expect($context->sharedResourceIds)->toBeNull();
+});
+
+it('populates sharedResourceIds for shareable queries under Own scope', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(
+        userId: 'user-7',
+        scope: 'own',
+        sharedResourceIds: ['res-1', 'res-2'],
+    );
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestShareableQuery);
+    assert($result instanceof ResolveScopeFilterTestShareableQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::Own);
+    expect($context->visibleIds)->toBe(['user-7']);
+    expect($context->sharedResourceIds)->toBe(['res-1', 'res-2']);
+});
+
+it('populates sharedResourceIds for shareable queries under Team scope', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(
+        userId: 'user-1',
+        scope: 'team',
+        teamVisibleUserIds: ['user-1', 'user-2'],
+        sharedResourceIds: ['res-3'],
+    );
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestShareableQuery);
+    assert($result instanceof ResolveScopeFilterTestShareableQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::Team);
+    expect($context->visibleIds)->toBe(['user-1', 'user-2']);
+    expect($context->sharedResourceIds)->toBe(['res-3']);
+});
+
 /** @implements Query<list<string>> */
 #[RequiresPermission('test.resource.read')]
 final readonly class ResolveScopeFilterTestQuery implements Query, ScopeAwareQuery
@@ -302,6 +382,35 @@ final readonly class ResolveScopeFilterTestTeamQuery implements Query, ScopeAwar
     public function scopeTarget(): ScopeTarget
     {
         return ScopeTarget::Team;
+    }
+
+    public function withAccessContext(AccessContext $accessContext): static
+    {
+        return new self($accessContext);
+    }
+
+    public function accessContext(): ?AccessContext
+    {
+        return $this->accessContext;
+    }
+}
+
+/** @implements Query<list<string>> */
+#[RequiresPermission('test.resource.read')]
+final readonly class ResolveScopeFilterTestShareableQuery implements Query, ScopeAwareQuery, ShareableScopeQuery
+{
+    public function __construct(
+        private ?AccessContext $accessContext = null,
+    ) {}
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::User;
+    }
+
+    public function shareableResourceType(): string
+    {
+        return 'test-resource';
     }
 
     public function withAccessContext(AccessContext $accessContext): static

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization\ValueObject;
+namespace App\Domain\Authorization\Contract\ValueObject;
 
-use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Contract\Enum\Action;
 
 final readonly class RecordShare
 {

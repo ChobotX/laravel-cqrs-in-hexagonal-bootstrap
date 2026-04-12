@@ -100,7 +100,7 @@ Scope filtering is handled transparently by the `ResolveScopeFilter` bus middlew
 
 1. Controller dispatches `ListUsersQuery` (no scope info)
 2. `AuthorizeAction` middleware checks binary access (can/deny)
-3. `ResolveScopeFilter` middleware reads `#[RequiresPermission]`, calls `canWithScope()`, resolves visible IDs via `TeamMembershipChecker`, creates a new query with `AccessContext`
+3. `ResolveScopeFilter` middleware reads `#[RequiresPermission]`, calls `canWithScope()`, resolves visible IDs via `TeamMembershipChecker`, and (for `ShareableScopeQuery`) fetches shared resource IDs via `AuthorizationChecker::accessibleResourceIds()`. It returns a new query with an `AccessContext`.
 4. Handler reads `accessContext()?->visibleIds` and passes to repository
 5. Repository applies `WHERE IN (...)` at the SQL level
 
@@ -108,6 +108,7 @@ Scope filtering is handled transparently by the `ResolveScopeFilter` bus middlew
 - `visibleIds = null` — unrestricted (All scope, no SQL filter)
 - `visibleIds = ['id1', 'id2']` — restrict to these IDs (Team or Own scope)
 - `visibleIds = []` — no visible records
+- `sharedResourceIds` — resource IDs shared with the actor (populated only when the query implements `ShareableScopeQuery` and the scope is not `All`). Null otherwise.
 
 The `team` scope uses `TeamMembershipChecker::visibleUserIds()` which returns user IDs from the user's direct teams **plus all descendant teams** via recursive CTE. This means a member of "Engineering" also sees users from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Team module](../Team/README.md).
 
@@ -115,6 +116,48 @@ The `team` scope uses `TeamMembershipChecker::visibleUserIds()` which returns us
 - `NoScopeResolutionInPresentationRule` — blocks `canWithScope()` calls in Presentation
 - `testPresentationDoesNotDependOnTeamMembershipChecker` — blocks importing the service
 - `testPresentationDoesNotDependOnAccessContext` — blocks importing scope types
+
+## Record Sharing
+
+Any entity type can opt in to universal record sharing, an extension of the scope system rather than a parallel mechanism. A user can grant access to a specific record to any user they can see; the grantee then sees the record in list views alongside records they own/can-see by scope.
+
+**Turning on sharing for a new entity type** (three steps, no bespoke handler logic):
+
+1. Add `created_by_user_id UUID NOT NULL` to the entity's table (FK to `users.id`).
+2. Make its list query implement both `ScopeAwareQuery` and `ShareableScopeQuery`:
+   ```php
+   public function shareableResourceType(): string { return 'entry'; }
+   ```
+3. `use ScopesOwnedQuery;` in the Eloquent repository; call `$this->applyScopeFilter($builder, $accessContext)` in list methods.
+4. Register the resource type in `AuthorizationServiceProvider`:
+   ```php
+   $this->app->singleton(ShareableResourceRegistry::class, fn () => new ShareableResourceRegistry([
+       'entry' => 'registry.entries',  // resource_type => permission prefix
+   ]));
+   ```
+5. Make the entity's `*Deleted` event implement `App\Contract\Event\EntityDeleted` (`entityId()` + `entityType()`). The generic `CleanupSharesOnEntityDeleted` handler revokes all shares on delete automatically.
+
+Once wired, `ResolveScopeFilter` automatically unions shared IDs into `AccessContext::$sharedResourceIds`, and `ScopesOwnedQuery::applyScopeFilter()` produces `WHERE (created_by_user_id IN (visibleIds) OR id IN (sharedIds))`.
+
+**Commands, queries, and the universal share API:**
+
+- `ShareRecordCommand(granteeUserId, resourceType, resourceId, actions, grantorUserId)` — grants a list of actions (typically `['read', 'update']`). Emits one `RecordShared` event per action.
+- `RevokeRecordShareCommand(granteeUserId, resourceType, resourceId)` — revokes all actions for a grantee + resource. Emits `RecordShareRevoked`.
+- `GetSharesForResourceQuery(resourceType, resourceId)` — returns a `list<RecordShare>` for the resource (used by the SharePanel UI).
+- HTTP: `GET/POST /internal-api/shares/{resourceType}/{resourceId}` and `DELETE /internal-api/shares/{resourceType}/{resourceId}/{granteeUserId}`. Controllers live in `Presentation/Http/Controller/Web/Sharing/`.
+
+**Authorization rules at the share API layer** (enforced inline; see the three sharing controllers):
+
+- Viewing/sharing additionally requires `users.list.read` so the actor can resolve grantee identities in the UI.
+- Sharing requires `AuthorizationChecker::canShareResource($userId, $resourceType)` (update permission on the resource type).
+- Revoking requires being the original grantor OR having `canShareResource()` (e.g. an admin can revoke anyone's share).
+
+**`AuthorizationChecker` sharing methods:**
+
+- `supportsResourceSharing(resourceType): bool` — whether the resource type is registered for sharing.
+- `canShareResource(userId, resourceType): bool` — resolves the update permission for that type via the registry.
+- `canViewResourceShares(userId, resourceType): bool` — resolves the read permission for that type.
+- `accessibleResourceIds(userId, resourceType, action): list<string>` — shared record IDs visible to the user for that action.
 
 ## Role Assignment (Superset Enforcement)
 
@@ -182,6 +225,9 @@ Domain event handlers in `App\Domain\Authorization\EventHandler\` react to autho
 | `RefreshAuthorizationOnOverrideRemoved` | `PermissionOverrideRemoved` | Refresh for the user |
 | `RefreshAuthorizationOnRoleDeleted` | `RoleDeleted` | Refresh for all users with the role |
 | `RefreshAuthorizationOnRoleUpdated` | `RoleUpdated` | Refresh for all users with the role |
+| `RefreshAuthorizationOnRecordShared` | `RecordShared` | Refresh for the grantee user so their shared-resource cache invalidates |
+| `RefreshAuthorizationOnRecordShareRevoked` | `RecordShareRevoked` | Refresh for the grantee user |
+| `CleanupSharesOnEntityDeleted` | any `EntityDeleted` | Revoke all record shares for the deleted entity |
 
 The `AuthorizationRefresher` contract abstracts the refresh mechanism. The infrastructure implementation (`CacheAuthorizationRefresher`) increments the `auth:version:{userId}` counter, which invalidates all versioned cache keys for that user.
 

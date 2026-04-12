@@ -70,6 +70,7 @@ final readonly class UpdateEntryHandler implements CommandHandler
             namespace: $entry->namespace,
             title: new EntryTitle($command->title),
             data: $command->data,
+            createdByUserId: $entry->createdByUserId,
         );
 
         $this->entryRepository->update($updatedEntry);

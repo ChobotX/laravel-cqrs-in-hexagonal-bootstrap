@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Contract\Query;
 
+use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
+use App\Application\Authorization\ScopeAwareQuery;
+use App\Application\Authorization\ScopeTarget;
+use App\Application\Authorization\ShareableScopeQuery;
 use App\Application\Filtering\Filter;
 use App\Application\Filtering\FilterableQuery;
 use App\Application\Pagination\PaginatedResult;
@@ -19,7 +23,7 @@ use App\Domain\Registry\Contract\Entity\Entry;
  * @implements Query<PaginatedResult<Entry>>
  */
 #[RequiresPermission('registry.entries.read')]
-final readonly class ListEntriesQuery implements FilterableQuery, Query, SortableQuery
+final readonly class ListEntriesQuery implements FilterableQuery, Query, ScopeAwareQuery, ShareableScopeQuery, SortableQuery
 {
     public const int DEFAULT_PER_PAGE = 15;
 
@@ -36,12 +40,33 @@ final readonly class ListEntriesQuery implements FilterableQuery, Query, Sortabl
         public int $perPage = self::DEFAULT_PER_PAGE,
         private array $filters = [],
         private array $sortings = [],
+        private ?AccessContext $accessContext = null,
     ) {}
+
+    public function scopeTarget(): ScopeTarget
+    {
+        return ScopeTarget::User;
+    }
+
+    public function shareableResourceType(): string
+    {
+        return 'entry';
+    }
+
+    public function withAccessContext(AccessContext $accessContext): static
+    {
+        return new self($this->definitionId, $this->page, $this->perPage, $this->filters, $this->sortings, $accessContext);
+    }
+
+    public function accessContext(): ?AccessContext
+    {
+        return $this->accessContext;
+    }
 
     /** @param list<Filter> $filters */
     public function withFilters(array $filters): static
     {
-        return new self($this->definitionId, $this->page, $this->perPage, $filters, $this->sortings);
+        return new self($this->definitionId, $this->page, $this->perPage, $filters, $this->sortings, $this->accessContext);
     }
 
     /** @return list<Filter> */
@@ -53,7 +78,7 @@ final readonly class ListEntriesQuery implements FilterableQuery, Query, Sortabl
     /** @param list<Sorting> $sortings */
     public function withSorting(array $sortings): static
     {
-        return new self($this->definitionId, $this->page, $this->perPage, $this->filters, $sortings);
+        return new self($this->definitionId, $this->page, $this->perPage, $this->filters, $sortings, $this->accessContext);
     }
 
     /** @return list<Sorting> */

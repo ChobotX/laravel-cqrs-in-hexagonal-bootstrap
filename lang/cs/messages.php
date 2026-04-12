@@ -257,6 +257,22 @@ return [
         'search_failed' => 'Nepodařilo se načíst štítky.',
     ],
 
+    'sharing' => [
+        'title' => 'Sdílení',
+        'subtitle' => 'Sdílejte tento záznam s dalšími uživateli. Sdílení uživatelé jej mohou prohlížet a upravovat.',
+        'loading' => 'Načítání sdílení...',
+        'search_placeholder' => 'Hledat uživatele pro sdílení...',
+        'no_shares' => 'Tento záznam není s nikým sdílen.',
+        'revoke' => 'Odebrat',
+        'revoke_confirm' => 'Odebrat přístup uživateli :name k tomuto záznamu?',
+        'shared_success' => 'Záznam byl úspěšně sdílen.',
+        'revoked_success' => 'Přístup odebrán.',
+        'share_failed' => 'Nepodařilo se sdílet záznam.',
+        'revoke_failed' => 'Nepodařilo se odebrat přístup.',
+        'load_failed' => 'Nepodařilo se načíst sdílení.',
+        'search_failed' => 'Nepodařilo se vyhledat uživatele.',
+    ],
+
     'feature_flags' => [
         'title' => 'Přepínače funkcí',
         'flag' => 'Přepínač',

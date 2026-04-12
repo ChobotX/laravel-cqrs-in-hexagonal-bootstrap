@@ -52,6 +52,7 @@ function seedApiDefinitionWithEntries(): void
         'namespace' => 'enumerations',
         'title' => 'Acme Corp',
         'data' => ['name' => 'Acme'],
+        'created_by_user_id' => '550e8400-e29b-41d4-a716-446655440a00',
     ]);
 }
 

@@ -19,6 +19,7 @@ it('can be constructed with value objects and data array', function (): void {
         namespace: new DefinitionNamespace('crm'),
         title: new EntryTitle('John Doe'),
         data: $data,
+        createdByUserId: '550e8400-e29b-41d4-a716-446655440001',
     );
 
     expect($entry->id->value)->toBe('550e8400-e29b-41d4-a716-446655440000')
@@ -26,5 +27,6 @@ it('can be constructed with value objects and data array', function (): void {
         ->and($entry->definitionVersion->value)->toBe(1)
         ->and($entry->namespace->value)->toBe('crm')
         ->and($entry->title->value)->toBe('John Doe')
-        ->and($entry->data)->toBe($data);
+        ->and($entry->data)->toBe($data)
+        ->and($entry->createdByUserId)->toBe('550e8400-e29b-41d4-a716-446655440001');
 });

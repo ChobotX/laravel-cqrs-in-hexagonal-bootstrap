@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\Registry;
 
+use App\Application\Authorization\AccessContext;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Domain\Registry\Contract\Entity\Entry;
@@ -13,11 +14,13 @@ use App\Domain\Registry\Contract\ValueObject\EntryId;
 use App\Domain\Registry\ValueObject\DefinitionNamespace;
 use App\Domain\Registry\ValueObject\DefinitionSlug;
 use App\Infrastructure\Eloquent\FiltersQuery;
+use App\Infrastructure\Eloquent\ScopesOwnedQuery;
 use App\Infrastructure\Eloquent\SortsQuery;
 
 final readonly class EloquentEntryRepository implements EntryRepository
 {
     use FiltersQuery;
+    use ScopesOwnedQuery;
     use SortsQuery;
 
     public function __construct(
@@ -44,6 +47,7 @@ final readonly class EloquentEntryRepository implements EntryRepository
         $entryModel->namespace = $entry->namespace->value;
         $entryModel->title = $entry->title->value;
         $entryModel->data = $entry->data;
+        $entryModel->created_by_user_id = $entry->createdByUserId;
         $entryModel->save();
     }
 
@@ -66,12 +70,14 @@ final readonly class EloquentEntryRepository implements EntryRepository
     }
 
     /** @return PaginatedResult<Entry> */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = []): PaginatedResult
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = [], ?AccessContext $accessContext = null): PaginatedResult
     {
-        $builder = $this->filterBuilder(
+        $builder = $this->applyScopeFilter(
             EntryModel::where('definition_id', $definitionId->value),
-            $filters,
+            $accessContext,
         );
+
+        $builder = $this->filterBuilder($builder, $filters);
 
         $total = $builder->count();
 

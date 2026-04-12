@@ -86,6 +86,7 @@ it('throws when definition has entries', function (): void {
         new DefinitionNamespace('crm'),
         new EntryTitle('John Doe'),
         ['name' => 'John Doe'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     $defRepo = new FakeDefinitionRepository(['550e8400-e29b-41d4-a716-446655440000' => $existing]);

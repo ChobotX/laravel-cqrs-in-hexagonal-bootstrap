@@ -8,8 +8,10 @@ use App\Application\Authorization\AccessContext;
 use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
+use App\Application\Authorization\ShareableScopeQuery;
 use App\Contract\Bus\Middleware;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Team\Contract\Service\TeamMembershipChecker;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
@@ -63,7 +65,16 @@ final readonly class ResolveScopeFilter implements Middleware
             },
         };
 
-        $accessContext = new AccessContext($accessScope, $visibleIds);
+        $sharedResourceIds = null;
+        if ($message instanceof ShareableScopeQuery && $accessScope !== AccessScope::All) {
+            $sharedResourceIds = $this->authorizationChecker->accessibleResourceIds(
+                $userId,
+                $message->shareableResourceType(),
+                Action::Read->value,
+            );
+        }
+
+        $accessContext = new AccessContext($accessScope, $visibleIds, $sharedResourceIds);
 
         return $next($message->withAccessContext($accessContext));
     }

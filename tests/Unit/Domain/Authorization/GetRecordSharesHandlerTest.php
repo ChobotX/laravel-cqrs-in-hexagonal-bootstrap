@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Query\GetRecordSharesQuery;
-use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Contract\ValueObject\RecordShare;
 use App\Domain\Authorization\Handler\Query\GetRecordSharesHandler;
-use App\Domain\Authorization\ValueObject\RecordShare;
 use Tests\Helper\FakeRecordShareRepository;
 
 it('returns record shares for a user', function (): void {

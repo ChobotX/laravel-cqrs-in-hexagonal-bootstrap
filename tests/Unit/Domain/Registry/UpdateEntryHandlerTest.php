@@ -45,6 +45,7 @@ function updateEntryHandlerFixtures(array $overrides = []): array
         new DefinitionNamespace('crm'),
         new EntryTitle('Old Title'),
         ['name' => 'Old Name'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     $version = new DefinitionVersion(

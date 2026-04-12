@@ -8,10 +8,10 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Domain\Authorization\Contract\Command\ShareRecordCommand;
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Event\RecordShared;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
-use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\ValueObject\RecordShare;
+use App\Domain\Authorization\Contract\ValueObject\RecordShare;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<ShareRecordCommand> */
@@ -24,23 +24,27 @@ final readonly class ShareRecordHandler implements CommandHandler
 
     public function handle(Command $command): void
     {
-        $recordShare = new RecordShare(
-            granteeUserId: $command->granteeUserId,
-            resourceType: $command->resourceType,
-            resourceId: $command->resourceId,
-            action: Action::from($command->action),
-            grantorUserId: $command->grantorUserId,
-        );
+        $now = new DateTimeImmutable;
 
-        $this->recordShareRepository->share($recordShare);
+        foreach ($command->actions as $actionValue) {
+            $action = Action::from($actionValue);
 
-        $this->eventCollector->collect(new RecordShared(
-            granteeUserId: $command->granteeUserId,
-            resourceType: $command->resourceType,
-            resourceId: $command->resourceId,
-            action: $command->action,
-            grantorUserId: $command->grantorUserId,
-            occurredAt: new DateTimeImmutable,
-        ));
+            $this->recordShareRepository->share(new RecordShare(
+                granteeUserId: $command->granteeUserId,
+                resourceType: $command->resourceType,
+                resourceId: $command->resourceId,
+                action: $action,
+                grantorUserId: $command->grantorUserId,
+            ));
+
+            $this->eventCollector->collect(new RecordShared(
+                granteeUserId: $command->granteeUserId,
+                resourceType: $command->resourceType,
+                resourceId: $command->resourceId,
+                action: $action->value,
+                grantorUserId: $command->grantorUserId,
+                occurredAt: $now,
+            ));
+        }
     }
 }

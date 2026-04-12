@@ -45,6 +45,8 @@ Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus
 - `App\Application\Authorization\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.
 - `App\Application\Authorization\SkipPermissionCheck` — attribute for commands/queries that intentionally skip authorization.
 - `App\Application\Authorization\ScopeAwareQuery` — interface for queries that receive automatic scope resolution via bus middleware. Extends `Query`. See [Domain README](../Domain/README.md) for usage.
+- `App\Application\Authorization\ShareableScopeQuery` — opt-in marker interface (complements `ScopeAwareQuery`). Queries that declare a `shareableResourceType()` automatically have shared resource IDs resolved into `AccessContext::$sharedResourceIds` by `ResolveScopeFilter`.
+- `App\Application\Authorization\ShareableResourceRegistry` — maps `resource_type` to its permission prefix (e.g. `'entry' => 'registry.entries'`). Used by `AuthorizationChecker::canShareResource/canViewResourceShares` so generic share endpoints resolve the right permissions without knowing about specific entity types. Bound in `AuthorizationServiceProvider`.
 
 ## Pagination
 

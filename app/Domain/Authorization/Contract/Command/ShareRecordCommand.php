@@ -13,6 +13,7 @@ use App\Contract\Command\Command;
 #[SkipPermissionCheck(reason: 'Record sharing is enforced per-resource by the handler')]
 final readonly class ShareRecordCommand implements Command
 {
+    /** @param list<string> $actions */
     public function __construct(
         /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $granteeUserId,
@@ -20,8 +21,8 @@ final readonly class ShareRecordCommand implements Command
         public string $resourceType,
         /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $resourceId,
-        /** Field `action` for this contract; see module docs for validation rules. */
-        public string $action,
+        /** Action names to grant (values of the Action enum). */
+        public array $actions,
         /** Stable identifier (typically UUID) unless the owning module documents otherwise. */
         public string $grantorUserId,
     ) {}

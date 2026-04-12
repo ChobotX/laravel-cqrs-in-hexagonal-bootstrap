@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Contract\Repository;
 
-use App\Domain\Authorization\Enum\Action;
-use App\Domain\Authorization\ValueObject\RecordShare;
+use App\Domain\Authorization\Contract\Enum\Action;
+use App\Domain\Authorization\Contract\ValueObject\RecordShare;
 
 /**
  * Persistence port for record share data in the Authorization context; implementations live in Infrastructure.
@@ -23,6 +23,12 @@ interface RecordShareRepository
 
     /** @return list<RecordShare> */
     public function findByGrantee(string $granteeUserId, ?string $resourceType = null): array;
+
+    /** @return list<RecordShare> */
+    public function findByResource(string $resourceType, string $resourceId): array;
+
+    /** Removes all shares for a resource (cleanup on entity delete). */
+    public function revokeAllForResource(string $resourceType, string $resourceId): void;
 
     /** @return list<string> */
     public function accessibleResourceIds(

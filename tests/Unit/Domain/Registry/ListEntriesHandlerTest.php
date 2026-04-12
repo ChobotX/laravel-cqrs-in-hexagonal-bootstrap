@@ -25,6 +25,7 @@ it('returns paginated entries for a definition', function (): void {
         new DefinitionNamespace('crm'),
         new EntryTitle('John Doe'),
         ['name' => 'John Doe'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     $entry2 = new Entry(
@@ -34,6 +35,7 @@ it('returns paginated entries for a definition', function (): void {
         new DefinitionNamespace('crm'),
         new EntryTitle('Jane Doe'),
         ['name' => 'Jane Doe'],
+        '550e8400-e29b-41d4-a716-446655440002',
     );
 
     $repo = new FakeEntryRepository([
@@ -74,6 +76,7 @@ it('filters entries with search filter by title', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('Toyota'),
             ['country' => 'Japan'],
+            '550e8400-e29b-41d4-a716-446655440001',
         ),
         '880e8400-e29b-41d4-a716-446655440000' => new Entry(
             new EntryId('880e8400-e29b-41d4-a716-446655440000'),
@@ -82,6 +85,7 @@ it('filters entries with search filter by title', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('BMW'),
             ['country' => 'Germany'],
+            '550e8400-e29b-41d4-a716-446655440002',
         ),
         '990e8400-e29b-41d4-a716-446655440000' => new Entry(
             new EntryId('990e8400-e29b-41d4-a716-446655440000'),
@@ -90,6 +94,7 @@ it('filters entries with search filter by title', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('Honda'),
             ['country' => 'Japan'],
+            '550e8400-e29b-41d4-a716-446655440003',
         ),
     ];
 
@@ -113,6 +118,7 @@ it('returns all entries with empty filters', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('Toyota'),
             ['country' => 'Japan'],
+            '550e8400-e29b-41d4-a716-446655440001',
         ),
         '880e8400-e29b-41d4-a716-446655440000' => new Entry(
             new EntryId('880e8400-e29b-41d4-a716-446655440000'),
@@ -121,6 +127,7 @@ it('returns all entries with empty filters', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('BMW'),
             ['country' => 'Germany'],
+            '550e8400-e29b-41d4-a716-446655440002',
         ),
     ];
 
@@ -143,6 +150,7 @@ it('search filter returns empty for no match', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('Toyota'),
             ['country' => 'Japan'],
+            '550e8400-e29b-41d4-a716-446655440001',
         ),
     ];
 
@@ -166,6 +174,7 @@ it('empty search term returns all entries', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('Toyota'),
             ['country' => 'Japan'],
+            '550e8400-e29b-41d4-a716-446655440001',
         ),
         '880e8400-e29b-41d4-a716-446655440000' => new Entry(
             new EntryId('880e8400-e29b-41d4-a716-446655440000'),
@@ -174,6 +183,7 @@ it('empty search term returns all entries', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('BMW'),
             ['country' => 'Germany'],
+            '550e8400-e29b-41d4-a716-446655440002',
         ),
     ];
 
@@ -216,6 +226,7 @@ it('passes sortings to repository', function (): void {
         new DefinitionNamespace('crm'),
         new EntryTitle('Toyota'),
         ['name' => 'Toyota'],
+        '550e8400-e29b-41d4-a716-446655440001',
     );
 
     $repo = new FakeEntryRepository([
@@ -242,6 +253,7 @@ it('combines search filter with pagination', function (): void {
             new DefinitionNamespace('crm'),
             new EntryTitle('Entry '.$i),
             ['value' => $i],
+            '550e8400-e29b-41d4-a716-446655440001',
         );
     }
 

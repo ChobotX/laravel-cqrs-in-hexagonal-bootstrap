@@ -20,6 +20,9 @@ use App\Presentation\Http\Controller\Web\Notification\DeleteNotificationControll
 use App\Presentation\Http\Controller\Web\Notification\ListNotificationsController;
 use App\Presentation\Http\Controller\Web\Notification\MarkAllNotificationsAsReadController;
 use App\Presentation\Http\Controller\Web\Notification\MarkNotificationAsReadController;
+use App\Presentation\Http\Controller\Web\Sharing\GetEntitySharesController;
+use App\Presentation\Http\Controller\Web\Sharing\RevokeEntityShareController;
+use App\Presentation\Http\Controller\Web\Sharing\ShareEntityController;
 use App\Presentation\Http\Controller\Web\Team\GetTeamTreeController;
 use App\Presentation\Http\Controller\Web\Team\SearchTeamsController;
 use App\Presentation\Http\Controller\Web\User\SearchUsersController;
@@ -38,6 +41,10 @@ Route::middleware('auth')->prefix('internal-api')->group(function (): void {
     Route::get('/teams/tree', GetTeamTreeController::class)->name('internal-api.teams.tree');
     Route::get('/labels/search', SearchLabelsController::class)->name('internal-api.labels.search');
     Route::post('/labels', CreateLabelController::class)->name('internal-api.labels.create');
+
+    Route::get('/shares/{resourceType}/{resourceId}', GetEntitySharesController::class)->name('internal-api.shares.index');
+    Route::post('/shares/{resourceType}/{resourceId}', ShareEntityController::class)->name('internal-api.shares.store');
+    Route::delete('/shares/{resourceType}/{resourceId}/{granteeUserId}', RevokeEntityShareController::class)->name('internal-api.shares.destroy');
 
     Route::get('/notifications', ListNotificationsController::class)->name('internal-api.notifications.index');
     Route::get('/notifications/unread-count', CountUnreadNotificationsController::class)->name('internal-api.notifications.unread-count');

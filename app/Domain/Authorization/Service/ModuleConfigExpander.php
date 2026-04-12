@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Service;
 
-use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\PermissionKey;
 

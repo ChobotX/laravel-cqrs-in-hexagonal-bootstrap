@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Domain\Authorization\Enum\Action;
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Infrastructure\Eloquent\Authorization\RecordShareMapper;
 use App\Infrastructure\Eloquent\Authorization\RecordShareModel;
 

@@ -61,6 +61,7 @@ final readonly class CreateEntryHandler implements CommandHandler
             namespace: $definition->namespace,
             title: new EntryTitle($command->title),
             data: $command->data,
+            createdByUserId: $command->createdByUserId,
         );
 
         $this->entryRepository->create($entry);

@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
+use App\Application\Authorization\ShareableResourceRegistry;
+use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\Authorization\Contract\Service\AccessDecision;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
-use App\Domain\Authorization\Enum\Action;
 use App\Domain\Authorization\Service\PermissionResolver;
 
 final readonly class ResolverAuthorizationChecker implements AuthorizationChecker
@@ -21,6 +22,7 @@ final readonly class ResolverAuthorizationChecker implements AuthorizationChecke
         private UserPermissionRepository $userPermissionRepository,
         private RecordShareRepository $recordShareRepository,
         private PermissionResolver $permissionResolver,
+        private ShareableResourceRegistry $shareableResourceRegistry,
         private array $availableModules,
     ) {}
 
@@ -58,6 +60,21 @@ final readonly class ResolverAuthorizationChecker implements AuthorizationChecke
             $resourceType,
             Action::from($action),
         );
+    }
+
+    public function supportsResourceSharing(string $resourceType): bool
+    {
+        return $this->shareableResourceRegistry->supports($resourceType);
+    }
+
+    public function canShareResource(string $userId, string $resourceType): bool
+    {
+        return $this->can($userId, $this->shareableResourceRegistry->updatePermission($resourceType));
+    }
+
+    public function canViewResourceShares(string $userId, string $resourceType): bool
+    {
+        return $this->can($userId, $this->shareableResourceRegistry->readPermission($resourceType));
     }
 
     /**

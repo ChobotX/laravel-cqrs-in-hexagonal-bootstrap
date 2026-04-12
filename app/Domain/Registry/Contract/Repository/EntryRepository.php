@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Contract\Repository;
 
+use App\Application\Authorization\AccessContext;
 use App\Application\Filtering\Filter;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
@@ -37,7 +38,7 @@ interface EntryRepository
      * @return PaginatedResult<Entry>
      *                                Loads a record or value object, or null when absent.
      */
-    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = []): PaginatedResult;
+    public function findByDefinitionPaginated(DefinitionId $definitionId, Pagination $pagination, array $filters = [], array $sortings = [], ?AccessContext $accessContext = null): PaginatedResult;
 
     /** Whether the targeted resource is present. */
     public function existsByDefinition(DefinitionId $definitionId): bool;

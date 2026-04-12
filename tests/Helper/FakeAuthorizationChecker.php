@@ -52,4 +52,19 @@ final readonly class FakeAuthorizationChecker implements AuthorizationChecker
     {
         return [];
     }
+
+    public function supportsResourceSharing(string $resourceType): bool
+    {
+        return true;
+    }
+
+    public function canShareResource(string $userId, string $resourceType): bool
+    {
+        return $this->can($userId, 'shareable.'.$resourceType.'.update');
+    }
+
+    public function canViewResourceShares(string $userId, string $resourceType): bool
+    {
+        return $this->can($userId, 'shareable.'.$resourceType.'.read');
+    }
 }

@@ -108,6 +108,51 @@ it('invalidates cache when version increments', function (): void {
     expect($inner->canCallCount)->toBe(2);
 });
 
+it('delegates supportsResourceSharing to inner checker', function (): void {
+    [$checker] = cachedCheckerSetup();
+
+    expect($checker->supportsResourceSharing('entry'))->toBeFalse();
+});
+
+it('delegates canShareResource to inner checker', function (): void {
+    [$checker] = cachedCheckerSetup();
+
+    expect($checker->canShareResource('user-1', 'entry'))->toBeFalse();
+});
+
+it('delegates canViewResourceShares to inner checker', function (): void {
+    [$checker] = cachedCheckerSetup();
+
+    expect($checker->canViewResourceShares('user-1', 'entry'))->toBeFalse();
+});
+
+it('delegates supportsResourceSharing and returns true when inner returns true', function (): void {
+    $cache = new CacheRepository(new ArrayStore);
+    $inner = new CachedCheckerTestInnerSupportingSharing;
+    $tenantContext = new FakeTenantContext('tenant-1', 'acme');
+    $checker = new CachedAuthorizationChecker($inner, $cache, $tenantContext, 300);
+
+    expect($checker->supportsResourceSharing('entry'))->toBeTrue();
+});
+
+it('delegates canShareResource and returns true when inner returns true', function (): void {
+    $cache = new CacheRepository(new ArrayStore);
+    $inner = new CachedCheckerTestInnerSupportingSharing;
+    $tenantContext = new FakeTenantContext('tenant-1', 'acme');
+    $checker = new CachedAuthorizationChecker($inner, $cache, $tenantContext, 300);
+
+    expect($checker->canShareResource('user-1', 'entry'))->toBeTrue();
+});
+
+it('delegates canViewResourceShares and returns true when inner returns true', function (): void {
+    $cache = new CacheRepository(new ArrayStore);
+    $inner = new CachedCheckerTestInnerSupportingSharing;
+    $tenantContext = new FakeTenantContext('tenant-1', 'acme');
+    $checker = new CachedAuthorizationChecker($inner, $cache, $tenantContext, 300);
+
+    expect($checker->canViewResourceShares('user-1', 'entry'))->toBeTrue();
+});
+
 final class CachedCheckerTestInner implements AuthorizationChecker
 {
     public int $canCallCount = 0;
@@ -138,5 +183,54 @@ final class CachedCheckerTestInner implements AuthorizationChecker
         $this->accessibleCallCount++;
 
         return [];
+    }
+
+    public function supportsResourceSharing(string $resourceType): bool
+    {
+        return false;
+    }
+
+    public function canShareResource(string $userId, string $resourceType): bool
+    {
+        return false;
+    }
+
+    public function canViewResourceShares(string $userId, string $resourceType): bool
+    {
+        return false;
+    }
+}
+
+final class CachedCheckerTestInnerSupportingSharing implements AuthorizationChecker
+{
+    public function can(string $userId, string $permission): bool
+    {
+        return false;
+    }
+
+    public function canWithScope(string $userId, string $permission): AccessDecision
+    {
+        return new SimpleAccessDecision(false, 'all');
+    }
+
+    /** @return list<string> */
+    public function accessibleResourceIds(string $userId, string $resourceType, string $action): array
+    {
+        return [];
+    }
+
+    public function supportsResourceSharing(string $resourceType): bool
+    {
+        return true;
+    }
+
+    public function canShareResource(string $userId, string $resourceType): bool
+    {
+        return true;
+    }
+
+    public function canViewResourceShares(string $userId, string $resourceType): bool
+    {
+        return true;
     }
 }

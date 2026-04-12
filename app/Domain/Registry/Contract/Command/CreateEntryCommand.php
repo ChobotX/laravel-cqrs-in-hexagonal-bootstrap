@@ -23,5 +23,7 @@ final readonly class CreateEntryCommand implements Command
         public string $title,
         /** Array for `data`; see constructor PHPDoc for structural tags when present. */
         public array $data,
+        /** User ID of the creator (ownership anchor for scope + sharing). */
+        public string $createdByUserId,
     ) {}
 }
