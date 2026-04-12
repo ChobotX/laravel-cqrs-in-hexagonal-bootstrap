@@ -43,7 +43,7 @@ final readonly class UpdateTenantSettingsHandler implements CommandHandler
             throw new InvalidTenantNameException;
         }
 
-        $displayTimezone = $this->normalizeIncomingDisplayTimezone($command->displayTimezone, $existing);
+        $displayTimezone = $this->normalizeIncomingDisplayTimezone($command->displayTimezone);
 
         $changes = $this->propertyChangeBuilder->diff([
             'name' => [$existing->name, $command->name],
@@ -83,10 +83,10 @@ final readonly class UpdateTenantSettingsHandler implements CommandHandler
         return $tenantSettings->logoUrl;
     }
 
-    private function normalizeIncomingDisplayTimezone(?string $raw, TenantSettings $tenantSettings): ?string
+    private function normalizeIncomingDisplayTimezone(?string $raw): ?string
     {
         if ($raw === null) {
-            return $tenantSettings->displayTimezone;
+            return null;
         }
 
         $trimmed = trim($raw);

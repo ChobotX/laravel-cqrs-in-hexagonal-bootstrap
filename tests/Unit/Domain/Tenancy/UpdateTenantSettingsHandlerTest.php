@@ -24,6 +24,7 @@ it('updates tenant name and collects TenantSettingsUpdated event', function (): 
         name: 'New Name',
         logo: null,
         removeLogo: false,
+        displayTimezone: null,
     ));
 
     expect($repo->updatedName)->toBe('New Name')
@@ -45,6 +46,7 @@ it('passes logo file and remove flag to repository', function (): void {
         name: 'Acme',
         logo: null,
         removeLogo: true,
+        displayTimezone: null,
     ));
 
     expect($repo->removedLogo)->toBeTrue()
@@ -62,6 +64,7 @@ it('does nothing and collects no event when no fields change', function (): void
         name: 'Acme',
         logo: null,
         removeLogo: false,
+        displayTimezone: null,
     ));
 
     expect($repo->updatedName)->toBeNull()
@@ -77,6 +80,7 @@ it('throws when tenant not found', function (): void {
         name: 'Name',
         logo: null,
         removeLogo: false,
+        displayTimezone: null,
     ));
 })->throws(TenantNotFoundException::class);
 
@@ -90,6 +94,7 @@ it('throws when name is empty', function (): void {
         name: '',
         logo: null,
         removeLogo: false,
+        displayTimezone: null,
     ));
 })->throws(InvalidTenantNameException::class);
 
@@ -103,6 +108,7 @@ it('throws when name is only whitespace', function (): void {
         name: '   ',
         logo: null,
         removeLogo: false,
+        displayTimezone: null,
     ));
 })->throws(InvalidTenantNameException::class);
 

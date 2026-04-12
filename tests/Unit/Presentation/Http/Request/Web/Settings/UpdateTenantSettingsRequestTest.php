@@ -61,3 +61,12 @@ it('passes validation factory with a valid IANA timezone', function (): void {
 
     expect($validator->passes())->toBeTrue();
 });
+
+it('fails when display_timezone is missing from the payload', function (): void {
+    $validator = tenantSettingsRulesValidator([
+        'name' => 'Tenant',
+    ]);
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->has('display_timezone'))->toBeTrue();
+});

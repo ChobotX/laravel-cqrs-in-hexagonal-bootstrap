@@ -24,8 +24,8 @@ final readonly class UpdateTenantSettingsCommand implements Command
         /** Field `removeLogo` for this contract; see module docs for validation rules. */
         public bool $removeLogo,
         /**
-         * IANA timezone, null to leave unchanged, or empty string after trim to clear (browser-local display).
+         * IANA timezone from the settings form: null after validation means clear (browser-local display).
          */
-        public ?string $displayTimezone = null,
+        public ?string $displayTimezone,
     ) {}
 }

@@ -30,15 +30,16 @@ final readonly class UpdateTenantSettingsController
 
         $logo = $updateTenantSettingsRequest->file('logo');
 
+        /** @var string|null $displayTimezone */
+        $displayTimezone = $updateTenantSettingsRequest->validated('display_timezone');
+
         $this->commandBus->dispatch(new UpdateTenantSettingsCommand(
             tenantId: $tenantId,
             name: $updateTenantSettingsRequest->string('name')->toString(),
             logo: $logo instanceof UploadedFile ? $logo : null,
             removeLogo: $updateTenantSettingsRequest->boolean('remove_logo'),
-            displayTimezone: $updateTenantSettingsRequest->has('display_timezone')
-                ? (is_string($updateTenantSettingsRequest->input('display_timezone'))
-                    ? $updateTenantSettingsRequest->string('display_timezone')->toString()
-                    : '')
+            displayTimezone: is_string($displayTimezone)
+                ? $displayTimezone
                 : null,
         ));
 

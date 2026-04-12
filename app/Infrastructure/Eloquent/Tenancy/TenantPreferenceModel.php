@@ -37,10 +37,9 @@ final class TenantPreferenceModel extends Model
 
     public static function writeDisplayTimezone(?string $displayTimezone): void
     {
-        self::query()->updateOrInsert(
-            ['id' => self::SINGLETON_ID],
-            ['display_timezone' => $displayTimezone],
-        );
+        self::query()->whereKey(self::SINGLETON_ID)->update([
+            'display_timezone' => $displayTimezone,
+        ]);
     }
 
     /**

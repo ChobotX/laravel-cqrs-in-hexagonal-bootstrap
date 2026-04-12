@@ -21,7 +21,7 @@ final class UpdateTenantSettingsRequest extends FormRequest
             'logo' => ['nullable', 'image', 'max:2048'],
             'remove_logo' => ['nullable', 'boolean'],
             'display_timezone' => [
-                'sometimes',
+                'present',
                 'nullable',
                 'max:64',
                 function (string $attribute, mixed $value, Closure $fail): void {
