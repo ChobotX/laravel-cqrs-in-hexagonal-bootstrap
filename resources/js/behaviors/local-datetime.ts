@@ -1,4 +1,4 @@
-export {};
+import { formatInstant } from '../core/datetime/format-instant';
 
 const SELECTOR = 'time[data-local-datetime]';
 
@@ -9,16 +9,13 @@ function formatElement(timeElement: HTMLTimeElement): void {
         return;
     }
 
-    const parsed = new Date(iso);
+    const formatted = formatInstant(iso);
 
-    if (Number.isNaN(parsed.getTime())) {
+    if (formatted === '') {
         return;
     }
 
-    timeElement.textContent = new Intl.DateTimeFormat(navigator.language, {
-        dateStyle: 'medium',
-        timeStyle: 'medium',
-    }).format(parsed);
+    timeElement.textContent = formatted;
 }
 
 function formatAll(root: ParentNode): void {

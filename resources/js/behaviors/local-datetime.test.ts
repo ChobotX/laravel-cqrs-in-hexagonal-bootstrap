@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { formatInstant } from '../core/datetime/format-instant';
 
 const HTML = `
 <time id="tagged" datetime="2026-04-12T12:00:00Z" data-local-datetime>2026-04-12 12:00:00</time>
@@ -8,6 +9,7 @@ const HTML = `
 `;
 
 beforeEach(async () => {
+    window.__APP__ = {};
     document.body.innerHTML = HTML;
     await import('./local-datetime');
     document.dispatchEvent(new Event('DOMContentLoaded'));
@@ -15,17 +17,14 @@ beforeEach(async () => {
 
 afterEach(() => {
     document.body.innerHTML = '';
+    window.__APP__ = undefined;
 });
 
 describe('local-datetime', () => {
-    it('rewrites text of elements with data-local-datetime using browser locale', () => {
+    it('rewrites text of elements with data-local-datetime using shared formatter', () => {
         const el = document.getElementById('tagged') as HTMLTimeElement;
-        const expected = new Intl.DateTimeFormat(navigator.language, {
-            dateStyle: 'medium',
-            timeStyle: 'medium',
-        }).format(new Date('2026-04-12T12:00:00Z'));
 
-        expect(el.textContent).toBe(expected);
+        expect(el.textContent).toBe(formatInstant('2026-04-12T12:00:00Z'));
     });
 
     it('leaves elements without the marker attribute untouched', () => {

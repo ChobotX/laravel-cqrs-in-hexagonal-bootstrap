@@ -61,6 +61,7 @@ final readonly class ResolveTenantMiddleware
 
         View::share('tenantName', $this->tenantContext->currentTenantName());
         View::share('tenantLogoUrl', $this->tenantContext->currentTenantLogoUrl());
+        View::share('tenantDisplayTimezone', $this->tenantContext->currentTenantDisplayTimezone());
 
         return $next($request);
     }

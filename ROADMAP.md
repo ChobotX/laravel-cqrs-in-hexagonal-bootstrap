@@ -1,32 +1,41 @@
 # Roadmap
 
+Planned work that is **not** yet in the codebase (implemented areas such as email templating and audit logging live in the app and layer READMEs).
+
 ## Tenant configuration
-### Email templating 
-- Including login, password reset, etc... extendable and reusable from any Domain, template per translation.
-### Enforce password rotation 
-- Including validation, that it does not match last password, including notifications when time approaches.. notification should appear on every login in last 10% of the rotation period.
-### 2FA 
-- (Email OTP or 2FA app, user can choose) + password enforcement in the settings per tenant.
+
+### Enforce password rotation
+
+- Including validation that the new password does not match the last one, notifications as the deadline approaches, and a warning on every login during the last 10% of the rotation period.
+
+### 2FA
+
+- (Email OTP or authenticator app, user can choose) plus password policy enforced in tenant settings.
+
 ### SSO
-- Search some Laravel implementation package, if we can reuse this to offer some of the generic SSO options, tenant would. SSO bypasses 2FA optionally.
+
+- Evaluate a Laravel-oriented package for common SSO options; tenant-level configuration. SSO may optionally bypass 2FA.
+
 ### Enable overriding default email provider
-- Offer Mailjet, Mailgun and MailPit for now. Should even send invite and password recovery emails through tenant defined email provider, using their from address.
+
+- Offer Mailjet, Mailgun, and Mailpit (or equivalent) as tenant-configurable transports. Invite and password recovery should respect the tenant’s provider and from address.
 
 ## Tenant broadcast
-- Sending notification to whole tenant, explicit users, whole teams or teams including subteams. (Text-length limited, simple text)
-- Sending email to whole tenant, explicit users, whole teams or teams including subteams. (Large text limit, rich text, including attachments)
 
-## Audit log
-- Log every Command to database for audit logging. Add this as listener to domain events, group together by trace-id. There should be history, viewable per entity or per user. Viewing history should be permission based. History cannot be edited nor deleted.
+- Notifications to the whole tenant, explicit users, whole teams, or teams including subteams (text-length limited, plain text).
+- Email to the same audiences (higher length limit, rich text, attachments).
 
 ## Webhook system
-- Users can configure outbound webhooks for any domain event. In configuration, he should see example request and even can trigger test webhook.
 
-## API Key Management
-- Per user API key management, respecting users permissions.
-- Per tenant API key management, selecting exact permissions for the key. Can include root team in case of selecting team scoped permissions.
-- No-one can create API key with wider permissions than he has.
+- Users configure outbound webhooks for domain events, see an example request payload, and can fire a test delivery.
+
+## API key management
+
+- Per-user API keys that respect that user’s permissions.
+- Per-tenant API keys with explicit permission grants (including root team when using team-scoped permissions).
+- No key may be created with broader permissions than the creator has.
 
 ## Billing
-- Add billing platform, with optional payment gateway adapter and configuration. Start with GoPay and Stripe adapter options.
-- By file configurable price tiers, free test periods, user limits and features (reusing feature flags).
+
+- Billing platform with an optional payment gateway adapter. Initial adapters: GoPay and Stripe.
+- File-driven price tiers, trial periods, user limits, and feature gating (reusing feature flags).

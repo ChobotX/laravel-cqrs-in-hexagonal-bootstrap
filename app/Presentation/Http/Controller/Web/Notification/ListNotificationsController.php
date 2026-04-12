@@ -12,6 +12,8 @@ use App\Domain\Notification\Contract\Query\ListOwnNotificationsQuery;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Notification\ListNotificationsRequest;
 use App\Presentation\Http\Request\Web\Notification\NotificationFilter;
+use App\Presentation\Http\Serialization\InstantJson;
+use DateTimeImmutable;
 use Illuminate\Http\JsonResponse;
 
 #[SkipPermissionCheck(reason: 'Notifications are accessible to all authenticated users')]
@@ -45,8 +47,10 @@ final readonly class ListNotificationsController
                 'title' => $notification->title,
                 'body' => $notification->body,
                 'link_url' => $notification->link?->value,
-                'read_at' => $notification->readAt?->format('c'),
-                'created_at' => $notification->createdAt->format('c'),
+                'read_at' => $notification->readAt instanceof DateTimeImmutable
+                    ? InstantJson::toRfc3339Utc($notification->readAt)
+                    : null,
+                'created_at' => InstantJson::toRfc3339Utc($notification->createdAt),
             ], $paginatedResult->items),
             'meta' => [
                 'current_page' => $paginatedResult->pagination->page,

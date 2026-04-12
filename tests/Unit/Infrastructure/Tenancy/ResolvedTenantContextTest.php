@@ -23,6 +23,20 @@ it('returns null logo url when none set', function (): void {
     expect($context->currentTenantLogoUrl())->toBeNull();
 });
 
+it('returns null display timezone when none set', function (): void {
+    $context = new ResolvedTenantContext;
+    $context->set('tenant-123', 'test-slug', 'Test Tenant', null);
+
+    expect($context->currentTenantDisplayTimezone())->toBeNull();
+});
+
+it('returns display timezone when set', function (): void {
+    $context = new ResolvedTenantContext;
+    $context->set('tenant-123', 'test-slug', 'Test Tenant', null, 'Europe/Prague');
+
+    expect($context->currentTenantDisplayTimezone())->toBe('Europe/Prague');
+});
+
 it('is not resolved by default', function (): void {
     $context = new ResolvedTenantContext;
 
@@ -47,4 +61,9 @@ it('throws when accessing tenant name before resolution', function (): void {
 it('throws when accessing tenant logo url before resolution', function (): void {
     $context = new ResolvedTenantContext;
     $context->currentTenantLogoUrl();
+})->throws(TenantNotResolvedException::class);
+
+it('throws when accessing tenant display timezone before resolution', function (): void {
+    $context = new ResolvedTenantContext;
+    $context->currentTenantDisplayTimezone();
 })->throws(TenantNotResolvedException::class);

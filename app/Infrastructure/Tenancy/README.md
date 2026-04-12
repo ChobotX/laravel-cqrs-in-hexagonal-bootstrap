@@ -32,7 +32,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 
 | Class | Layer | Purpose |
 |---|---|---|
-| `TenantContext` | Contract | Current tenant ID/slug/name/logo URL |
+| `TenantContext` | Contract | Current tenant ID/slug/name/logo URL / optional display timezone (IANA) |
 | `TenantBootstrapper` | Contract | Resolve + switch schema (interface for Presentation) |
 | `TenantSchemaManager` | Infrastructure | Configures tenant DB connection and manages schemas |
 | `TenantResolver` | Infrastructure | Resolves tenant by domain or slug via landlord DB |
@@ -40,7 +40,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 | `TenantMigrator` | Infrastructure | Creates schema + runs tenant migrations |
 | `ConsoleTenantBootstrap` | Infrastructure | Event listener for CLI tenant resolution |
 | `TenantBootstrapperImpl` | Infrastructure | Implements TenantBootstrapper contract |
-| `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes tenant name and logo via landlord DB + public disk |
+| `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes tenant name, logo, and display timezone via landlord DB + public disk |
 
 ## Console Commands
 

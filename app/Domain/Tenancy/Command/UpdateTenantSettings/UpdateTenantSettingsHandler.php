@@ -12,10 +12,15 @@ use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Domain\Tenancy\Contract\Event\TenantSettingsUpdated;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
+use App\Domain\Tenancy\Exception\InvalidTenantDisplayTimezoneException;
 use App\Domain\Tenancy\Exception\InvalidTenantNameException;
 use App\Domain\Tenancy\Exception\TenantNotFoundException;
 use DateTimeImmutable;
 use SplFileInfo;
+
+use function in_array;
+use function timezone_identifiers_list;
+use function trim;
 
 /** @implements CommandHandler<UpdateTenantSettingsCommand> */
 final readonly class UpdateTenantSettingsHandler implements CommandHandler
@@ -38,9 +43,12 @@ final readonly class UpdateTenantSettingsHandler implements CommandHandler
             throw new InvalidTenantNameException;
         }
 
+        $displayTimezone = $this->normalizeIncomingDisplayTimezone($command->displayTimezone, $existing);
+
         $changes = $this->propertyChangeBuilder->diff([
             'name' => [$existing->name, $command->name],
             'logo' => [$existing->logoUrl, $this->resolveNewLogo($existing, $command)],
+            'display_timezone' => [$existing->displayTimezone, $displayTimezone],
         ]);
 
         if ($changes === []) {
@@ -52,6 +60,7 @@ final readonly class UpdateTenantSettingsHandler implements CommandHandler
             $command->name,
             $command->logo,
             $command->removeLogo,
+            $displayTimezone,
         );
 
         $this->eventCollector->collect(new TenantSettingsUpdated(
@@ -72,5 +81,24 @@ final readonly class UpdateTenantSettingsHandler implements CommandHandler
         }
 
         return $tenantSettings->logoUrl;
+    }
+
+    private function normalizeIncomingDisplayTimezone(?string $raw, TenantSettings $tenantSettings): ?string
+    {
+        if ($raw === null) {
+            return $tenantSettings->displayTimezone;
+        }
+
+        $trimmed = trim($raw);
+
+        if ($trimmed === '') {
+            return null;
+        }
+
+        if (! in_array($trimmed, timezone_identifiers_list(), true)) {
+            throw new InvalidTenantDisplayTimezoneException($trimmed);
+        }
+
+        return $trimmed;
     }
 }

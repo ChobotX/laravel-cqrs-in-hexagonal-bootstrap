@@ -16,6 +16,8 @@ final class FakeTenantSettingsRepository implements TenantSettingsRepository
 
     public bool $removedLogo = false;
 
+    public ?string $updatedDisplayTimezone = null;
+
     public ?string $updatedTenantId = null;
 
     /** @param array<string, TenantSettings> $settings */
@@ -28,16 +30,25 @@ final class FakeTenantSettingsRepository implements TenantSettingsRepository
         return $this->settings[$tenantId] ?? null;
     }
 
-    public function updateSettings(string $tenantId, string $name, ?SplFileInfo $logo, bool $removeLogo): void
-    {
+    public function updateSettings(
+        string $tenantId,
+        string $name,
+        ?SplFileInfo $logo,
+        bool $removeLogo,
+        ?string $displayTimezone,
+    ): void {
         $this->updatedTenantId = $tenantId;
         $this->updatedName = $name;
         $this->updatedLogo = $logo;
         $this->removedLogo = $removeLogo;
+        $this->updatedDisplayTimezone = $displayTimezone;
+
+        $previous = $this->settings[$tenantId] ?? null;
 
         $this->settings[$tenantId] = new TenantSettings(
             name: $name,
-            logoUrl: $removeLogo ? null : (($this->settings[$tenantId] ?? null)?->logoUrl),
+            logoUrl: $removeLogo ? null : ($previous?->logoUrl),
+            displayTimezone: $displayTimezone,
         );
     }
 }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { computed, ref } from 'vue';
+import { formatInstant } from '../../core/datetime/format-instant';
 import ActionButton from '../../shared/components/ActionButton.vue';
 import { type NotificationEntry, NotificationLevel } from './notification-store';
 
@@ -40,6 +41,8 @@ const levelColor = computed(() => {
             return 'text-red-500';
     }
 });
+
+const absoluteCreatedAt = computed(() => formatInstant(props.notification.createdAt));
 
 const timeAgo = computed(() => {
     const now = Date.now();
@@ -165,7 +168,8 @@ function handleClick(): void {
                     {{ trans('messages.notifications.show_less') }}
                 </button>
             </p>
-            <p class="mt-1 text-xs text-gray-400">{{ timeAgo }}</p>
+            <p class="mt-1 text-xs text-gray-400"
+               :title="absoluteCreatedAt">{{ timeAgo }}</p>
         </div>
         <div :class="['flex shrink-0 items-start', compact ? 'flex-row gap-1' : 'flex-col gap-0.5']">
             <ActionButton

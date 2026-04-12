@@ -305,6 +305,10 @@ return [
     'settings' => [
         'title' => 'Tenant Settings',
         'subtitle' => 'Manage your organization name and branding',
+        'display_timezone' => 'Display timezone',
+        'display_timezone_hint' => 'Dates and times in the app use this timezone. Leave empty to use each visitor’s browser timezone.',
+        'display_timezone_browser' => 'Browser default (no fixed timezone)',
+        'invalid_display_timezone' => 'Choose a valid IANA timezone or leave the field empty.',
         'name' => 'Organization Name',
         'logo' => 'Logo',
         'current_logo' => 'Current logo',
@@ -391,6 +395,7 @@ return [
         'image_processing_error' => 'Image processing failed.',
         'tenant_not_found' => 'Tenant with id [:id] not found.',
         'invalid_tenant_name' => 'Tenant name must not be empty.',
+        'invalid_tenant_display_timezone' => 'The display timezone is not a valid IANA identifier.',
         'tenant_logo_storage_failed' => 'Failed to store tenant logo.',
         'tenant_inactive' => 'Tenant [:identifier] is inactive.',
         'invalid_password_reset_token' => 'This password reset link is invalid or has expired.',

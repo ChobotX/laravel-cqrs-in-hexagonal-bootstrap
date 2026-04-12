@@ -17,6 +17,8 @@
           content="{{ config('reverb.apps.apps.0.options.client_scheme') }}">
     <meta name="tenant-slug"
           content="{{ $tenantSlug ?? '' }}">
+    <meta name="app-display-timezone"
+          content="{{ $tenantDisplayTimezone ?? '' }}">
     <meta name="feature-flags"
           content="{{ json_encode($featureFlags ?? new stdClass()) }}">
     <title>@yield('title', __('messages.nav.dashboard'))</title>

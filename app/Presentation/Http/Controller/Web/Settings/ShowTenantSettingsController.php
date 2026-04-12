@@ -8,6 +8,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
+use DateTimeZone;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\View;
 
@@ -32,6 +33,7 @@ final readonly class ShowTenantSettingsController
 
         return view('settings.tenant', [
             'settings' => $tenantSettings,
+            'ianaTimezones' => DateTimeZone::listIdentifiers(),
         ]);
     }
 }

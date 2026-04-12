@@ -23,7 +23,8 @@ it('reads tenant settings by id', function (): void {
 
     expect($settings)->not->toBeNull()
         ->and($settings->name)->toBe('Test Tenant')
-        ->and($settings->logoUrl)->toBeNull();
+        ->and($settings->logoUrl)->toBeNull()
+        ->and($settings->displayTimezone)->toBeNull();
 });
 
 it('returns null for nonexistent tenant', function (): void {
@@ -36,7 +37,7 @@ it('updates tenant name', function (): void {
     $tenant = TenantModel::findOrFail(test()->tenantId());
     $eloquentTenantSettingsRepository = settingsRepo();
 
-    $eloquentTenantSettingsRepository->updateSettings($tenant->id, 'Updated Name', null, false);
+    $eloquentTenantSettingsRepository->updateSettings($tenant->id, 'Updated Name', null, false, null);
 
     $tenant->refresh();
     expect($tenant->name)->toBe('Updated Name');
@@ -49,7 +50,7 @@ it('stores a logo file', function (): void {
 
     $file = UploadedFile::fake()->image('logo.png', 100, 100);
 
-    $repo->updateSettings($tenant->id, 'Acme Corp', $file, false);
+    $repo->updateSettings($tenant->id, 'Acme Corp', $file, false, null);
 
     $tenant->refresh();
     expect($tenant->logo_path)->not->toBeNull();
@@ -62,13 +63,13 @@ it('removes a logo', function (): void {
     $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file = UploadedFile::fake()->image('logo.png', 100, 100);
-    $repo->updateSettings($tenant->id, 'Acme', $file, false);
+    $repo->updateSettings($tenant->id, 'Acme', $file, false, null);
 
     $tenant->refresh();
     $oldPath = $tenant->logo_path;
     expect($oldPath)->not->toBeNull();
 
-    $repo->updateSettings($tenant->id, 'Acme', null, true);
+    $repo->updateSettings($tenant->id, 'Acme', null, true, null);
 
     $tenant->refresh();
     expect($tenant->logo_path)->toBeNull();
@@ -81,7 +82,7 @@ it('returns logo URL after upload via findByTenantId', function (): void {
     $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file = UploadedFile::fake()->image('logo.png', 100, 100);
-    $repo->updateSettings($tenant->id, 'Acme', $file, false);
+    $repo->updateSettings($tenant->id, 'Acme', $file, false, null);
 
     $settings = $repo->findByTenantId($tenant->id);
 
@@ -114,7 +115,7 @@ it('stores logo from SplFileInfo using file extension', function (): void {
     imagedestroy($img);
 
     $spl = new SplFileInfo($tempPath);
-    $repo->updateSettings($tenant->id, 'Acme', $spl, false);
+    $repo->updateSettings($tenant->id, 'Acme', $spl, false, null);
 
     $tenant->refresh();
     expect($tenant->logo_path)->toContain('.webp');
@@ -129,17 +130,31 @@ it('replaces existing logo when new one uploaded with different extension', func
     $repo = new EloquentTenantSettingsRepository(new TenantLogoFileStorage($filesystem));
 
     $file1 = UploadedFile::fake()->image('logo1.png', 100, 100);
-    $repo->updateSettings($tenant->id, 'Acme', $file1, false);
+    $repo->updateSettings($tenant->id, 'Acme', $file1, false, null);
 
     $tenant->refresh();
     $oldPath = $tenant->logo_path;
     expect($oldPath)->toContain('.png');
 
     $file2 = UploadedFile::fake()->image('logo2.jpg', 200, 200);
-    $repo->updateSettings($tenant->id, 'Acme', $file2, false);
+    $repo->updateSettings($tenant->id, 'Acme', $file2, false, null);
 
     $tenant->refresh();
     expect($tenant->logo_path)->toContain('.jpg');
     $filesystem->assertMissing($oldPath);
     $filesystem->assertExists($tenant->logo_path);
+});
+
+it('persists display timezone', function (): void {
+    $tenant = TenantModel::findOrFail(test()->tenantId());
+    $eloquentTenantSettingsRepository = settingsRepo();
+
+    $eloquentTenantSettingsRepository->updateSettings($tenant->id, 'Acme', null, false, 'Europe/Prague');
+
+    $tenant->refresh();
+    expect($tenant->display_timezone)->toBe('Europe/Prague');
+
+    $read = $eloquentTenantSettingsRepository->findByTenantId($tenant->id);
+    expect($read)->not->toBeNull()
+        ->and($read->displayTimezone)->toBe('Europe/Prague');
 });

@@ -25,6 +25,7 @@
             <directory>app/Presentation/Http/Middleware</directory>
             <directory>app/Presentation/Http/Request</directory>
             <directory>app/Presentation/Http/Resource</directory>
+            <directory>app/Presentation/Http/Serialization</directory>
             <directory>app/Presentation/Http/Security</directory>
             <directory>app/Presentation/View</directory>
         </include>

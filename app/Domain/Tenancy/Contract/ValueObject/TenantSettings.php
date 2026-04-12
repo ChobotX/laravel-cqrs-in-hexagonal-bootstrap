@@ -14,5 +14,7 @@ final readonly class TenantSettings
         public string $name,
         /** Absolute or application-relative URL for clients. */
         public ?string $logoUrl,
+        /** IANA timezone for UI display, or null to use the browser's local timezone. */
+        public ?string $displayTimezone,
     ) {}
 }

@@ -71,6 +71,13 @@ Enforced by PHPStan rule `NoBusDispatchInControllerLoopsRule`.
 - **Reusable components** — split views into small, single-responsibility Blade partials/components (`resources/views/components/`). Follow SRP and DRY — extract shared UI into components rather than duplicating markup across pages.
 - **Blade formatting** — all `.blade.php` files must pass `blade-formatter --check-formatted`. Config in `.bladeformatterrc.json` enforces: 4-space indent, 120-char line width, force-aligned attribute wrapping (min 2 attrs), code-guide HTML attribute ordering, Tailwind class sorting, no multiple empty lines. Run `composer format:blade` to auto-fix.
 
+## Dates, times, and JSON instants
+
+- **APIs and JSON payloads** — serialize every instant with `App\Presentation\Http\Serialization\InstantJson::toRfc3339Utc()` so responses always include an explicit UTC offset. Calendar-only values stay as `Y-m-d` strings. PHPStan enforces this via `NoNaiveDateFormatInPresentationHttpRule`; `tests/Architecture/PresentationHttpNaiveDateFormatLiteralTest.php` blocks the common naive `Y-m-d H:i:s` literal in `app/Presentation/Http`.
+- **Blade** — use `<x-instant-datetime :instant="$model->occurredAt" />` for user-visible instants so the `datetime` attribute matches the JSON contract.
+- **Frontend** — format instants only through `resources/js/core/datetime/format-instant.ts` (behaviors and widgets import this module; it lives under `core/` so dependency-cruiser allows behavior scripts to load it). `tests/Architecture/FrontendIntlGuardTest.php` forbids `Intl.DateTimeFormat` / `toLocaleString` / `toLocaleDateString` outside `resources/js/core/datetime/`.
+- **Display timezone** — `ResolveTenantMiddleware` shares `tenantDisplayTimezone` (IANA id or empty). The layout exposes `<meta name="app-display-timezone">` and `resources/js/core/app-bootstrap.ts` copies it to `window.__APP__.displayTimezone`. When empty, the shared formatter uses the visitor’s browser timezone.
+
 ## `<x-action-button>` component
 
 Permission-gated action button for table rows. Every action button **must** specify either `permission` or `skip-permission` — omitting both causes the button to render nothing (fail-safe).

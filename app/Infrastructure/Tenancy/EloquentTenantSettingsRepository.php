@@ -28,11 +28,17 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         return new TenantSettings(
             name: $tenant->name,
             logoUrl: $this->resolveLogoUrl($tenant->logo_path),
+            displayTimezone: $tenant->display_timezone,
         );
     }
 
-    public function updateSettings(string $tenantId, string $name, ?SplFileInfo $logo, bool $removeLogo): void
-    {
+    public function updateSettings(
+        string $tenantId,
+        string $name,
+        ?SplFileInfo $logo,
+        bool $removeLogo,
+        ?string $displayTimezone,
+    ): void {
         $tenant = TenantModel::findOrFail($tenantId);
 
         if ($removeLogo && $tenant->logo_path !== null) {
@@ -56,6 +62,7 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         }
 
         $tenant->name = $name;
+        $tenant->display_timezone = $displayTimezone;
         $tenant->save();
     }
 

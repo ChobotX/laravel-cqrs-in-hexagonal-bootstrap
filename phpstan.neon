@@ -92,6 +92,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\NoNaiveDateFormatInPresentationHttpRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\ControllerRequiresPermissionRule
         tags:
             - phpstan.rules.rule

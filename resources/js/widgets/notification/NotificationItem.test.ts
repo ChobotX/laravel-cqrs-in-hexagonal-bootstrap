@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { formatInstant } from '../../core/datetime/format-instant';
 import NotificationItem from './NotificationItem.vue';
 import { type NotificationEntry, NotificationLevel } from './notification-store';
 
@@ -33,11 +34,27 @@ function mountItem(notification: NotificationEntry = createEntry(), compact = fa
 }
 
 describe('NotificationItem', () => {
+    beforeEach(() => {
+        window.__APP__ = {};
+    });
+
+    afterEach(() => {
+        window.__APP__ = undefined;
+    });
+
     it('renders title and body', () => {
         const wrapper = mountItem(createEntry({ title: 'My Title', body: 'My Body' }));
 
         expect(wrapper.text()).toContain('My Title');
         expect(wrapper.text()).toContain('My Body');
+    });
+
+    it('sets title attribute using shared datetime formatter', () => {
+        const iso = '2026-01-10T14:00:00Z';
+        const wrapper = mountItem(createEntry({ createdAt: iso }));
+        const timeRow = wrapper.find('.mt-1.text-xs.text-gray-400');
+
+        expect(timeRow.attributes('title')).toBe(formatInstant(iso));
     });
 
     it('applies unread highlight for unread notification', () => {

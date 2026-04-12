@@ -90,8 +90,7 @@
                     @forelse ($entries as $entry)
                         <tr class="transition-colors hover:bg-gray-50/50">
                             <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                                <time data-local-datetime
-                                      datetime="{{ $entry->occurredAt->format(DATE_ATOM) }}">{{ $entry->occurredAt->format('Y-m-d H:i:s') }}</time>
+                                <x-instant-datetime :instant="$entry->occurredAt" />
                             </td>
                             <td class="px-6 py-4 text-sm font-medium text-gray-900">
                                 {{ $entry->actionLabel }}

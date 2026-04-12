@@ -14,9 +14,15 @@ interface AppToast {
     error(message: string): void;
 }
 
+interface AppBootstrap {
+    displayTimezone?: string;
+    locale?: string;
+}
+
 interface Window {
     appDialog: AppDialog;
     appToast: AppToast;
     Echo: import('laravel-echo').default;
     Pusher: typeof import('pusher-js').default;
+    __APP__?: AppBootstrap;
 }

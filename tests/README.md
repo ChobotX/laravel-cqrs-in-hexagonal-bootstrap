@@ -59,8 +59,16 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `ContractSubdirectoryTypeEnforcementRule` | Enforces type constraints per Contract subdirectory: `Repository/`/`Service/` → interface, `Enum/` → enum, `Command/` → implements Command, etc. |
 | `DomainSubdirectoryTypeEnforcementRule` | Enforces type constraints per Domain subdirectory: `Enum/` → enum, `Handler/Command/` → implements CommandHandler, `EventHandler/` → implements DomainEventHandler, etc. Exempt: `Registry/Schema/` |
 | `NoDomainSpecificContractsInGlobalContractRule` | `App\Contract\` may only contain framework-level namespaces (Bus, Command, Query, Event, etc.) — domain-specific contracts must live in `Domain/{Module}/Contract/` |
+| `NoNaiveDateFormatInPresentationHttpRule` | Bans naive `->format('…')` string literals for datetimes in `App\Presentation\Http\*` — use `InstantJson::toRfc3339Utc()` or formats with explicit offset (`DATE_ATOM`, `c`, literals containing `P`/`O`, or trailing `Z`) |
 
 **No PHPStan baseline** — all errors must be fixed, not suppressed.
+
+## Architecture safety nets (non-PHPStan)
+
+| Test | Enforces |
+|---|---|
+| `tests/Architecture/FrontendIntlGuardTest.php` | No `Intl.DateTimeFormat` / `toLocaleString` / `toLocaleDateString` outside `resources/js/core/datetime/` (tests exempt) |
+| `tests/Architecture/PresentationHttpNaiveDateFormatLiteralTest.php` | No `'Y-m-d H:i:s'` / `"Y-m-d H:i:s"` literals under `app/Presentation/Http` |
 
 ## Blade lint scripts
 

@@ -135,7 +135,14 @@ trait TenantAwareRefreshDatabase
     private function setTenantContext(): void
     {
         $resolvedTenantContext = app(ResolvedTenantContext::class);
-        $resolvedTenantContext->set($this->tenantId(), 'test-'.$this->workerToken(), 'Test Tenant', null);
+        $displayTimezone = TenantModel::query()->whereKey($this->tenantId())->value('display_timezone');
+        $resolvedTenantContext->set(
+            $this->tenantId(),
+            'test-'.$this->workerToken(),
+            'Test Tenant',
+            null,
+            is_string($displayTimezone) && $displayTimezone !== '' ? $displayTimezone : null,
+        );
 
         Context::add('tenant_id', $this->tenantId());
         Context::add('tenant_slug', 'test-'.$this->workerToken());

@@ -16,5 +16,11 @@ interface TenantSettingsRepository
     public function findByTenantId(string $tenantId): ?TenantSettings;
 
     /** Contract operation `updateSettings`; see infrastructure for behavior. */
-    public function updateSettings(string $tenantId, string $name, ?SplFileInfo $logo, bool $removeLogo): void;
+    public function updateSettings(
+        string $tenantId,
+        string $name,
+        ?SplFileInfo $logo,
+        bool $removeLogo,
+        ?string $displayTimezone,
+    ): void;
 }

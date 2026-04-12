@@ -303,6 +303,10 @@ return [
     'settings' => [
         'title' => 'Nastavení organizace',
         'subtitle' => 'Spravujte název a značku vaší organizace',
+        'display_timezone' => 'Časové pásmo zobrazení',
+        'display_timezone_hint' => 'Datum a čas v aplikaci se zobrazují v tomto pásmu. Nechte prázdné pro časové pásmo prohlížeče návštěvníka.',
+        'display_timezone_browser' => 'Výchozí podle prohlížeče (bez pevného pásma)',
+        'invalid_display_timezone' => 'Zvolte platné IANA časové pásmo nebo nechte pole prázdné.',
         'name' => 'Název organizace',
         'logo' => 'Logo',
         'current_logo' => 'Aktuální logo',
@@ -383,6 +387,7 @@ return [
         'image_processing_error' => 'Zpracování obrázku selhalo.',
         'tenant_not_found' => 'Organizace s id [:id] nebyla nalezena.',
         'invalid_tenant_name' => 'Název organizace nesmí být prázdný.',
+        'invalid_tenant_display_timezone' => 'Časové pásmo zobrazení není platný IANA identifikátor.',
         'tenant_logo_storage_failed' => 'Nepodařilo se uložit logo organizace.',
         'tenant_inactive' => 'Tenant [:identifier] je neaktivní.',
         'invalid_password_reset_token' => 'Tento odkaz pro obnovení hesla je neplatný nebo vypršel.',

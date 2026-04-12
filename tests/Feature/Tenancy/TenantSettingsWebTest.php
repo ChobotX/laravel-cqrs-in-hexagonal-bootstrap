@@ -44,6 +44,7 @@ it('updates tenant name', function (): void {
     $this->actingAs($userModel)
         ->put('/settings', [
             'name' => 'Updated Tenant Name',
+            'display_timezone' => '',
         ])->assertRedirect(route('settings.index'));
 
     $tenant = TenantModel::findOrFail(test()->tenantId());
@@ -57,6 +58,7 @@ it('uploads a logo', function (): void {
     $this->actingAs($userModel)
         ->put('/settings', [
             'name' => 'Test Tenant',
+            'display_timezone' => '',
             'logo' => UploadedFile::fake()->image('logo.png', 100, 100),
         ])->assertRedirect(route('settings.index'));
 
@@ -73,12 +75,14 @@ it('removes a logo', function (): void {
     $this->actingAs($userModel)
         ->put('/settings', [
             'name' => 'Test Tenant',
+            'display_timezone' => '',
             'logo' => $file,
         ]);
 
     $this->actingAs($userModel)
         ->put('/settings', [
             'name' => 'Test Tenant',
+            'display_timezone' => '',
             'remove_logo' => '1',
         ])->assertRedirect(route('settings.index'));
 
@@ -101,6 +105,7 @@ it('validates logo must be an image', function (): void {
     $this->actingAs($userModel)
         ->put('/settings', [
             'name' => 'Test Tenant',
+            'display_timezone' => '',
             'logo' => UploadedFile::fake()->create('document.pdf', 100),
         ])->assertSessionHasErrors('logo');
 });
@@ -111,13 +116,14 @@ it('validates logo max size', function (): void {
     $this->actingAs($userModel)
         ->put('/settings', [
             'name' => 'Test Tenant',
+            'display_timezone' => '',
             'logo' => UploadedFile::fake()->image('huge.png')->size(3000),
         ])->assertSessionHasErrors('logo');
 });
 
 it('requires authentication', function (): void {
     $this->get('/settings')->assertRedirect();
-    $this->put('/settings', ['name' => 'Test'])->assertRedirect();
+    $this->put('/settings', ['name' => 'Test', 'display_timezone' => ''])->assertRedirect();
 });
 
 it('requires settings.tenant.read permission for show', function (): void {
@@ -159,6 +165,29 @@ it('requires settings.tenant.update permission for update', function (): void {
     ]);
 
     $this->actingAs($user)
-        ->put('/settings', ['name' => 'Test'])
+        ->put('/settings', ['name' => 'Test', 'display_timezone' => ''])
         ->assertForbidden();
+});
+
+it('persists display timezone from settings form', function (): void {
+    $userModel = settingsWebUser();
+
+    $this->actingAs($userModel)
+        ->put('/settings', [
+            'name' => 'Test Tenant',
+            'display_timezone' => 'UTC',
+        ])->assertRedirect(route('settings.index'));
+
+    $tenant = TenantModel::findOrFail(test()->tenantId());
+    expect($tenant->display_timezone)->toBe('UTC');
+});
+
+it('validates display timezone is a known IANA identifier', function (): void {
+    $userModel = settingsWebUser();
+
+    $this->actingAs($userModel)
+        ->put('/settings', [
+            'name' => 'Test Tenant',
+            'display_timezone' => 'Not/A/Zone',
+        ])->assertSessionHasErrors('display_timezone');
 });

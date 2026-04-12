@@ -14,6 +14,7 @@ final readonly class FakeTenantContext implements TenantContext
         private ?string $tenantSlug = null,
         private string $tenantName = 'Test Tenant',
         private ?string $tenantLogoUrl = null,
+        private ?string $tenantDisplayTimezone = null,
     ) {}
 
     public function currentTenantId(): string
@@ -42,6 +43,15 @@ final readonly class FakeTenantContext implements TenantContext
     public function currentTenantLogoUrl(): ?string
     {
         return $this->tenantLogoUrl;
+    }
+
+    public function currentTenantDisplayTimezone(): ?string
+    {
+        if ($this->tenantId === null) {
+            throw new RuntimeException('Tenant not resolved');
+        }
+
+        return $this->tenantDisplayTimezone;
     }
 
     public function isResolved(): bool

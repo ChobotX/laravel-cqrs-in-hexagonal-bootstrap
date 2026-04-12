@@ -9,14 +9,15 @@ use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsHandler;
 use Tests\Helper\FakeTenantSettingsRepository;
 
 it('returns tenant settings when found', function (): void {
-    $settings = new TenantSettings(name: 'Acme Corp', logoUrl: '/storage/tenant-logos/abc.png');
+    $settings = new TenantSettings(name: 'Acme Corp', logoUrl: '/storage/tenant-logos/abc.png', displayTimezone: 'UTC');
     $repo = new FakeTenantSettingsRepository(['tenant-1' => $settings]);
     $handler = new GetTenantSettingsHandler($repo);
 
     $tenantSettings = $handler->handle(new GetTenantSettingsQuery(tenantId: 'tenant-1'));
 
     expect($tenantSettings->name)->toBe('Acme Corp')
-        ->and($tenantSettings->logoUrl)->toBe('/storage/tenant-logos/abc.png');
+        ->and($tenantSettings->logoUrl)->toBe('/storage/tenant-logos/abc.png')
+        ->and($tenantSettings->displayTimezone)->toBe('UTC');
 });
 
 it('throws when tenant not found', function (): void {

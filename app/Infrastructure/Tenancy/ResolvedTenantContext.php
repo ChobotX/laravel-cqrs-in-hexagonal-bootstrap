@@ -16,12 +16,20 @@ final class ResolvedTenantContext implements TenantContext
 
     private ?string $tenantLogoUrl = null;
 
-    public function set(string $tenantId, string $tenantSlug, string $tenantName, ?string $tenantLogoUrl): void
-    {
+    private ?string $tenantDisplayTimezone = null;
+
+    public function set(
+        string $tenantId,
+        string $tenantSlug,
+        string $tenantName,
+        ?string $tenantLogoUrl,
+        ?string $tenantDisplayTimezone = null,
+    ): void {
         $this->tenantId = $tenantId;
         $this->tenantSlug = $tenantSlug;
         $this->tenantName = $tenantName;
         $this->tenantLogoUrl = $tenantLogoUrl;
+        $this->tenantDisplayTimezone = $tenantDisplayTimezone;
     }
 
     public function currentTenantId(): string
@@ -46,6 +54,15 @@ final class ResolvedTenantContext implements TenantContext
         }
 
         return $this->tenantLogoUrl;
+    }
+
+    public function currentTenantDisplayTimezone(): ?string
+    {
+        if (! $this->isResolved()) {
+            throw new TenantNotResolvedException;
+        }
+
+        return $this->tenantDisplayTimezone;
     }
 
     public function isResolved(): bool

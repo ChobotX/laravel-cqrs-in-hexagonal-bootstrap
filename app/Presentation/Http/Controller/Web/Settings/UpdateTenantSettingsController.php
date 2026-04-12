@@ -35,6 +35,11 @@ final readonly class UpdateTenantSettingsController
             name: $updateTenantSettingsRequest->string('name')->toString(),
             logo: $logo instanceof UploadedFile ? $logo : null,
             removeLogo: $updateTenantSettingsRequest->boolean('remove_logo'),
+            displayTimezone: $updateTenantSettingsRequest->has('display_timezone')
+                ? (is_string($updateTenantSettingsRequest->input('display_timezone'))
+                    ? $updateTenantSettingsRequest->string('display_timezone')->toString()
+                    : '')
+                : null,
         ));
 
         return redirect()->route('settings.index')->with('success', __('messages.settings.updated'));

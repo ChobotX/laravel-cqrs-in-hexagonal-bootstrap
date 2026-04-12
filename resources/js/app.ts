@@ -1,3 +1,4 @@
+import './core/app-bootstrap';
 import './core/session-guard';
 import './core/sentry';
 import './behaviors/dropdown';
