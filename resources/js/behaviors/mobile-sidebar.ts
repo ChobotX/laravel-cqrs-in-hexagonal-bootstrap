@@ -1,4 +1,4 @@
-export {};
+import { htmlElementFromEventTarget } from '../core/dom/event-target-guards';
 
 const HIDDEN_CLASS = 'hidden';
 
@@ -42,7 +42,10 @@ function isSidebarOpen(): boolean {
 }
 
 document.addEventListener('click', (event: MouseEvent): void => {
-    const target = event.target as HTMLElement;
+    const target = htmlElementFromEventTarget(event.target);
+    if (target === null) {
+        return;
+    }
 
     if (target.closest('[data-sidebar-open]')) {
         openSidebar();

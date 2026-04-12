@@ -1,9 +1,11 @@
-import { test, expect, type BrowserContext, type Page } from '@playwright/test';
-import { execSync } from 'node:child_process';
+import { type BrowserContext, expect, type Page, test } from '@playwright/test';
+import { execInLaravelApp } from './exec-env';
+import { mailpitApiBase } from './mailpit-config';
+import { parseMailpitMessageBody, parseMailpitMessagesResponse } from './mailpit-json';
 
 // ── Mailpit helpers ─────────────────────────────────────────────────────────
 
-const MAILPIT_API = process.env.MAILPIT_API_URL ?? 'http://localhost:8025/api/v1';
+const MAILPIT_API: string = mailpitApiBase();
 
 async function clearMailpit(): Promise<void> {
     await fetch(`${MAILPIT_API}/messages`, { method: 'DELETE' });
@@ -12,12 +14,8 @@ async function clearMailpit(): Promise<void> {
 async function waitForMailpitMessage(recipientEmail: string): Promise<string> {
     for (let attempt = 0; attempt < 20; attempt++) {
         const res = await fetch(`${MAILPIT_API}/messages`);
-        const data = (await res.json()) as {
-            messages?: Array<{ ID: string; To: Array<{ Address: string }> }>;
-        };
-        const msg = data.messages?.find((m) =>
-            m.To.some((to) => to.Address === recipientEmail),
-        );
+        const data = parseMailpitMessagesResponse(await res.json());
+        const msg = data.messages?.find((m) => m.To.some((to) => to.Address === recipientEmail));
         if (msg) return msg.ID;
         await new Promise<void>((r) => setTimeout(r, 500));
     }
@@ -26,7 +24,7 @@ async function waitForMailpitMessage(recipientEmail: string): Promise<string> {
 
 async function extractInviteLinkFromEmail(messageId: string): Promise<string> {
     const res = await fetch(`${MAILPIT_API}/message/${messageId}`);
-    const data = (await res.json()) as { HTML?: string; Text?: string };
+    const data = parseMailpitMessageBody(await res.json());
     const body = data.HTML ?? data.Text ?? '';
     const match = body.match(/https?:\/\/[^"'\s<>]+\/invite\/[^"'\s<>]+/);
     if (!match) throw new Error('Could not find invite link in email body');
@@ -36,7 +34,7 @@ async function extractInviteLinkFromEmail(messageId: string): Promise<string> {
 // ── Sail helpers ─────────────────────────────────────────────────────────────
 
 function sail(command: string): void {
-    execSync(`./vendor/bin/sail ${command}`, { stdio: 'inherit', timeout: 30_000 });
+    execInLaravelApp(command);
 }
 
 function processQueue(tenantSlug: string): void {
@@ -59,7 +57,7 @@ function processQueue(tenantSlug: string): void {
 function cleanupE2eTenant(): void {
     sail(
         `php artisan tinker --execute="` +
-            `DB::connection('landlord')->statement('DROP SCHEMA IF EXISTS \\\"tenant_e2etest\\\" CASCADE');` +
+            `DB::connection('landlord')->statement('DROP SCHEMA IF EXISTS \\"tenant_e2etest\\" CASCADE');` +
             `DB::connection('landlord')->table('tenant_domains')->where('domain','e2etest')->delete();` +
             `DB::connection('landlord')->table('tenants')->where('slug','e2etest')->delete();` +
             `"`,
@@ -120,10 +118,7 @@ test.describe('Tenant Registration & Member Invitation', () => {
         const messageId = await waitForMailpitMessage(ADMIN_EMAIL);
         // Force HTTPS: the URL is signed with relative path (scheme-independent),
         // but the page must load over HTTPS to avoid mixed-content session issues.
-        const adminInviteLink = (await extractInviteLinkFromEmail(messageId)).replace(
-            /^http:\/\//,
-            'https://',
-        );
+        const adminInviteLink = (await extractInviteLinkFromEmail(messageId)).replace(/^http:\/\//, 'https://');
 
         expect(adminInviteLink).toContain('/invite/');
         expect(adminInviteLink).toContain('signature=');
@@ -143,10 +138,7 @@ test.describe('Tenant Registration & Member Invitation', () => {
         await adminPage.getByTestId('invite-submit-button').click();
 
         await expect(adminPage).toHaveURL(/\/users/);
-        await expect(adminPage.locator('#app-flash-data[data-success]')).toHaveAttribute(
-            'data-success',
-            /./,
-        );
+        await expect(adminPage.locator('#app-flash-data[data-success]')).toHaveAttribute('data-success', /./);
         await expect(adminPage.getByTestId('topbar-user-email')).toHaveText(ADMIN_EMAIL);
     });
 
@@ -161,18 +153,12 @@ test.describe('Tenant Registration & Member Invitation', () => {
         await adminPage.getByTestId('user-create-submit-button').click();
 
         await expect(adminPage).toHaveURL(/\/users/);
-        await expect(adminPage.locator('#app-flash-data[data-success]')).toHaveAttribute(
-            'data-success',
-            /./,
-        );
+        await expect(adminPage.locator('#app-flash-data[data-success]')).toHaveAttribute('data-success', /./);
 
         processQueue(TENANT_DOMAIN);
 
         const messageId = await waitForMailpitMessage(MEMBER_EMAIL);
-        memberInviteLink = (await extractInviteLinkFromEmail(messageId)).replace(
-            /^http:\/\//,
-            'https://',
-        );
+        memberInviteLink = (await extractInviteLinkFromEmail(messageId)).replace(/^http:\/\//, 'https://');
 
         expect(memberInviteLink).toContain('/invite/');
         expect(memberInviteLink).toContain('signature=');

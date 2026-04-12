@@ -6,7 +6,7 @@ source "$(dirname "$0")/_common.sh" "$@"
 wave "Wave 1 · Auto-fix"
 
 frontend_fix() {
-    run_step "biome-fix" npx biome check --write resources/js/
+    run_step "biome-fix" npx biome check --write resources/js/ tests/e2e/
     run_step "blade-formatter-fix" npx blade-formatter --write resources/views/**/*.blade.php
 }
 

@@ -1,4 +1,5 @@
-type FlagState = { enabled: boolean; value: string };
+import { type FlagState, parseFeatureFlagsMetaJson } from './parse-feature-flags-meta';
+
 let cachedFlags: Record<string, FlagState> | null = null;
 
 function getFlags(): Record<string, FlagState> {
@@ -16,7 +17,7 @@ function getFlags(): Record<string, FlagState> {
 
     const content = meta.getAttribute('content') ?? '{}';
 
-    cachedFlags = JSON.parse(content) as Record<string, FlagState>;
+    cachedFlags = parseFeatureFlagsMetaJson(content);
 
     return cachedFlags;
 }

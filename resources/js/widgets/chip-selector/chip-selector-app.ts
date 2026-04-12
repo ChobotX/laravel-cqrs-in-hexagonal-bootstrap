@@ -3,6 +3,7 @@ import { useI18n } from '../../shared/i18n/i18n';
 import type { ChipOption } from './ChipSelector.vue';
 import ChipSelector from './ChipSelector.vue';
 import LazyChipSelector from './LazyChipSelector.vue';
+import { parseChipOptionsJson, parseStringArrayJson } from './parse-chip-mount-data';
 
 function createStaticWrapper(
     options: ChipOption[],
@@ -51,8 +52,8 @@ for (const el of document.querySelectorAll<HTMLElement>('[data-chip-selector]'))
         };
     } else {
         component = createStaticWrapper(
-            JSON.parse(el.dataset.options ?? '[]') as ChipOption[],
-            JSON.parse(el.dataset.selectedIds ?? '[]') as string[],
+            parseChipOptionsJson(el.dataset.options ?? '[]'),
+            parseStringArrayJson(el.dataset.selectedIds ?? '[]'),
             el.dataset.inputName ?? 'items[]',
             el.dataset.placeholder,
             el.dataset.noResultsText,

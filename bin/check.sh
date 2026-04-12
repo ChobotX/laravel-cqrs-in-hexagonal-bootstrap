@@ -11,7 +11,7 @@ frontend_lint() {
     run_step "blade-a11y" bash bin/lint-blade-a11y.sh
     run_step "blade-url" bash bin/lint-blade-url.sh
     run_step "blade-layers" bash bin/lint-blade-layers.sh
-    run_step "biome" npx biome check resources/js/
+    run_step "biome" npx biome check resources/js/ tests/e2e/
     run_step "catch-blocks" bash bin/lint-catch-blocks.sh
     run_step "frontend-structure" bash bin/lint-frontend-structure.sh
     run_step "depcruise" npx depcruise resources/js/app.ts --config --output-type err-long

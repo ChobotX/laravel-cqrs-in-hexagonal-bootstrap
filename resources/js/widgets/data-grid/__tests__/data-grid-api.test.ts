@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mockedFetchFirstInitBodyString, mockedFetchFirstUrl } from '../../../test-utils/vitest-fetch';
 import type { FetchParams } from '../composables/types';
 import { deleteGridAction, fetchGridData, postGridAction } from '../data-grid-api';
 
@@ -46,7 +47,7 @@ describe('fetchGridData', () => {
         expect(result).toEqual(responseBody);
         expect(fetchMock).toHaveBeenCalledOnce();
 
-        const calledUrl = fetchMock.mock.calls[0][0] as string;
+        const calledUrl = mockedFetchFirstUrl(fetchMock);
         const url = new URL(calledUrl, 'http://localhost');
 
         expect(url.pathname).toBe('/api/users');
@@ -78,7 +79,7 @@ describe('fetchGridData', () => {
 
         await fetchGridData('/api/items', params);
 
-        const calledUrl = fetchMock.mock.calls[0][0] as string;
+        const calledUrl = mockedFetchFirstUrl(fetchMock);
         const url = new URL(calledUrl, 'http://localhost');
 
         expect(url.searchParams.has('sort')).toBe(false);
@@ -98,7 +99,7 @@ describe('fetchGridData', () => {
 
         await fetchGridData('/api/items', params);
 
-        const calledUrl = fetchMock.mock.calls[0][0] as string;
+        const calledUrl = mockedFetchFirstUrl(fetchMock);
         const url = new URL(calledUrl, 'http://localhost');
 
         expect(url.searchParams.has('search')).toBe(false);
@@ -117,7 +118,7 @@ describe('fetchGridData', () => {
 
         await fetchGridData('/api/items', params);
 
-        const calledUrl = fetchMock.mock.calls[0][0] as string;
+        const calledUrl = mockedFetchFirstUrl(fetchMock);
         const url = new URL(calledUrl, 'http://localhost');
 
         expect(url.searchParams.get('filter[status]')).toBe('active');
@@ -136,6 +137,20 @@ describe('fetchGridData', () => {
         };
 
         await expect(fetchGridData('/api/items', params)).rejects.toThrow('Grid fetch failed: 500');
+    });
+
+    it('throws when JSON body is not a valid grid envelope', async () => {
+        mockFetch({ data: [], meta: null });
+
+        const params: FetchParams = {
+            page: 1,
+            perPage: 15,
+            sort: null,
+            filters: {},
+            search: '',
+        };
+
+        await expect(fetchGridData('/api/items', params)).rejects.toThrow('Grid fetch returned invalid JSON shape');
     });
 
     it('decodes URL-encoded CSRF token', async () => {
@@ -206,7 +221,7 @@ describe('postGridAction', () => {
 
         expect(fetchMock).toHaveBeenCalledOnce();
         expect(fetchMock.mock.calls[0][1].headers['Content-Type']).toBe('application/json');
-        expect(JSON.parse(fetchMock.mock.calls[0][1].body as string)).toEqual({
+        expect(JSON.parse(mockedFetchFirstInitBodyString(fetchMock))).toEqual({
             grid_name: 'users',
             name: 'My Preset',
         });

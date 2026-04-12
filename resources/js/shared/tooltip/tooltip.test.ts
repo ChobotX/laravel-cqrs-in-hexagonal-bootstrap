@@ -1,4 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+    requireChildElement,
+    requireDocumentButton,
+    requireDocumentElement,
+    requireNthDocumentButton,
+    requireSvgPathElement,
+} from '../../test-utils/dom';
 
 const SIMPLE_HTML = `
 <button data-tooltip="Hello tooltip">Hover me</button>
@@ -85,7 +92,7 @@ afterEach(() => {
 
 describe('tooltip bridge', () => {
     it('shows tooltip on mouseover', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -95,7 +102,7 @@ describe('tooltip bridge', () => {
     });
 
     it('hides tooltip on mouseout', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -107,9 +114,9 @@ describe('tooltip bridge', () => {
 
     it('does not hide when moving between children of same trigger', () => {
         document.body.innerHTML = '<div data-tooltip="Parent"><span>A</span><span>B</span></div>';
-        const trigger = document.querySelector('[data-tooltip]') as HTMLElement;
-        const spanA = trigger.querySelector('span:first-child') as HTMLElement;
-        const spanB = trigger.querySelector('span:last-child') as HTMLElement;
+        const trigger = requireDocumentElement('[data-tooltip]');
+        const spanA = requireChildElement(trigger, 'span:first-child');
+        const spanB = requireChildElement(trigger, 'span:last-child');
         mockRect(trigger, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(spanA);
@@ -120,7 +127,7 @@ describe('tooltip bridge', () => {
     });
 
     it('shows tooltip on focusin', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         focusIn(btn);
@@ -128,7 +135,7 @@ describe('tooltip bridge', () => {
     });
 
     it('hides tooltip on focusout', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         focusIn(btn);
@@ -140,9 +147,9 @@ describe('tooltip bridge', () => {
 
     it('does not hide on focusout when focus stays in trigger', () => {
         document.body.innerHTML = '<div data-tooltip="Parent"><button>A</button><button>B</button></div>';
-        const trigger = document.querySelector('[data-tooltip]') as HTMLElement;
-        const btnA = trigger.querySelector('button:first-child') as HTMLElement;
-        const btnB = trigger.querySelector('button:last-child') as HTMLElement;
+        const trigger = requireDocumentElement('[data-tooltip]');
+        const btnA = requireChildElement(trigger, 'button:first-child');
+        const btnB = requireChildElement(trigger, 'button:last-child');
         mockRect(trigger, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         focusIn(btnA);
@@ -153,7 +160,7 @@ describe('tooltip bridge', () => {
     });
 
     it('hides tooltip on Escape key', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -164,7 +171,7 @@ describe('tooltip bridge', () => {
     });
 
     it('hides tooltip on scroll', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -176,7 +183,7 @@ describe('tooltip bridge', () => {
 
     it('uses template content when present', () => {
         document.body.innerHTML = HTML_CONTENT_HTML;
-        const trigger = document.querySelector('[data-tooltip]') as HTMLElement;
+        const trigger = requireDocumentElement('[data-tooltip]');
         mockRect(trigger, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(trigger);
@@ -191,7 +198,7 @@ describe('tooltip bridge', () => {
                 <template data-tooltip-content><em>HTML content</em></template>
             </span>
         `;
-        const trigger = document.querySelector('[data-tooltip]') as HTMLElement;
+        const trigger = requireDocumentElement('[data-tooltip]');
         mockRect(trigger, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(trigger);
@@ -201,7 +208,7 @@ describe('tooltip bridge', () => {
 
     it('ignores elements without data-tooltip', () => {
         document.body.innerHTML = NO_TOOLTIP_HTML;
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
 
         mouseOver(btn);
         expect(isVisible()).toBe(false);
@@ -209,7 +216,7 @@ describe('tooltip bridge', () => {
 
     it('does not show tooltip for empty data-tooltip without template', () => {
         document.body.innerHTML = EMPTY_ATTR_HTML;
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -217,7 +224,7 @@ describe('tooltip bridge', () => {
     });
 
     it('does not re-show for same trigger', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -229,7 +236,7 @@ describe('tooltip bridge', () => {
     });
 
     it('reuses singleton tooltip element', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -243,7 +250,7 @@ describe('tooltip bridge', () => {
     });
 
     it('flips to bottom when not enough space above', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 20, left: 200, bottom: 52, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -253,7 +260,7 @@ describe('tooltip bridge', () => {
 
     it('flips to top when not enough space below', () => {
         document.body.innerHTML = '<button data-tooltip="Tip" data-tooltip-position="bottom">Hover</button>';
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 700, left: 200, bottom: 732, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -263,7 +270,7 @@ describe('tooltip bridge', () => {
 
     it('flips to right when not enough space on left', () => {
         document.body.innerHTML = '<button data-tooltip="Tip" data-tooltip-position="left">Hover</button>';
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 20, bottom: 232, right: 120, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -273,7 +280,7 @@ describe('tooltip bridge', () => {
 
     it('flips to left when not enough space on right', () => {
         document.body.innerHTML = '<button data-tooltip="Tip" data-tooltip-position="right">Hover</button>';
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 900, bottom: 232, right: 1000, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -283,7 +290,7 @@ describe('tooltip bridge', () => {
 
     it('respects data-tooltip-position attribute', () => {
         document.body.innerHTML = POSITIONED_HTML;
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -293,7 +300,7 @@ describe('tooltip bridge', () => {
 
     it('defaults to top position for invalid position attribute', () => {
         document.body.innerHTML = '<button data-tooltip="Tip" data-tooltip-position="invalid">Hover</button>';
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -302,7 +309,7 @@ describe('tooltip bridge', () => {
     });
 
     it('removes position classes on hide', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -325,8 +332,8 @@ describe('tooltip bridge', () => {
                 <svg class="h-5 w-5" viewBox="0 0 24 24"><path d="M6 18L18 6" /></svg>
             </button>
         `;
-        const btn = document.querySelector('button') as HTMLElement;
-        const path = document.querySelector('path') as Element;
+        const btn = requireDocumentButton();
+        const path = requireSvgPathElement();
         mockRect(btn, { top: 200, left: 400, bottom: 236, right: 436, width: 36, height: 36 });
 
         mouseOver(path);
@@ -336,7 +343,7 @@ describe('tooltip bridge', () => {
     });
 
     it('handles mouseout on non-trigger element', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -348,7 +355,7 @@ describe('tooltip bridge', () => {
 
     it('handles focusin on non-trigger element', () => {
         document.body.innerHTML = NO_TOOLTIP_HTML;
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
 
         focusIn(btn);
         expect(isVisible()).toBe(false);
@@ -356,7 +363,7 @@ describe('tooltip bridge', () => {
 
     it('handles focusout on non-trigger element', () => {
         document.body.innerHTML = NO_TOOLTIP_HTML;
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
 
         focusOut(btn);
         expect(isVisible()).toBe(false);
@@ -371,7 +378,7 @@ describe('tooltip bridge', () => {
     });
 
     it('ignores non-Escape keys', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -384,8 +391,8 @@ describe('tooltip bridge', () => {
             <button data-tooltip="First">One</button>
             <button data-tooltip="Second">Two</button>
         `;
-        const btn1 = document.querySelectorAll('button')[0] as HTMLElement;
-        const btn2 = document.querySelectorAll('button')[1] as HTMLElement;
+        const btn1 = requireNthDocumentButton(0);
+        const btn2 = requireNthDocumentButton(1);
         mockRect(btn1, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
         mockRect(btn2, { top: 200, left: 400, bottom: 232, right: 500, width: 100, height: 32 });
 
@@ -398,7 +405,7 @@ describe('tooltip bridge', () => {
     });
 
     it('sets role=tooltip on the popup element', () => {
-        const btn = document.querySelector('button') as HTMLElement;
+        const btn = requireDocumentButton();
         mockRect(btn, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
 
         mouseOver(btn);
@@ -415,8 +422,8 @@ describe('tooltip bridge', () => {
             <button data-tooltip="Top" data-tooltip-position="top">Top</button>
             <button data-tooltip="Bottom" data-tooltip-position="bottom">Bottom</button>
         `;
-        const btn1 = document.querySelectorAll('button')[0] as HTMLElement;
-        const btn2 = document.querySelectorAll('button')[1] as HTMLElement;
+        const btn1 = requireNthDocumentButton(0);
+        const btn2 = requireNthDocumentButton(1);
         mockRect(btn1, { top: 200, left: 200, bottom: 232, right: 300, width: 100, height: 32 });
         mockRect(btn2, { top: 200, left: 400, bottom: 232, right: 500, width: 100, height: 32 });
 

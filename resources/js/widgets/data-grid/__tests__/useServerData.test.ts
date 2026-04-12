@@ -141,12 +141,26 @@ describe('useServerData', () => {
         expect(error.value).toBe('Unknown error');
     });
 
+    it('sets error when fetch returns an invalid grid envelope', async () => {
+        // biome-ignore lint/plugin/no-type-assertion: Deliberately invalid payload; runtime path must reject before typing.
+        vi.mocked(fetchGridData).mockResolvedValue({ invalid: true } as FetchResult<{ id: number }>);
+
+        const deps = createDeps();
+        const { error, refresh } = runInScope(scope, () => useServerData(deps));
+
+        refresh();
+        await vi.runAllTimersAsync();
+
+        expect(error.value).toBe('Grid fetch returned invalid JSON shape');
+    });
+
     it('extracts extra fields from response', async () => {
         const response = {
             ...makeFetchResult([{ id: 1 }], 1),
             summary: { totalAmount: 500 },
             flags: ['flagA'],
         };
+        // biome-ignore lint/plugin/no-type-assertion: Test fixture extends validated grid envelope with extra keys.
         vi.mocked(fetchGridData).mockResolvedValue(response as FetchResult<unknown>);
 
         const deps = createDeps();

@@ -20,11 +20,15 @@ afterEach(() => {
 });
 
 function getToggle(): HTMLElement {
-    return document.querySelector('[data-dropdown-toggle]') as HTMLElement;
+    const el = document.querySelector('[data-dropdown-toggle]');
+    expect(el).toBeInstanceOf(HTMLElement);
+    return el;
 }
 
 function getMenu(): HTMLElement {
-    return document.querySelector('[data-dropdown-menu]') as HTMLElement;
+    const el = document.querySelector('[data-dropdown-menu]');
+    expect(el).toBeInstanceOf(HTMLElement);
+    return el;
 }
 
 function isMenuOpen(): boolean {
@@ -87,6 +91,25 @@ describe('dropdown', () => {
         items[0].focus();
         pressKey('ArrowDown', items[0]);
         expect(document.activeElement).toBe(items[1]);
+    });
+
+    it('ArrowDown from menu when no menu item is focused starts at first item', () => {
+        clickElement(getToggle());
+        const items: NodeListOf<HTMLElement> = document.querySelectorAll('[role="menuitem"]');
+        const ae = document.activeElement;
+        if (ae instanceof HTMLElement) {
+            ae.blur();
+        }
+        pressKey('ArrowDown', getMenu());
+        expect(document.activeElement).toBe(items[0]);
+    });
+
+    it('ArrowDown when focus is inside dropdown but not on a menu item wraps from index -1', () => {
+        clickElement(getToggle());
+        const items: NodeListOf<HTMLElement> = document.querySelectorAll('[role="menuitem"]');
+        getToggle().focus();
+        pressKey('ArrowDown', getToggle());
+        expect(document.activeElement).toBe(items[0]);
     });
 
     it('navigates menu items with ArrowUp', () => {
@@ -176,12 +199,25 @@ describe('dropdown', () => {
         clickElement(getToggle());
         expect(isMenuOpen()).toBe(true);
 
-        const menuItem: HTMLElement = document.querySelector('[role="menuitem"]') as HTMLElement;
+        const menuItem = document.querySelector('[role="menuitem"]');
+        expect(menuItem).toBeInstanceOf(HTMLElement);
         clickElement(menuItem);
         expect(isMenuOpen()).toBe(true);
     });
 
     it('Escape when no dropdown is open is no-op', () => {
         pressKey('Escape');
+    });
+
+    it('ignores Arrow keys when keyboard target is null', () => {
+        const ev = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true });
+        Object.defineProperty(ev, 'target', { value: null, enumerable: true });
+        document.dispatchEvent(ev);
+    });
+
+    it('ignores document clicks when mouse target is null', () => {
+        const ev = new MouseEvent('click', { bubbles: true });
+        Object.defineProperty(ev, 'target', { value: null, enumerable: true });
+        document.dispatchEvent(ev);
     });
 });

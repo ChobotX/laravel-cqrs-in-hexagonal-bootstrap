@@ -1,6 +1,7 @@
 import { type Ref, ref, watch } from 'vue';
 import { error as logError } from '../../../core/logger/logger';
 import { fetchGridData } from '../data-grid-api';
+import { isFetchResultUnknown } from '../fetch-result-guard';
 import type { FetchParams, FetchResult, SortItem } from './types';
 
 interface ServerDataDeps {
@@ -35,12 +36,13 @@ function buildFetchParams(deps: ServerDataDeps): FetchParams {
 }
 
 function applyFetchResult<T>(
-    result: FetchResult<T> & Record<string, unknown>,
+    result: FetchResult<unknown> & Record<string, unknown>,
     items: Ref<T[]>,
     extra: Ref<Record<string, unknown>>,
     setTotal: (total: number) => void,
 ): void {
-    items.value = result.data;
+    // biome-ignore lint/plugin/no-type-assertion: Grid envelope validated before call; rows match grid column schema T.
+    items.value = result.data as T[];
     setTotal(result.meta.total);
 
     const { data: _data, meta: _meta, ...rest } = result;
@@ -51,21 +53,31 @@ function handleFetchError(err: unknown, errorRef: Ref<string | null>): void {
     errorRef.value = err instanceof Error ? err.message : 'Unknown error';
 }
 
+async function runGridFetchAndApply<T>(
+    deps: ServerDataDeps,
+    state: { items: Ref<T[]>; loading: Ref<boolean>; error: Ref<string | null>; extra: Ref<Record<string, unknown>> },
+    isStale: () => boolean,
+): Promise<void> {
+    const fetcher = deps.fetchFn ?? fetchGridData;
+    const raw = await fetcher(deps.fetchUrl, buildFetchParams(deps));
+    if (!isFetchResultUnknown(raw)) {
+        throw new Error('Grid fetch returned invalid JSON shape');
+    }
+
+    if (isStale()) {
+        return;
+    }
+
+    applyFetchResult(raw, state.items, state.extra, deps.setTotal);
+}
+
 async function executeFetch<T>(
     deps: ServerDataDeps,
     state: { items: Ref<T[]>; loading: Ref<boolean>; error: Ref<string | null>; extra: Ref<Record<string, unknown>> },
     isStale: () => boolean,
 ): Promise<void> {
     try {
-        const fetcher = deps.fetchFn ?? fetchGridData;
-        const result = (await fetcher(deps.fetchUrl, buildFetchParams(deps))) as FetchResult<T> &
-            Record<string, unknown>;
-
-        if (isStale()) {
-            return;
-        }
-
-        applyFetchResult(result, state.items, state.extra, deps.setTotal);
+        await runGridFetchAndApply(deps, state, isStale);
     } catch (err) {
         if (isStale()) {
             return;
@@ -81,7 +93,7 @@ async function executeFetch<T>(
 }
 
 export function useServerData<T>(deps: ServerDataDeps): ServerDataReturn<T> {
-    const items = ref<T[]>([]) as Ref<T[]>;
+    const items: Ref<T[]> = ref<T[]>([]);
     const loading = ref(false);
     const error = ref<string | null>(null);
     const extra = ref<Record<string, unknown>>({});

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ref } from 'vue';
+import { isRecord } from '../../../shared/type-guards/is-record';
 import type { Preset, SortItem } from '../composables/types';
 import { usePresets } from '../composables/usePresets';
 
@@ -136,6 +137,26 @@ describe('usePresets', () => {
             await loadPresets();
 
             expect(presets.value).toEqual([]);
+        });
+
+        it('keeps existing presets when ok response body is not a list envelope', async () => {
+            const presetList = [makePreset({ id: 'keep' })];
+            vi.stubGlobal(
+                'fetch',
+                vi
+                    .fn()
+                    .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue({ data: presetList }) })
+                    .mockResolvedValueOnce({ ok: true, json: vi.fn().mockResolvedValue({}) }),
+            );
+
+            const deps = createDeps();
+            const { presets, loadPresets } = usePresets(deps);
+
+            await loadPresets();
+            expect(presets.value).toEqual(presetList);
+
+            await loadPresets();
+            expect(presets.value).toEqual(presetList);
         });
     });
 
@@ -330,7 +351,12 @@ describe('usePresets', () => {
 
             await savePreset('Personal Preset', 'personal');
 
-            const callArgs = vi.mocked(postGridAction).mock.calls[0][1] as Record<string, unknown>;
+            const rawArgs = vi.mocked(postGridAction).mock.calls[0][1];
+            expect(isRecord(rawArgs)).toBe(true);
+            if (!isRecord(rawArgs)) {
+                throw new Error('expected object body');
+            }
+            const callArgs = rawArgs;
 
             expect(callArgs.scope).toBeUndefined();
             expect(callArgs.team_id).toBeUndefined();

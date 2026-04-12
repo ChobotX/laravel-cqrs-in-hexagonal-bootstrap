@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { nodeFromEventTarget } from '../../core/dom/event-target-guards';
 import { confirm } from '../../shared/dialog/dialog-queue';
 import { resolvePosition } from '../../shared/tooltip/tooltip-position';
 import type { Preset, ShareableTeam } from './composables/types';
@@ -85,7 +86,10 @@ async function toggleForm(): Promise<void> {
 }
 
 function onDocumentClick(event: MouseEvent): void {
-    const target = event.target as Node;
+    const target = nodeFromEventTarget(event.target);
+    if (target === null) {
+        return;
+    }
 
     if (toggleRef.value?.contains(target) || dropdownRef.value?.contains(target)) {
         return;

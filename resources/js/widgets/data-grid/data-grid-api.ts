@@ -1,4 +1,5 @@
 import type { FetchParams, FetchResult } from './composables/types';
+import { isFetchResultUnknown } from './fetch-result-guard';
 
 export function getCsrfToken(): string {
     return decodeURIComponent(
@@ -48,7 +49,12 @@ export async function fetchGridData<T>(url: string, params: FetchParams): Promis
         throw new Error(`Grid fetch failed: ${response.status}`);
     }
 
-    return (await response.json()) as FetchResult<T>;
+    const body: unknown = await response.json();
+    if (!isFetchResultUnknown(body)) {
+        throw new Error('Grid fetch returned invalid JSON shape');
+    }
+    // biome-ignore lint/plugin/no-type-assertion: Envelope validated above; row type T is the Blade/grid contract.
+    return body as FetchResult<T>;
 }
 
 export async function postGridAction(url: string, body?: Record<string, unknown>): Promise<void> {

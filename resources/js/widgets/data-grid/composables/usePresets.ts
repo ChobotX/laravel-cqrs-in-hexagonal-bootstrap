@@ -1,6 +1,7 @@
 import { type Ref, ref } from 'vue';
 import { deleteGridAction, getCsrfToken, postGridAction } from '../data-grid-api';
 import type { Preset, SortItem } from './types';
+import { parsePresetsListBody, parseStringRecordFromJson, tryParseStringRecordFromJson } from './use-preset-guards';
 
 interface PresetDeps {
     gridName: string;
@@ -24,6 +25,27 @@ export interface PresetReturn {
     clearPreset: () => void;
 }
 
+function applyPresetSorting(preset: Preset, sortBy: Ref<SortItem | null>): void {
+    const sortData = tryParseStringRecordFromJson(preset.sorting);
+    if (sortData === null) {
+        sortBy.value = null;
+        return;
+    }
+
+    if (sortData.sort) {
+        const direction = sortData.direction;
+        const order = direction === 'desc' ? 'desc' : 'asc';
+        sortBy.value = {
+            key: sortData.sort,
+            order,
+        };
+    }
+}
+
+function applyPresetFilters(preset: Preset, filters: Ref<Record<string, string>>): void {
+    filters.value = parseStringRecordFromJson(preset.filters);
+}
+
 export function usePresets(deps: PresetDeps): PresetReturn {
     const presets = ref<Preset[]>([]);
     const activePresetId = ref<string | null>(null);
@@ -40,8 +62,11 @@ export function usePresets(deps: PresetDeps): PresetReturn {
             });
 
             if (response.ok) {
-                const result = (await response.json()) as { data: Preset[] };
-                presets.value = result.data;
+                const body: unknown = await response.json();
+                const list = parsePresetsListBody(body);
+                if (list !== null) {
+                    presets.value = list;
+                }
             }
         } catch {
             // @silent — presets are non-critical, failure should not block the grid
@@ -51,26 +76,8 @@ export function usePresets(deps: PresetDeps): PresetReturn {
     function applyPreset(preset: Preset): void {
         activePresetId.value = preset.id;
 
-        try {
-            const sortData = JSON.parse(preset.sorting) as Record<string, string>;
-
-            if (sortData.sort) {
-                deps.sortBy.value = {
-                    key: sortData.sort,
-                    order: (sortData.direction as 'asc' | 'desc') ?? 'asc',
-                };
-            }
-        } catch {
-            // @silent — invalid sorting JSON falls back to no sort
-            deps.sortBy.value = null;
-        }
-
-        try {
-            deps.filters.value = JSON.parse(preset.filters) as Record<string, string>;
-        } catch {
-            // @silent — invalid filters JSON falls back to empty filters
-            deps.filters.value = {};
-        }
+        applyPresetSorting(preset, deps.sortBy);
+        applyPresetFilters(preset, deps.filters);
 
         deps.setSearchImmediate(preset.search);
         deps.resetPage();

@@ -1,5 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isRecord } from '../../shared/type-guards/is-record';
+import { mockedFetchFirstInitRecord, mockedFetchFirstUrl } from '../../test-utils/vitest-fetch';
 import LazyChipSelector from './LazyChipSelector.vue';
 
 vi.mock('laravel-vue-i18n', () => ({
@@ -83,7 +85,7 @@ describe('LazyChipSelector', () => {
         await flushPromises();
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
-        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const fetchUrl = mockedFetchFirstUrl(global.fetch);
         expect(fetchUrl).toContain('/internal-api/teams/search');
     });
 
@@ -128,7 +130,7 @@ describe('LazyChipSelector', () => {
         await input.trigger('focus');
         await flushPromises();
 
-        (global.fetch as ReturnType<typeof vi.fn>).mockClear();
+        vi.mocked(global.fetch).mockClear();
 
         await input.setValue('Acme');
         await input.trigger('input');
@@ -136,7 +138,7 @@ describe('LazyChipSelector', () => {
         await flushPromises();
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
-        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const fetchUrl = mockedFetchFirstUrl(global.fetch);
         expect(fetchUrl).toContain('q=Acme');
     });
 
@@ -147,7 +149,7 @@ describe('LazyChipSelector', () => {
         await input.trigger('focus');
         await flushPromises();
 
-        (global.fetch as ReturnType<typeof vi.fn>).mockClear();
+        vi.mocked(global.fetch).mockClear();
         createFetchMock({ data: [{ id: 'org-2', name: 'Beta Inc', email: 'Beta description' }] });
 
         const options = wrapper.findAll('[role="option"]');
@@ -158,7 +160,7 @@ describe('LazyChipSelector', () => {
         expect(wrapper.text()).toContain('Acme Corp');
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
-        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const fetchUrl = mockedFetchFirstUrl(global.fetch);
         expect(fetchUrl).toContain('exclude%5B%5D=org-1');
     });
 
@@ -204,7 +206,7 @@ describe('LazyChipSelector', () => {
         await input.trigger('focus');
         await flushPromises();
 
-        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const fetchUrl = mockedFetchFirstUrl(global.fetch);
         expect(fetchUrl).toContain('exclude%5B%5D=org-a');
         expect(fetchUrl).toContain('exclude%5B%5D=org-b');
     });
@@ -257,7 +259,12 @@ describe('LazyChipSelector', () => {
         await input.trigger('focus');
         await flushPromises();
 
-        const fetchHeaders = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].headers;
+        const init = mockedFetchFirstInitRecord(global.fetch);
+        const fetchHeaders = init['headers'];
+        expect(isRecord(fetchHeaders)).toBe(true);
+        if (!isRecord(fetchHeaders)) {
+            throw new Error('expected headers');
+        }
         expect(fetchHeaders['X-CSRF-TOKEN']).toBe('test-csrf-token');
 
         document.head.removeChild(meta);
@@ -367,10 +374,19 @@ describe('LazyChipSelector', () => {
         const createCall = fetchMock.mock.calls.find((call) => call[1]?.method === 'POST');
         expect(createCall).toBeDefined();
         expect(createCall?.[0]).toBe('/internal-api/labels');
-        const body = JSON.parse(createCall?.[1].body as string);
+        const createInit = createCall?.[1];
+        expect(isRecord(createInit) && typeof createInit['body'] === 'string').toBe(true);
+        if (!isRecord(createInit) || typeof createInit['body'] !== 'string') {
+            throw new Error('expected POST body');
+        }
+        const body = JSON.parse(createInit['body']);
         expect(body).toEqual({ namespace: 'users', name: 'newlabel' });
 
-        const createHeaders = createCall?.[1].headers;
+        const createHeaders = createInit['headers'];
+        expect(isRecord(createHeaders)).toBe(true);
+        if (!isRecord(createHeaders)) {
+            throw new Error('expected headers');
+        }
         expect(createHeaders['X-CSRF-TOKEN']).toBe('create-csrf-token');
 
         document.head.removeChild(meta);
@@ -485,7 +501,7 @@ describe('LazyChipSelector', () => {
         await input.trigger('focus');
         await flushPromises();
 
-        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const fetchUrl = mockedFetchFirstUrl(global.fetch);
         expect(fetchUrl).toContain('/internal-api/labels/search?namespace=users&');
         expect(fetchUrl).not.toContain('?exclude');
     });
@@ -504,7 +520,7 @@ describe('LazyChipSelector', () => {
         await vi.advanceTimersByTimeAsync(0);
         await flushPromises();
 
-        const callCount = (global.fetch as ReturnType<typeof vi.fn>).mock.calls.length;
+        const callCount = vi.mocked(global.fetch).mock.calls.length;
 
         const createOption = wrapper.findAll('[role="option"]').find((o) => o.text().includes('Create'));
         if (createOption) {
@@ -512,6 +528,6 @@ describe('LazyChipSelector', () => {
             await flushPromises();
         }
 
-        expect((global.fetch as ReturnType<typeof vi.fn>).mock.calls.length).toBe(callCount);
+        expect(vi.mocked(global.fetch).mock.calls.length).toBe(callCount);
     });
 });

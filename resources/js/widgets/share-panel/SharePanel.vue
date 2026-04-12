@@ -2,6 +2,7 @@
 import { trans } from 'laravel-vue-i18n';
 import { computed, onMounted, ref } from 'vue';
 import { error as showErrorToast, success as showSuccessToast } from '../../shared/toast/toast-queue';
+import { isRecord } from '../../shared/type-guards/is-record';
 
 interface ShareEntry {
     grantee_user_id: string;
@@ -14,6 +15,33 @@ interface UserOption {
     id: string;
     name: string;
     email?: string;
+}
+
+function isUserOption(value: unknown): value is UserOption {
+    if (!isRecord(value) || typeof value['id'] !== 'string' || typeof value['name'] !== 'string') {
+        return false;
+    }
+    const email = value['email'];
+    return email === undefined || typeof email === 'string';
+}
+
+function buildUserSearchQueryUrl(searchUrl: string, term: string, excludeIds: string[]): string {
+    const params = new URLSearchParams();
+    if (term !== '') {
+        params.set('q', term);
+    }
+    for (const id of excludeIds) {
+        params.append('exclude[]', id);
+    }
+    const separator = searchUrl.includes('?') ? '&' : '?';
+    return `${searchUrl}${separator}${params.toString()}`;
+}
+
+function parseUserSearchBody(body: unknown): UserOption[] {
+    if (!isRecord(body) || !Array.isArray(body['data'])) {
+        return [];
+    }
+    return body['data'].filter(isUserOption);
 }
 
 const props = defineProps<{
@@ -68,20 +96,12 @@ async function loadShares(): Promise<void> {
 async function searchUsers(term: string): Promise<void> {
     isSearching.value = true;
     try {
-        const params = new URLSearchParams();
-        if (term !== '') {
-            params.set('q', term);
-        }
-        for (const id of excludedIds.value) {
-            params.append('exclude[]', id);
-        }
-        const separator = props.searchUrl.includes('?') ? '&' : '?';
-        const response = await fetch(`${props.searchUrl}${separator}${params.toString()}`, { headers: csrfHeaders() });
+        const url = buildUserSearchQueryUrl(props.searchUrl, term, excludedIds.value);
+        const response = await fetch(url, { headers: csrfHeaders() });
         if (!response.ok) {
             throw new Error(`Failed: ${response.status}`);
         }
-        const json = await response.json();
-        searchResults.value = (json.data ?? []) as UserOption[];
+        searchResults.value = parseUserSearchBody(await response.json());
     } catch {
         searchResults.value = [];
         showErrorToast(trans('messages.sharing.search_failed'));
@@ -91,8 +111,11 @@ async function searchUsers(term: string): Promise<void> {
 }
 
 function onSearchInput(event: Event): void {
-    const target = event.target as HTMLInputElement;
-    searchTerm.value = target.value;
+    const t = event.target;
+    if (!(t instanceof HTMLInputElement)) {
+        return;
+    }
+    searchTerm.value = t.value;
     if (debounceTimer) {
         clearTimeout(debounceTimer);
     }

@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
+import { requireDocumentElement } from '../../test-utils/dom';
 import Tooltip from './Tooltip.vue';
 
 function mountTooltip(props: Record<string, unknown> = {}): ReturnType<typeof mount> {
@@ -15,7 +16,7 @@ function mountTooltip(props: Record<string, unknown> = {}): ReturnType<typeof mo
 }
 
 function getTooltipEl(): HTMLElement {
-    return document.querySelector('[role="tooltip"]') as HTMLElement;
+    return requireDocumentElement('[role="tooltip"]');
 }
 
 afterEach(() => {

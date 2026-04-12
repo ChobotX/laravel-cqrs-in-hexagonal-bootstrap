@@ -11,7 +11,11 @@ const emit = defineEmits<{
 }>();
 
 function onInput(event: Event): void {
-    emit('update:modelValue', (event.target as HTMLInputElement).value);
+    const t = event.target;
+    if (!(t instanceof HTMLInputElement)) {
+        return;
+    }
+    emit('update:modelValue', t.value);
 }
 </script>
 

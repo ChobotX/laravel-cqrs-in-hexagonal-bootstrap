@@ -7,8 +7,11 @@ const overlayRef = ref<HTMLElement | null>(null);
 const previousActiveElement = ref<Element | null>(null);
 
 function getFocusableElements(): HTMLElement[] {
+    if (overlayRef.value === null) {
+        return [];
+    }
     return Array.from(
-        (overlayRef.value as HTMLElement).querySelectorAll<HTMLElement>(
+        overlayRef.value.querySelectorAll<HTMLElement>(
             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         ),
     );

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import type { App } from 'vue';
 
 vi.mock('laravel-vue-i18n', () => ({
     i18nVue: { install: vi.fn() },
@@ -9,7 +10,8 @@ import { resolveLanguage, useI18n } from './i18n';
 describe('useI18n', () => {
     it('registers i18nVue plugin with resolve function', () => {
         const useFn = vi.fn().mockReturnThis();
-        const fakeApp = { use: useFn } as unknown as import('vue').App;
+        // biome-ignore lint/plugin/no-type-assertion: Minimal test stub; not a real Vue App instance.
+        const fakeApp = { use: useFn } as App;
 
         const result = useI18n(fakeApp);
 

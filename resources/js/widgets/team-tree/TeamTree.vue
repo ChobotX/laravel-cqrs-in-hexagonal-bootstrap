@@ -1,29 +1,8 @@
 <script setup lang="ts">
 import { OrgChart } from 'd3-org-chart';
 import { nextTick, onMounted, onUnmounted, ref } from 'vue';
-
-interface MemberRole {
-    id: string;
-    name: string;
-    detailUrl: string;
-}
-
-interface TeamMember {
-    id: string;
-    name: string;
-    avatarUrl: string | null;
-    detailUrl: string;
-    roles: MemberRole[];
-}
-
-interface TeamNode {
-    id: string;
-    parentId: string;
-    name: string;
-    slug: string;
-    memberCount: number;
-    members: TeamMember[];
-}
+import { htmlElementFromEventTarget } from '../../core/dom/event-target-guards';
+import { parseTeamTreeResponse, type TeamNode } from './team-tree-response-guard';
 
 const MAX_COLLAPSED_MEMBERS = 5;
 const NODE_WIDTH = 280;
@@ -153,11 +132,15 @@ function toggleTeamMembers(teamId: string): void {
 }
 
 function handleClick(event: MouseEvent): void {
-    const target = (event.target as HTMLElement).closest<HTMLElement>('[data-action="toggle-members"]');
-
-    if (target?.dataset.teamId) {
-        toggleTeamMembers(target.dataset.teamId);
+    const clicked = htmlElementFromEventTarget(event.target);
+    if (clicked === null) {
+        return;
     }
+    const target = clicked.closest('[data-action="toggle-members"]');
+    if (!(target instanceof HTMLElement) || !target.dataset.teamId) {
+        return;
+    }
+    toggleTeamMembers(target.dataset.teamId);
 }
 
 async function fetchData(): Promise<void> {
@@ -171,8 +154,8 @@ async function fetchData(): Promise<void> {
             throw new Error(`HTTP ${response.status}`);
         }
 
-        const json = (await response.json()) as { data: TeamNode[] };
-        treeData.value = json.data;
+        const body: unknown = await response.json();
+        treeData.value = parseTeamTreeResponse(body);
         isLoading.value = false;
     } catch (error) {
         isLoading.value = false;

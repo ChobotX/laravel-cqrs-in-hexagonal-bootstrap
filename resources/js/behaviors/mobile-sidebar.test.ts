@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { queryHTMLElementById } from '../test-utils/dom';
 
 const SIDEBAR_HTML = `
 <button data-sidebar-open>Open</button>
@@ -22,7 +23,15 @@ afterEach(() => {
 });
 
 function getOverlay(): HTMLElement {
-    return document.getElementById('mobile-sidebar-overlay') as HTMLElement;
+    const el = queryHTMLElementById('mobile-sidebar-overlay');
+    expect(el).not.toBeNull();
+    return el;
+}
+
+function requireHTMLElement(selector: string): HTMLElement {
+    const el = document.querySelector(selector);
+    expect(el).toBeInstanceOf(HTMLElement);
+    return el;
 }
 
 function isSidebarOpen(): boolean {
@@ -39,7 +48,7 @@ function pressKey(key: string): void {
 
 describe('mobile-sidebar', () => {
     it('opens sidebar on open button click', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
 
         expect(isSidebarOpen()).toBe(true);
@@ -47,35 +56,35 @@ describe('mobile-sidebar', () => {
     });
 
     it('focuses close button on open', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
 
-        const closeBtn: HTMLElement = document.querySelector('[data-sidebar-close]') as HTMLElement;
+        const closeBtn = requireHTMLElement('[data-sidebar-close]');
         expect(document.activeElement).toBe(closeBtn);
     });
 
     it('closes sidebar on close button click', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
         expect(isSidebarOpen()).toBe(true);
 
-        const closeBtn: HTMLElement = document.querySelector('[data-sidebar-close]') as HTMLElement;
+        const closeBtn = requireHTMLElement('[data-sidebar-close]');
         clickElement(closeBtn);
         expect(isSidebarOpen()).toBe(false);
         expect(document.body.style.overflow).toBe('');
     });
 
     it('closes sidebar on backdrop click', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
 
-        const backdrop: HTMLElement = document.querySelector('[data-sidebar-backdrop]') as HTMLElement;
+        const backdrop = requireHTMLElement('[data-sidebar-backdrop]');
         clickElement(backdrop);
         expect(isSidebarOpen()).toBe(false);
     });
 
     it('closes sidebar on Escape key', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
         expect(isSidebarOpen()).toBe(true);
 
@@ -89,31 +98,31 @@ describe('mobile-sidebar', () => {
     });
 
     it('closes sidebar on nav link click', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
 
-        const link: HTMLElement = document.querySelector('#mobile-sidebar-overlay a') as HTMLElement;
+        const link = requireHTMLElement('#mobile-sidebar-overlay a');
         clickElement(link);
         expect(isSidebarOpen()).toBe(false);
     });
 
     it('focuses open button after close', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
 
-        const closeBtn: HTMLElement = document.querySelector('[data-sidebar-close]') as HTMLElement;
+        const closeBtn = requireHTMLElement('[data-sidebar-close]');
         clickElement(closeBtn);
         expect(document.activeElement).toBe(openBtn);
     });
 
     it('handles open when overlay is missing', () => {
         getOverlay().remove();
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
     });
 
     it('handles close when overlay is missing', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
         getOverlay().remove();
 
@@ -125,27 +134,33 @@ describe('mobile-sidebar', () => {
 
     it('handles missing close button on open', () => {
         document.querySelector('[data-sidebar-close]')?.remove();
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
         expect(isSidebarOpen()).toBe(true);
     });
 
     it('handles missing open button when closing', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
         openBtn.remove();
 
-        const closeBtn: HTMLElement = document.querySelector('[data-sidebar-close]') as HTMLElement;
+        const closeBtn = requireHTMLElement('[data-sidebar-close]');
         clickElement(closeBtn);
         expect(isSidebarOpen()).toBe(false);
     });
 
     it('ignores unrelated clicks when open', () => {
-        const openBtn: HTMLElement = document.querySelector('[data-sidebar-open]') as HTMLElement;
+        const openBtn = requireHTMLElement('[data-sidebar-open]');
         clickElement(openBtn);
 
-        const aside: HTMLElement = document.querySelector('aside') as HTMLElement;
+        const aside = requireHTMLElement('aside');
         clickElement(aside);
         expect(isSidebarOpen()).toBe(true);
+    });
+
+    it('ignores clicks when event target is null', () => {
+        const ev = new MouseEvent('click', { bubbles: true });
+        Object.defineProperty(ev, 'target', { value: null, enumerable: true });
+        document.dispatchEvent(ev);
     });
 });

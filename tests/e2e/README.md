@@ -26,6 +26,14 @@ E2E_BASE_URL=https://bravo.laravel-bootstrap.local npm run test:e2e
 
 E2E tests are **not** part of `composer check` — they require a running app with seeded data and a host-side browser.
 
+## TypeScript linting (Biome)
+
+`tests/e2e/**/*.ts` is included in [`biome.json`](../../biome.json) and linted with the rest of the frontend in the Biome step of `composer check` / `composer lint:ts` (same paths as `resources/js/`).
+
+**Narrow overrides** for e2e only (not a full opt-out): `useExplicitType`, `noAwaitInLoops`, and `noMagicNumbers` are turned off so Playwright specs stay readable. The **no-type-assertion** plugin stays **on** — avoid `(await response.json()) as { … }` and similar; use small helpers that narrow from `unknown` (for example [`mailpit-json.ts`](mailpit-json.ts) for Mailpit API payloads).
+
+Import aliases such as `import { test as setup }` are not type assertions and are unaffected.
+
 ## Authentication
 
 The `auth.setup.ts` file logs in as `admin@test.com` / `password` once and saves the session to `.auth/user.json`. All tests in the `chromium` project start pre-authenticated.
@@ -116,32 +124,39 @@ As the suite grows, tests using independent users and non-shared endpoints can b
 
 - Auth is set up once and reused via `storageState` — no per-test login overhead
 - Only Chromium is configured (add Firefox/WebKit when cross-browser testing is needed)
-- `test:e2e:reset` script flushes Redis and resets admin password before each run
+- `test:e2e:reset` runs [`bin/e2e-reset.sh`](../../bin/e2e-reset.sh) — Redis flush + admin password reset (Sail on host, `php artisan` inside the app container so `npm run test:e2e` works from `./vendor/bin/sail npm run test:e2e`)
 
 ## Mailpit Integration
 
-For tests that verify email delivery (e.g., invite acceptance), use Mailpit's REST API. Read `MAILPIT_API_URL` from the environment with a localhost fallback:
+For tests that verify email delivery (e.g., invite acceptance), use Mailpit's REST API. Prefer the typed helpers in [`mailpit-json.ts`](mailpit-json.ts) (list messages, fetch message detail, extract HTML) so response bodies are narrowed from `unknown` instead of using inline `as` shapes.
+
+Use [`mailpit-config.ts`](mailpit-config.ts) `mailpitApiBase()` (or set `MAILPIT_API_URL`) so Mailpit resolves to `localhost` on the host and to the `mailpit` service when Playwright runs inside the Sail app container. Example flow:
 
 ```typescript
-const MAILPIT_API = process.env.MAILPIT_API_URL ?? 'http://localhost:8025/api/v1';
+import { mailpitApiBase } from './mailpit-config';
+import { parseMailpitMessageBody, parseMailpitMessagesResponse } from './mailpit-json';
+
+const MAILPIT_API = mailpitApiBase();
 
 // Clear messages before test
 await fetch(`${MAILPIT_API}/messages`, { method: 'DELETE' });
 
 // Poll for a message by recipient
-const res = await fetch(`${MAILPIT_API}/messages`);
-const data = await res.json();
-const msg = data.messages?.find(m => m.To.some(to => to.Address === 'user@example.com'));
+const listRes = await fetch(`${MAILPIT_API}/messages`);
+const list = parseMailpitMessagesResponse(await listRes.json());
+const msg = list.messages?.find((m) => m.To.some((to) => to.Address === 'user@example.com'));
 
 // Fetch full message with HTML body
-const detail = await fetch(`${MAILPIT_API}/message/${msg.ID}`);
-const body = (await detail.json()).HTML;
+const detailRes = await fetch(`${MAILPIT_API}/message/${msg.ID}`);
+const body = parseMailpitMessageBody(await detailRes.json());
 ```
 
-Since domain events are queued (`HandleDomainEventJob`), process the queue before polling Mailpit:
+Since domain events are queued (`HandleDomainEventJob`), process the queue before polling Mailpit. From specs, use `execInLaravelApp` from [`exec-env.ts`](exec-env.ts) so the same tests run on the host (via Sail) and inside the app container (bare `php artisan`, no nested Docker):
 
 ```typescript
-execSync('./vendor/bin/sail php artisan queue:work --stop-when-empty --queue=default', { stdio: 'inherit' });
+import { execInLaravelApp } from './exec-env';
+
+execInLaravelApp('php artisan queue:work --stop-when-empty --queue=default');
 ```
 
 ## Debugging
@@ -160,6 +175,9 @@ tests/e2e/
 ├── auth.setup.ts               # Login setup — runs before all tests
 ├── auth.teardown.ts            # Cleanup stored auth state after tests
 ├── auth.spec.ts                # Login/logout tests
+├── exec-env.ts                 # Artisan / shell: Sail on host, `php` in app container
+├── mailpit-config.ts           # Mailpit API base URL (host vs in-container)
+├── mailpit-json.ts             # Mailpit API response narrowing (no inline json() casts)
 ├── profile-password.spec.ts    # Profile password change tests
 ├── tenant-invite.spec.ts       # Tenant registration + member invitation
 └── README.md                   # This file

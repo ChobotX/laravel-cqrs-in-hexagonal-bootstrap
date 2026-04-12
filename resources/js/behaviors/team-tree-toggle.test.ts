@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { queryHTMLElementById } from '../test-utils/dom';
 
 function buildDom(): void {
     document.body.innerHTML = `
@@ -65,8 +66,13 @@ describe('team-tree-toggle', () => {
         buildDom();
         await import('./team-tree-toggle');
 
-        const listBtn = document.getElementById('teams-view-list-btn') as HTMLElement;
-        const treeBtn = document.getElementById('teams-view-tree-btn') as HTMLElement;
+        const listBtn = queryHTMLElementById('teams-view-list-btn');
+        const treeBtn = queryHTMLElementById('teams-view-tree-btn');
+        expect(listBtn).not.toBeNull();
+        expect(treeBtn).not.toBeNull();
+        if (listBtn === null || treeBtn === null) {
+            throw new Error('missing toggle buttons');
+        }
 
         treeBtn.click();
 

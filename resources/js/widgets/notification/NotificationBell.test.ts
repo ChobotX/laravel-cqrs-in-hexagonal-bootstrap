@@ -77,7 +77,7 @@ describe('NotificationBell', () => {
 
     it('hides badge when unread count is 0', async () => {
         const { fetchUnreadCount } = await import('./notification-api');
-        (fetchUnreadCount as ReturnType<typeof vi.fn>).mockResolvedValueOnce(0);
+        vi.mocked(fetchUnreadCount).mockResolvedValueOnce(0);
 
         const wrapper = mountBell();
         await flushPromises();
@@ -87,7 +87,7 @@ describe('NotificationBell', () => {
 
     it('shows 99+ when unread count exceeds 99', async () => {
         const { fetchUnreadCount } = await import('./notification-api');
-        (fetchUnreadCount as ReturnType<typeof vi.fn>).mockResolvedValueOnce(150);
+        vi.mocked(fetchUnreadCount).mockResolvedValueOnce(150);
 
         const wrapper = mountBell();
         await flushPromises();
@@ -144,7 +144,7 @@ describe('NotificationBell', () => {
 
     it('shows empty state when no notifications', async () => {
         const { fetchNotifications } = await import('./notification-api');
-        (fetchNotifications as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
+        vi.mocked(fetchNotifications).mockResolvedValueOnce({
             data: [],
             meta: { current_page: 1, per_page: 10, total: 0, total_pages: 0 },
         });
@@ -189,7 +189,7 @@ describe('NotificationBell', () => {
 
     it('hides mark all read button when unread is 0', async () => {
         const { fetchUnreadCount } = await import('./notification-api');
-        (fetchUnreadCount as ReturnType<typeof vi.fn>).mockResolvedValueOnce(0);
+        vi.mocked(fetchUnreadCount).mockResolvedValueOnce(0);
 
         const wrapper = mountBell();
         await flushPromises();
@@ -230,7 +230,7 @@ describe('NotificationBell', () => {
 
     it('logs error when fetchNotifications fails', async () => {
         const { fetchNotifications } = await import('./notification-api');
-        (fetchNotifications as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
+        vi.mocked(fetchNotifications).mockRejectedValueOnce(new Error('fail'));
 
         const { error: logError } = await import('../../core/logger/logger');
         const wrapper = mountBell();
@@ -259,7 +259,7 @@ describe('NotificationBell', () => {
 
     it('logs error and toasts when markRead fails', async () => {
         const { markRead } = await import('./notification-api');
-        (markRead as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
+        vi.mocked(markRead).mockRejectedValueOnce(new Error('fail'));
 
         const { error: logError } = await import('../../core/logger/logger');
         const { error: toastError } = await import('../../shared/toast/toast-queue');
@@ -292,7 +292,7 @@ describe('NotificationBell', () => {
 
     it('logs error when fetchUnreadCount fails', async () => {
         const { fetchUnreadCount } = await import('./notification-api');
-        (fetchUnreadCount as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
+        vi.mocked(fetchUnreadCount).mockRejectedValueOnce(new Error('fail'));
 
         const { error: logError } = await import('../../core/logger/logger');
         mountBell();
@@ -303,7 +303,7 @@ describe('NotificationBell', () => {
 
     it('logs error and toasts when markAllRead fails', async () => {
         const { markAllRead } = await import('./notification-api');
-        (markAllRead as ReturnType<typeof vi.fn>).mockRejectedValueOnce(new Error('fail'));
+        vi.mocked(markAllRead).mockRejectedValueOnce(new Error('fail'));
 
         const wrapper = mountBell();
         await flushPromises();

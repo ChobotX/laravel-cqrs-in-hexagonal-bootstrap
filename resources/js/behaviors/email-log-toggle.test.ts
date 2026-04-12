@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 function buildDom(): void {
     document.body.innerHTML = `
@@ -20,6 +20,10 @@ function buildDom(): void {
 }
 
 describe('email-log-toggle', () => {
+    beforeEach(() => {
+        vi.restoreAllMocks();
+    });
+
     afterEach(() => {
         document.body.innerHTML = '';
         vi.resetModules();
@@ -79,6 +83,32 @@ describe('email-log-toggle', () => {
         expect(button).not.toBeNull();
         button?.click();
 
+        expect(button?.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('ignores clicks whose target is not an HTMLElement', async () => {
+        buildDom();
+        await import('./email-log-toggle');
+
+        const ev = new MouseEvent('click', { bubbles: true });
+        Object.defineProperty(ev, 'target', { value: document.createTextNode(''), enumerable: true });
+        document.dispatchEvent(ev);
+    });
+
+    it('ignores toggle attribute on non-button elements', async () => {
+        document.body.innerHTML = `<div data-email-log-toggle>not a button</div>`;
+        await import('./email-log-toggle');
+
+        const div = document.querySelector('[data-email-log-toggle]');
+        div?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    it('does nothing when toggle is not inside a table row', async () => {
+        document.body.innerHTML = '<button data-email-log-toggle aria-expanded="false">Orphan</button>';
+        await import('./email-log-toggle');
+
+        const button = document.querySelector<HTMLButtonElement>('[data-email-log-toggle]');
+        button?.click();
         expect(button?.getAttribute('aria-expanded')).toBe('false');
     });
 });

@@ -20,7 +20,7 @@ describe('confirm-delete', () => {
             </form>
         `;
 
-        (window.appDialog.confirm as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+        vi.mocked(window.appDialog.confirm).mockResolvedValue(false);
 
         await import('./confirm-delete');
 
@@ -42,17 +42,17 @@ describe('confirm-delete', () => {
             </form>
         `;
 
-        (window.appDialog.confirm as ReturnType<typeof vi.fn>).mockResolvedValue(true);
+        vi.mocked(window.appDialog.confirm).mockResolvedValue(true);
 
         await import('./confirm-delete');
 
-        const form: HTMLFormElement | null = document.querySelector('form');
-        expect(form).not.toBeNull();
-        const submitSpy = vi.spyOn(form as HTMLFormElement, 'submit').mockImplementation((): void => {
+        const form = document.querySelector('form');
+        expect(form).toBeInstanceOf(HTMLFormElement);
+        const submitSpy = vi.spyOn(form, 'submit').mockImplementation((): void => {
             // noop: prevent actual form submission in test
         });
         const event: Event = new Event('submit', { bubbles: true, cancelable: true });
-        form?.dispatchEvent(event);
+        form.dispatchEvent(event);
 
         await vi.waitFor(() => {
             expect(submitSpy).toHaveBeenCalled();
@@ -66,7 +66,7 @@ describe('confirm-delete', () => {
             </form>
         `;
 
-        (window.appDialog.confirm as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+        vi.mocked(window.appDialog.confirm).mockResolvedValue(false);
 
         await import('./confirm-delete');
 
@@ -94,6 +94,23 @@ describe('confirm-delete', () => {
         expect(form).not.toBeNull();
         const event: Event = new Event('submit', { bubbles: true, cancelable: true });
         form?.dispatchEvent(event);
+
+        expect(window.appDialog.confirm).not.toHaveBeenCalled();
+    });
+
+    it('ignores submit when event target is not an HTMLFormElement', async () => {
+        document.body.innerHTML = `
+            <form data-confirm-delete action="/users/1" method="POST">
+                <button type="submit">Delete</button>
+            </form>
+        `;
+
+        await import('./confirm-delete');
+
+        const button = document.querySelector('button');
+        expect(button).not.toBeNull();
+        const event = new SubmitEvent('submit', { bubbles: true, cancelable: true });
+        button?.dispatchEvent(event);
 
         expect(window.appDialog.confirm).not.toHaveBeenCalled();
     });

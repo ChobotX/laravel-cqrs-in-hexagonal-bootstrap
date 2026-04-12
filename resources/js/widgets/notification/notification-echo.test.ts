@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { NotificationEntry } from './notification-store';
+import { type NotificationEntry, NotificationLevel } from './notification-store';
 
 const echoMocks = vi.hoisted(() => {
     const listen = vi.fn().mockReturnThis();
@@ -69,7 +69,10 @@ describe('notification-echo', () => {
         const echo = initEcho();
 
         expect(echo).toBeInstanceOf(echoMocks.EchoStub);
-        expect((echo as unknown as InstanceType<typeof echoMocks.EchoStub>).options).toEqual(
+        if (!(echo instanceof echoMocks.EchoStub)) {
+            throw new Error('expected EchoStub');
+        }
+        expect(echo.options).toEqual(
             expect.objectContaining({
                 broadcaster: 'reverb',
                 key: 'test-key',
@@ -100,9 +103,10 @@ describe('notification-echo', () => {
 
         const echo = initEcho();
 
-        expect((echo as unknown as InstanceType<typeof echoMocks.EchoStub>).options).toEqual(
-            expect.objectContaining({ forceTLS: true }),
-        );
+        if (!(echo instanceof echoMocks.EchoStub)) {
+            throw new Error('expected EchoStub');
+        }
+        expect(echo.options).toEqual(expect.objectContaining({ forceTLS: true }));
     });
 
     it('subscribeToNotifications subscribes to private channel', () => {
@@ -121,11 +125,21 @@ describe('notification-echo', () => {
 
         subscribeToNotifications('user-1', onReceived, vi.fn());
 
-        const receivedCallback = echoMocks.listen.mock.calls.find(
-            (call: unknown[]) => call[0] === '.NotificationReceived',
-        )?.[1] as (event: { payload: NotificationEntry }) => void;
+        const receivedEntry = echoMocks.listen.mock.calls.find((call) => call[0] === '.NotificationReceived');
+        const receivedCallback = receivedEntry?.[1];
+        if (typeof receivedCallback !== 'function') {
+            throw new Error('missing NotificationReceived callback');
+        }
 
-        const payload = { id: 'n1', title: 'Test' } as NotificationEntry;
+        const payload: NotificationEntry = {
+            id: 'n1',
+            level: NotificationLevel.Info,
+            title: 'Test',
+            body: '',
+            linkUrl: null,
+            readAt: null,
+            createdAt: '',
+        };
         receivedCallback({ payload });
 
         expect(onReceived).toHaveBeenCalledWith(payload);
@@ -136,9 +150,11 @@ describe('notification-echo', () => {
 
         subscribeToNotifications('user-1', vi.fn(), onCountUpdated);
 
-        const countCallback = echoMocks.listen.mock.calls.find(
-            (call: unknown[]) => call[0] === '.UnreadCountUpdated',
-        )?.[1] as (event: { count: number }) => void;
+        const countEntry = echoMocks.listen.mock.calls.find((call) => call[0] === '.UnreadCountUpdated');
+        const countCallback = countEntry?.[1];
+        if (typeof countCallback !== 'function') {
+            throw new Error('missing UnreadCountUpdated callback');
+        }
 
         countCallback({ count: 5 });
 
@@ -168,7 +184,10 @@ describe('notification-echo', () => {
 
         const echo = initEcho();
 
-        expect((echo as unknown as InstanceType<typeof echoMocks.EchoStub>).options).toEqual(
+        if (!(echo instanceof echoMocks.EchoStub)) {
+            throw new Error('expected EchoStub');
+        }
+        expect(echo.options).toEqual(
             expect.objectContaining({
                 key: '',
                 wsHost: '',

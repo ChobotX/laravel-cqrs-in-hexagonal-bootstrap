@@ -21,6 +21,14 @@ const VARIABLE_PATTERN_GLOBAL: RegExp = /\{\{\s*\$(\w+)\s*\}\}/g;
 const VARIABLE_PATTERN_TEST: RegExp = /\{\{\s*\$(\w+)\s*\}\}/;
 const VARIABLE_INPUT_PATTERN: RegExp = /\{\{\s*\$(\w+)\s*\}\}$/;
 
+/** `parseHTML` rule for generic `<span>` — exposed for unit tests (branch coverage). */
+export function variableSpanGetAttrsFromChipRule(node: string | Element): false | null {
+    if (typeof node === 'string' || !(node instanceof HTMLElement)) {
+        return false;
+    }
+    return VARIABLE_PATTERN_TEST.test(String(node.textContent)) ? null : false;
+}
+
 export function createVariableRuleHandler(nodeType: NodeType): (args: RuleHandlerArgs) => void {
     return ({ state, range, match }: RuleHandlerArgs): void => {
         const variableName: string = match[1];
@@ -52,8 +60,7 @@ export const VariableChipExtension: Node = Node.create({
             { tag: 'span[data-variable]' },
             {
                 tag: 'span',
-                getAttrs: (node: string | HTMLElement): false | null =>
-                    VARIABLE_PATTERN_TEST.test(String((node as HTMLElement).textContent)) ? null : false,
+                getAttrs: variableSpanGetAttrsFromChipRule,
             },
         ];
     },

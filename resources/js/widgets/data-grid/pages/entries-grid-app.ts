@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import { useI18n } from '../../../shared/i18n/i18n';
+import { parseShareableTeamsJson } from '../parse-shareable-teams';
 import EntriesGrid from './EntriesGrid.vue';
 
 const mountPoint: HTMLElement | null = document.getElementById('app-entries-grid');
@@ -11,7 +12,7 @@ if (mountPoint) {
         definitionName: mountPoint.dataset.definitionName ?? '',
         canShareTeam: mountPoint.dataset.canShareTeam === 'true',
         canShareGlobal: mountPoint.dataset.canShareGlobal === 'true',
-        shareableTeams: JSON.parse(mountPoint.dataset.shareableTeams ?? '[]') as Array<{ id: string; name: string }>,
+        shareableTeams: parseShareableTeamsJson(mountPoint.dataset.shareableTeams ?? '[]'),
     });
 
     useI18n(app);

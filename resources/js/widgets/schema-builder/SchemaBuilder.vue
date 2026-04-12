@@ -2,6 +2,7 @@
 import { trans } from 'laravel-vue-i18n';
 import { onMounted, ref } from 'vue';
 import { error as logError } from '../../core/logger/logger';
+import { isRecord } from '../../shared/type-guards/is-record';
 import FieldConfigDrawer from './FieldConfigDrawer.vue';
 import type { DefinitionOption, FieldRow } from './types';
 
@@ -269,8 +270,8 @@ function addFormFields(form: HTMLFormElement, prefix: string, data: unknown): vo
         }
         return;
     }
-    if (typeof data === 'object' && data !== null) {
-        for (const [key, value] of Object.entries(data as Record<string, unknown>)) {
+    if (isRecord(data)) {
+        for (const [key, value] of Object.entries(data)) {
             addFormFields(form, `${prefix}[${key}]`, value);
         }
         return;

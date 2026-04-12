@@ -1,4 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { mockedFetchFirstUrl } from '../../test-utils/vitest-fetch';
 import { deleteNotification, fetchNotifications, fetchUnreadCount, markAllRead, markRead } from './notification-api';
 
 const HTTP_OK = 200;
@@ -72,7 +73,7 @@ describe('fetchNotifications', () => {
 
         await fetchNotifications('unread', 2, 5);
 
-        const callUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const callUrl = mockedFetchFirstUrl(global.fetch);
         expect(callUrl).toContain('filter=unread');
         expect(callUrl).toContain('page=2');
         expect(callUrl).toContain('per_page=5');

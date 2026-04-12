@@ -28,8 +28,12 @@ function triggerChange(el: Element): void {
 
 describe('auto-submit', () => {
     it('submits form on change of element with data-auto-submit', () => {
-        const form = document.getElementById('test-form') as HTMLFormElement;
-        const select = document.getElementById('auto-select') as HTMLSelectElement;
+        const formEl = document.getElementById('test-form');
+        const selectEl = document.getElementById('auto-select');
+        expect(formEl).toBeInstanceOf(HTMLFormElement);
+        expect(selectEl).toBeInstanceOf(HTMLSelectElement);
+        const form = formEl;
+        const select = selectEl;
         const submitSpy = vi.spyOn(form, 'submit').mockImplementation(vi.fn());
 
         triggerChange(select);
@@ -38,8 +42,12 @@ describe('auto-submit', () => {
     });
 
     it('does not submit form on change of normal element', () => {
-        const form = document.getElementById('test-form') as HTMLFormElement;
-        const select = document.getElementById('normal-select') as HTMLSelectElement;
+        const formEl = document.getElementById('test-form');
+        const selectEl = document.getElementById('normal-select');
+        expect(formEl).toBeInstanceOf(HTMLFormElement);
+        expect(selectEl).toBeInstanceOf(HTMLSelectElement);
+        const form = formEl;
+        const select = selectEl;
         const submitSpy = vi.spyOn(form, 'submit').mockImplementation(vi.fn());
 
         triggerChange(select);
@@ -53,5 +61,17 @@ describe('auto-submit', () => {
         document.body.appendChild(orphan);
 
         triggerChange(orphan);
+    });
+
+    it('ignores change events whose target is not an HTMLElement', () => {
+        const formEl = document.getElementById('test-form');
+        expect(formEl).toBeInstanceOf(HTMLFormElement);
+        const submitSpy = vi.spyOn(formEl, 'submit').mockImplementation(vi.fn());
+
+        const ev = new Event('change', { bubbles: true });
+        Object.defineProperty(ev, 'target', { value: document.createTextNode(''), enumerable: true });
+        document.dispatchEvent(ev);
+
+        expect(submitSpy).not.toHaveBeenCalled();
     });
 });

@@ -1,6 +1,6 @@
-import { test as setup, expect } from '@playwright/test';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { expect, test as setup } from '@playwright/test';
 
 const authFile = join(dirname(fileURLToPath(import.meta.url)), '.auth/user.json');
 

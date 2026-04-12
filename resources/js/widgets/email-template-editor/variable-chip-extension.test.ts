@@ -1,7 +1,11 @@
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import { describe, expect, it } from 'vitest';
-import { createVariableRuleHandler, VariableChipExtension } from './variable-chip-extension';
+import {
+    createVariableRuleHandler,
+    VariableChipExtension,
+    variableSpanGetAttrsFromChipRule,
+} from './variable-chip-extension';
 
 function createEditor(content = '<p>Hello</p>'): Editor {
     return new Editor({
@@ -10,6 +14,23 @@ function createEditor(content = '<p>Hello</p>'): Editor {
         element: document.createElement('div'),
     });
 }
+
+describe('variableSpanGetAttrsFromChipRule', () => {
+    it('returns false for string DOM nodes or non-HTMLElement', () => {
+        expect(variableSpanGetAttrsFromChipRule('span')).toBe(false);
+        expect(variableSpanGetAttrsFromChipRule(document.createComment(''))).toBe(false);
+    });
+
+    it('returns null when text matches variable pattern, otherwise false', () => {
+        const match = document.createElement('span');
+        match.textContent = '{{ $foo }}';
+        expect(variableSpanGetAttrsFromChipRule(match)).toBe(null);
+
+        const plain = document.createElement('span');
+        plain.textContent = 'plain';
+        expect(variableSpanGetAttrsFromChipRule(plain)).toBe(false);
+    });
+});
 
 describe('VariableChipExtension', () => {
     it('registers as an inline atom node', () => {

@@ -19,7 +19,9 @@ describe('permission-matrix', () => {
         await import('./permission-matrix');
         document.dispatchEvent(new Event('DOMContentLoaded'));
 
-        const toggle = document.querySelector<HTMLInputElement>('[data-module-toggle="users"]') as HTMLInputElement;
+        const toggleEl = document.querySelector('[data-module-toggle="users"]');
+        expect(toggleEl).toBeInstanceOf(HTMLInputElement);
+        const toggle = toggleEl;
         toggle.checked = true;
         toggle.dispatchEvent(new Event('change'));
 
@@ -39,7 +41,9 @@ describe('permission-matrix', () => {
         await import('./permission-matrix');
         document.dispatchEvent(new Event('DOMContentLoaded'));
 
-        const toggle = document.querySelector<HTMLInputElement>('[data-module-toggle="users"]') as HTMLInputElement;
+        const toggleEl = document.querySelector('[data-module-toggle="users"]');
+        expect(toggleEl).toBeInstanceOf(HTMLInputElement);
+        const toggle = toggleEl;
         toggle.checked = false;
         toggle.dispatchEvent(new Event('change'));
 
@@ -59,7 +63,9 @@ describe('permission-matrix', () => {
         await import('./permission-matrix');
         document.dispatchEvent(new Event('DOMContentLoaded'));
 
-        const toggle = document.querySelector<HTMLInputElement>('[data-module-toggle="users"]') as HTMLInputElement;
+        const toggleEl = document.querySelector('[data-module-toggle="users"]');
+        expect(toggleEl).toBeInstanceOf(HTMLInputElement);
+        const toggle = toggleEl;
         expect(toggle.checked).toBe(true);
         expect(toggle.indeterminate).toBe(false);
     });
@@ -74,7 +80,9 @@ describe('permission-matrix', () => {
         await import('./permission-matrix');
         document.dispatchEvent(new Event('DOMContentLoaded'));
 
-        const toggle = document.querySelector<HTMLInputElement>('[data-module-toggle="users"]') as HTMLInputElement;
+        const toggleEl = document.querySelector('[data-module-toggle="users"]');
+        expect(toggleEl).toBeInstanceOf(HTMLInputElement);
+        const toggle = toggleEl;
         expect(toggle.checked).toBe(false);
         expect(toggle.indeterminate).toBe(true);
     });
@@ -89,13 +97,15 @@ describe('permission-matrix', () => {
         await import('./permission-matrix');
         document.dispatchEvent(new Event('DOMContentLoaded'));
 
-        const toggle = document.querySelector<HTMLInputElement>('[data-module-toggle="users"]') as HTMLInputElement;
+        const toggleEl = document.querySelector('[data-module-toggle="users"]');
+        expect(toggleEl).toBeInstanceOf(HTMLInputElement);
+        const toggle = toggleEl;
         expect(toggle.checked).toBe(false);
         expect(toggle.indeterminate).toBe(false);
 
-        const firstCb = document.querySelector<HTMLInputElement>(
-            '[data-permission="users.list.read"]',
-        ) as HTMLInputElement;
+        const firstCbEl = document.querySelector('[data-permission="users.list.read"]');
+        expect(firstCbEl).toBeInstanceOf(HTMLInputElement);
+        const firstCb = firstCbEl;
         firstCb.checked = true;
         firstCb.dispatchEvent(new Event('change'));
 

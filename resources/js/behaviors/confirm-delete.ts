@@ -1,7 +1,11 @@
 export {};
 
 document.addEventListener('submit', (event: SubmitEvent): void => {
-    const form: HTMLFormElement = event.target as HTMLFormElement;
+    const t = event.target;
+    if (!(t instanceof HTMLFormElement)) {
+        return;
+    }
+    const form = t;
     if (!form.hasAttribute('data-confirm-delete')) {
         return;
     }

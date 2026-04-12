@@ -564,6 +564,14 @@ The frontend follows an adapted Feature-Sliced Design with 4 categories and stri
 
 **Enforced by:** dependency-cruiser (`.dependency-cruiser.cjs`) + `bin/lint-frontend-structure.sh`
 
+### TypeScript type assertions
+
+Biome loads `biome-plugin-no-type-assertion`, which flags TypeScript `as` retyping (it does **not** flag `as const` or import aliases like `import { foo as bar }`).
+
+- **Default stance:** avoid `as` for untrusted shapes. At HTTP, `fetch().json()`, `JSON.parse`, and Blade `dataset` boundaries, narrow from `unknown` with type guards or small parse helpers (see existing `*-guard.ts` / `parse-*.ts` patterns under `resources/js/widgets/` and `resources/js/shared/`). For `Event#target` / `activeElement` narrowing, use `resources/js/core/dom/event-target-guards.ts` — it lives under `core/` so `behaviors/` may import it (behaviors must not import `shared/`).
+- **Acceptable exceptions:** unavoidable DOM/event targets after `instanceof` checks where the type checker still needs help; documented one-line `biome-ignore` comments only where runtime validation exists but generics cannot express the result (keep these rare).
+- **Lint surface:** `composer lint:ts` and `npm run lint:ts` both run Biome on `resources/js/` and `tests/e2e/` (Playwright specs share the same no-assertion rule; e2e-only Biome overrides are documented in `tests/e2e/README.md`).
+
 ### Adding a new module
 
 1. Decide the category: Uses Vue? → `widgets/` or `shared/`. Pure DOM? → `behaviors/`. Infrastructure? → `core/`.

@@ -7,8 +7,11 @@ const panelRef = ref<HTMLElement | null>(null);
 const previousActiveElement = ref<Element | null>(null);
 
 function getFocusableElements(): HTMLElement[] {
+    if (panelRef.value === null) {
+        return [];
+    }
     return Array.from(
-        (panelRef.value as HTMLElement).querySelectorAll<HTMLElement>(
+        panelRef.value.querySelectorAll<HTMLElement>(
             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         ),
     );

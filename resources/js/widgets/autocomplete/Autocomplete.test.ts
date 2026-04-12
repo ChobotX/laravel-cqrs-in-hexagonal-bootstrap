@@ -1,5 +1,7 @@
 import { flushPromises, mount } from '@vue/test-utils';
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { isRecord } from '../../shared/type-guards/is-record';
+import { mockedFetchFirstInitRecord, mockedFetchFirstUrl } from '../../test-utils/vitest-fetch';
 import Autocomplete from './Autocomplete.vue';
 
 vi.mock('laravel-vue-i18n', () => ({
@@ -108,7 +110,7 @@ describe('Autocomplete', () => {
         await typeAndFetch(wrapper, 'test');
         await wrapper.findAll('[role="option"]')[0].trigger('mousedown');
 
-        (global.fetch as ReturnType<typeof vi.fn>).mockClear();
+        vi.mocked(global.fetch).mockClear();
 
         const input = wrapper.find('input[role="combobox"]');
         await input.trigger('focus');
@@ -126,7 +128,7 @@ describe('Autocomplete', () => {
 
         expect(global.fetch).toHaveBeenCalledTimes(1);
 
-        (global.fetch as ReturnType<typeof vi.fn>).mockClear();
+        vi.mocked(global.fetch).mockClear();
 
         await input.trigger('blur');
         await input.trigger('focus');
@@ -151,7 +153,7 @@ describe('Autocomplete', () => {
 
         await typeAndFetch(wrapper, 'test');
 
-        const fetchUrl = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
+        const fetchUrl = mockedFetchFirstUrl(global.fetch);
         expect(fetchUrl).toContain('exclude%5B%5D=user-x');
         expect(fetchUrl).toContain('exclude%5B%5D=user-y');
     });
@@ -277,7 +279,12 @@ describe('Autocomplete', () => {
 
         await typeAndFetch(wrapper, 'test');
 
-        const fetchHeaders = (global.fetch as ReturnType<typeof vi.fn>).mock.calls[0][1].headers;
+        const init = mockedFetchFirstInitRecord(global.fetch);
+        const fetchHeaders = init['headers'];
+        expect(isRecord(fetchHeaders)).toBe(true);
+        if (!isRecord(fetchHeaders)) {
+            throw new Error('expected headers object');
+        }
         expect(fetchHeaders['X-CSRF-TOKEN']).toBe('test-csrf-token');
 
         document.head.removeChild(meta);

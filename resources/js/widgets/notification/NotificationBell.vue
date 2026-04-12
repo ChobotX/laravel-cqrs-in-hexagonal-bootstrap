@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { trans } from 'laravel-vue-i18n';
 import { onMounted, onUnmounted, ref } from 'vue';
+import { nodeFromEventTarget } from '../../core/dom/event-target-guards';
 import { error as logError } from '../../core/logger/logger';
 import { error as toastError } from '../../shared/toast/toast-queue';
 import NotificationItem from './NotificationItem.vue';
@@ -82,7 +83,11 @@ async function handleDelete(id: string): Promise<void> {
 }
 
 function handleClickOutside(event: MouseEvent): void {
-    if (bellRef.value && !bellRef.value.contains(event.target as Node)) {
+    if (bellRef.value === null) {
+        return;
+    }
+    const n = nodeFromEventTarget(event.target);
+    if (n === null || !bellRef.value.contains(n)) {
         close();
     }
 }

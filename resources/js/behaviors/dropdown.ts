@@ -1,4 +1,4 @@
-export {};
+import { activeHtmlElement, htmlElementFromEventTarget, nodeFromEventTarget } from '../core/dom/event-target-guards';
 
 const HIDDEN_CLASS = 'hidden';
 
@@ -74,7 +74,8 @@ function focusMenuItem(menu: HTMLElement, direction: number): void {
         return;
     }
 
-    const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+    const active = activeHtmlElement();
+    const currentIndex = active === null ? -1 : items.indexOf(active);
     const nextIndex = (currentIndex + direction + items.length) % items.length;
     items[nextIndex].focus();
 }
@@ -88,7 +89,10 @@ function handleEscape(): void {
 }
 
 function handleArrowKey(event: KeyboardEvent): void {
-    const target = event.target as HTMLElement;
+    const target = htmlElementFromEventTarget(event.target);
+    if (target === null) {
+        return;
+    }
     const dropdown = target.closest<HTMLElement>('[data-dropdown]');
     if (!dropdown) {
         return;
@@ -105,7 +109,10 @@ function handleArrowKey(event: KeyboardEvent): void {
 }
 
 document.addEventListener('click', (event: MouseEvent): void => {
-    const target = event.target as Node;
+    const target = nodeFromEventTarget(event.target);
+    if (target === null) {
+        return;
+    }
 
     for (const dropdown of getDropdowns()) {
         handleToggleClick(dropdown, target);

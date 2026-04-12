@@ -1,12 +1,18 @@
 {
     "$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+    "plugins": ["./node_modules/biome-plugin-no-type-assertion/no-type-assertion.grit"],
     "vcs": {
         "enabled": true,
         "clientKind": "git",
         "useIgnoreFile": true
     },
     "files": {
-        "includes": ["resources/js/**/*.ts", "resources/js/**/*.vue", "!resources/js/types/*.d.ts"]
+        "includes": [
+            "resources/js/**/*.ts",
+            "resources/js/**/*.vue",
+            "!resources/js/types/*.d.ts",
+            "tests/e2e/**/*.ts"
+        ]
     },
     "formatter": {
         "enabled": true,
@@ -140,6 +146,22 @@
                     },
                     "nursery": {
                         "useExplicitType": "off"
+                    }
+                }
+            }
+        },
+        {
+            "includes": ["tests/e2e/**/*.ts"],
+            "linter": {
+                "rules": {
+                    "nursery": {
+                        "useExplicitType": "off"
+                    },
+                    "performance": {
+                        "noAwaitInLoops": "off"
+                    },
+                    "style": {
+                        "noMagicNumbers": "off"
                     }
                 }
             }

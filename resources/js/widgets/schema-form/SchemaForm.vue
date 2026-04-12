@@ -2,6 +2,7 @@
 import { trans } from 'laravel-vue-i18n';
 import { computed, onMounted, ref } from 'vue';
 import { error as logError } from '../../core/logger/logger';
+import { isRecord } from '../../shared/type-guards/is-record';
 
 interface FieldSchema {
     type: string;
@@ -88,8 +89,11 @@ function isRequired(fieldName: string): boolean {
 
 function getRepeaterRows(fieldName: string): Record<string, unknown>[] {
     const val = formValues.value[fieldName];
-    if (Array.isArray(val) && val.length > 0) return val as Record<string, unknown>[];
-    return [{}];
+    if (!Array.isArray(val) || val.length === 0) {
+        return [{}];
+    }
+    const rows = val.filter(isRecord);
+    return rows.length > 0 ? rows : [{}];
 }
 
 function addRepeaterRow(fieldName: string, schema: FieldSchema): void {
@@ -108,7 +112,9 @@ function removeRepeaterRow(fieldName: string, index: number, schema: FieldSchema
 
 function getObjectValue(fieldName: string): Record<string, unknown> {
     const val = formValues.value[fieldName];
-    if (val && typeof val === 'object' && !Array.isArray(val)) return val as Record<string, unknown>;
+    if (isRecord(val) && !Array.isArray(val)) {
+        return val;
+    }
     return {};
 }
 

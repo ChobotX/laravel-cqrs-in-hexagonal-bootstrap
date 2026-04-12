@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-let capturedFetch: typeof window.fetch;
+let fetchMock: ReturnType<typeof vi.fn>;
 const replaceSpy: ReturnType<typeof vi.fn> = vi.fn();
 
 beforeEach(async () => {
-    capturedFetch = vi.fn().mockResolvedValue(new Response('', { status: 200 }));
-    window.fetch = capturedFetch;
+    fetchMock = vi.fn().mockResolvedValue(new Response('', { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
 
     Object.defineProperty(window, 'location', {
         value: {
@@ -23,13 +23,14 @@ beforeEach(async () => {
 
 afterEach(() => {
     replaceSpy.mockClear();
+    vi.unstubAllGlobals();
     vi.resetModules();
 });
 
 describe('session-guard', () => {
     it('passes through normal responses unchanged', async () => {
         const okResponse = new Response('ok', { status: 200 });
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(okResponse);
+        fetchMock.mockResolvedValue(okResponse);
 
         const result = await window.fetch('/api/data');
 
@@ -38,7 +39,7 @@ describe('session-guard', () => {
     });
 
     it('redirects to login on 401 response from same-origin', async () => {
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('', { status: 401 }));
+        fetchMock.mockResolvedValue(new Response('', { status: 401 }));
 
         await window.fetch('/internal-api/users/search');
 
@@ -46,7 +47,7 @@ describe('session-guard', () => {
     });
 
     it('redirects to login on 419 response from same-origin', async () => {
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('', { status: 419 }));
+        fetchMock.mockResolvedValue(new Response('', { status: 419 }));
 
         await window.fetch('/internal-api/users/search');
 
@@ -54,7 +55,7 @@ describe('session-guard', () => {
     });
 
     it('skips redirect for external URLs', async () => {
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('', { status: 401 }));
+        fetchMock.mockResolvedValue(new Response('', { status: 401 }));
 
         await window.fetch('https://sentry.example.com/api/envelope');
 
@@ -73,7 +74,7 @@ describe('session-guard', () => {
             configurable: true,
         });
 
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('', { status: 401 }));
+        fetchMock.mockResolvedValue(new Response('', { status: 401 }));
 
         await window.fetch('/internal-api/users/search');
 
@@ -81,7 +82,7 @@ describe('session-guard', () => {
     });
 
     it('handles Request object input', async () => {
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(new Response('', { status: 401 }));
+        fetchMock.mockResolvedValue(new Response('', { status: 401 }));
 
         await window.fetch(new Request('http://localhost/internal-api/users/search'));
 
@@ -90,7 +91,7 @@ describe('session-guard', () => {
 
     it('passes through non-session error responses', async () => {
         const errorResponse = new Response('', { status: 500 });
-        (capturedFetch as ReturnType<typeof vi.fn>).mockResolvedValue(errorResponse);
+        fetchMock.mockResolvedValue(errorResponse);
 
         const result = await window.fetch('/api/data');
 
