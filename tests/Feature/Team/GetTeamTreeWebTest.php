@@ -129,12 +129,19 @@ it('includes members with their roles', function (): void {
         'joined_at' => '2024-01-01 00:00:00',
     ]);
 
-    $this->actingAs($userModel)
+    $response = $this->actingAs($userModel)
         ->getJson('/internal-api/teams/tree')
-        ->assertOk()
-        ->assertJsonPath('data.0.memberCount', 1)
-        ->assertJsonCount(1, 'data.0.members')
-        ->assertJsonPath('data.0.members.0.name', 'Team Member');
+        ->assertOk();
+
+    /** @var list<array{id: string, memberCount: int, members: list<array{name: string}>}> $data */
+    $data = $response->json('data');
+    $companyNode = collect($data)->firstWhere('id', '550e8400-e29b-41d4-a716-446655440f10');
+
+    expect($companyNode)->not->toBeNull();
+    assert(is_array($companyNode));
+    expect($companyNode['memberCount'])->toBe(1)
+        ->and($companyNode['members'])->toHaveCount(1)
+        ->and($companyNode['members'][0]['name'])->toBe('Team Member');
 });
 
 it('redirects unauthenticated users', function (): void {

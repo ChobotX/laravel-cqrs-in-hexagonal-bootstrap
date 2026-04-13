@@ -44,7 +44,6 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
             ]);
         }
 
-        $this->tenantMigrator->setupTenant($tenant);
     }
 
     public function migrateTenant(string $slug): void

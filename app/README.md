@@ -15,6 +15,7 @@ Additional rules:
 - **Controllers** (`App\Presentation\Http\Controller`): single `__invoke()` method (invokable)
 - **No App→App inheritance**: no class in `App\` may extend another `App\` class
 - **No generic PHP exceptions**: never construct `Exception`, `RuntimeException`, `LogicException`, `InvalidArgumentException`, `BadMethodCallException`, `DomainException` (PHP's), `RangeException`, `OverflowException`, `UnderflowException`, `UnexpectedValueException`, `LengthException`, `OutOfRangeException`, `OutOfBoundsException` — create domain-specific exceptions instead
+- **Strict SRP by layer**: handlers orchestrate business workflow; infrastructure adapters map one concern (I/O, persistence, framework bridge) and avoid orchestration
 
 ## Code style
 

@@ -14,11 +14,11 @@ Presentation may only import from `App\Domain\{Module}\Contract\*`. Contract is 
 **Why:** Prevents Presentation from coupling to domain internals. One namespace to check, one boundary to enforce.
 **Enforced by:** `testPresentationOnlyImportsDomainContracts` PHPat rule.
 
-### Handlers are domain logic, not orchestrators
+### Command handlers are domain orchestrators
 
-Domain handlers contain business rules directly. They are not thin orchestrators delegating to services.
-**Why:** Avoids unnecessary indirection. The hexagonal shell (Infrastructure + Presentation) handles I/O; handlers handle logic.
-**Enforced by:** Convention. See [app/Domain/README.md](app/Domain/README.md).
+Business workflow orchestration belongs in Domain command handlers (and in entrypoints: controllers / console commands). Handlers coordinate sequencing across repositories and services, decide when to emit domain events, and own cross-step use-case flow.
+**Why:** Keeps orchestration in one predictable place, avoids hidden workflow coordinators in Infrastructure, and preserves testability of business flow under the command bus middleware pipeline.
+**Enforced by:** Convention + architecture review + boundary rules in [app/Domain/README.md](app/Domain/README.md) and [app/Infrastructure/README.md](app/Infrastructure/README.md).
 
 ### Scalable for k8s: database sessions, no file state, stderr logging
 
@@ -220,6 +220,6 @@ Record sharing is an extension of the 3-level scope system, not a parallel mecha
 
 ### Thin Infrastructure adapters
 
-Classes under `App\Infrastructure\`, other than `Infrastructure\Bus\*` and `Infrastructure\Provider\*`, should implement framework I/O and persistence mapping only. They do not call `EventCollector::collect()`, do not take `CommandBus` or `QueryBus` as constructor dependencies, and do not coordinate workflows across bounded contexts. Heavy SQL belongs behind the **owning** module’s repository (for example, team hierarchy queries on `TeamMemberRepository`), not inside another module’s Infrastructure package. Orchestration and calls to `collect()` remain in `App\Domain\` command handlers or in domain services that are bound to Domain `Contract` interfaces.
+Classes under `App\Infrastructure\`, other than `Infrastructure\Bus\*` and `Infrastructure\Provider\*`, implement framework I/O and persistence mapping only. They do not call `EventCollector::collect()`, do not take `CommandBus` or `QueryBus` as constructor dependencies, and do not coordinate workflows across bounded contexts. Heavy SQL belongs behind the **owning** module’s repository (for example, team hierarchy queries on `TeamMemberRepository`), not inside another module’s Infrastructure package. Workflow orchestration and event collection remain in `App\Domain\` handlers.
 **Why:** Stops Infrastructure classes from growing into a second application layer, duplicating responsibilities that belong in Domain and blurring hexagonal boundaries. Domain events and workflow decisions stay testable in Domain alongside the same bus middleware (authorization, transactions, dispatch).
 **Enforced by:** PHPStan rules `NoInfrastructureEventCollectorCollectRule`, `NoApplicationBusInInfrastructureRule`, and `InfrastructureCrossDomainImportsRule`. The last rule requires that Infrastructure code outside the wiring exclusions import another bounded context only via `App\Domain\{Other}\Contract\…`, not via that context’s internal namespaces. See [app/Infrastructure/README.md](app/Infrastructure/README.md) and [tests/README.md](tests/README.md).

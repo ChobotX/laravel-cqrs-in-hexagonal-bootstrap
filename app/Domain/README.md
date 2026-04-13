@@ -10,6 +10,8 @@ The key invariant enforced: nothing mutates users outside the handler flow. All 
 
 Handlers live in `App\Domain` (not `App\Application`) because in this architecture, Domain = business logic + use cases. The `Application` layer contains only bus interfaces (ports). No extra indirection layer is needed between Presentation and Domain.
 
+Domain services stay narrow and reusable. They should not replace handlers as workflow coordinators; sequencing across multiple steps belongs in handlers.
+
 ## Value Objects
 
 Use value objects for values with validation rules, equality semantics, or that appear in multiple places.

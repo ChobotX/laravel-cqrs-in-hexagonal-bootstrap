@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Domain\Tenancy\Contract\Service\TenantAdminInitializer;
+use App\Contract\Event\DomainEvent;
+use App\Contract\Event\EventCollector;
+use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
+use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
 use App\Domain\User\Contract\Event\UserCreated;
 use Illuminate\Support\Facades\DB;
 
@@ -16,12 +19,14 @@ beforeEach(function (): void {
 });
 
 it('initializes tenant with email templates, roles, admin user, and role assignment', function (): void {
-    $tenantAdminInitializer = app(TenantAdminInitializer::class);
-    $userCreated = $tenantAdminInitializer->initialize(
-        '00000000-0000-0000-0000-000000000099',
-        'Test Admin',
-        'admin-init@test.com',
-    );
+    $eventCollector = app(EventCollector::class);
+    $initializeTenantAdminHandler = app(InitializeTenantAdminHandler::class);
+    $initializeTenantAdminHandler->handle(new InitializeTenantAdminCommand(
+        tenantSlug: testTenantSlug(),
+        adminId: '00000000-0000-0000-0000-000000000099',
+        adminName: 'Test Admin',
+        adminEmail: 'admin-init@test.com',
+    ));
 
     // Email templates seeded
     $this->assertDatabaseHas('email_templates', ['type' => 'user_invite', 'locale' => 'en'], 'tenant');
@@ -56,9 +61,15 @@ it('initializes tenant with email templates, roles, admin user, and role assignm
         'role_id' => $superAdminRoleId,
     ], 'tenant');
 
-    // UserCreated event returned to caller for collection
-    expect($userCreated)->toBeInstanceOf(UserCreated::class)
-        ->and($userCreated->userId)->toBe('00000000-0000-0000-0000-000000000099')
-        ->and($userCreated->name)->toBe('Test Admin')
-        ->and($userCreated->email)->toBe('admin-init@test.com');
+    $events = $eventCollector->flush();
+    $userCreatedEvents = array_filter(
+        $events,
+        fn (DomainEvent $domainEvent): bool => $domainEvent instanceof UserCreated,
+    );
+
+    expect($userCreatedEvents)->toHaveCount(1);
+    $event = array_values($userCreatedEvents)[0];
+    expect($event->userId)->toBe('00000000-0000-0000-0000-000000000099')
+        ->and($event->name)->toBe('Test Admin')
+        ->and($event->email)->toBe('admin-init@test.com');
 });

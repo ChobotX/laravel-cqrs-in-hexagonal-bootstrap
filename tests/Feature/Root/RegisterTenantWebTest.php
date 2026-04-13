@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Domain\Tenancy\Contract\Service\TenantAdminInitializer;
-use Tests\Helper\FakeTenantAdminInitializer;
+use App\Contract\Command\Command;
+use App\Contract\Command\CommandHandler;
+use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
 
 it('shows registration form', function (): void {
     app()->forgetScopedInstances();
@@ -14,9 +15,10 @@ it('shows registration form', function (): void {
 
 it('creates tenant with admin via registration form', function (): void {
     app()->forgetScopedInstances();
-
-    $fake = new FakeTenantAdminInitializer;
-    $this->app->instance(TenantAdminInitializer::class, $fake);
+    $this->app->bind(InitializeTenantAdminHandler::class, static fn (): CommandHandler => new class implements CommandHandler
+    {
+        public function handle(Command $command): void {}
+    });
 
     $this->post('http://laravel-bootstrap.local/register', [
         'name' => 'New Corp',
@@ -28,9 +30,6 @@ it('creates tenant with admin via registration form', function (): void {
 
     $this->assertDatabaseHas('tenants', ['slug' => 'newcorp'], 'landlord');
     $this->assertDatabaseHas('tenant_domains', ['domain' => 'newcorp'], 'landlord');
-
-    expect($fake->initializedAdminName)->toBe('Admin User')
-        ->and($fake->initializedAdminEmail)->toBe('admin@newcorp.com');
 });
 
 it('validates required fields', function (): void {

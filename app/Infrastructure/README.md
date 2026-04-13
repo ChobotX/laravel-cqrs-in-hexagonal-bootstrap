@@ -8,7 +8,7 @@ Infrastructure classes implement **ports** such as repositories, mailers, cache 
 
 Outside those wiring and persistence namespaces, a `use` statement that pulls in another module’s code must import only from that module’s `Contract\` tree (`App\Domain\{X}\Contract\…`). Adapters that belong to the same domain module may still import internal types from that module, such as value objects, exceptions, or schema types.
 
-Orchestration, raising domain events, and policy decisions stay in `App\Domain\`, typically in command handlers and in small domain services that are registered against `Contract` interfaces. PHPStan enforces this boundary with `NoInfrastructureEventCollectorCollectRule`, `NoInfrastructureEventCollectorInjectionRule`, `NoApplicationBusInInfrastructureRule`, `NoApplicationBusFromAppHelperInInfrastructureRule`, `InfrastructureCrossDomainImportsRule`, and `InfrastructureCrossDomainGroupUseImportsRule`. For the architectural rationale, see [ADR.md](../../ADR.md) (section on thin Infrastructure adapters).
+Orchestration, raising domain events, and policy decisions stay in `App\Domain\` command handlers (or controller/CLI entrypoints before dispatch). Infrastructure does one thing per adapter and avoids multi-step coordination logic. PHPStan enforces this boundary with `NoInfrastructureEventCollectorCollectRule`, `NoInfrastructureEventCollectorInjectionRule`, `NoApplicationBusInInfrastructureRule`, `NoApplicationBusFromAppHelperInInfrastructureRule`, `InfrastructureCrossDomainImportsRule`, and `InfrastructureCrossDomainGroupUseImportsRule`. For the architectural rationale, see [ADR.md](../../ADR.md) (section on thin Infrastructure adapters).
 
 ## BusServiceProvider registration
 

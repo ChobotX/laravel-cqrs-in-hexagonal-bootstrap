@@ -25,5 +25,7 @@ final readonly class CreateTenantHandler implements CommandHandler
             $command->slug,
             $command->domain,
         );
+
+        $this->tenantProvisioner->migrateTenant($command->slug);
     }
 }
