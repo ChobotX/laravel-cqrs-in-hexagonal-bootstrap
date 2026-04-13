@@ -56,4 +56,9 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
     {
         $this->tenantMigrator->migrateAll();
     }
+
+    public function resetTenantPersistenceScope(): void
+    {
+        $this->tenantMigrator->resetPersistenceScope();
+    }
 }

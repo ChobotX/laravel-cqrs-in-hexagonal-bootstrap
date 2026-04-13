@@ -41,8 +41,6 @@ final readonly class RegisterTenantController
         /** @var string $rootDomain */
         $rootDomain = config('tenancy.root_domain');
 
-        $tenantUrl = $registerTenantFormRequest->getScheme().'://'.$domain.'.'.$rootDomain.'/login';
-
-        return redirect($tenantUrl);
+        return redirect($registerTenantFormRequest->getScheme().'://'.$domain.'.'.$rootDomain.'/login');
     }
 }

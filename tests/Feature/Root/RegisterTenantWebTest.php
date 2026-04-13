@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Contract\Command\Command;
-use App\Contract\Command\CommandHandler;
-use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
+use App\Contract\Tenancy\TenantBootstrapper;
+use Illuminate\Support\Facades\DB;
 
 it('shows registration form', function (): void {
     app()->forgetScopedInstances();
@@ -15,21 +14,39 @@ it('shows registration form', function (): void {
 
 it('creates tenant with admin via registration form', function (): void {
     app()->forgetScopedInstances();
-    $this->app->bind(InitializeTenantAdminHandler::class, static fn (): CommandHandler => new class implements CommandHandler
-    {
-        public function handle(Command $command): void {}
-    });
+
+    // Random slug avoids collisions; drop orphan schema so migrate always runs on a clean slate.
+    $unique = bin2hex(random_bytes(4));
+    $slug = 'regtn'.$unique;
+    $domain = 'regtn'.$unique;
+
+    /** @var string $schemaPrefix */
+    $schemaPrefix = config('tenancy.schema_prefix');
+    $schemaName = $schemaPrefix.$slug;
+    DB::connection('landlord')->statement(sprintf('DROP SCHEMA IF EXISTS "%s" CASCADE', $schemaName));
 
     $this->post('http://laravel-bootstrap.local/register', [
         'name' => 'New Corp',
-        'slug' => 'newcorp',
-        'domain' => 'newcorp',
+        'slug' => $slug,
+        'domain' => $domain,
         'admin_name' => 'Admin User',
         'admin_email' => 'admin@newcorp.com',
     ])->assertRedirect();
 
-    $this->assertDatabaseHas('tenants', ['slug' => 'newcorp'], 'landlord');
-    $this->assertDatabaseHas('tenant_domains', ['domain' => 'newcorp'], 'landlord');
+    $this->assertDatabaseHas('tenants', ['slug' => $slug], 'landlord');
+    $this->assertDatabaseHas('tenant_domains', ['domain' => $domain], 'landlord');
+
+    app(TenantBootstrapper::class)->bootstrapBySlug($slug);
+
+    $this->assertDatabaseHas('email_templates', ['type' => 'user_invite', 'locale' => 'en'], 'tenant');
+    $this->assertDatabaseHas('roles', ['name' => 'Super Admin', 'is_system' => true], 'tenant');
+    $this->assertDatabaseHas('users', [
+        'name' => 'Admin User',
+        'email' => 'admin@newcorp.com',
+        'password' => null,
+    ], 'tenant');
+
+    app(TenantBootstrapper::class)->reset();
 });
 
 it('validates required fields', function (): void {

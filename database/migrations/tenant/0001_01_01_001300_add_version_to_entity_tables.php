@@ -10,7 +10,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        $tables = ['users', 'teams', 'roles', 'labels', 'notifications', 'record_shares', 'user_permission_overrides'];
+        $tables = ['teams', 'labels', 'notifications', 'record_shares', 'user_permission_overrides'];
 
         foreach ($tables as $table) {
             Schema::table($table, function (Blueprint $blueprint): void {
@@ -21,7 +21,7 @@ return new class extends Migration
 
     public function down(): void
     {
-        $tables = ['users', 'teams', 'roles', 'labels', 'notifications', 'record_shares', 'user_permission_overrides'];
+        $tables = ['teams', 'labels', 'notifications', 'record_shares', 'user_permission_overrides'];
 
         foreach ($tables as $table) {
             Schema::table($table, function (Blueprint $blueprint): void {

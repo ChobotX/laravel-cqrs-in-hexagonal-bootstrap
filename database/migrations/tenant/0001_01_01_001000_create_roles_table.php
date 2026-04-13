@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('is_system')->default(false);
             $table->timestamps();
             $table->softDeletes();
+            $table->integer('lock_version')->default(1);
         });
     }
 

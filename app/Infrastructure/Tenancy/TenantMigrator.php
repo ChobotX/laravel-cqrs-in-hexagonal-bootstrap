@@ -24,8 +24,6 @@ final readonly class TenantMigrator
             '--path' => 'database/migrations/tenant',
             '--force' => true,
         ]);
-
-        $this->tenantSchemaManager->reset();
     }
 
     public function migrateAll(): void
@@ -35,5 +33,10 @@ final readonly class TenantMigrator
         foreach ($tenants as $tenant) {
             $this->setupTenant($tenant);
         }
+    }
+
+    public function resetPersistenceScope(): void
+    {
+        $this->tenantSchemaManager->reset();
     }
 }

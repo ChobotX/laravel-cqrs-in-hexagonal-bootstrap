@@ -87,7 +87,7 @@ Key classes:
 - `TenantResolver` — resolves tenant by domain or slug via landlord DB
 - `TenantBootstrapperImpl` — composes resolver + schema manager + context. Implements `TenantBootstrapper` contract so Presentation never imports Infrastructure directly.
 - `ResolvedTenantContext` — mutable scoped singleton implementing `TenantContext`
-- `TenantMigrator` — creates schema + runs tenant migrations
+- `TenantMigrator` — creates schema + runs tenant migrations (connection stays on the migrated tenant schema until `TenantBootstrapper::reset()` / `TenantSchemaManager::reset()`)
 - `ConsoleTenantBootstrap` — event listener for CLI tenant resolution via `#[TenantAwareCommand]`
 
 ## Exception boundaries

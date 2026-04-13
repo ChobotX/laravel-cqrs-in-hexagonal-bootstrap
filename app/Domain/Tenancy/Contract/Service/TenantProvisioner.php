@@ -17,4 +17,7 @@ interface TenantProvisioner
 
     /** Contract operation `migrateAllTenants`; see infrastructure for behavior. */
     public function migrateAllTenants(): void;
+
+    /** Clears tenant DB search_path scope (e.g. after CLI migrate). */
+    public function resetTenantPersistenceScope(): void;
 }

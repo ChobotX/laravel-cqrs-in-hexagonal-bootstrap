@@ -38,7 +38,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 | `TenantSchemaManager` | Infrastructure | Configures tenant DB connection and manages schemas |
 | `TenantResolver` | Infrastructure | Resolves tenant by domain or slug via landlord DB |
 | `ResolvedTenantContext` | Infrastructure | Mutable scoped singleton implementing TenantContext |
-| `TenantMigrator` | Infrastructure | Creates schema + runs tenant migrations |
+| `TenantMigrator` | Infrastructure | Creates schema + runs tenant migrations; leaves the `tenant` connection on that schema (call `TenantBootstrapper::reset()` / `TenantSchemaManager::reset()` when a neutral `search_path` is required) |
 | `ConsoleTenantBootstrap` | Infrastructure | Event listener for CLI tenant resolution |
 | `TenantBootstrapperImpl` | Infrastructure | Implements TenantBootstrapper contract |
 | `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes tenant name and logo via landlord `tenants` + public disk; reads/writes display timezone in tenant schema (`tenant_preferences`) |
@@ -49,7 +49,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 |---|---|---|
 | `tenant:setup` | `TenantAgnosticCommand` | Full setup: landlord + tenants + migrations + seeds |
 | `tenant:create` | `TenantAgnosticCommand` | Create a new tenant with schema |
-| `tenant:migrate` | `TenantAgnosticCommand` | Run migrations for one or all tenants |
+| `tenant:migrate` | `TenantAgnosticCommand` | Run migrations for one or all tenants; `MigrateTenantHandler` / `MigrateAllTenantsHandler` reset tenant connection scope afterward |
 
 All other console commands (e.g. `user:create`) use `#[TenantAwareCommand]` and require `--tenant=slug`.
 

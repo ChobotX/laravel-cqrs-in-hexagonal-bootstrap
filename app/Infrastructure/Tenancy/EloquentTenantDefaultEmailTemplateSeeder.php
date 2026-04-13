@@ -20,7 +20,7 @@ final readonly class EloquentTenantDefaultEmailTemplateSeeder implements TenantD
         foreach ($this->defaultEmailTemplateSeedData->templatesByTypeLocaleKey() as $key => $template) {
             [$type, $locale] = explode(':', $key);
 
-            DB::connection('tenant')->table('email_templates')->insert([
+            DB::connection('tenant')->table('email_templates')->insertOrIgnore([
                 'id' => Str::uuid()->toString(),
                 'type' => $type,
                 'locale' => $locale,

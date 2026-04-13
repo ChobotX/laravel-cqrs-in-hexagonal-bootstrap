@@ -21,5 +21,6 @@ final readonly class MigrateAllTenantsHandler implements CommandHandler
     public function handle(Command $command): void
     {
         $this->tenantProvisioner->migrateAllTenants();
+        $this->tenantProvisioner->resetTenantPersistenceScope();
     }
 }
