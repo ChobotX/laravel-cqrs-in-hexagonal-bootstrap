@@ -388,6 +388,7 @@ return [
         'team_cycle_detected' => 'Tento nadřazený tým by vytvořil kruhovou hierarchii.',
         'invalid_notification_id' => 'Hodnota [:value] není platné UUID upozornění.',
         'notification_not_found' => 'Upozornění s id [:id] nebylo nalezeno.',
+        'notification_email_template_not_found' => 'E-mailová šablona pro upozornění není nastavena pro jazyk [:locale] ani záložní [:fallbackLocale].',
         'notification_ownership' => 'K tomuto upozornění nemáte přístup.',
         'invalid_notification_type' => 'Hodnota [:value] není platný typ upozornění.',
         'invalid_notification_link' => 'Hodnota [:value] není platný odkaz upozornění.',

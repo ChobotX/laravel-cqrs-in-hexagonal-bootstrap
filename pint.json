@@ -1,5 +1,8 @@
 {
     "preset": "laravel",
+    "exclude": [
+        "tests/Architecture/PHPStan/Fixtures"
+    ],
     "rules": {
         "declare_strict_types": true,
         "final_class": true,

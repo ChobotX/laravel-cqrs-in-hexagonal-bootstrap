@@ -45,12 +45,12 @@ final readonly class ResendUserInviteHandler implements CommandHandler
         $inviteLink = $this->inviteLinkGenerator->generate($user->id->value);
         $locale = $this->translator->locale();
 
-        $this->templatedEmailDispatcher->dispatch(
+        $this->eventCollector->collect($this->templatedEmailDispatcher->dispatch(
             $user->id->value,
             'user_invite',
             $locale,
             ['userName' => $user->name->value, 'link' => $inviteLink],
-        );
+        ));
 
         $this->eventCollector->collect(new UserInviteSent(
             userId: $user->id->value,

@@ -14,10 +14,10 @@ use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\RoleUpdated;
 use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Service\RolePermissionMapper;
-use App\Domain\Authorization\ValueObject\RoleName;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<UpdateRoleCommand> */

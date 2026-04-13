@@ -39,7 +39,13 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "App\\Infrastructure\\PhpStanFixtures\\": "tests/Architecture/PHPStan/Fixtures/",
+            "App\\Domain\\PhpStanFixtures\\": "tests/Architecture/PHPStan/Fixtures/",
+            "App\\Infrastructure\\Bus\\PhpStanFixtures\\": "tests/Architecture/PHPStan/Fixtures/",
+            "App\\Infrastructure\\Provider\\PhpStanFixtures\\": "tests/Architecture/PHPStan/Fixtures/",
+            "App\\Infrastructure\\SimulatorTenant\\": "tests/Architecture/PHPStan/Fixtures/",
+            "App\\Domain\\User\\PhpStanFixtureInternal\\": "tests/Architecture/PHPStan/Fixtures/UserPhpStanFixtureInternal/"
         }
     },
     "scripts": {

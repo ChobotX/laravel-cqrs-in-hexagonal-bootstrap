@@ -8,7 +8,7 @@ use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Domain\File\Exception\FileStorageException;
 use App\Domain\File\ValueObject\FileNamespace;
 use App\Domain\File\ValueObject\StoragePath;
-use App\Infrastructure\Filesystem\LaravelFileStorage;
+use App\Infrastructure\File\LaravelFileStorage;
 use Illuminate\Support\Facades\Storage;
 
 it('stores a file and returns a storage path', function (): void {

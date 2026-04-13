@@ -396,6 +396,7 @@ return [
         'label_namespace_mismatch' => 'This label does not belong to this entity type.',
         'invalid_notification_id' => 'Value [:value] is not a valid notification UUID.',
         'notification_not_found' => 'Notification with id [:id] not found.',
+        'notification_email_template_not_found' => 'The notification email template is not configured for locale [:locale] or fallback [:fallbackLocale].',
         'notification_ownership' => 'You do not have access to this notification.',
         'invalid_notification_type' => 'Value [:value] is not a valid notification type.',
         'invalid_notification_link' => 'Value [:value] is not a valid notification link.',

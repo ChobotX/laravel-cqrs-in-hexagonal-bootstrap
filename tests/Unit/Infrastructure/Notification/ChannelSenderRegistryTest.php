@@ -9,7 +9,7 @@ use App\Infrastructure\Notification\Exception\UnsupportedNotificationChannelExce
 it('returns sender for registered channel', function (): void {
     $emailSender = new class implements NotificationChannelSender
     {
-        public function send(string $recipientId, string $type, string $title, string $body, string $level, ?string $link): void {}
+        public function send(string $recipientId, string $recipientEmail, string $type, string $title, string $body, string $level, ?string $link): void {}
 
         public function supports(): string
         {

@@ -20,6 +20,7 @@ Additional rules:
 
 Enforced by Pint (`pint.json`) and Rector (`rector.php`). Key rules:
 
+- **PHPStan rule fixtures** — Rector does not process `tests/Architecture/PHPStan/Fixtures/`, and Pint excludes the same path so intentional braced `use { … }` imports are not flattened. Those files exist solely to exercise custom PHPStan rules; Rector’s dead-code rules would otherwise delete `use` statements and constructor parameters that the rule tests are written to detect or allow.
 - `declare(strict_types=1)` — every PHP file
 - `===` only — no loose `==` comparisons
 - Import everything — classes, functions, constants; order: `class`, `function`, `const`

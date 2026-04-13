@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domain\EmailTemplate\Contract\Event\TemplatedEmailSent;
 use App\Domain\User\Contract\Command\SendUserInviteCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\UserInviteSent;
@@ -114,14 +115,15 @@ it('collects a UserInviteSent event', function (): void {
 
     $handler->handle(new SendUserInviteCommand(userId: '550e8400-e29b-41d4-a716-446655440000'));
 
-    expect($eventCollector->collected)->toHaveCount(1);
-    expect($eventCollector->collected[0])->toBeInstanceOf(UserInviteSent::class);
-    assert($eventCollector->collected[0] instanceof UserInviteSent);
-    expect($eventCollector->collected[0]->userId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($eventCollector->collected[0]->userName)->toBe('John Doe')
-        ->and($eventCollector->collected[0]->inviteLink)->toBe('https://app.test/invite/abc123')
-        ->and($eventCollector->collected[0]->locale)->toBe('en')
-        ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
+    expect($eventCollector->collected)->toHaveCount(2)
+        ->and($eventCollector->collected[0])->toBeInstanceOf(TemplatedEmailSent::class)
+        ->and($eventCollector->collected[1])->toBeInstanceOf(UserInviteSent::class);
+    assert($eventCollector->collected[1] instanceof UserInviteSent);
+    expect($eventCollector->collected[1]->userId)->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($eventCollector->collected[1]->userName)->toBe('John Doe')
+        ->and($eventCollector->collected[1]->inviteLink)->toBe('https://app.test/invite/abc123')
+        ->and($eventCollector->collected[1]->locale)->toBe('en')
+        ->and($eventCollector->collected[1]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
 });
 
 it('throws UserNotFoundException when user does not exist', function (): void {

@@ -5,10 +5,10 @@ declare(strict_types=1);
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
-use App\Domain\Authorization\ValueObject\RoleName;
 use App\Infrastructure\Eloquent\Authorization\EloquentRoleRepository;
 use App\Infrastructure\Eloquent\Authorization\RoleMapper;
 

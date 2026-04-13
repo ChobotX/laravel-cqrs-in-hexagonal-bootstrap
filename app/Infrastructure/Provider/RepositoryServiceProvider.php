@@ -12,9 +12,12 @@ use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
 use App\Domain\EmailTemplate\Contract\Repository\EmailLogRepository;
 use App\Domain\EmailTemplate\Contract\Repository\EmailTemplateRepository;
+use App\Domain\EmailTemplate\Contract\Service\DefaultEmailTemplateSeedData;
 use App\Domain\EmailTemplate\Contract\Service\EmailSender;
 use App\Domain\EmailTemplate\Contract\Service\TemplateCompiler;
 use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
+use App\Domain\EmailTemplate\Service\DefaultEmailTemplateSeedDataFromConstant;
+use App\Domain\EmailTemplate\Service\DefaultTemplatedEmailDispatcher;
 use App\Domain\File\Contract\Repository\FileRepository;
 use App\Domain\File\Contract\Service\FileStorage;
 use App\Domain\File\Contract\Service\ImageProcessor;
@@ -25,6 +28,7 @@ use App\Domain\Notification\Contract\Repository\NotificationRepository;
 use App\Domain\Notification\Contract\Service\NotificationBroadcaster;
 use App\Domain\Notification\Contract\Service\NotificationChannelSenderRegistry;
 use App\Domain\Notification\Contract\Service\RecipientResolver;
+use App\Domain\Notification\Service\DefaultRecipientResolver;
 use App\Domain\Registry\Contract\Repository\DefinitionRepository;
 use App\Domain\Registry\Contract\Repository\DefinitionVersionRepository;
 use App\Domain\Registry\Contract\Repository\EntryRepository;
@@ -51,13 +55,11 @@ use App\Infrastructure\Eloquent\Registry\EloquentEntryRepository;
 use App\Infrastructure\Eloquent\Team\EloquentTeamMemberRepository;
 use App\Infrastructure\Eloquent\Team\EloquentTeamRepository;
 use App\Infrastructure\Eloquent\User\EloquentUserRepository;
-use App\Infrastructure\Email\BladeTemplateCompiler;
-use App\Infrastructure\Email\LaravelEmailSender;
-use App\Infrastructure\Email\TemplatedEmailDispatcherImpl;
-use App\Infrastructure\Filesystem\LaravelFileStorage;
-use App\Infrastructure\Image\GdImageProcessor;
+use App\Infrastructure\EmailTemplate\BladeTemplateCompiler;
+use App\Infrastructure\EmailTemplate\LaravelEmailSender;
+use App\Infrastructure\File\GdImageProcessor;
+use App\Infrastructure\File\LaravelFileStorage;
 use App\Infrastructure\Notification\ChannelSenderRegistry;
-use App\Infrastructure\Notification\EloquentRecipientResolver;
 use App\Infrastructure\Notification\EmailNotificationSender;
 use App\Infrastructure\Notification\LaravelNotificationBroadcaster;
 use App\Infrastructure\Registry\JsonSchemaSerializerImpl;
@@ -81,7 +83,7 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(LabelRepository::class, EloquentLabelRepository::class);
         $this->app->bind(NotificationRepository::class, EloquentNotificationRepository::class);
         $this->app->bind(NotificationPreferenceRepository::class, EloquentNotificationPreferenceRepository::class);
-        $this->app->bind(RecipientResolver::class, EloquentRecipientResolver::class);
+        $this->app->bind(RecipientResolver::class, DefaultRecipientResolver::class);
         $this->app->bind(NotificationChannelSenderRegistry::class, fn (): ChannelSenderRegistry => new ChannelSenderRegistry([
             'email' => $this->app->make(EmailNotificationSender::class),
         ]));
@@ -104,6 +106,7 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(EmailLogRepository::class, EloquentEmailLogRepository::class);
         $this->app->bind(TemplateCompiler::class, BladeTemplateCompiler::class);
         $this->app->bind(EmailSender::class, LaravelEmailSender::class);
-        $this->app->bind(TemplatedEmailDispatcher::class, TemplatedEmailDispatcherImpl::class);
+        $this->app->bind(TemplatedEmailDispatcher::class, DefaultTemplatedEmailDispatcher::class);
+        $this->app->bind(DefaultEmailTemplateSeedData::class, DefaultEmailTemplateSeedDataFromConstant::class);
     }
 }

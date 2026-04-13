@@ -126,4 +126,24 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
     {
         unset($this->memberships[$userId]);
     }
+
+    /** @return list<string> */
+    public function memberUserIdsForTeam(string $teamId): array
+    {
+        $ids = [];
+
+        foreach ($this->memberships as $userId => $teamIds) {
+            if (in_array($teamId, $teamIds, true)) {
+                $ids[] = $userId;
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
+    /** @return list<string> */
+    public function memberUserIdsForTeamSubtree(string $teamId): array
+    {
+        return $this->memberUserIdsForTeam($teamId);
+    }
 }

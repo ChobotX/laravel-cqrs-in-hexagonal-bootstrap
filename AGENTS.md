@@ -25,6 +25,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/GridPreset/README.md](app/Domain/GridPreset/README.md) | Grid preset module — saved filter/sort/search presets per user, default views |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
+| [tests/Architecture/PHPStan/Fixtures/README.md](tests/Architecture/PHPStan/Fixtures/README.md) | PHPStan rule fixtures — conventions and orphan guard |
 | [tests/e2e/README.md](tests/e2e/README.md) | E2E testing — Playwright setup, auth pattern, best practices |
 | [docker/README.md](docker/README.md) | Observability — OpenTelemetry, Sentry, production Dockerfile |
 | [ROADMAP.md](ROADMAP.md) | Feature roadmap and planned work |

@@ -6,12 +6,15 @@ namespace Tests\Helper;
 
 use App\Application\Bus\QueryBus;
 use App\Contract\Query\Query;
+use Closure;
 use RuntimeException;
 use Throwable;
 
 final class FakeQueryBus implements QueryBus
 {
-    /** @param array<class-string, mixed> $results */
+    /**
+     * @param  array<class-string, mixed|Closure(Query): mixed>  $results
+     */
     public function __construct(private array $results = []) {}
 
     public function dispatch(Query $query): mixed
@@ -26,6 +29,10 @@ final class FakeQueryBus implements QueryBus
 
         if ($result instanceof Throwable) {
             throw $result;
+        }
+
+        if ($result instanceof Closure) {
+            return $result($query);
         }
 
         return $result;

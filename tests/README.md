@@ -22,9 +22,12 @@
 
 Custom rules in `tests/Architecture/PHPStan/`:
 
+- **Rule fixtures** — The directory `tests/Architecture/PHPStan/Fixtures/` contains small PHP files that deliberately satisfy or violate the custom architecture rules; see [tests/Architecture/PHPStan/Fixtures/README.md](Architecture/PHPStan/Fixtures/README.md). The main `phpstan.neon` configuration does not analyse that tree, so intentional violations never fail the project-wide PHPStan run in CI. The directory is also excluded from **full-project** Laravel Pint runs (`pint.json`) so braced `use { … }` stays intact. Coverage for those snippets lives in `PHPStan\Testing\RuleTestCase` subclasses (for example `NoInfrastructureEventCollectorCollectRuleTest`, `NoApplicationBusInInfrastructureRuleTest`, `InfrastructureCrossDomainImportsRuleTest`). `PhpStanFixtureFilesReferencedInRuleTestsTest` asserts every fixture `.php` file appears in at least one rule test’s `analyse([…])` call. Composer’s `autoload-dev` section registers several `App\…` PSR-4 prefixes that map to `Fixtures/` (and related dev-only paths), which lets PHPStan’s `ReflectionProvider` resolve fixture class names when those tests execute.
+
 | Rule | Enforces |
 |---|---|
-| `NoCrossDomainDependenciesRule` | No `App\Domain\{A}` → `App\Domain\{B}` imports (except `Domain\{B}\Contract\*` which is allowed from any domain) |
+| `DomainCrossDomainImportsRule` | No `App\Domain\{A}` → `App\Domain\{B}` imports except `Domain\{B}\Contract\*` (covers `use`, `use function`, and `use const`) |
+| `DomainCrossDomainGroupUseImportsRule` | Same boundary as `DomainCrossDomainImportsRule` for brace `use { … }` imports |
 | `HandlersInDomainRule` | All `CommandHandler`, `QueryHandler`, `DomainEventHandler` implementations must live in `App\Domain\` |
 | `NoMixedAnnotationsRule` | No `mixed` in `@param`, `@return`, `@var` PHPDoc in `App\` |
 | `NoMockeryInDomainTestsRule` | No Mockery in `tests/Unit/Domain/` |
@@ -48,11 +51,17 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `EventHandlerRequiresRetryPolicyRule` | Every `DomainEventHandler` must declare `#[RetryPolicy]` |
 | `CommandHandlerMustCollectEventsRule` | Every `CommandHandler` must inject `EventCollector` or declare `#[SkipDomainEvent(reason:)]` |
 | `UpdatedEventMustImplementEntityUpdatedRule` | Every event class ending in "Updated" in `Contract/Event/` must implement `EntityUpdated` |
-| `NoDirectFilesystemAccessRule` | Bans `Storage::`, `storage_path()`, PHP file functions (`fopen`, `unlink`, etc.) outside `Infrastructure\Filesystem\` |
-| `NoDirectFilesystemImportRule` | Bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\Filesystem\` |
-| `FileStorageOnlyInFileDomainRule` | Bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\Filesystem` — forces bus usage |
+| `NoDirectFilesystemAccessRule` | Bans `Storage::`, `storage_path()`, PHP file functions (`fopen`, `unlink`, etc.) outside `Infrastructure\File\` |
+| `NoDirectFilesystemImportRule` | Bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\File\` |
+| `FileStorageOnlyInFileDomainRule` | Bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\File` — forces bus usage |
 | `ControllerDependenciesRule` | Controllers may only inject `CommandBus`, `QueryBus`, `AuthenticatedUser`, `AuthorizationChecker`, `IdGenerator`, `Guard` — no domain services or infrastructure |
 | `NoHttpExceptionsInInfrastructureRule` | Infrastructure must not throw Symfony HTTP exceptions — throw domain exceptions instead, Presentation translates |
+| `NoInfrastructureEventCollectorCollectRule` | Infrastructure must not call `EventCollector::collect()` (except `InMemoryEventCollector` implementation) |
+| `NoInfrastructureEventCollectorInjectionRule` | Infrastructure must not type-hint `EventCollector` on properties or method return types (except `InMemoryEventCollector` implementation) |
+| `NoApplicationBusInInfrastructureRule` | Infrastructure must not inject `CommandBus` or `QueryBus` (except `Infrastructure\Bus\*` and `Infrastructure\Provider\*`) |
+| `NoApplicationBusFromAppHelperInInfrastructureRule` | Infrastructure must not obtain `CommandBus` or `QueryBus` via `app()` / `App::make()` |
+| `InfrastructureCrossDomainImportsRule` | Outside the excluded wiring namespaces, Infrastructure may not import another bounded context’s internal types; imports from `App\Domain\{Other}\…` must stay under `App\Domain\{Other}\Contract\` unless `{Other}` is the adapter’s own module (covers `use`, `use function`, and `use const`) |
+| `InfrastructureCrossDomainGroupUseImportsRule` | Same boundary as `InfrastructureCrossDomainImportsRule` for brace `use { … }` imports |
 | `NoBusDispatchInControllerLoopsRule` | Controllers must not call `->dispatch()` inside foreach loops — use batch queries or aggregate commands instead |
 | `NoLooseFilesInDomainModuleRule` | No PHP classes directly at `Domain/{Module}/` root — must be in a typed subdirectory (`Handler/`, `ValueObject/`, `Enum/`, etc.) |
 | `NoLooseFilesInContractRule` | No PHP classes directly at `Domain/{Module}/Contract/` root — must be in a typed subdirectory (`Entity/`, `ValueObject/`, `Repository/`, etc.) |

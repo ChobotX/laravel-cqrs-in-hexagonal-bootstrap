@@ -6,7 +6,7 @@ use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;
-use App\Infrastructure\Auth\RequestAuthenticatedUser;
+use App\Infrastructure\User\RequestAuthenticatedUser;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Tests\Helper\FakeImpersonationManager;
@@ -107,10 +107,18 @@ final class RequestAuthenticatedUserTestGuard implements Guard
 
     public function id(): int|string|null
     {
-        /* @var int|string|null */
-        return $this->authenticatable?->getAuthIdentifier();
+        $identifier = $this->authenticatable?->getAuthIdentifier();
+
+        if (is_int($identifier) || is_string($identifier) || $identifier === null) {
+            return $identifier;
+        }
+
+        return null;
     }
 
+    /**
+     * @param  array<mixed>  $credentials
+     */
     public function validate(array $credentials = []): bool
     {
         return false;
@@ -158,7 +166,7 @@ final readonly class RequestAuthenticatedUserTestAuthenticatable implements Auth
         return '';
     }
 
-    public function setRememberToken(mixed $value): void {}
+    public function setRememberToken($value): void {}
 
     public function getRememberTokenName(): string
     {

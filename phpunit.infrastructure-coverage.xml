@@ -19,7 +19,7 @@
         <exclude>
             <directory suffix="Model.php">app/Infrastructure/Eloquent</directory>
             <directory>app/Infrastructure/Dev</directory>
-            <directory>app/Infrastructure/Image</directory>
+            <directory>app/Infrastructure/File</directory>
         </exclude>
     </source>
     <php>

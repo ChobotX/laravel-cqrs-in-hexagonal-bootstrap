@@ -1,0 +1,43 @@
+%% Registry tenant data model (migrations 001500–001502)
+erDiagram
+  definitions ||--o{ definition_versions : "cascade on delete"
+  definitions ||--o{ entries : "FK"
+  users ||--o{ entries : "cascade on delete"
+
+  definitions {
+    uuid id PK
+    string namespace
+    string slug
+    string name
+    int lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  definition_versions {
+    uuid id PK
+    uuid definition_id FK
+    int version
+    jsonb body
+    string status
+    int lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  entries {
+    uuid id PK
+    uuid definition_id FK
+    int definition_version
+    string namespace
+    string title
+    jsonb data
+    uuid created_by_user_id FK
+    int lock_version
+    datetime created_at
+    datetime updated_at
+  }
+
+  users {
+    uuid id PK
+  }

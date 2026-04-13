@@ -6,6 +6,7 @@ use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
 use App\Domain\FeatureFlag\Contract\Enum\FlagType;
 use App\Domain\FeatureFlag\Contract\ValueObject\FlagDefinition;
 use App\Domain\FeatureFlag\Contract\ValueObject\FlagKey;
+use App\Domain\FeatureFlag\Service\DefaultFeatureFlagChecker;
 use App\Infrastructure\FeatureFlag\CachedFeatureFlagChecker;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Cache\Repository as CacheRepository;
@@ -51,12 +52,17 @@ function checkerSetup(
     array $overrides = [],
     ?string $tenantId = 'tenant-1',
 ): CachedFeatureFlagChecker {
+    $tenantContext = new FakeTenantContext($tenantId);
+
     return new CachedFeatureFlagChecker(
-        featureFlagDefinitionProvider: new FakeFeatureFlagDefinitionProvider($definitions),
-        featureFlagOverrideRepository: new FakeFeatureFlagOverrideRepository($overrides),
-        cacheRepository: new CacheRepository(new ArrayStore),
-        tenantContext: new FakeTenantContext($tenantId),
-        ttl: 300,
+        new DefaultFeatureFlagChecker(
+            new FakeFeatureFlagDefinitionProvider($definitions),
+            new FakeFeatureFlagOverrideRepository($overrides),
+            $tenantContext,
+        ),
+        new CacheRepository(new ArrayStore),
+        $tenantContext,
+        300,
     );
 }
 
@@ -100,11 +106,14 @@ it('caches resolved values on second call', function (): void {
     $tenantContext = new FakeTenantContext('tenant-1');
 
     $checker = new CachedFeatureFlagChecker(
-        featureFlagDefinitionProvider: new FakeFeatureFlagDefinitionProvider($definitions),
-        featureFlagOverrideRepository: new FakeFeatureFlagOverrideRepository($overrides),
-        cacheRepository: $cache,
-        tenantContext: $tenantContext,
-        ttl: 300,
+        new DefaultFeatureFlagChecker(
+            new FakeFeatureFlagDefinitionProvider($definitions),
+            new FakeFeatureFlagOverrideRepository($overrides),
+            $tenantContext,
+        ),
+        $cache,
+        $tenantContext,
+        300,
     );
 
     $first = $checker->all();

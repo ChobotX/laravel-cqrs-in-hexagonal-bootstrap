@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
+use Closure;
+use Illuminate\Contracts\Mail\Mailable;
 use Illuminate\Contracts\Mail\Mailer;
+use Illuminate\Mail\Message;
 use Illuminate\Mail\PendingMail;
 use Illuminate\Mail\SentMessage;
 use RuntimeException;
+use Symfony\Component\Mime\Email;
 
 final class FakeMailer implements Mailer
 {
@@ -16,8 +20,11 @@ final class FakeMailer implements Mailer
 
     public function raw($text, $callback): ?SentMessage
     {
-        $message = new \Illuminate\Mail\Message(new \Symfony\Component\Mime\Email);
-        assert(is_callable($callback));
+        if (! is_callable($callback)) {
+            return null;
+        }
+
+        $message = new Message(new Email);
         $callback($message);
         $subject = $message->getSymfonyMessage()->getSubject();
         $this->sent[] = [
@@ -29,20 +36,25 @@ final class FakeMailer implements Mailer
         return null;
     }
 
-    public function to($users): PendingMail
+    public function to(mixed $users): PendingMail
     {
         throw new RuntimeException('Not expected');
     }
 
-    public function bcc($users): PendingMail
+    public function bcc(mixed $users): PendingMail
     {
         throw new RuntimeException('Not expected');
     }
 
+    /**
+     * @param  Mailable|string|array<int|string, mixed>  $view
+     * @param  array<mixed>  $data
+     * @param  Closure|string|null  $callback
+     */
     public function send($view, array $data = [], $callback = null): ?SentMessage
     {
         if (is_callable($callback)) {
-            $message = new \Illuminate\Mail\Message(new \Symfony\Component\Mime\Email);
+            $message = new Message(new Email);
             $callback($message);
             $symfony = $message->getSymfonyMessage();
             $this->sent[] = [
@@ -55,7 +67,12 @@ final class FakeMailer implements Mailer
         return null;
     }
 
-    public function sendNow($mailable, ?array $data = [], $callback = null): ?SentMessage
+    /**
+     * @param  Mailable|string|array<int|string, mixed>  $mailable
+     * @param  array<mixed>  $data
+     * @param  Closure|string|null  $callback
+     */
+    public function sendNow($mailable, array $data = [], $callback = null): ?SentMessage
     {
         return null;
     }

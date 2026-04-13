@@ -15,11 +15,11 @@ use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Repository\RoleRepository;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
-use App\Domain\Authorization\ValueObject\RoleName;
 
 /** @implements CommandHandler<SeedDefaultRolesCommand> */
 #[SkipDomainEvent(reason: 'Data initialization — seeds default roles during setup, no domain events needed')]

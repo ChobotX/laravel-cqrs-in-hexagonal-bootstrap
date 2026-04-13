@@ -13,12 +13,12 @@ use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Query\ListRolesQuery;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\Handler\Query\ListRolesHandler;
 use App\Domain\Authorization\ValueObject\Feature;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
-use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeRoleRepository;
 
 it('returns all roles', function (): void {

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Application\Authorization\SkipPermissionCheck;
 use App\Contract\Bus\Middleware;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
@@ -11,15 +12,8 @@ use App\Infrastructure\Bus\LaravelQueryBus;
 use Illuminate\Container\Container;
 
 it('dispatches query and returns result', function (): void {
-    $query = new class implements Query {};
-
-    $handler = new class implements QueryHandler
-    {
-        public function handle(Query $query): mixed
-        {
-            return 'query-result';
-        }
-    };
+    $query = new LaravelQueryBusTestQuery;
+    $handler = new LaravelQueryBusTestHandler;
 
     $container = new Container;
     $container->instance($handler::class, $handler);
@@ -33,7 +27,7 @@ it('dispatches query and returns result', function (): void {
 });
 
 it('throws HandlerNotFoundException when no handler registered', function (): void {
-    $query = new class implements Query {};
+    $query = new LaravelQueryBusTestQuery;
 
     $bus = new LaravelQueryBus(
         container: new Container,
@@ -44,15 +38,8 @@ it('throws HandlerNotFoundException when no handler registered', function (): vo
 })->throws(HandlerNotFoundException::class);
 
 it('throws InvalidHandlerException when container resolves wrong type', function (): void {
-    $query = new class implements Query {};
-
-    $legitimateHandler = new class implements QueryHandler
-    {
-        public function handle(Query $query): mixed
-        {
-            return 'query-result';
-        }
-    };
+    $query = new LaravelQueryBusTestQuery;
+    $legitimateHandler = new LaravelQueryBusTestHandler;
 
     $container = new Container;
     $container->instance($legitimateHandler::class, new stdClass);
@@ -66,15 +53,8 @@ it('throws InvalidHandlerException when container resolves wrong type', function
 })->throws(InvalidHandlerException::class, 'is not an instance of');
 
 it('throws InvalidHandlerException when middleware passes wrong message type', function (): void {
-    $query = new class implements Query {};
-
-    $handler = new class implements QueryHandler
-    {
-        public function handle(Query $query): mixed
-        {
-            return 'query-result';
-        }
-    };
+    $query = new LaravelQueryBusTestQuery;
+    $handler = new LaravelQueryBusTestHandler;
 
     $container = new Container;
     $container->instance($handler::class, $handler);
@@ -95,3 +75,20 @@ it('throws InvalidHandlerException when middleware passes wrong message type', f
 
     $bus->dispatch($query);
 })->throws(InvalidHandlerException::class, 'but expected an instance of');
+
+/**
+ * @implements Query<string>
+ */
+#[SkipPermissionCheck(reason: 'Test fixture query for infrastructure bus test')]
+final class LaravelQueryBusTestQuery implements Query {}
+
+/**
+ * @implements QueryHandler<LaravelQueryBusTestQuery, string>
+ */
+final class LaravelQueryBusTestHandler implements QueryHandler
+{
+    public function handle(Query $query): string
+    {
+        return 'query-result';
+    }
+}

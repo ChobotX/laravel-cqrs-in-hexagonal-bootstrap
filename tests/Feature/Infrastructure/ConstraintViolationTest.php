@@ -70,7 +70,7 @@ it('throws RoleAlreadyExistsException on duplicate role name', function (): void
 
     $dupe = new App\Domain\Authorization\Contract\Entity\Role(
         new App\Domain\Authorization\Contract\ValueObject\RoleId('550e8400-e29b-41d4-a716-446655440c08'),
-        new App\Domain\Authorization\ValueObject\RoleName('DupeRole'),
+        new App\Domain\Authorization\Contract\ValueObject\RoleName('DupeRole'),
         'Another',
         false,
         [],

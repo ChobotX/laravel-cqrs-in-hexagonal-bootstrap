@@ -12,10 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-/** @use HasFactory<RoleModelFactory> */
 final class RoleModel extends Model
 {
+    /** @use HasFactory<RoleModelFactory> */
     use HasFactory;
+
     use HasOptimisticLocking;
     use HasUuids;
     use SoftDeletes;

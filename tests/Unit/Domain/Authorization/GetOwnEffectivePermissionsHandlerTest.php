@@ -6,12 +6,12 @@ use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Query\GetOwnEffectivePermissionsQuery;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
 use App\Domain\Authorization\Handler\Query\GetOwnEffectivePermissionsHandler;
 use App\Domain\Authorization\Service\PermissionResolver;
 use App\Domain\Authorization\ValueObject\Module;
 use App\Domain\Authorization\ValueObject\PermissionKey;
-use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeUserPermissionRepository;
 
 it('resolves own effective permissions', function (): void {

@@ -8,16 +8,31 @@ use App\Domain\Notification\Contract\Service\NotificationChannelSender;
 
 final class FakeNotificationChannelSender implements NotificationChannelSender
 {
-    /** @var list<array{recipientId: string, type: string, title: string, body: string, level: string, link: ?string}> */
+    /** @var list<array{recipientId: string, recipientEmail: string, type: string, title: string, body: string, level: string, link: ?string}> */
     public array $sent = [];
 
     public function __construct(
         private readonly string $channel = 'email',
     ) {}
 
-    public function send(string $recipientId, string $type, string $title, string $body, string $level, ?string $link): void
-    {
-        $this->sent[] = ['recipientId' => $recipientId, 'type' => $type, 'title' => $title, 'body' => $body, 'level' => $level, 'link' => $link];
+    public function send(
+        string $recipientId,
+        string $recipientEmail,
+        string $type,
+        string $title,
+        string $body,
+        string $level,
+        ?string $link,
+    ): void {
+        $this->sent[] = [
+            'recipientId' => $recipientId,
+            'recipientEmail' => $recipientEmail,
+            'type' => $type,
+            'title' => $title,
+            'body' => $body,
+            'level' => $level,
+            'link' => $link,
+        ];
     }
 
     public function supports(): string

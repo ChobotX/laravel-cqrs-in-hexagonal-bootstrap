@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\Contract\Entity;
 
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Contract\ValueObject\RolePermission;
-use App\Domain\Authorization\ValueObject\RoleName;
 
 /**
  * Immutable read-model snapshot of a Role returned from queries in the Authorization context.

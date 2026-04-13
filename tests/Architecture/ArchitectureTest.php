@@ -104,7 +104,12 @@ final class ArchitectureTest
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Domain'))
             // Domain\Tenancy naturally depends on its own contracts
-            ->excluding(Selector::inNamespace('App\Domain\Tenancy'))
+            ->excluding(
+                Selector::inNamespace('App\Domain\Tenancy'),
+                // Email templating and feature flags read tenant slice at runtime (same as prior infra adapters).
+                Selector::inNamespace('App\Domain\EmailTemplate\Service'),
+                Selector::inNamespace('App\Domain\FeatureFlag\Service'),
+            )
             ->shouldNotDependOn()
             ->classes(Selector::inNamespace('App\Contract\Tenancy'));
     }

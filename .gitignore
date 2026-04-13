@@ -28,6 +28,7 @@ compose.override.yaml
 /coverage
 /storage/coverage
 /storage/phpstan
+/storage/framework/phpstan-rule-tests
 /.claude
 /test-results/
 /playwright-report/

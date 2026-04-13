@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
-use App\Infrastructure\Filesystem\TenantLogoFileStorage;
+use App\Infrastructure\File\TenantLogoFileStorage;
 use App\Infrastructure\Tenancy\EloquentTenantSettingsRepository;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;

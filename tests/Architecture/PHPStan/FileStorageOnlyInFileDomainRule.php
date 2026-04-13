@@ -46,14 +46,14 @@ final class FileStorageOnlyInFileDomainRule implements Rule
         }
 
         if (str_starts_with($namespace, 'App\Domain\File')
-            || str_starts_with($namespace, 'App\Infrastructure\Filesystem')
+            || str_starts_with($namespace, 'App\Infrastructure\File')
             || str_starts_with($namespace, 'App\Infrastructure\Provider')) {
             return [];
         }
 
         return [
             RuleErrorBuilder::message(
-                'Direct use of FileStorage is not allowed outside Domain\File and Infrastructure\Filesystem. Use StoreFileCommand/DeleteFileCommand/GetFileContentQuery through the bus instead.',
+                'Direct use of FileStorage is not allowed outside Domain\File and Infrastructure\File. Use StoreFileCommand/DeleteFileCommand/GetFileContentQuery through the bus instead.',
             )
                 ->identifier('app.fileStorageOnlyInFileDomain')
                 ->build(),

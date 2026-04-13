@@ -6,9 +6,9 @@ use App\Domain\Authorization\Contract\Command\DeleteRoleCommand;
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\RoleDeleted;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Exception\RoleNotFoundException;
 use App\Domain\Authorization\Handler\Command\DeleteRoleHandler;
-use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeRoleRepository;
 

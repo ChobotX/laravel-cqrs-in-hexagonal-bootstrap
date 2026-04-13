@@ -5,8 +5,8 @@ declare(strict_types=1);
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Handler\Query\GetUserRolesHandler;
-use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeUserPermissionRepository;
 
 it('returns roles assigned to a user', function (): void {

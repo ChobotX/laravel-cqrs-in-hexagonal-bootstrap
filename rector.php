@@ -27,4 +27,6 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         PostIncDecToPreIncDecRector::class,
+        // PHPStan architecture-rule fixtures: excluded so dead-code rectors do not remove intentional imports or promoted constructor parameters.
+        __DIR__.'/tests/Architecture/PHPStan/Fixtures',
     ]);

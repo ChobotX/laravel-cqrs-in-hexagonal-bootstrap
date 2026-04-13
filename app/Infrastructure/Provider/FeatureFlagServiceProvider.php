@@ -10,6 +10,7 @@ use App\Domain\FeatureFlag\Contract\Repository\FeatureFlagOverrideRepository;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagCacheInvalidator;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagChecker;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagDefinitionProvider;
+use App\Domain\FeatureFlag\Service\DefaultFeatureFlagChecker;
 use App\Infrastructure\Eloquent\FeatureFlag\EloquentFeatureFlagOverrideRepository;
 use App\Infrastructure\FeatureFlag\CachedFeatureFlagChecker;
 use App\Infrastructure\FeatureFlag\CacheFeatureFlagCacheInvalidator;
@@ -44,12 +45,17 @@ final class FeatureFlagServiceProvider extends ServiceProvider
             /** @var int $ttl */
             $ttl = config('feature-flags.cache_ttl');
 
+            $tenantContext = $this->app->make(TenantContext::class);
+
             return new CachedFeatureFlagChecker(
-                featureFlagDefinitionProvider: $this->app->make(FeatureFlagDefinitionProvider::class),
-                featureFlagOverrideRepository: $this->app->make(FeatureFlagOverrideRepository::class),
-                cacheRepository: $this->app->make(CacheRepository::class),
-                tenantContext: $this->app->make(TenantContext::class),
-                ttl: $ttl,
+                new DefaultFeatureFlagChecker(
+                    $this->app->make(FeatureFlagDefinitionProvider::class),
+                    $this->app->make(FeatureFlagOverrideRepository::class),
+                    $tenantContext,
+                ),
+                $this->app->make(CacheRepository::class),
+                $tenantContext,
+                $ttl,
             );
         });
 

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Domain\EmailTemplate\Contract\Event\TemplatedEmailSent;
 use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordResetRequested;
@@ -80,14 +81,15 @@ it('collects a PasswordResetRequested event', function (): void {
 
     $handler->handle(new RequestPasswordResetCommand(email: 'john@example.com'));
 
-    expect($eventCollector->collected)->toHaveCount(1);
-    expect($eventCollector->collected[0])->toBeInstanceOf(PasswordResetRequested::class);
-    assert($eventCollector->collected[0] instanceof PasswordResetRequested);
-    expect($eventCollector->collected[0]->userId)->toBe('550e8400-e29b-41d4-a716-446655440000')
-        ->and($eventCollector->collected[0]->email)->toBe('john@example.com')
-        ->and($eventCollector->collected[0]->resetLink)->toBe('https://app.test/reset/abc123')
-        ->and($eventCollector->collected[0]->locale)->toBe('en')
-        ->and($eventCollector->collected[0]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
+    expect($eventCollector->collected)->toHaveCount(2)
+        ->and($eventCollector->collected[0])->toBeInstanceOf(TemplatedEmailSent::class)
+        ->and($eventCollector->collected[1])->toBeInstanceOf(PasswordResetRequested::class);
+    assert($eventCollector->collected[1] instanceof PasswordResetRequested);
+    expect($eventCollector->collected[1]->userId)->toBe('550e8400-e29b-41d4-a716-446655440000')
+        ->and($eventCollector->collected[1]->email)->toBe('john@example.com')
+        ->and($eventCollector->collected[1]->resetLink)->toBe('https://app.test/reset/abc123')
+        ->and($eventCollector->collected[1]->locale)->toBe('en')
+        ->and($eventCollector->collected[1]->occurredAt)->toBeInstanceOf(DateTimeImmutable::class);
 });
 
 it('does nothing when broker returns null', function (): void {

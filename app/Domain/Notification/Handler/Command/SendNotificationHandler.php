@@ -19,6 +19,8 @@ use App\Domain\Notification\Contract\ValueObject\NotificationId;
 use App\Domain\Notification\Enum\NotificationLevel;
 use App\Domain\Notification\ValueObject\NotificationLink;
 use App\Domain\Notification\ValueObject\NotificationType;
+use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\ValueObject\UserId;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<SendNotificationCommand> */
@@ -28,6 +30,7 @@ final readonly class SendNotificationHandler implements CommandHandler
         private NotificationRepository $notificationRepository,
         private NotificationPreferenceRepository $notificationPreferenceRepository,
         private NotificationChannelSenderRegistry $notificationChannelSenderRegistry,
+        private UserRepository $userRepository,
         private IdGenerator $idGenerator,
         private EventCollector $eventCollector,
     ) {}
@@ -51,6 +54,12 @@ final readonly class SendNotificationHandler implements CommandHandler
         NotificationLevel $notificationLevel,
         ?NotificationLink $notificationLink,
     ): void {
+        $user = $this->userRepository->findById(new UserId($recipientId));
+
+        if (! $user instanceof \App\Domain\User\Contract\Entity\User) {
+            return;
+        }
+
         $channels = $this->resolveChannels($recipientId, $notificationLevel);
 
         foreach ($channels as $channel) {
@@ -59,6 +68,7 @@ final readonly class SendNotificationHandler implements CommandHandler
             } else {
                 $this->notificationChannelSenderRegistry->senderFor($channel->value)->send(
                     $recipientId,
+                    $user->email->value,
                     $notificationType->value,
                     $title,
                     $body,

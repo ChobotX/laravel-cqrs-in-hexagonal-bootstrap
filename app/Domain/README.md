@@ -26,13 +26,16 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 - **No static calls** in `App\Domain` except `parent::` (`NoStaticCallsInDomainRule`)
 - **Only `App\Contract\Exception\DomainException` implementors** can be thrown — the interface requires a `userMessage(Translator): string` method and a `statusCode(): int` method (`OnlyDomainExceptionsInDomainRule`)
 - **No Laravel helpers** in `App\Domain` — `__()`, `app()`, `config()`, etc. are blocked; use Contract interfaces instead (`NoLaravelHelpersInDomainRule`)
-- **No cross-domain dependencies** — `App\Domain\{ContextA}` must not depend on `App\Domain\{ContextB}`, except `EventHandler` classes may import `DomainEvent` classes from other domains (`NoCrossDomainDependenciesRule`)
+- **No cross-domain dependencies** — `App\Domain\{ContextA}` must not depend on `App\Domain\{ContextB}` except via `Domain\{ContextB}\Contract\*` (`DomainCrossDomainImportsRule`, `DomainCrossDomainGroupUseImportsRule`)
 - **No loose files in module roots** — every PHP class in `Domain/{Module}/` must live in a typed subdirectory (`Handler/`, `ValueObject/`, `Enum/`, `Service/`, `Policy/`, `Constant/`, `Exception/`, `EventHandler/`, `Middleware/`, `Schema/`), not at the module root (`NoLooseFilesInDomainModuleRule`)
 - **No loose files in Contract roots** — every PHP class in `Domain/{Module}/Contract/` must live in a typed subdirectory (`Entity/`, `ValueObject/`, `Repository/`, `Service/`, `Enum/`, `Command/`, `Query/`, `Event/`, `Exception/`), not at the Contract root (`NoLooseFilesInContractRule`)
 - **Contract subdirectory types enforced** — `Repository/` and `Service/` must contain interfaces, `Enum/` must contain enums, `Command/`/`Query/`/`Event/`/`Exception/` must implement their respective Contract interfaces (`ContractSubdirectoryTypeEnforcementRule`)
 - **Domain subdirectory types enforced** — `Enum/` must contain enums, `Handler/Command/` must implement `CommandHandler`, `Handler/Query/` must implement `QueryHandler`, `EventHandler/` must implement `DomainEventHandler`, `Middleware/` must implement `Middleware`, `Exception/` must implement `DomainException`. `Registry/Schema/` is exempt (`DomainSubdirectoryTypeEnforcementRule`)
 - **All handlers in Domain** — `CommandHandler`, `QueryHandler`, and `DomainEventHandler` implementations must live in `App\Domain\`; if a handler needs infrastructure, use a `Contract` interface (`HandlersInDomainRule`)
 - **Every command handler must collect domain events** — `CommandHandler` implementations must inject `EventCollector` and fire at least one event. Handlers that legitimately produce no events (infrastructure provisioning, data initialization) must declare `#[SkipDomainEvent(reason: '...')]` from `App\Application\Bus\SkipDomainEvent` (`CommandHandlerMustCollectEventsRule`)
+- **Infrastructure must not collect domain events** — `EventCollector::collect()` is forbidden under `App\Infrastructure\` except inside `InMemoryEventCollector` (`NoInfrastructureEventCollectorCollectRule`)
+- **Infrastructure must not inject the application buses** — `CommandBus` and `QueryBus` are forbidden on `App\Infrastructure\` classes except `App\Infrastructure\Bus\*` and `App\Infrastructure\Provider\*` (`NoApplicationBusInInfrastructureRule`)
+- **Infrastructure cross-domain imports** — For Infrastructure classes outside the excluded wiring namespaces (bus, provider, persistence, logging, and related glue), any `use` of `App\Domain\{Other}\…` must resolve under `App\Domain\{Other}\Contract\…` whenever `{Other}` is not the adapter’s inferred home module (`InfrastructureCrossDomainImportsRule`, `InfrastructureCrossDomainGroupUseImportsRule`).
 - **Update events must implement EntityUpdated** — every event class in `Contract/Event/` with a name ending in "Updated" must implement `App\Application\Event\EntityUpdated`. Update events carry a `list<PropertyChange>` with only the changed fields (old/new values). Handlers must not fire update events when nothing changes — compare old vs new state and skip the event if `$changes === []`. (`UpdatedEventMustImplementEntityUpdatedRule`)
 - **No `assert()` calls** in `App\` namespace — use proper exceptions (`NoAssertInAppRule`)
 - **No `mixed` native type** in `App\Domain` — parameters, return types, and properties must use specific types (`NoMixedInDomainRule`)
@@ -200,7 +203,7 @@ Internal types (handlers, exceptions, domain-internal value objects, enums, serv
 
 ## Cross-domain communication
 
-Bounded contexts must not depend on each other directly. Enforced by `NoCrossDomainDependenciesRule` PHPStan rule. Any domain may import `Domain\{Other}\Contract\*` — this is the intended cross-domain boundary. Direct imports of `Domain\{Other}\*` (non-Contract) are blocked.
+Bounded contexts must not depend on each other directly. Enforced by `DomainCrossDomainImportsRule` and `DomainCrossDomainGroupUseImportsRule`. Any domain may import `Domain\{Other}\Contract\*` — this is the intended cross-domain boundary. Direct imports of `Domain\{Other}\*` (non-Contract) are blocked.
 
 ### Adding a domain event
 

@@ -6,7 +6,7 @@ Centralized file management with database tracking, namespace-based organization
 
 Every file in the system has a database record. Files are organized by namespace (a slug like `user-avatars`, `documents`). The namespace maps to a directory on disk. Files are versioned: uploading a file with the same name in the same namespace creates a new version rather than overwriting. Storage paths use UUIDs to prevent collisions.
 
-Direct filesystem access (`Storage::`, `fopen`, `file_get_contents`, etc.) is banned outside `Infrastructure\Filesystem\` by PHPStan rules. All file operations go through the `FileStorage` contract. A dedicated `files` disk in `config/filesystems.php` is used -- swap to S3 by setting `FILES_DISK_DRIVER=s3` and configuring S3 credentials.
+Direct filesystem access (`Storage::`, `fopen`, `file_get_contents`, etc.) is banned outside `Infrastructure\File\` by PHPStan rules. All file operations go through the `FileStorage` contract. A dedicated `files` disk in `config/filesystems.php` is used -- swap to S3 by setting `FILES_DISK_DRIVER=s3` and configuring S3 credentials.
 
 ### Schema
 
@@ -52,10 +52,10 @@ Domain-level file input abstraction wrapping `\SplFileInfo` with metadata (`File
 ## Contracts
 
 - `FileRepository` — CRUD + version queries for file database records
-- `FileStorage` — store/retrieve/delete/exists/url for actual file bytes. Infrastructure implements with Laravel's `Filesystem`. **Only usable within `Domain\File` and `Infrastructure\Filesystem`** — other domains must use commands/queries through the bus.
+- `FileStorage` — store/retrieve/delete/exists/url for actual file bytes. Infrastructure implements with Laravel's `Filesystem`. **Only usable within `Domain\File` and `Infrastructure\File`** — other domains must use commands/queries through the bus.
 
 ## PHPStan Enforcement
 
-- `NoDirectFilesystemAccessRule` — bans `Storage::` facade, `storage_path()`, and PHP file functions (`fopen`, `file_get_contents`, `unlink`, etc.) outside `Infrastructure\Filesystem\`
-- `NoDirectFilesystemImportRule` — bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\Filesystem\`
-- `FileStorageOnlyInFileDomainRule` — bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\Filesystem` — forces all file operations through the CQRS bus
+- `NoDirectFilesystemAccessRule` — bans `Storage::` facade, `storage_path()`, and PHP file functions (`fopen`, `file_get_contents`, `unlink`, etc.) outside `Infrastructure\File\`
+- `NoDirectFilesystemImportRule` — bans `Illuminate\Filesystem\*` and `Illuminate\Contracts\Filesystem\*` imports outside `Infrastructure\File\`
+- `FileStorageOnlyInFileDomainRule` — bans `FileStorage` contract usage outside `Domain\File` and `Infrastructure\File` — forces all file operations through the CQRS bus

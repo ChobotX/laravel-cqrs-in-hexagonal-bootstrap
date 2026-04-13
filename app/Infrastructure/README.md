@@ -2,6 +2,14 @@
 
 Concrete implementations of contracts and framework integrations. All classes must be `final`.
 
+## Thin adapters vs Domain orchestration
+
+Infrastructure classes implement **ports** such as repositories, mailers, cache decorators, and framework bridges. They must not call `EventCollector::collect()`, must not type-hint `EventCollector` on properties or method return types (the collector is a domain-side concern), must not take `CommandBus` or `QueryBus` as dependencies (except under `Infrastructure\Bus\*` and `Infrastructure\Provider\*`, where the buses are implemented or wired), must not resolve buses via `app()` / `App::make()`, and must not implement multi-step workflows that span bounded contexts.
+
+Outside those wiring and persistence namespaces, a `use` statement that pulls in another module’s code must import only from that module’s `Contract\` tree (`App\Domain\{X}\Contract\…`). Adapters that belong to the same domain module may still import internal types from that module, such as value objects, exceptions, or schema types.
+
+Orchestration, raising domain events, and policy decisions stay in `App\Domain\`, typically in command handlers and in small domain services that are registered against `Contract` interfaces. PHPStan enforces this boundary with `NoInfrastructureEventCollectorCollectRule`, `NoInfrastructureEventCollectorInjectionRule`, `NoApplicationBusInInfrastructureRule`, `NoApplicationBusFromAppHelperInInfrastructureRule`, `InfrastructureCrossDomainImportsRule`, and `InfrastructureCrossDomainGroupUseImportsRule`. For the architectural rationale, see [ADR.md](../../ADR.md) (section on thin Infrastructure adapters).
+
 ## BusServiceProvider registration
 
 All command, query, and event handler mappings are registered in `app/Infrastructure/Provider/BusServiceProvider.php`. All handler implementations live in `App\Domain\` — Infrastructure only provides the wiring. Enforced by PHPStan rule `HandlersInDomainRule`.
@@ -64,11 +72,11 @@ The `FiltersQuery` trait (`app/Infrastructure/Eloquent/FiltersQuery.php`) provid
 
 ## File Storage
 
-`App\Infrastructure\Filesystem\LaravelFileStorage` implements `App\Domain\File\Contract\FileStorage`, wrapping Laravel's `Illuminate\Contracts\Filesystem\Filesystem`. This is the only place in the application that touches the filesystem directly — all other code must inject the `FileStorage` interface. Storage paths use `{namespace}/{uuid}.{extension}` format. Files are streamed via `SplFileInfo::getPathname()` to avoid loading full contents into memory.
+`App\Infrastructure\File\LaravelFileStorage` implements `App\Domain\File\Contract\FileStorage`, wrapping Laravel's `Illuminate\Contracts\Filesystem\Filesystem`. This is the only place in the application that touches the filesystem directly — all other code must inject the `FileStorage` interface. Storage paths use `{namespace}/{uuid}.{extension}` format. Files are streamed via `SplFileInfo::getPathname()` to avoid loading full contents into memory.
 
 A dedicated `files` disk is configured in `config/filesystems.php`. Swapping storage backends (local ↔ S3) requires only changing `FILES_DISK_DRIVER` in `.env` — no code changes. The disk is resolved via `FilesystemFactory::disk('files')` in `RepositoryServiceProvider`.
 
-Enforced by PHPStan rules `NoDirectFilesystemAccessRule` (bans facade calls and PHP file functions) and `NoDirectFilesystemImportRule` (bans framework filesystem imports) outside `Infrastructure\Filesystem\`.
+Enforced by PHPStan rules `NoDirectFilesystemAccessRule` (bans facade calls and PHP file functions) and `NoDirectFilesystemImportRule` (bans framework filesystem imports) outside `Infrastructure\File\`.
 
 ## Tenant Schema Management
 

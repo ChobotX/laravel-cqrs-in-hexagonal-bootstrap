@@ -12,11 +12,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-/** @use HasFactory<UserModelFactory> */
 final class UserModel extends Authenticatable
 {
     use HasApiTokens;
+
+    /** @use HasFactory<UserModelFactory> */
     use HasFactory;
+
     use HasOptimisticLocking;
     use HasUuids;
     use SoftDeletes;

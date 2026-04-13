@@ -12,6 +12,7 @@ interface NotificationChannelSender
     /** Executes the side effect synchronously. */
     public function send(
         string $recipientId,
+        string $recipientEmail,
         string $type,
         string $title,
         string $body,

@@ -44,6 +44,12 @@ interface TeamMemberRepository
     /** @return list<string> User IDs visible to this user (members of their teams + descendants, always includes self) */
     public function visibleUserIds(string $userId): array;
 
+    /** @return list<string> User IDs with direct membership in the given team */
+    public function memberUserIdsForTeam(string $teamId): array;
+
+    /** @return list<string> User IDs in the team or any descendant team (distinct) */
+    public function memberUserIdsForTeamSubtree(string $teamId): array;
+
     /** Deletes or soft-deletes the targeted record. */
     public function removeAllByUser(string $userId): void;
 }

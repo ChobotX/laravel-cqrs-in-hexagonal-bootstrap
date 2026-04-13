@@ -1,0 +1,118 @@
+<mxfile host="app.diagrams.net" version="22.1.0">
+  <diagram id="registry-schema-entry" name="Registry — data model">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="d-def" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="definitions (tenant)" vertex="1">
+          <mxGeometry x="40" y="40" width="200" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="d-def-1" parent="d-def" style="text;align=left;spacingLeft=4;" value="+ id: uuid PK" vertex="1">
+          <mxGeometry y="26" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-def-2" parent="d-def" style="text;align=left;spacingLeft=4;" value="+ namespace, slug, name" vertex="1">
+          <mxGeometry y="52" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-def-3" parent="d-def" style="text;align=left;spacingLeft=4;fontStyle=2" value="UNIQUE (namespace, slug)" vertex="1">
+          <mxGeometry y="78" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-def-4" parent="d-def" style="text;align=left;spacingLeft=4;" value="+ lock_version, timestamps" vertex="1">
+          <mxGeometry y="104" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d-ver" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#fff2cc;strokeColor=#d6b656;" value="definition_versions (tenant)" vertex="1">
+          <mxGeometry x="320" y="40" width="240" height="156" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ver-1" parent="d-ver" style="text;align=left;spacingLeft=4;" value="+ id: uuid PK" vertex="1">
+          <mxGeometry y="26" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ver-2" parent="d-ver" style="text;align=left;spacingLeft=4;" value="+ definition_id → definitions" vertex="1">
+          <mxGeometry y="52" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ver-3" parent="d-ver" style="text;align=left;spacingLeft=4;" value="+ version: int" vertex="1">
+          <mxGeometry y="78" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ver-4" parent="d-ver" style="text;align=left;spacingLeft=4;" value="+ body: jsonb (Schema → JSON)" vertex="1">
+          <mxGeometry y="104" width="240" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ver-5" parent="d-ver" style="text;align=left;spacingLeft=4;" value="+ status (draft | active | deprecated)" vertex="1">
+          <mxGeometry y="130" width="240" height="26" as="geometry" />
+        </mxCell>
+
+        <mxCell id="d-ent" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#d5e8d4;strokeColor=#82b366;" value="entries (tenant)" vertex="1">
+          <mxGeometry x="640" y="40" width="260" height="182" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ent-1" parent="d-ent" style="text;align=left;spacingLeft=4;" value="+ id: uuid PK" vertex="1">
+          <mxGeometry y="26" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ent-2" parent="d-ent" style="text;align=left;spacingLeft=4;" value="+ definition_id → definitions" vertex="1">
+          <mxGeometry y="52" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ent-3" parent="d-ent" style="text;align=left;spacingLeft=4;" value="+ definition_version: int (snapshot)" vertex="1">
+          <mxGeometry y="78" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ent-4" parent="d-ent" style="text;align=left;spacingLeft=4;" value="+ namespace, title" vertex="1">
+          <mxGeometry y="104" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ent-5" parent="d-ent" style="text;align=left;spacingLeft=4;" value="+ data: jsonb (validated payload)" vertex="1">
+          <mxGeometry y="130" width="260" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-ent-6" parent="d-ent" style="text;align=left;spacingLeft=4;" value="+ created_by_user_id → users" vertex="1">
+          <mxGeometry y="156" width="260" height="26" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e1" edge="1" parent="1" source="d-ver" target="d-def" style="endArrow=ERmany;startArrow=ERone;html=1;exitX=0;exitY=0.35;entryX=1;entryY=0.35;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e1l" connectable="0" parent="e1" style="edgeLabel;html=1;" value="1" vertex="1">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e1r" connectable="0" parent="e1" style="edgeLabel;html=1;" value="0..n" vertex="1">
+          <mxGeometry x="0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="e2" edge="1" parent="1" source="d-ent" target="d-def" style="endArrow=ERmany;startArrow=ERone;html=1;exitX=0;exitY=0.25;entryX=1;entryY=0.65;">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="600" y="73" /><mxPoint x="600" y="125" /></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="e2l" connectable="0" parent="e2" style="edgeLabel;html=1;" value="1" vertex="1">
+          <mxGeometry x="-0.15" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e2r" connectable="0" parent="e2" style="edgeLabel;html=1;" value="0..n" vertex="1">
+          <mxGeometry x="0.15" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="d-usr" parent="1" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#f8cecc;strokeColor=#b85450;" value="users (tenant)" vertex="1">
+          <mxGeometry x="640" y="280" width="200" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="d-usr-1" parent="d-usr" style="text;align=left;spacingLeft=4;" value="+ id: uuid PK" vertex="1">
+          <mxGeometry y="26" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-usr-2" parent="d-usr" style="text;align=left;spacingLeft=4;fontStyle=2" value="(subset; full user cols elsewhere)" vertex="1">
+          <mxGeometry y="52" width="200" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="d-usr-3" parent="d-usr" style="text;align=left;spacingLeft=4;" value="entries.created_by_user_id FK" vertex="1">
+          <mxGeometry y="78" width="200" height="26" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e3" edge="1" parent="1" source="d-ent" target="d-usr" style="endArrow=ERmany;startArrow=ERone;html=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3l" connectable="0" parent="e3" style="edgeLabel;html=1;" value="0..n" vertex="1">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+        <mxCell id="e3r" connectable="0" parent="e3" style="edgeLabel;html=1;" value="1" vertex="1">
+          <mxGeometry x="0.2" relative="1" as="geometry"><mxPoint as="offset" /></mxGeometry>
+        </mxCell>
+
+        <mxCell id="note" parent="1" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#fff9e6;align=left;verticalAlign=top;spacingLeft=8;spacingTop=4;" value="&lt;b&gt;Note&lt;/b&gt;: &lt;i&gt;entries.definition_version&lt;/i&gt; is an int &lt;b&gt;snapshot&lt;/b&gt; at insert time — no FK to &lt;i&gt;definition_versions&lt;/i&gt;." vertex="1">
+          <mxGeometry x="40" y="260" width="520" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="note2" parent="1" style="text;html=1;strokeColor=none;fillColor=none;align=left;" value="Tenant DB — users: tenant/000000; registry: tenant/001500–001502" vertex="1">
+          <mxGeometry x="40" y="10" width="560" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

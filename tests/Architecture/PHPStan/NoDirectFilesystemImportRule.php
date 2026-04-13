@@ -29,7 +29,7 @@ final class NoDirectFilesystemImportRule implements Rule
         $file = $scope->getFile();
 
         if (! str_contains($file, '/app/')
-            || str_contains($file, '/Infrastructure/Filesystem/')
+            || str_contains($file, '/Infrastructure/File/')
             || str_contains($file, '/Infrastructure/Provider/')) {
             return [];
         }
@@ -43,7 +43,7 @@ final class NoDirectFilesystemImportRule implements Rule
 
         return [
             RuleErrorBuilder::message(sprintf(
-                'Direct use of %s is not allowed outside Infrastructure\Filesystem. Inject App\Domain\File\Contract\Service\FileStorage instead.',
+                'Direct use of %s is not allowed outside Infrastructure\File. Inject App\Domain\File\Contract\Service\FileStorage instead.',
                 $name,
             ))
                 ->identifier('app.noDirectFilesystemImport')

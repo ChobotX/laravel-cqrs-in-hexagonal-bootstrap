@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Notification\Contract\Service\RecipientResolver;
 use App\Infrastructure\Eloquent\Team\TeamMemberModel;
 use App\Infrastructure\Eloquent\Team\TeamModel;
 use App\Infrastructure\Eloquent\User\UserModel;
-use App\Infrastructure\Notification\EloquentRecipientResolver;
 use Illuminate\Support\Facades\Hash;
 
 function createResolverUsers(): void
@@ -22,9 +22,9 @@ it('resolves team members', function (): void {
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-00000000c001', 'user_id' => '550e8400-e29b-41d4-a716-44665544c001', 'joined_at' => now()]);
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-00000000c001', 'user_id' => '550e8400-e29b-41d4-a716-44665544c002', 'joined_at' => now()]);
 
-    $resolver = new EloquentRecipientResolver;
+    $recipientResolver = app(RecipientResolver::class);
 
-    $members = $resolver->resolveTeamMembers('00000000-0000-0000-0000-00000000c001');
+    $members = $recipientResolver->resolveTeamMembers('00000000-0000-0000-0000-00000000c001');
 
     expect($members)->toHaveCount(2)
         ->and($members)->toContain('550e8400-e29b-41d4-a716-44665544c001')
@@ -34,9 +34,9 @@ it('resolves team members', function (): void {
 it('returns empty list for team with no members', function (): void {
     TeamModel::create(['id' => '00000000-0000-0000-0000-00000000c002', 'name' => 'Empty Team', 'slug' => 'empty-team-resolver', 'description' => '']);
 
-    $resolver = new EloquentRecipientResolver;
+    $recipientResolver = app(RecipientResolver::class);
 
-    expect($resolver->resolveTeamMembers('00000000-0000-0000-0000-00000000c002'))->toBe([]);
+    expect($recipientResolver->resolveTeamMembers('00000000-0000-0000-0000-00000000c002'))->toBe([]);
 });
 
 it('resolves team with subteam members recursively', function (): void {
@@ -48,9 +48,9 @@ it('resolves team with subteam members recursively', function (): void {
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-00000000c010', 'user_id' => '550e8400-e29b-41d4-a716-44665544c001', 'joined_at' => now()]);
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-00000000c011', 'user_id' => '550e8400-e29b-41d4-a716-44665544c002', 'joined_at' => now()]);
 
-    $resolver = new EloquentRecipientResolver;
+    $recipientResolver = app(RecipientResolver::class);
 
-    $members = $resolver->resolveTeamWithSubteamMembers('00000000-0000-0000-0000-00000000c010');
+    $members = $recipientResolver->resolveTeamWithSubteamMembers('00000000-0000-0000-0000-00000000c010');
 
     expect($members)->toHaveCount(2)
         ->and($members)->toContain('550e8400-e29b-41d4-a716-44665544c001')
@@ -66,9 +66,9 @@ it('deduplicates users in multiple subteams', function (): void {
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-00000000c020', 'user_id' => '550e8400-e29b-41d4-a716-44665544c001', 'joined_at' => now()]);
     TeamMemberModel::create(['team_id' => '00000000-0000-0000-0000-00000000c021', 'user_id' => '550e8400-e29b-41d4-a716-44665544c001', 'joined_at' => now()]);
 
-    $resolver = new EloquentRecipientResolver;
+    $recipientResolver = app(RecipientResolver::class);
 
-    $members = $resolver->resolveTeamWithSubteamMembers('00000000-0000-0000-0000-00000000c020');
+    $members = $recipientResolver->resolveTeamWithSubteamMembers('00000000-0000-0000-0000-00000000c020');
 
     expect($members)->toHaveCount(1)
         ->and($members[0])->toBe('550e8400-e29b-41d4-a716-44665544c001');

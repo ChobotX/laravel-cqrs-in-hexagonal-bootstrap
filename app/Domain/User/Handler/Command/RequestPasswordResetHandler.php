@@ -43,12 +43,12 @@ final readonly class RequestPasswordResetHandler implements CommandHandler
 
         $locale = $this->translator->locale();
 
-        $this->templatedEmailDispatcher->dispatch(
+        $this->eventCollector->collect($this->templatedEmailDispatcher->dispatch(
             $user->id->value,
             'password_reset',
             $locale,
             ['link' => $resetLink],
-        );
+        ));
 
         $this->eventCollector->collect(new PasswordResetRequested(
             userId: $user->id->value,

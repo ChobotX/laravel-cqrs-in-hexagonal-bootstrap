@@ -51,8 +51,8 @@ The `NotificationBroadcaster` contract abstracts real-time delivery. The infrast
 
 ## Channel System
 
-The `SendNotificationHandler` resolves channels per recipient based on their preferences (defaults: info/success→in_app only, warning/error→in_app+email). In-app notifications are persisted directly by the handler. External channels (email, future push) use the `NotificationChannelSender` contract, resolved via `NotificationChannelSenderRegistry`.
+The `SendNotificationHandler` resolves channels per recipient based on their preferences (defaults: info/success→in_app only, warning/error→in_app+email). In-app notifications are persisted directly by the handler. External channels (email, future push) use the `NotificationChannelSender` contract, resolved via `NotificationChannelSenderRegistry`. For email delivery, the handler loads each recipient’s email via `UserRepository` (missing users raise `UserNotFoundException`). The infrastructure email sender throws `NotificationEmailTemplateNotFoundException` when the `notification` email template is missing for the active and fallback locales — this is a configuration failure, not a silent skip.
 
 ## Recipient Resolution
 
-For team/subteam targeting, the `RecipientResolver` contract resolves team hierarchies to user ID lists. The `EloquentRecipientResolver` uses a recursive CTE query. The domain handler receives pre-resolved `list<string>` of recipient IDs — no cross-domain coupling.
+For team/subteam targeting, the `RecipientResolver` contract resolves team hierarchies to user ID lists. The default implementation is `DefaultRecipientResolver` in `Domain\Notification\Service`, which delegates to `TeamMemberRepository` (recursive CTE and direct membership queries live in `Infrastructure\Eloquent\Team\EloquentTeamMemberRepository`). The domain handler receives pre-resolved `list<string>` of recipient IDs.

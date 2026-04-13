@@ -6,9 +6,9 @@ use App\Domain\Authorization\Contract\Command\RevokeRoleFromUserCommand;
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Event\RoleRevokedFromUser;
 use App\Domain\Authorization\Contract\ValueObject\RoleId;
+use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Authorization\Exception\RoleNotAssignedException;
 use App\Domain\Authorization\Handler\Command\RevokeRoleFromUserHandler;
-use App\Domain\Authorization\ValueObject\RoleName;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeUserPermissionRepository;
 

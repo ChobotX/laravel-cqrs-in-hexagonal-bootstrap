@@ -28,7 +28,11 @@ services:
         tags:
             - phpstan.rules.rule
     -
-        class: Tests\Architecture\PHPStan\NoCrossDomainDependenciesRule
+        class: Tests\Architecture\PHPStan\DomainCrossDomainImportsRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\DomainCrossDomainGroupUseImportsRule
         tags:
             - phpstan.rules.rule
     -
@@ -191,11 +195,40 @@ services:
         class: Tests\Architecture\PHPStan\NoDomainSpecificContractsInGlobalContractRule
         tags:
             - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoInfrastructureEventCollectorCollectRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoInfrastructureEventCollectorInjectionRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoApplicationBusInInfrastructureRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\NoApplicationBusFromAppHelperInInfrastructureRule
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\InfrastructureCrossDomainImportsRule
+        factory: ['Tests\Architecture\PHPStan\InfrastructureCrossDomainImportsRule', 'createWithDefaultBoundary']
+        tags:
+            - phpstan.rules.rule
+    -
+        class: Tests\Architecture\PHPStan\InfrastructureCrossDomainGroupUseImportsRule
+        factory: ['Tests\Architecture\PHPStan\InfrastructureCrossDomainGroupUseImportsRule', 'createWithDefaultBoundary']
+        tags:
+            - phpstan.rules.rule
 
 parameters:
     paths:
         - app/
         - tests/
+    excludePaths:
+        # Intentional violations for PHPStan RuleTestCase; analysed only via tests.
+        - tests/Architecture/PHPStan/Fixtures
     level: max
     tmpDir: storage/phpstan
     checkBenevolentUnionTypes: true
@@ -206,6 +239,9 @@ parameters:
         class: 30
         function: 7
     ignoreErrors:
+        # Remaining ignores are path-scoped and identifier-specific (Pest internals, Feature HTTP
+        # tests, Eloquent __call, bus handler registries). Prefer real fixes; do not replace with
+        # looser types, global strict-rule toggles, or `@phpstan-ignore` in application code.
         # Pest marks its public API (expect(), throws(), toBe(), etc.) as @internal.
         -
             identifier: method.internalClass
@@ -221,8 +257,6 @@ parameters:
                 - app/Infrastructure/Bus/LaravelQueryBus.php
                 - app/Infrastructure/Bus/QueuedEventBus.php
                 - app/Infrastructure/Bus/Job/HandleDomainEventJob.php
-                - tests/Unit/Infrastructure/Bus/LaravelQueryBusTest.php
-                - app/Infrastructure/Eloquent/
         # Eloquent builder returns dynamic proxy objects; strict-rules flags
         # methods like ->whereNull() and ->delete() as static-method-called-dynamically.
         -
@@ -243,19 +277,6 @@ parameters:
                 - argument.type
             paths:
                 - tests/Feature/
-        # Test doubles implementing framework interfaces inherit unresolvable types.
-        -
-            identifiers:
-                - missingType.iterableValue
-                - return.type
-            paths:
-                - tests/Unit/Infrastructure/Authorization/RequestAuthenticatedUserTest.php
-                - tests/Helper/FakeArtisanKernel.php
-        -
-            identifier: missingType.iterableValue
-            paths:
-                - tests/Helper/FakeEventsDispatcher.php
-                - tests/Helper/FakeMailer.php
         # Pest loads traits at runtime via uses(), invisible to PHPStan's static analysis.
         -
             identifier: trait.unused
