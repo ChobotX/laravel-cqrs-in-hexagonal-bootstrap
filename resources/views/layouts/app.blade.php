@@ -39,22 +39,30 @@
              data-sidebar-backdrop></div>
         <aside class="fixed inset-y-0 left-0 flex w-64 flex-col bg-gray-950 text-white">
             <div class="flex items-center justify-between border-b border-white/10 px-5 py-4">
-                <div class="flex items-center gap-2.5">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
-                        <svg class="h-5 w-5 text-white"
-                             aria-hidden="true"
-                             xmlns="http://www.w3.org/2000/svg"
-                             fill="none"
-                             viewBox="0 0 24 24"
-                             stroke-width="1.5"
-                             stroke="currentColor">
-                            <path stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                  d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
-                        </svg>
-                    </div>
-                    <span class="text-base font-semibold">Bootstrap</span>
-                </div>
+                <a class="flex min-w-0 items-center gap-2.5 hover:bg-white/5"
+                   href="{{ route('dashboard') }}"
+                   title="{{ __('messages.nav.dashboard') }}">
+                    @if (isset($tenantLogoUrl) && $tenantLogoUrl)
+                        <img class="h-8 w-8 rounded-lg object-cover"
+                             src="{{ $tenantLogoUrl }}"
+                             alt="{{ $tenantName ?? '' }}">
+                    @else
+                        <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600">
+                            <svg class="h-5 w-5 text-white"
+                                 aria-hidden="true"
+                                 xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke-width="1.5"
+                                 stroke="currentColor">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                            </svg>
+                        </div>
+                    @endif
+                    <span class="truncate text-base font-semibold">{{ $tenantName ?? 'Bootstrap' }}</span>
+                </a>
                 <x-control-button class="text-gray-400 hover:text-white"
                                   data-sidebar-close
                                   :label="__('messages.a11y.close_menu')">
@@ -84,6 +92,7 @@
         <main class="flex-1 p-6"
               id="main-content">
             @include('components.flash')
+            @include('components.password-rotation-banner')
             @yield('content')
         </main>
     </div>

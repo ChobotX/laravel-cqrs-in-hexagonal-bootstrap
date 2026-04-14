@@ -26,15 +26,6 @@ final readonly class TenantMigrator
         ]);
     }
 
-    public function migrateAll(): void
-    {
-        $tenants = TenantModel::all();
-
-        foreach ($tenants as $tenant) {
-            $this->setupTenant($tenant);
-        }
-    }
-
     public function resetPersistenceScope(): void
     {
         $this->tenantSchemaManager->reset();

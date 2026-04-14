@@ -27,8 +27,8 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         }
 
         return new TenantSettings(
-            name: $tenant->name,
-            logoUrl: $this->resolveLogoUrl($tenant->logo_path),
+            name: TenantPreferenceModel::readDisplayName(),
+            logoUrl: $this->resolveLogoUrl(TenantPreferenceModel::readLogoPath()),
             displayTimezone: TenantPreferenceModel::readDisplayTimezone(),
         );
     }
@@ -40,32 +40,37 @@ final readonly class EloquentTenantSettingsRepository implements TenantSettingsR
         bool $removeLogo,
         ?string $displayTimezone,
     ): void {
-        $tenant = TenantModel::findOrFail($tenantId);
+        TenantModel::findOrFail($tenantId);
 
-        if ($removeLogo && $tenant->logo_path !== null) {
-            $this->tenantLogoStorage->delete($tenant->logo_path);
-            $tenant->logo_path = null;
+        $currentLogoPath = TenantPreferenceModel::readLogoPath();
+
+        $newLogoPath = $currentLogoPath;
+
+        if ($removeLogo && $currentLogoPath !== null) {
+            $this->tenantLogoStorage->delete($currentLogoPath);
+            $newLogoPath = null;
         }
 
         if ($logo instanceof SplFileInfo) {
-            if ($tenant->logo_path !== null) {
-                $this->tenantLogoStorage->delete($tenant->logo_path);
+            if ($currentLogoPath !== null) {
+                $this->tenantLogoStorage->delete($currentLogoPath);
             }
 
             $extension = $logo instanceof UploadedFile
                 ? $logo->getClientOriginalExtension()
                 : $logo->getExtension();
-            $tenant->logo_path = $this->tenantLogoStorage->store(
+            $newLogoPath = $this->tenantLogoStorage->store(
                 $tenantId,
                 $logo->getPathname(),
                 $extension,
             );
         }
 
-        $tenant->name = $name;
-        $tenant->save();
-
-        TenantPreferenceModel::writeDisplayTimezone($displayTimezone);
+        TenantPreferenceModel::writePreferences([
+            'display_name' => $name,
+            'logo_path' => $newLogoPath,
+            'display_timezone' => $displayTimezone,
+        ]);
     }
 
     private function resolveLogoUrl(?string $logoPath): ?string

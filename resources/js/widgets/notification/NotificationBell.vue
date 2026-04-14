@@ -113,7 +113,7 @@ onUnmounted(() => {
 <template>
     <div ref="bellRef" class="relative" data-testid="notification-bell">
         <button
-            class="relative rounded-lg p-1.5 text-gray-500 transition-colors hover:text-gray-700"
+            class="relative cursor-pointer rounded-lg p-1.5 text-gray-500 transition-colors hover:text-gray-700"
             type="button"
             :data-tooltip="trans('messages.notifications.title')"
             :aria-label="trans('messages.notifications.title')"

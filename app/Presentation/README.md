@@ -205,6 +205,8 @@ Two middleware handle tenant resolution, applied globally to `web` and `api` sta
 - **`ResolveTenantMiddleware`** (prepended) — extracts subdomain from `Host` header, calls `TenantBootstrapper::bootstrapByDomain()` to resolve tenant and switch schema. Root domain requests (no subdomain) pass through without resolving.
 - **`EnsureTenantResolved`** (prepended, after resolve) — returns 404 if no tenant was resolved. Fail-safe: all routes require a tenant unless explicitly excluded.
 
+- **`EnforcePasswordRotation`** (web stack, after `SetAuthContextMiddleware`, before `CheckPermission`) — reads password expiry status for the authenticated user and redirects to `profile` when expired, except for profile update, logout, `locale.update`, guest password-reset routes, and **`settings.password-rotation` / `settings.password-rotation.update`** (so a tenant admin can adjust or disable the policy while their own password is expired). Successful login may flash `password_rotation` (`warning` / `expired` string values); `resources/views/components/password-rotation-banner.blade.php` compares those literals so Blade stays Presentation-only.
+
 Root domain routes (`routes/root.php`) opt out via `Route::withoutMiddleware(EnsureTenantResolved::class)`.
 
 Both middleware depend only on Contract interfaces (`TenantBootstrapper`, `TenantContext`) — no Infrastructure imports.

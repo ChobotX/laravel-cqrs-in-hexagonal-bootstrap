@@ -11,16 +11,26 @@ const authFile = join(__dirname, 'tests/e2e/.auth/user.json');
 // OrbStack/Bonjour). Resolve the IP via macOS dscacheutil and pass it as a
 // host-resolver-rule so Chromium can reach the app.
 function resolveHostForChromium(url: string): string[] {
+    if (process.platform !== 'darwin') {
+        return [];
+    }
+
     const hostname = new URL(url).hostname;
+
     try {
         const out = execSync(`dscacheutil -q host -a name ${hostname}`, { encoding: 'utf-8' });
         const match = out.match(/ip_address: (.+)/);
+
         if (match) {
             const ip = match[1].trim();
             const tld = hostname.split('.').slice(1).join('.') || hostname;
+
             return [`--host-resolver-rules=MAP *.${tld} ${ip},MAP ${tld} ${ip}`];
         }
-    } catch { /* standard DNS works, no override needed */ }
+    } catch {
+        // standard DNS works, no override needed
+    }
+
     return [];
 }
 
@@ -29,7 +39,7 @@ const chromiumDevice = { ...devices['Desktop Chrome'] };
 /*
  * Execution phases (enforced via project dependencies):
  *
- *   setup → auth-tests → profile-tests → tenant-tests → teardown
+ *   setup → auth-tests → profile-tests → settings-password-rotation-tests → tenant-tests → teardown
  *
  * Why sequential phases instead of parallel:
  * - auth-tests and profile-tests share the admin user (admin@test.com),
@@ -37,6 +47,7 @@ const chromiumDevice = { ...devices['Desktop Chrome'] };
  *   execution exhausts the limit.
  * - profile-tests mutate the admin password (change + revert). Running in
  *   parallel with auth-tests causes credential mismatches.
+ * - settings-password-rotation-tests reuse the authenticated admin session.
  * - tenant-tests create/destroy schemas and run artisan commands that can
  *   affect server-side connection state.
  *
@@ -76,10 +87,16 @@ export default defineConfig({
             dependencies: ['auth-tests'],
         },
         {
+            name: 'settings-password-rotation-tests',
+            use: { ...chromiumDevice, storageState: authFile },
+            testMatch: /password-rotation-settings\.spec\.ts$/,
+            dependencies: ['profile-tests'],
+        },
+        {
             name: 'tenant-tests',
             use: { ...chromiumDevice, storageState: authFile },
             testMatch: /tenant-invite\.spec\.ts$/,
-            dependencies: ['profile-tests'],
+            dependencies: ['settings-password-rotation-tests'],
             teardown: 'teardown',
         },
         { name: 'teardown', testMatch: /.*\.teardown\.ts/ },

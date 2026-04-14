@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use App\Infrastructure\Tenancy\TenantMigrator;
 use App\Infrastructure\Tenancy\TenantSchemaManager;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 final class DatabaseSeeder extends Seeder
 {
@@ -23,6 +25,24 @@ final class DatabaseSeeder extends Seeder
         foreach ($tenants as $tenant) {
             $migrator->setupTenant($tenant);
             $schemaManager->switchTo($tenant);
+
+            /** @var array<string, mixed> $config */
+            $config = $tenant->config;
+            $displayName = is_string($config['display_name'] ?? null)
+                ? $config['display_name']
+                : Str::headline($tenant->slug);
+
+            TenantPreferenceModel::writePreferences([
+                'display_name' => $displayName,
+                'logo_path' => null,
+                'display_timezone' => null,
+            ]);
+
+            if (array_key_exists('display_name', $config)) {
+                unset($config['display_name']);
+                $tenant->config = $config;
+                $tenant->save();
+            }
 
             $this->call(TenantSeeder::class);
 

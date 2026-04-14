@@ -34,8 +34,10 @@ Planned work that is **not** yet in the codebase (implemented areas such as emai
 - Per-user API keys that respect that user’s permissions.
 - Per-tenant API keys with explicit permission grants (including root team when using team-scoped permissions).
 - No key may be created with broader permissions than the creator has.
+- Maximum API key lifetime should be configurable at tenant configuration, with default to be 1 year. Can be set to unlimited.
 
 ## Billing
 
 - Billing platform with an optional payment gateway adapter. Initial adapters: GoPay and Stripe.
 - File-driven price tiers, trial periods, user limits, and feature gating (reusing feature flags).
+

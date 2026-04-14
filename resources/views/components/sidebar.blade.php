@@ -1,5 +1,7 @@
 <aside class="hidden min-h-screen w-64 flex-col bg-gray-950 text-white lg:flex">
-    <div class="flex items-center gap-2.5 border-b border-white/10 px-5 py-4">
+    <a class="flex items-center gap-2.5 border-b border-white/10 px-5 py-4 hover:bg-white/5"
+       href="{{ route('dashboard') }}"
+       title="{{ __('messages.nav.dashboard') }}">
         @if (isset($tenantLogoUrl) && $tenantLogoUrl)
             <img class="h-8 w-8 rounded-lg object-cover"
                  src="{{ $tenantLogoUrl }}"
@@ -20,7 +22,7 @@
             </div>
         @endif
         <span class="text-base font-semibold">{{ $tenantName ?? 'Bootstrap' }}</span>
-    </div>
+    </a>
 
     @include('components.sidebar-nav', ['sidebarNavInstance' => 'desktop'])
 </aside>

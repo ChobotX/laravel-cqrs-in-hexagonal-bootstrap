@@ -8,6 +8,9 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
+use App\Domain\User\Contract\Query\GetPasswordRotationSettingsQuery;
+use App\Domain\User\Contract\ValueObject\PasswordRotationSettings;
+use App\Presentation\Http\Request\Web\Settings\ShowTenantSettingsRequest;
 use DateTimeZone;
 use Illuminate\Support\Facades\Context;
 use Illuminate\View\View;
@@ -19,7 +22,7 @@ final readonly class ShowTenantSettingsController
         private QueryBus $queryBus,
     ) {}
 
-    public function __invoke(): View
+    public function __invoke(ShowTenantSettingsRequest $showTenantSettingsRequest): View
     {
         $tenantId = Context::get('tenant_id');
 
@@ -30,10 +33,19 @@ final readonly class ShowTenantSettingsController
         $tenantSettings = $this->queryBus->dispatch(new GetTenantSettingsQuery(
             tenantId: $tenantId,
         ));
+        $passwordRotationSettings = $this->queryBus->dispatch(new GetPasswordRotationSettingsQuery);
 
         return view('settings.tenant', [
             'settings' => $tenantSettings,
             'ianaTimezones' => DateTimeZone::listIdentifiers(),
+            'activeTab' => $showTenantSettingsRequest->activeTab(),
+            'rotationEnabled' => $passwordRotationSettings->rotationEnabled,
+            'maxAgeDays' => $passwordRotationSettings->maxAgeDays,
+            'historyCount' => $passwordRotationSettings->historyCount,
+            'minPasswordAgeDays' => PasswordRotationSettings::MIN_PASSWORD_AGE_DAYS,
+            'maxPasswordAgeDays' => PasswordRotationSettings::MAX_PASSWORD_AGE_DAYS,
+            'minHistoryCount' => PasswordRotationSettings::MIN_HISTORY_COUNT,
+            'maxHistoryCount' => PasswordRotationSettings::MAX_HISTORY_COUNT,
         ]);
     }
 }

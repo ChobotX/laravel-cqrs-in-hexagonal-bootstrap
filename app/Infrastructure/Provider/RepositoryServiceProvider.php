@@ -36,6 +36,8 @@ use App\Domain\Registry\Contract\Service\JsonSchemaValidator;
 use App\Domain\Registry\Contract\Service\SchemaSerializer;
 use App\Domain\Team\Contract\Repository\TeamMemberRepository;
 use App\Domain\Team\Contract\Repository\TeamRepository;
+use App\Domain\User\Contract\Repository\PasswordHistoryRepository;
+use App\Domain\User\Contract\Repository\PasswordRotationSettingsRepository;
 use App\Domain\User\Contract\Repository\UserRepository;
 use App\Infrastructure\Eloquent\AuditLog\EloquentAuditLogRepository;
 use App\Infrastructure\Eloquent\AuditLog\EloquentAuditLogWriter;
@@ -64,6 +66,8 @@ use App\Infrastructure\Notification\EmailNotificationSender;
 use App\Infrastructure\Notification\LaravelNotificationBroadcaster;
 use App\Infrastructure\Registry\JsonSchemaSerializerImpl;
 use App\Infrastructure\Registry\OpisJsonSchemaValidator;
+use App\Infrastructure\User\EloquentPasswordHistoryRepository;
+use App\Infrastructure\User\EloquentPasswordRotationSettingsRepository;
 use App\Infrastructure\UuidIdGenerator;
 use Illuminate\Contracts\Filesystem\Factory as FilesystemFactory;
 use Illuminate\Support\ServiceProvider;
@@ -75,6 +79,8 @@ final class RepositoryServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(UserRepository::class, EloquentUserRepository::class);
+        $this->app->bind(PasswordRotationSettingsRepository::class, EloquentPasswordRotationSettingsRepository::class);
+        $this->app->bind(PasswordHistoryRepository::class, EloquentPasswordHistoryRepository::class);
         $this->app->bind(RoleRepository::class, EloquentRoleRepository::class);
         $this->app->bind(UserPermissionRepository::class, EloquentUserPermissionRepository::class);
         $this->app->bind(RecordShareRepository::class, EloquentRecordShareRepository::class);

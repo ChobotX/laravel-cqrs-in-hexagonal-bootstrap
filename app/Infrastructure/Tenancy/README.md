@@ -9,6 +9,8 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 +------------------------------+       +----------------------------------+
 | tenants                      |       | users, personal_access_tokens    |
 | tenant_domains               |       | tenant_preferences               |
+|                              |       | password_rotation_settings       |
+|                              |       | user_password_history            |
 +------------------------------+       | teams, team_members              |
                                        | roles, role_permissions          |
                                        | user_roles, user_permission_...  |
@@ -33,7 +35,9 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 
 | Class | Layer | Purpose |
 |---|---|---|
-| `TenantContext` | Contract | Current tenant ID/slug/name/logo URL / optional display timezone (IANA) |
+| `TenantPreferencesSingletonMissingException` | Infrastructure | Thrown when `tenant_preferences` id `1` is missing after migrations (programming or migration failure) |
+| `TenantDisplayPreferencesSync` | Infrastructure | After migrations, ensures `tenant_preferences.display_name` is set from an explicit migrate name or from the tenant slug headline when empty |
+| `TenantContext` | Contract | Current tenant ID/slug/display name/logo URL / optional display timezone (IANA) |
 | `TenantBootstrapper` | Contract | Resolve + switch schema (interface for Presentation) |
 | `TenantSchemaManager` | Infrastructure | Configures tenant DB connection and manages schemas |
 | `TenantResolver` | Infrastructure | Resolves tenant by domain or slug via landlord DB |
@@ -41,13 +45,13 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 | `TenantMigrator` | Infrastructure | Creates schema + runs tenant migrations; leaves the `tenant` connection on that schema (call `TenantBootstrapper::reset()` / `TenantSchemaManager::reset()` when a neutral `search_path` is required) |
 | `ConsoleTenantBootstrap` | Infrastructure | Event listener for CLI tenant resolution |
 | `TenantBootstrapperImpl` | Infrastructure | Implements TenantBootstrapper contract |
-| `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes tenant name and logo via landlord `tenants` + public disk; reads/writes display timezone in tenant schema (`tenant_preferences`) |
+| `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes organization display name and logo in tenant schema (`tenant_preferences`) via public disk; reads/writes display timezone there; landlord `tenants` holds routing metadata only |
 
 ## Console Commands
 
 | Command | Attribute | Description |
 |---|---|---|
-| `tenant:setup` | `TenantAgnosticCommand` | Full setup: landlord + tenants + migrations + seeds |
+| `tenant:setup` | `TenantAgnosticCommand` | Full setup: landlord + tenants + migrations + seeds + `storage:link` for public tenant logos |
 | `tenant:create` | `TenantAgnosticCommand` | Create a new tenant with schema |
 | `tenant:migrate` | `TenantAgnosticCommand` | Run migrations for one or all tenants; `MigrateTenantHandler` / `MigrateAllTenantsHandler` reset tenant connection scope afterward |
 

@@ -30,7 +30,6 @@ final class LandlordSeeder extends Seeder
 
         $alpha = TenantModel::create([
             'id' => '00000000-0000-0000-0000-000000000100',
-            'name' => 'Acme Corp',
             'slug' => 'alpha',
             'schema_name' => 'tenant_alpha',
             'database_host' => $dbHost,
@@ -39,7 +38,7 @@ final class LandlordSeeder extends Seeder
             'database_username' => $dbUser,
             'database_password' => $dbPass,
             'is_active' => true,
-            'config' => [],
+            'config' => ['display_name' => 'Acme Corp'],
         ]);
 
         TenantDomainModel::create([
@@ -51,7 +50,6 @@ final class LandlordSeeder extends Seeder
 
         $bravo = TenantModel::create([
             'id' => '00000000-0000-0000-0000-000000000200',
-            'name' => 'Globex Inc',
             'slug' => 'bravo',
             'schema_name' => 'tenant_bravo',
             'database_host' => $dbHost,
@@ -60,7 +58,7 @@ final class LandlordSeeder extends Seeder
             'database_username' => $dbUser,
             'database_password' => $dbPass,
             'is_active' => true,
-            'config' => [],
+            'config' => ['display_name' => 'Globex Inc'],
         ]);
 
         TenantDomainModel::create([

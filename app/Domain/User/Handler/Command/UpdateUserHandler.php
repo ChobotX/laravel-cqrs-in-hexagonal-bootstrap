@@ -53,6 +53,7 @@ final readonly class UpdateUserHandler implements CommandHandler
             email: $email,
             isActivated: $existing->isActivated,
             avatarFileId: $command->avatarFileId !== null ? new FileId($command->avatarFileId) : null,
+            passwordChangedAt: $existing->passwordChangedAt,
         );
 
         $changes = $this->propertyChangeBuilder->diff([

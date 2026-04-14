@@ -1,4 +1,4 @@
-import { htmlElementFromEventTarget } from '../core/dom/event-target-guards';
+import { nodeFromEventTarget } from '../core/dom/event-target-guards';
 
 const HIDDEN_CLASS = 'hidden';
 
@@ -42,8 +42,8 @@ function isSidebarOpen(): boolean {
 }
 
 document.addEventListener('click', (event: MouseEvent): void => {
-    const target = htmlElementFromEventTarget(event.target);
-    if (target === null) {
+    const target = nodeFromEventTarget(event.target);
+    if (!(target instanceof Element)) {
         return;
     }
 

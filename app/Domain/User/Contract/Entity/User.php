@@ -8,6 +8,7 @@ use App\Domain\File\Contract\ValueObject\FileId;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;
+use DateTimeImmutable;
 
 /**
  * Immutable read-model snapshot of a User returned from queries in the User context.
@@ -25,5 +26,7 @@ final readonly class User
         public bool $isActivated = false,
         /** Optional avatarFile identifier when absent. */
         public ?FileId $avatarFileId = null,
+        /** When password last changed; null if never set. */
+        public ?DateTimeImmutable $passwordChangedAt = null,
     ) {}
 }

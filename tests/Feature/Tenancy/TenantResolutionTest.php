@@ -7,6 +7,7 @@ use App\Contract\Tenancy\TenantContext;
 use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
 use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use Illuminate\Support\Facades\Storage;
 
 it('resolves tenant from subdomain', function (): void {
@@ -80,9 +81,11 @@ it('resolves logo URL when tenant has a logo file', function (): void {
     $filesystem = Storage::fake('public');
     $filesystem->put('tenant-logos/test-logo.webp', 'fake-image');
 
-    $tenant = TenantModel::findOrFail(test()->tenantId());
-    $tenant->logo_path = 'tenant-logos/test-logo.webp';
-    $tenant->save();
+    TenantPreferenceModel::writePreferences([
+        'display_name' => TenantPreferenceModel::readDisplayName(),
+        'logo_path' => 'tenant-logos/test-logo.webp',
+        'display_timezone' => TenantPreferenceModel::readDisplayTimezone(),
+    ]);
 
     $tenantBootstrapper = app(TenantBootstrapper::class);
     $tenantBootstrapper->bootstrapBySlug(testTenantSlug());

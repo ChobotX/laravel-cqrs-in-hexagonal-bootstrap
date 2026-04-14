@@ -23,8 +23,7 @@ describe('useI18n', () => {
 });
 
 describe('resolveLanguage', () => {
-    it('throws when glob has no loader for the requested language', async () => {
-        // import.meta.glob produces {} in test env — accessing undefined key throws TypeError
-        await expect(resolveLanguage('cs')).rejects.toThrow(TypeError);
+    it('returns empty messages when language loader is missing in test runtime', async () => {
+        await expect(resolveLanguage('cs')).resolves.toEqual({ default: {} });
     });
 });

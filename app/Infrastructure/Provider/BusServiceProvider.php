@@ -287,6 +287,7 @@ use App\Domain\User\Contract\Command\ResendUserInviteCommand;
 use App\Domain\User\Contract\Command\ResetPasswordCommand;
 use App\Domain\User\Contract\Command\SendUserInviteCommand;
 use App\Domain\User\Contract\Command\SetPasswordCommand;
+use App\Domain\User\Contract\Command\UpdatePasswordRotationSettingsCommand;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
@@ -298,6 +299,8 @@ use App\Domain\User\Contract\Event\UserInviteAccepted;
 use App\Domain\User\Contract\Event\UserInviteSent;
 use App\Domain\User\Contract\Query\CountUsersQuery;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
+use App\Domain\User\Contract\Query\GetPasswordRotationSettingsQuery;
+use App\Domain\User\Contract\Query\GetPasswordRotationStatusQuery;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\Query\GetUsersByIdsQuery;
@@ -312,10 +315,13 @@ use App\Domain\User\Handler\Command\ResendUserInviteHandler;
 use App\Domain\User\Handler\Command\ResetPasswordHandler;
 use App\Domain\User\Handler\Command\SendUserInviteHandler;
 use App\Domain\User\Handler\Command\SetPasswordHandler;
+use App\Domain\User\Handler\Command\UpdatePasswordRotationSettingsHandler;
 use App\Domain\User\Handler\Command\UpdateProfileHandler;
 use App\Domain\User\Handler\Command\UpdateUserHandler;
 use App\Domain\User\Handler\Query\CountUsersHandler;
 use App\Domain\User\Handler\Query\GetOwnProfileHandler;
+use App\Domain\User\Handler\Query\GetPasswordRotationSettingsHandler;
+use App\Domain\User\Handler\Query\GetPasswordRotationStatusHandler;
 use App\Domain\User\Handler\Query\GetUserByEmailHandler;
 use App\Domain\User\Handler\Query\GetUserByIdHandler;
 use App\Domain\User\Handler\Query\GetUsersByIdsHandler;
@@ -387,6 +393,7 @@ final class BusServiceProvider extends ServiceProvider
                 CreateUserCommand::class => CreateUserHandler::class,
                 UpdateUserCommand::class => UpdateUserHandler::class,
                 UpdateProfileCommand::class => UpdateProfileHandler::class,
+                UpdatePasswordRotationSettingsCommand::class => UpdatePasswordRotationSettingsHandler::class,
                 DeleteUserCommand::class => DeleteUserHandler::class,
                 SetPasswordCommand::class => SetPasswordHandler::class,
                 SendUserInviteCommand::class => SendUserInviteHandler::class,
@@ -463,6 +470,8 @@ final class BusServiceProvider extends ServiceProvider
                 GetUserByIdQuery::class => GetUserByIdHandler::class,
                 GetUsersByIdsQuery::class => GetUsersByIdsHandler::class,
                 GetOwnProfileQuery::class => GetOwnProfileHandler::class,
+                GetPasswordRotationStatusQuery::class => GetPasswordRotationStatusHandler::class,
+                GetPasswordRotationSettingsQuery::class => GetPasswordRotationSettingsHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
                 CountUsersQuery::class => CountUsersHandler::class,

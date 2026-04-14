@@ -54,8 +54,10 @@ use App\Presentation\Http\Controller\Web\Settings\ListEmailLogsController;
 use App\Presentation\Http\Controller\Web\Settings\ListEmailTemplatesController;
 use App\Presentation\Http\Controller\Web\Settings\PreviewEmailTemplateController;
 use App\Presentation\Http\Controller\Web\Settings\ResetEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\ShowPasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\UpdatePasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
 use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
@@ -128,6 +130,8 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/settings', ShowTenantSettingsController::class)->name('settings.index');
     Route::put('/settings', UpdateTenantSettingsController::class)->name('settings.update');
+    Route::get('/settings/password-rotation', ShowPasswordRotationSettingsController::class)->name('settings.password-rotation');
+    Route::put('/settings/password-rotation', UpdatePasswordRotationSettingsController::class)->name('settings.password-rotation.update');
 
     // Email Templates
     Route::get('/settings/email-templates', ListEmailTemplatesController::class)->name('settings.email-templates.index');

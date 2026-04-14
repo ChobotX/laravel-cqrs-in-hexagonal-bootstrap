@@ -110,12 +110,13 @@ Tests that mutate shared state (e.g., password) must include `afterAll` cleanup 
 Tests run in sequential project phases via Playwright dependencies (see `playwright.config.ts`):
 
 ```
-setup → auth-tests → profile-tests → tenant-tests → teardown
+setup → auth-tests → profile-tests → settings-password-rotation-tests → tenant-tests → teardown
 ```
 
 Why sequential instead of parallel:
 - Shared admin user (`admin@test.com`) is rate-limited at 5 req/min on login
 - Profile tests mutate admin password (change + revert)
+- Settings password rotation tests reuse the saved admin session
 - Tenant tests create/destroy schemas affecting server-side state
 
 As the suite grows, tests using independent users and non-shared endpoints can be grouped into parallel projects.
@@ -179,6 +180,7 @@ tests/e2e/
 ├── mailpit-config.ts           # Mailpit API base URL (host vs in-container)
 ├── mailpit-json.ts             # Mailpit API response narrowing (no inline json() casts)
 ├── profile-password.spec.ts    # Profile password change tests
+├── password-rotation-settings.spec.ts # Tenant password rotation policy UI
 ├── tenant-invite.spec.ts       # Tenant registration + member invitation
 └── README.md                   # This file
 ```

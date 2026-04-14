@@ -205,6 +205,20 @@ it('marks settings active for settings update route name', function (): void {
 
     $items = $sidebarNavigationBuilder->build()->sections[0]->blocks[0]->items;
 
+    expect($items)->toHaveCount(1)
+        ->and($items[0]->active)->toBeTrue();
+});
+
+it('marks password rotation active for password rotation update route name', function (): void {
+    $sidebarNavigationBuilder = makeBuilder(
+        authenticatedUser('u-1'),
+        new FakeAuthorizationChecker(['settings.tenant.read']),
+        new FakeFeatureFlagChecker,
+        sidebarRequestWithRouteName('settings.password-rotation.update'),
+    );
+
+    $items = $sidebarNavigationBuilder->build()->sections[0]->blocks[0]->items;
+
     expect($items[0]->active)->toBeTrue();
 });
 

@@ -127,7 +127,7 @@ final readonly class SidebarNavigationBuilder
                 userId: $userId,
                 permission: 'settings.tenant.read',
                 routeName: 'settings.index',
-                routeIsPatterns: ['settings.index', 'settings.update'],
+                routeIsPatterns: ['settings.index', 'settings.update', 'settings.password-rotation', 'settings.password-rotation.update'],
                 icon: 'heroicon-o-cog-6-tooth',
                 labelKey: 'messages.nav.settings',
             ),

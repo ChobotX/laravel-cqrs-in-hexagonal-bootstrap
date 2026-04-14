@@ -1,6 +1,6 @@
 <div class="relative"
      data-dropdown>
-    <button class="flex items-center text-gray-500 transition-colors hover:text-gray-700"
+    <button class="flex cursor-pointer items-center text-gray-500 transition-colors hover:text-gray-700"
             data-dropdown-toggle
             data-tooltip="{{ __('messages.a11y.language_switcher') }}"
             type="button"
@@ -32,7 +32,7 @@
                     <input name="locale"
                            type="hidden"
                            value="{{ $locale }}">
-                    <button class="flex w-full items-center gap-2.5 px-3 py-2 text-left text-base text-gray-700 transition-colors hover:bg-gray-50 sm:text-sm"
+                    <button class="flex w-full cursor-pointer items-center gap-2.5 px-3 py-2 text-left text-base text-gray-700 transition-colors hover:bg-gray-50 sm:text-sm"
                             type="submit"
                             title="{{ $meta['label'] }}"
                             role="menuitem">

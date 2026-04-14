@@ -2,7 +2,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { queryHTMLElementById } from '../test-utils/dom';
 
 const SIDEBAR_HTML = `
-<button data-sidebar-open>Open</button>
+<button data-sidebar-open>
+    <svg><path data-sidebar-open-icon></path></svg>
+</button>
 <div id="mobile-sidebar-overlay" class="hidden">
     <div data-sidebar-backdrop></div>
     <aside>
@@ -53,6 +55,17 @@ describe('mobile-sidebar', () => {
 
         expect(isSidebarOpen()).toBe(true);
         expect(document.body.style.overflow).toBe('hidden');
+    });
+
+    it('opens sidebar when clicking icon element inside open button', () => {
+        const icon = document.querySelector('[data-sidebar-open-icon]');
+        expect(icon).toBeInstanceOf(Element);
+        if (!(icon instanceof Element)) {
+            throw new Error('Expected sidebar-open icon element');
+        }
+        clickElement(icon);
+
+        expect(isSidebarOpen()).toBe(true);
     });
 
     it('focuses close button on open', () => {

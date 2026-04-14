@@ -18,6 +18,7 @@ return [
         'registry' => 'Registry',
         'notifications' => 'Notifications',
         'settings' => 'Settings',
+        'password_rotation' => 'Password rotation',
         'dashboard' => 'Dashboard',
         'system' => 'System',
         'feature_flags' => 'Feature Flags',
@@ -333,6 +334,15 @@ return [
         'update_action' => 'Save',
         'cancel' => 'Cancel',
         'updated' => 'Settings updated.',
+        'password_rotation_title' => 'Password rotation',
+        'password_rotation_intro' => 'Require users to change passwords periodically and block reuse of recent passwords.',
+        'rotation_enabled' => 'Enable password expiry',
+        'max_age_days' => 'Maximum password age (days)',
+        'history_count' => 'Passwords remembered for reuse prevention',
+        'password_rotation_warning' => 'Your password will expire soon. Please change it.',
+        'password_rotation_expired' => 'Your password has expired. You must change it to continue.',
+        'change_password_link' => 'Change password',
+        'password_rotation_updated' => 'Password rotation settings saved.',
     ],
 
     'audit_log' => [
@@ -411,6 +421,7 @@ return [
         'file_storage_error' => 'File storage operation failed.',
         'image_processing_error' => 'Image processing failed.',
         'tenant_not_found' => 'Tenant with id [:id] not found.',
+        'tenant_display_name_not_configured' => 'Organization display name is not configured for this tenant.',
         'invalid_tenant_name' => 'Tenant name must not be empty.',
         'invalid_tenant_display_timezone' => 'The display timezone is not a valid IANA identifier.',
         'tenant_logo_storage_failed' => 'Failed to store tenant logo.',
@@ -428,6 +439,9 @@ return [
         'email_template_not_found' => 'Email template [:type] for locale [:locale] not found.',
         'invalid_email_template_type' => 'Value [:value] is not a valid email template type.',
         'invalid_email_template_locale' => 'Value [:value] is not a valid locale.',
+        'invalid_password_rotation_max_age' => 'When expiry is enabled, password age must be between 1 and 3660 days.',
+        'invalid_password_rotation_history' => 'History length must be between 1 and 24 previous passwords.',
+        'password_previously_used' => 'Choose a password you have not used recently.',
     ],
 
     'email_templates' => [

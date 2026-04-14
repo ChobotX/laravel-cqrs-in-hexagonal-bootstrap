@@ -197,7 +197,7 @@ Each bounded context exposes a `Contract` sub-namespace containing types that ot
 - **Entities**: `User`, `Team`, `Role`, `File`, `Label`, `Notification`, `Definition`, `Entry` — in `Domain/{Context}/Contract/Entity/`
 - **Value objects**: `UserId`, `TeamId`, `RoleId`, `LabelId`, `FileId`, `NotificationId`, etc. — in `Domain/{Context}/Contract/ValueObject/`
 - **Repository interfaces**: `UserRepository`, `TeamRepository`, `FileRepository`, etc. — in `Domain/{Context}/Contract/Repository/`
-- **Service contracts**: `FileStorage` — in `Domain/File/Contract/Service/`, `TeamMembershipChecker` — in `Domain/Team/Contract/Service/`, `InviteLinkGenerator`, `PasswordResetBroker`, `DirectEmailSender`, `PasswordManager` — in `Domain/User/Contract/Service/`
+- **Service contracts**: `FileStorage` — in `Domain/File/Contract/Service/`, `TeamMembershipChecker` — in `Domain/Team/Contract/Service/`, `InviteLinkGenerator`, `PasswordResetBroker`, `DirectEmailSender`, `PasswordManager` — in `Domain/User/Contract/Service/`; password rotation policy reads/writes use `PasswordRotationSettingsRepository` and `PasswordHistoryRepository` in `Domain/User/Contract/Repository/`
 - **Enums**: `NotificationChannel`, `VersionStatus`, `AccessScope` — in `Domain/{Context}/Contract/Enum/`
 - **Domain events**: `UserCreated`, `UserInviteSent`, `UserInviteAccepted`, `PasswordChanged`, `PasswordResetRequested`, `PasswordResetCompleted`, `RoleDeleted`, `FileStored`, `FileDeleted`, etc. — in `Domain/{Context}/Contract/Event/`
 

@@ -9,11 +9,15 @@ namespace App\Domain\Tenancy\Contract\Service;
  */
 interface TenantProvisioner
 {
-    /** Persists a new or updated aggregate row. */
-    public function createTenant(string $name, string $slug, ?string $domain): void;
+    /** Persists landlord routing row (no display name — lives in tenant_preferences after migrate). */
+    public function createTenant(string $slug, ?string $domain): void;
 
-    /** Contract operation `migrateTenant`; see infrastructure for behavior. */
-    public function migrateTenant(string $slug): void;
+    /**
+     * Runs tenant migrations and ensures tenant_preferences.display_name is set.
+     *
+     * @param  string|null  $displayName  When non-null, written as organization display name (create-tenant flow).
+     */
+    public function migrateTenant(string $slug, ?string $displayName = null): void;
 
     /** Contract operation `migrateAllTenants`; see infrastructure for behavior. */
     public function migrateAllTenants(): void;

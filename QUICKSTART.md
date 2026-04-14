@@ -77,6 +77,8 @@ The project uses PostgreSQL schema-based multi-tenancy. Each tenant gets its own
 
 Configure your local DNS/reverse proxy to route `*.laravel-bootstrap.local` and `laravel-bootstrap.local` to the app container. Default tenants: `tenant-a.laravel-bootstrap.local` and `tenant-b.laravel-bootstrap.local`.
 
+`tenant:setup` also ensures the `public/storage` symlink exists (same effect as `php artisan storage:link`) so tenant logos served from the public disk are available immediately.
+
 ## Customizing the template
 
 - **App name**: Update `config/app.php`, `docker-compose.yml`, `.env`

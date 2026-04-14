@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Auth;
 
 use App\Application\Authorization\SkipPermissionCheck;
+use App\Application\Bus\QueryBus;
+use App\Domain\User\Contract\Query\GetPasswordRotationStatusQuery;
+use App\Domain\User\Contract\ValueObject\PasswordRotationUiStatus;
 use App\Presentation\Http\Request\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 #[SkipPermissionCheck('Guest login endpoint')]
 final readonly class LoginController
 {
-    public function __invoke(LoginRequest $loginRequest): RedirectResponse
+    public function __invoke(LoginRequest $loginRequest, QueryBus $queryBus): RedirectResponse
     {
         $credentials = $loginRequest->only('email', 'password');
 
@@ -22,6 +25,18 @@ final readonly class LoginController
 
         $loginRequest->session()->regenerate();
 
-        return redirect()->intended('/users');
+        $redirectResponse = redirect()->intended('/users');
+
+        $passwordRotationUiStatus = $queryBus->dispatch(new GetPasswordRotationStatusQuery);
+
+        if ($passwordRotationUiStatus->value === PasswordRotationUiStatus::WARNING) {
+            return $redirectResponse->with('password_rotation', PasswordRotationUiStatus::WARNING);
+        }
+
+        if ($passwordRotationUiStatus->value === PasswordRotationUiStatus::EXPIRED) {
+            return $redirectResponse->with('password_rotation', PasswordRotationUiStatus::EXPIRED);
+        }
+
+        return $redirectResponse;
     }
 }

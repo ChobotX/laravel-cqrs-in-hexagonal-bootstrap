@@ -39,11 +39,13 @@ final readonly class TenantBootstrapperImpl implements TenantBootstrapper
     {
         $this->tenantSchemaManager->switchTo($tenantModel);
 
+        $logoPath = TenantPreferenceModel::readLogoPath();
+
         $this->resolvedTenantContext->set(
             $tenantModel->id,
             $tenantModel->slug,
-            $tenantModel->name,
-            $this->resolveLogoUrl($tenantModel->logo_path),
+            TenantPreferenceModel::readDisplayName(),
+            $this->resolveLogoUrl($logoPath),
             TenantPreferenceModel::readDisplayTimezone(),
         );
     }

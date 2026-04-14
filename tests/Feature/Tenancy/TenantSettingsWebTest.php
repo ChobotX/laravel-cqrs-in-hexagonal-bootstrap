@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 use App\Application\Bus\CommandBus;
 use App\Application\Bus\QueryBus;
-use App\Infrastructure\Eloquent\Tenancy\TenantModel;
+use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
+use App\Domain\User\Contract\ValueObject\PasswordRotationSettings;
 use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use App\Infrastructure\Eloquent\User\UserModel;
 use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
+use App\Presentation\Http\Request\Web\Settings\ShowTenantSettingsRequest;
 use App\Presentation\Http\Request\Web\Settings\UpdateTenantSettingsRequest;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Context;
 use Illuminate\Support\Facades\Hash;
@@ -48,8 +51,7 @@ it('updates tenant name', function (): void {
             'display_timezone' => '',
         ])->assertRedirect(route('settings.index'));
 
-    $tenant = TenantModel::findOrFail(test()->tenantId());
-    expect($tenant->name)->toBe('Updated Tenant Name');
+    expect(TenantPreferenceModel::readDisplayName())->toBe('Updated Tenant Name');
 });
 
 it('uploads a logo', function (): void {
@@ -63,9 +65,9 @@ it('uploads a logo', function (): void {
             'logo' => UploadedFile::fake()->image('logo.png', 100, 100),
         ])->assertRedirect(route('settings.index'));
 
-    $tenant = TenantModel::findOrFail(test()->tenantId());
-    expect($tenant->logo_path)->not->toBeNull();
-    Storage::disk('public')->assertExists($tenant->logo_path);
+    $path = TenantPreferenceModel::readLogoPath();
+    expect($path)->not->toBeNull();
+    Storage::disk('public')->assertExists($path);
 });
 
 it('removes a logo', function (): void {
@@ -87,8 +89,7 @@ it('removes a logo', function (): void {
             'remove_logo' => '1',
         ])->assertRedirect(route('settings.index'));
 
-    $tenant = TenantModel::findOrFail(test()->tenantId());
-    expect($tenant->logo_path)->toBeNull();
+    expect(TenantPreferenceModel::readLogoPath())->toBeNull();
 });
 
 it('validates name is required', function (): void {
@@ -143,9 +144,13 @@ it('requires settings.tenant.read permission for show', function (): void {
 it('show aborts when tenant_id is missing from context', function (): void {
     Context::flush();
     $mock = Mockery::mock(QueryBus::class);
+    $mock->shouldReceive('dispatch')->andReturn(
+        new TenantSettings('Tenant', null, null),
+        new PasswordRotationSettings(false, null, 5),
+    );
     $controller = new ShowTenantSettingsController($mock);
 
-    $controller();
+    $controller(ShowTenantSettingsRequest::createFromBase(Request::create('/settings', 'GET')));
 })->throws(Symfony\Component\HttpKernel\Exception\HttpException::class);
 
 it('update aborts when tenant_id is missing from context', function (): void {

@@ -18,6 +18,7 @@ return [
         'registry' => 'Registr',
         'notifications' => 'Upozornění',
         'settings' => 'Nastavení',
+        'password_rotation' => 'Rotace hesel',
         'dashboard' => 'Přehled',
         'system' => 'Systém',
         'feature_flags' => 'Přepínače funkcí',
@@ -331,6 +332,15 @@ return [
         'update_action' => 'Uložit',
         'cancel' => 'Zrušit',
         'updated' => 'Nastavení aktualizováno.',
+        'password_rotation_title' => 'Rotace hesel',
+        'password_rotation_intro' => 'Vyžadujte pravidelnou změnu hesel a zabraňte opakovanému použití nedávných hesel.',
+        'rotation_enabled' => 'Zapnout expiraci hesla',
+        'max_age_days' => 'Maximální stáří hesla (dny)',
+        'history_count' => 'Počet pamatovaných hesel proti opakovanému použití',
+        'password_rotation_warning' => 'Platnost vašeho hesla brzy skončí. Změňte ho prosím.',
+        'password_rotation_expired' => 'Platnost vašeho hesla vypršela. Pro pokračování ho musíte změnit.',
+        'change_password_link' => 'Změnit heslo',
+        'password_rotation_updated' => 'Nastavení rotace hesel bylo uloženo.',
     ],
 
     'audit_log' => [
@@ -403,6 +413,7 @@ return [
         'file_storage_error' => 'Operace úložiště souborů selhala.',
         'image_processing_error' => 'Zpracování obrázku selhalo.',
         'tenant_not_found' => 'Organizace s id [:id] nebyla nalezena.',
+        'tenant_display_name_not_configured' => 'Pro tuto organizaci není nastaven zobrazovaný název.',
         'invalid_tenant_name' => 'Název organizace nesmí být prázdný.',
         'invalid_tenant_display_timezone' => 'Časové pásmo zobrazení není platný IANA identifikátor.',
         'tenant_logo_storage_failed' => 'Nepodařilo se uložit logo organizace.',
@@ -420,6 +431,9 @@ return [
         'email_template_not_found' => 'Šablona emailu [:type] pro jazyk [:locale] nebyla nalezena.',
         'invalid_email_template_type' => 'Hodnota [:value] není platný typ emailové šablony.',
         'invalid_email_template_locale' => 'Hodnota [:value] není platný jazyk.',
+        'invalid_password_rotation_max_age' => 'Při zapnuté expiraci musí být stáří hesla mezi 1 a 3660 dny.',
+        'invalid_password_rotation_history' => 'Délka historie musí být mezi 1 a 24 předchozími hesly.',
+        'password_previously_used' => 'Zvolte heslo, které jste nedávno nepoužili.',
     ],
 
     'email_templates' => [

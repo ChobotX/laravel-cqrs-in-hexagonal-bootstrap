@@ -21,11 +21,11 @@ final readonly class CreateTenantHandler implements CommandHandler
     public function handle(Command $command): void
     {
         $this->tenantProvisioner->createTenant(
-            $command->name,
             $command->slug,
             $command->domain,
         );
 
-        $this->tenantProvisioner->migrateTenant($command->slug);
+        $this->tenantProvisioner->migrateTenant($command->slug, $command->name);
+        $this->tenantProvisioner->resetTenantPersistenceScope();
     }
 }

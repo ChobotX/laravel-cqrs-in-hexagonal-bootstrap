@@ -67,6 +67,12 @@ trait TenantAwareRefreshDatabase
 
             (new EmailTemplateSeeder)->run();
 
+            TenantPreferenceModel::writePreferences([
+                'display_name' => 'Test Tenant',
+                'logo_path' => null,
+                'display_timezone' => null,
+            ]);
+
             $connection->statement(sprintf('CREATE SCHEMA IF NOT EXISTS "%s"', $this->secondaryTenantSchema()));
             $this->switchToTenantSchema($this->secondaryTenantSchema());
             $this->artisan('migrate', [
@@ -76,6 +82,12 @@ trait TenantAwareRefreshDatabase
             ]);
 
             (new EmailTemplateSeeder)->run();
+
+            TenantPreferenceModel::writePreferences([
+                'display_name' => 'Test Tenant B',
+                'logo_path' => null,
+                'display_timezone' => null,
+            ]);
 
             $this->switchToTenantSchema($this->tenantSchema());
         } finally {
@@ -91,7 +103,6 @@ trait TenantAwareRefreshDatabase
         $token = $this->workerToken();
 
         TenantModel::updateOrCreate(['id' => $tenantId], [
-            'name' => 'Test Tenant',
             'slug' => 'test-'.$token,
             'schema_name' => $this->tenantSchema(),
             'database_host' => (string) config('database.connections.tenant.host'),
@@ -109,7 +120,6 @@ trait TenantAwareRefreshDatabase
         ]);
 
         TenantModel::updateOrCreate(['id' => $secondaryTenantId], [
-            'name' => 'Test Tenant B',
             'slug' => 'test-b-'.$token,
             'schema_name' => $this->secondaryTenantSchema(),
             'database_host' => (string) config('database.connections.tenant.host'),
@@ -140,7 +150,7 @@ trait TenantAwareRefreshDatabase
         $resolvedTenantContext->set(
             $this->tenantId(),
             'test-'.$this->workerToken(),
-            'Test Tenant',
+            TenantPreferenceModel::readDisplayName(),
             null,
             is_string($displayTimezone) && $displayTimezone !== '' ? $displayTimezone : null,
         );

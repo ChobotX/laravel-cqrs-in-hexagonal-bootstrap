@@ -16,10 +16,11 @@ Run the minimum set of checks needed to verify your changes. Never waste time on
 
 1. **Every failure must be fixed** — no exceptions, no excuses. Preexisting issues are your issues. Flaky tests are broken tests. Never dismiss, never re-run hoping it passes. Never suppress output or hide the problem. Take your time, read the full output, analyze the root cause deeply, and fix it properly.
 2. **All commands through Sail** — `./vendor/bin/sail <command>`. Never run PHP, Composer, or npx on host.
-3. **Never grep, pipe, or filter output** — read the full result directly. Output is already clean.
-4. **Never run `check` after `check-and-fix`** — `check-and-fix` already verifies in its Wave 3. Running `check` after is 100% redundant.
-5. **One QA pass per change cycle** — do not repeat checks that already passed. If pint passed, don't run pint again.
-6. **Never run `check-and-fix` followed by `check`** — this is the single biggest time waste. Stop after `check-and-fix`.
+3. **Agent / minimal-PATH shells (Cursor, some CI):** If Sail prints `Docker is not running` but Docker works in your normal terminal, prepend `PATH` so the Docker CLI is found (OrbStack/Homebrew install it under `/usr/local/bin` or `/opt/homebrew/bin`, which minimal shells often omit). Example: `export PATH="/usr/local/bin:/opt/homebrew/bin:$PATH"` then run `./vendor/bin/sail …`.
+4. **Never grep, pipe, or filter output** — read the full result directly. Output is already clean.
+5. **Never run `check` after `check-and-fix`** — `check-and-fix` already verifies in its Wave 3. Running `check` after is 100% redundant.
+6. **One QA pass per change cycle** — do not repeat checks that already passed. If pint passed, don't run pint again.
+7. **Never run `check-and-fix` followed by `check`** — this is the single biggest time waste. Stop after `check-and-fix`.
 
 ## Mode Selection
 

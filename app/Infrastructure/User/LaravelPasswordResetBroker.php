@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Infrastructure\User;
 
 use App\Domain\User\Contract\Exception\InvalidPasswordResetTokenException;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Domain\User\Contract\Service\PasswordResetBroker;
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Auth\Passwords\PasswordBrokerManager;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Routing\UrlGenerator;
-use Illuminate\Support\Facades\Hash;
 
 final readonly class LaravelPasswordResetBroker implements PasswordResetBroker
 {
@@ -19,6 +19,7 @@ final readonly class LaravelPasswordResetBroker implements PasswordResetBroker
         private PasswordBrokerManager $passwordBrokerManager,
         private UserProvider $userProvider,
         private UrlGenerator $urlGenerator,
+        private PasswordManager $passwordManager,
     ) {}
 
     public function createResetLink(string $email): ?string
@@ -44,16 +45,17 @@ final readonly class LaravelPasswordResetBroker implements PasswordResetBroker
         /** @var \Illuminate\Auth\Passwords\PasswordBroker $broker */
         $broker = $this->passwordBrokerManager->broker();
 
+        $passwordManager = $this->passwordManager;
+
         $status = $broker->reset(
             [
                 'email' => $email,
                 'token' => $token,
                 'password' => $newPassword,
             ],
-            static function (CanResetPassword $canResetPassword, string $password): void {
+            static function (CanResetPassword $canResetPassword, string $password) use ($passwordManager): void {
                 if ($canResetPassword instanceof UserModel) {
-                    $canResetPassword->password = Hash::make($password);
-                    $canResetPassword->save();
+                    $passwordManager->setPassword($canResetPassword->id, $password);
                 }
             },
         );

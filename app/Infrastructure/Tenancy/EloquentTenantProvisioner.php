@@ -13,9 +13,11 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
     public function __construct(
         private TenantMigrator $tenantMigrator,
         private TenantResolver $tenantResolver,
+        private TenantSchemaManager $tenantSchemaManager,
+        private TenantDisplayPreferencesSync $tenantDisplayPreferencesSync,
     ) {}
 
-    public function createTenant(string $name, string $slug, ?string $domain): void
+    public function createTenant(string $slug, ?string $domain): void
     {
         /** @var array{host: string, port: string|int, database: string, username: string, password: string} $cfg */
         $cfg = config('database.connections.tenant');
@@ -24,7 +26,6 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
         $schemaPrefix = config('tenancy.schema_prefix');
 
         $tenant = TenantModel::create([
-            'name' => $name,
             'slug' => $slug,
             'schema_name' => $schemaPrefix.$slug,
             'database_host' => $cfg['host'],
@@ -46,15 +47,24 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
 
     }
 
-    public function migrateTenant(string $slug): void
+    public function migrateTenant(string $slug, ?string $displayName = null): void
     {
         $tenantModel = $this->tenantResolver->resolveBySlug($slug);
         $this->tenantMigrator->setupTenant($tenantModel);
+        $this->tenantSchemaManager->switchTo($tenantModel);
+
+        try {
+            $this->tenantDisplayPreferencesSync->sync($slug, $displayName);
+        } finally {
+            $this->tenantSchemaManager->reset();
+        }
     }
 
     public function migrateAllTenants(): void
     {
-        $this->tenantMigrator->migrateAll();
+        foreach (TenantModel::all() as $tenant) {
+            $this->migrateTenant($tenant->slug);
+        }
     }
 
     public function resetTenantPersistenceScope(): void

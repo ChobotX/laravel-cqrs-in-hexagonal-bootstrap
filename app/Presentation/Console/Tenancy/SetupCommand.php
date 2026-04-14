@@ -36,6 +36,10 @@ final class SetupCommand extends Command
         $artisan->call('db:seed', ['--force' => true]);
         $this->line($artisan->output());
 
+        $this->info('Ensuring public storage symlink...');
+        $artisan->call('storage:link');
+        $this->line($artisan->output());
+
         $this->info('Setup complete.');
 
         return self::SUCCESS;

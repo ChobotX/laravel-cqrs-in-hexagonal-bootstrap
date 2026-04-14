@@ -22,8 +22,9 @@ it('runs setup successfully', function (): void {
     $exitCode = $command->handle($fake);
 
     expect($exitCode)->toBe(0)
-        ->and($fake->calls)->toHaveCount(3)
+        ->and($fake->calls)->toHaveCount(4)
         ->and($fake->calls[0])->toBe('tenant:drop-schemas')
         ->and($fake->calls[1])->toBe('migrate')
-        ->and($fake->calls[2])->toBe('db:seed');
+        ->and($fake->calls[2])->toBe('db:seed')
+        ->and($fake->calls[3])->toBe('storage:link');
 });

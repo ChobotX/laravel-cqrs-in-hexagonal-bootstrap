@@ -17,7 +17,6 @@ function makeTenantModel(array $attributes = []): TenantModel
     $model = new TenantModel;
     $model->forceFill(array_merge([
         'id' => '00000000-0000-0000-0000-000000000001',
-        'name' => 'Test Tenant',
         'slug' => 'test',
         'schema_name' => 'tenant_test',
         'database_host' => $cfg['host'],

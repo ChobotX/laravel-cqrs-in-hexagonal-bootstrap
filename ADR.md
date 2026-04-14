@@ -212,6 +212,18 @@ Each bounded context exposes a `Contract` sub-namespace (`Domain/{Context}/Contr
 **Why:** Provides a formal, enforceable boundary between domain contexts. Cross-domain imports are limited to a stable, narrow API surface. Changes to internal domain types don't break other contexts.
 **Enforced by:** PHPStan rule `NoCrossDomainDependenciesRule`. See [tests/README.md](tests/README.md).
 
+### Tenant display name and logo live only in tenant schema
+
+Landlord `tenants` rows store routing metadata (slug, domain, schema name, active flag, JSON config without display name). The organization display name and optional logo path are written exclusively to `tenant_preferences` in each tenant schema. Tenant resolution and mail branding read from that table; missing display name is a hard error (`TenantDisplayNameNotConfiguredException`) with no landlord fallback.
+**Why:** Keeps PII and branding out of the shared landlord database, aligns with schema-per-tenant isolation, and avoids ambiguous “which name is canonical” drift between layers.
+**Enforced by:** landlord/tenant migrations, `TenantPreferenceModel`, `TenantBootstrapperImpl`, provisioning paths, and PHPStan/architecture tests.
+
+### Password rotation and reuse prevention are tenant-scoped
+
+Password expiry policy (`password_rotation_settings` singleton), `users.password_changed_at`, and `user_password_history` exist only in the tenant database. `PasswordManager` enforces reuse against the current hash plus stored history for every password change. UI status (`GetPasswordRotationStatusQuery`) and `EnforcePasswordRotation` middleware gate navigation when expiry is enabled. Updating the policy row uses `#[SkipDomainEvent]` because it is tenant configuration storage, not an aggregate lifecycle event.
+**Why:** Password material never crosses tenant boundaries; landlords remain routing-only. History and timestamps stay co-located with credentials for simpler backups and compliance.
+**Enforced by:** tenant migrations, `EloquentPasswordManager`, middleware registration in `bootstrap/app.php`, and bus handler registration.
+
 ### Universal record sharing via scope infrastructure
 
 Record sharing is an extension of the 3-level scope system, not a parallel mechanism. An entity opts in by (1) adding `created_by_user_id UUID NOT NULL` to its table, (2) implementing `App\Application\Authorization\ShareableScopeQuery` on its list query (alongside `ScopeAwareQuery`), (3) using the `App\Infrastructure\Eloquent\ScopesOwnedQuery` trait in its Eloquent repository, and (4) registering the resource type in `ShareableResourceRegistry` (`AuthorizationServiceProvider`). `ResolveScopeFilter` automatically unions shared resource IDs into `AccessContext::$sharedResourceIds`; the trait produces `WHERE (created_by_user_id IN visibleIds OR id IN sharedIds)`. Cleanup on delete is handled by the generic `CleanupSharesOnEntityDeleted` listening to any `EntityDeleted` event (which now also carries `entityType()`). Share/revoke commands emit events whose handlers (`RefreshAuthorizationOnRecordShared/Revoked`) invalidate the grantee's permission cache.

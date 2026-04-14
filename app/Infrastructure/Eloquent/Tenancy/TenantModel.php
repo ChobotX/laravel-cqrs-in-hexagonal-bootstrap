@@ -27,8 +27,6 @@ final class TenantModel extends Model
 
     protected $fillable = [
         'id',
-        'name',
-        'logo_path',
         'slug',
         'schema_name',
         'database_host',

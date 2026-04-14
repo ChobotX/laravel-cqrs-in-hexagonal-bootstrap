@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Contract\Exception\DomainException;
 use App\Contract\Translation\Translator;
+use App\Domain\User\Contract\Exception\PasswordPreviouslyUsedException;
 use App\Presentation\Http\Middleware\CheckPermission;
+use App\Presentation\Http\Middleware\EnforcePasswordRotation;
 use App\Presentation\Http\Middleware\EnsureTenantResolved;
 use App\Presentation\Http\Middleware\ResolveTenantMiddleware;
 use App\Presentation\Http\Middleware\SetAuthContextMiddleware;
@@ -64,12 +66,13 @@ return Application::configure(basePath: dirname(__DIR__))
             users: '/dashboard',
         );
         $middleware->web(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);
-        $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, CheckPermission::class, 'throttle:web']);
+        $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, EnforcePasswordRotation::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([
             ResolveTenantMiddleware::class,
             EnsureTenantResolved::class,
             Illuminate\Auth\Middleware\Authenticate::class,
             SetAuthContextMiddleware::class,
+            EnforcePasswordRotation::class,
             CheckPermission::class,
         ]);
         $middleware->api(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);
@@ -131,6 +134,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             if ($statusCode === Response::HTTP_NOT_FOUND) {
                 throw new NotFoundHttpException($e->userMessage($translator), $e);
+            }
+
+            if ($e instanceof PasswordPreviouslyUsedException) {
+                return redirect()->back()->withErrors(['password' => $e->userMessage($translator)]);
             }
 
             return redirect()->back()->withErrors(['message' => $e->userMessage($translator)]);

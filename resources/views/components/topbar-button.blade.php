@@ -19,7 +19,7 @@
             <form method="POST"
                   action="{{ $action }}">
                 @csrf
-                <button class="{{ $colorClasses }} flex items-center gap-1.5 text-sm transition-colors"
+                <button class="{{ $colorClasses }} flex cursor-pointer items-center gap-1.5 text-sm transition-colors"
                         data-tooltip="{{ $label }}"
                         type="submit"
                         aria-label="{{ $label }}"
@@ -34,7 +34,7 @@
         <form method="POST"
               action="{{ $action }}">
             @csrf
-            <button class="{{ $colorClasses }} flex items-center gap-1.5 text-sm transition-colors"
+            <button class="{{ $colorClasses }} flex cursor-pointer items-center gap-1.5 text-sm transition-colors"
                     data-tooltip="{{ $label }}"
                     type="submit"
                     aria-label="{{ $label }}"

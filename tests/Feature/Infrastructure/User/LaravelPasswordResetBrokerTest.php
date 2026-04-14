@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\User\Contract\Exception\InvalidPasswordResetTokenException;
+use App\Domain\User\Contract\Service\PasswordManager;
 use App\Infrastructure\Eloquent\User\UserModel;
 use App\Infrastructure\User\LaravelPasswordResetBroker;
 use Illuminate\Auth\Passwords\PasswordBrokerManager;
@@ -17,6 +18,7 @@ function resetBroker(): LaravelPasswordResetBroker
         app(PasswordBrokerManager::class),
         app(UserProvider::class),
         app(UrlGenerator::class),
+        app(PasswordManager::class),
     );
 }
 
@@ -91,6 +93,7 @@ it('throws when user lookup fails after successful reset', function (): void {
         app(PasswordBrokerManager::class),
         $mock,
         app(UrlGenerator::class),
+        app(PasswordManager::class),
     );
 
     $broker->reset('vanish@example.com', $token, 'newpassword1');
