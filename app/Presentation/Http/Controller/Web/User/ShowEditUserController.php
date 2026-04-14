@@ -56,6 +56,8 @@ final readonly class ShowEditUserController
 
         $canEditEmail = $this->authorizationChecker->can($currentUserId, 'users.list.update');
 
+        $canResetUserTwoFactor = $this->authorizationChecker->can($currentUserId, 'user_recovery.two_factor.update');
+
         $canManageLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.read');
         $canCreateLabels = $this->authorizationChecker->can($currentUserId, 'labels.management.create');
 
@@ -99,6 +101,7 @@ final readonly class ShowEditUserController
             'canManageLabels' => $canManageLabels,
             'canCreateLabels' => $canCreateLabels,
             'userLabels' => $userLabels,
+            'canResetUserTwoFactor' => $canResetUserTwoFactor,
         ]);
     }
 }

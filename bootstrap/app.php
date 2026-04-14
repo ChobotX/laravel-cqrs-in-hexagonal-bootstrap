@@ -7,6 +7,7 @@ use App\Contract\Translation\Translator;
 use App\Domain\User\Contract\Exception\PasswordPreviouslyUsedException;
 use App\Presentation\Http\Middleware\CheckPermission;
 use App\Presentation\Http\Middleware\EnforcePasswordRotation;
+use App\Presentation\Http\Middleware\EnforceTwoFactor;
 use App\Presentation\Http\Middleware\EnsureTenantResolved;
 use App\Presentation\Http\Middleware\ResolveTenantMiddleware;
 use App\Presentation\Http\Middleware\SetAuthContextMiddleware;
@@ -66,13 +67,14 @@ return Application::configure(basePath: dirname(__DIR__))
             users: '/dashboard',
         );
         $middleware->web(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);
-        $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, EnforcePasswordRotation::class, CheckPermission::class, 'throttle:web']);
+        $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, EnforcePasswordRotation::class, EnforceTwoFactor::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([
             ResolveTenantMiddleware::class,
             EnsureTenantResolved::class,
             Illuminate\Auth\Middleware\Authenticate::class,
             SetAuthContextMiddleware::class,
             EnforcePasswordRotation::class,
+            EnforceTwoFactor::class,
             CheckPermission::class,
         ]);
         $middleware->api(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);

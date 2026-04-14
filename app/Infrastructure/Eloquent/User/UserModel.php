@@ -16,6 +16,9 @@ use Override;
 
 /**
  * @property CarbonImmutable|null $password_changed_at
+ * @property CarbonImmutable|null $email_two_factor_confirmed_at
+ * @property CarbonImmutable|null $totp_confirmed_at
+ * @property list<string>|null $totp_recovery_code_hashes
  */
 final class UserModel extends Authenticatable
 {
@@ -32,7 +35,19 @@ final class UserModel extends Authenticatable
 
     protected $table = 'users';
 
-    protected $fillable = ['id', 'name', 'email', 'password', 'password_changed_at', 'avatar_file_id'];
+    protected $fillable = [
+        'id',
+        'name',
+        'email',
+        'password',
+        'password_changed_at',
+        'avatar_file_id',
+        'email_two_factor_enabled',
+        'email_two_factor_confirmed_at',
+        'totp_secret',
+        'totp_confirmed_at',
+        'totp_recovery_code_hashes',
+    ];
 
     protected $keyType = 'string';
 
@@ -52,6 +67,10 @@ final class UserModel extends Authenticatable
     {
         return [
             'password_changed_at' => 'immutable_datetime',
+            'email_two_factor_enabled' => 'boolean',
+            'email_two_factor_confirmed_at' => 'immutable_datetime',
+            'totp_confirmed_at' => 'immutable_datetime',
+            'totp_recovery_code_hashes' => 'array',
         ];
     }
 }

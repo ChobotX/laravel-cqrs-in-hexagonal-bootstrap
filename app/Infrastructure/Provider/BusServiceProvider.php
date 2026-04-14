@@ -280,16 +280,26 @@ use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
 use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsHandler;
 use App\Domain\User\Contract\Command\AcceptInviteCommand;
+use App\Domain\User\Contract\Command\AdminResetUserTwoFactorCommand;
+use App\Domain\User\Contract\Command\ConfirmTotpSetupCommand;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Domain\User\Contract\Command\DeleteUserCommand;
+use App\Domain\User\Contract\Command\DisableEmailTwoFactorCommand;
+use App\Domain\User\Contract\Command\DisableTotpTwoFactorCommand;
+use App\Domain\User\Contract\Command\EnableEmailTwoFactorCommand;
+use App\Domain\User\Contract\Command\IssueEmailTwoFactorChallengeCommand;
+use App\Domain\User\Contract\Command\MarkTotpBackupCodesDownloadedCommand;
 use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
 use App\Domain\User\Contract\Command\ResendUserInviteCommand;
 use App\Domain\User\Contract\Command\ResetPasswordCommand;
 use App\Domain\User\Contract\Command\SendUserInviteCommand;
 use App\Domain\User\Contract\Command\SetPasswordCommand;
+use App\Domain\User\Contract\Command\StartTotpSetupCommand;
 use App\Domain\User\Contract\Command\UpdatePasswordRotationSettingsCommand;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
+use App\Domain\User\Contract\Command\UpdateTwoFactorSettingsCommand;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
+use App\Domain\User\Contract\Command\VerifyTwoFactorChallengeCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Event\PasswordResetCompleted;
 use App\Domain\User\Contract\Event\PasswordResetRequested;
@@ -301,6 +311,10 @@ use App\Domain\User\Contract\Query\CountUsersQuery;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationSettingsQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationStatusQuery;
+use App\Domain\User\Contract\Query\GetPendingTotpBackupCodesPayloadQuery;
+use App\Domain\User\Contract\Query\GetTotpSetupQuery;
+use App\Domain\User\Contract\Query\GetTwoFactorSettingsQuery;
+use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\Query\GetUsersByIdsQuery;
@@ -308,20 +322,34 @@ use App\Domain\User\Contract\Query\ListUsersQuery;
 use App\Domain\User\Contract\Query\SearchUsersQuery;
 use App\Domain\User\EventHandler\SendInviteOnUserCreated;
 use App\Domain\User\Handler\Command\AcceptInviteHandler;
+use App\Domain\User\Handler\Command\AdminResetUserTwoFactorHandler;
+use App\Domain\User\Handler\Command\ConfirmTotpSetupHandler;
 use App\Domain\User\Handler\Command\CreateUserHandler;
 use App\Domain\User\Handler\Command\DeleteUserHandler;
+use App\Domain\User\Handler\Command\DisableEmailTwoFactorHandler;
+use App\Domain\User\Handler\Command\DisableTotpTwoFactorHandler;
+use App\Domain\User\Handler\Command\EnableEmailTwoFactorHandler;
+use App\Domain\User\Handler\Command\IssueEmailTwoFactorChallengeHandler;
+use App\Domain\User\Handler\Command\MarkTotpBackupCodesDownloadedHandler;
 use App\Domain\User\Handler\Command\RequestPasswordResetHandler;
 use App\Domain\User\Handler\Command\ResendUserInviteHandler;
 use App\Domain\User\Handler\Command\ResetPasswordHandler;
 use App\Domain\User\Handler\Command\SendUserInviteHandler;
 use App\Domain\User\Handler\Command\SetPasswordHandler;
+use App\Domain\User\Handler\Command\StartTotpSetupHandler;
 use App\Domain\User\Handler\Command\UpdatePasswordRotationSettingsHandler;
 use App\Domain\User\Handler\Command\UpdateProfileHandler;
+use App\Domain\User\Handler\Command\UpdateTwoFactorSettingsHandler;
 use App\Domain\User\Handler\Command\UpdateUserHandler;
+use App\Domain\User\Handler\Command\VerifyTwoFactorChallengeHandler;
 use App\Domain\User\Handler\Query\CountUsersHandler;
 use App\Domain\User\Handler\Query\GetOwnProfileHandler;
 use App\Domain\User\Handler\Query\GetPasswordRotationSettingsHandler;
 use App\Domain\User\Handler\Query\GetPasswordRotationStatusHandler;
+use App\Domain\User\Handler\Query\GetPendingTotpBackupCodesPayloadHandler;
+use App\Domain\User\Handler\Query\GetTotpSetupHandler;
+use App\Domain\User\Handler\Query\GetTwoFactorSettingsHandler;
+use App\Domain\User\Handler\Query\GetTwoFactorStatusHandler;
 use App\Domain\User\Handler\Query\GetUserByEmailHandler;
 use App\Domain\User\Handler\Query\GetUserByIdHandler;
 use App\Domain\User\Handler\Query\GetUsersByIdsHandler;
@@ -394,8 +422,18 @@ final class BusServiceProvider extends ServiceProvider
                 UpdateUserCommand::class => UpdateUserHandler::class,
                 UpdateProfileCommand::class => UpdateProfileHandler::class,
                 UpdatePasswordRotationSettingsCommand::class => UpdatePasswordRotationSettingsHandler::class,
+                UpdateTwoFactorSettingsCommand::class => UpdateTwoFactorSettingsHandler::class,
                 DeleteUserCommand::class => DeleteUserHandler::class,
                 SetPasswordCommand::class => SetPasswordHandler::class,
+                EnableEmailTwoFactorCommand::class => EnableEmailTwoFactorHandler::class,
+                DisableEmailTwoFactorCommand::class => DisableEmailTwoFactorHandler::class,
+                StartTotpSetupCommand::class => StartTotpSetupHandler::class,
+                ConfirmTotpSetupCommand::class => ConfirmTotpSetupHandler::class,
+                DisableTotpTwoFactorCommand::class => DisableTotpTwoFactorHandler::class,
+                MarkTotpBackupCodesDownloadedCommand::class => MarkTotpBackupCodesDownloadedHandler::class,
+                IssueEmailTwoFactorChallengeCommand::class => IssueEmailTwoFactorChallengeHandler::class,
+                VerifyTwoFactorChallengeCommand::class => VerifyTwoFactorChallengeHandler::class,
+                AdminResetUserTwoFactorCommand::class => AdminResetUserTwoFactorHandler::class,
                 SendUserInviteCommand::class => SendUserInviteHandler::class,
                 ResendUserInviteCommand::class => ResendUserInviteHandler::class,
                 AcceptInviteCommand::class => AcceptInviteHandler::class,
@@ -472,6 +510,10 @@ final class BusServiceProvider extends ServiceProvider
                 GetOwnProfileQuery::class => GetOwnProfileHandler::class,
                 GetPasswordRotationStatusQuery::class => GetPasswordRotationStatusHandler::class,
                 GetPasswordRotationSettingsQuery::class => GetPasswordRotationSettingsHandler::class,
+                GetTwoFactorStatusQuery::class => GetTwoFactorStatusHandler::class,
+                GetTwoFactorSettingsQuery::class => GetTwoFactorSettingsHandler::class,
+                GetTotpSetupQuery::class => GetTotpSetupHandler::class,
+                GetPendingTotpBackupCodesPayloadQuery::class => GetPendingTotpBackupCodesPayloadHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
                 CountUsersQuery::class => CountUsersHandler::class,

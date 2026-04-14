@@ -6,13 +6,16 @@
     @if ($activeTab === 'password-rotation')
         <h1 class="mb-2 text-2xl font-semibold text-gray-900"
             data-testid="password-rotation-title">{{ __('messages.settings.password_rotation_title') }}</h1>
+    @elseif ($activeTab === 'two-factor')
+        <h1 class="mb-2 text-2xl font-semibold text-gray-900"
+            data-testid="two-factor-title">{{ __('messages.settings.two_factor_title') }}</h1>
     @else
         <h1 class="mb-2 text-2xl font-semibold text-gray-900">{{ __('messages.settings.title') }}</h1>
     @endif
 
     <div class="mb-6">
         <p class="text-base text-gray-500 sm:text-sm">
-            {{ $activeTab === 'password-rotation' ? __('messages.settings.password_rotation_intro') : __('messages.settings.subtitle') }}
+            {{ $activeTab === 'password-rotation' ? __('messages.settings.password_rotation_intro') : ($activeTab === 'two-factor' ? __('messages.settings.two_factor_intro') : __('messages.settings.subtitle')) }}
         </p>
     </div>
 
@@ -23,6 +26,9 @@
         <a class="{{ $activeTab === 'password-rotation' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }} inline-flex rounded-lg px-3 py-2 text-sm font-medium transition-colors"
            href="{{ route('settings.index', ['tab' => 'password-rotation']) }}"
            title="{{ __('messages.settings.password_rotation_title') }}">{{ __('messages.settings.password_rotation_title') }}</a>
+        <a class="{{ $activeTab === 'two-factor' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }} inline-flex rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+           href="{{ route('settings.index', ['tab' => 'two-factor']) }}"
+           title="{{ __('messages.settings.two_factor_title') }}">{{ __('messages.settings.two_factor_title') }}</a>
     </div>
 
     <div class="mb-6 max-w-lg">
@@ -86,6 +92,63 @@
                     <div class="flex items-center gap-3 pt-2">
                         <x-primary-button skip-permission
                                           testId="password-rotation-save-button"
+                                          :label="__('messages.settings.update_action')" />
+                    </div>
+                </form>
+            </div>
+        @elseif ($activeTab === 'two-factor')
+            <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
+                <form class="space-y-5 p-6"
+                      method="POST"
+                      action="{{ route('settings.two-factor.update') }}">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="flex items-center gap-2">
+                        <input name="required_for_all_users"
+                               type="hidden"
+                               value="0">
+                        <input class="h-4 w-4 cursor-pointer rounded border border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                               id="required_for_all_users"
+                               name="required_for_all_users"
+                               type="checkbox"
+                               value="1"
+                               @checked(old('required_for_all_users', $twoFactorRequiredForAllUsers))>
+                        <label class="text-base font-medium text-gray-700 sm:text-sm"
+                               for="required_for_all_users">{{ __('messages.settings.two_factor_required_for_all') }}</label>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input name="email_otp_enabled"
+                               type="hidden"
+                               value="0">
+                        <input class="h-4 w-4 cursor-pointer rounded border border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                               id="email_otp_enabled"
+                               name="email_otp_enabled"
+                               type="checkbox"
+                               value="1"
+                               @checked(old('email_otp_enabled', $twoFactorEmailOtpEnabled))>
+                        <label class="text-base font-medium text-gray-700 sm:text-sm"
+                               for="email_otp_enabled">{{ __('messages.settings.two_factor_email_method') }}</label>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <input name="totp_enabled"
+                               type="hidden"
+                               value="0">
+                        <input class="h-4 w-4 cursor-pointer rounded border border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                               id="totp_enabled"
+                               name="totp_enabled"
+                               type="checkbox"
+                               value="1"
+                               @checked(old('totp_enabled', $twoFactorTotpEnabled))>
+                        <label class="text-base font-medium text-gray-700 sm:text-sm"
+                               for="totp_enabled">{{ __('messages.settings.two_factor_totp_method') }}</label>
+                    </div>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <x-primary-button skip-permission
+                                          testId="two-factor-save-button"
                                           :label="__('messages.settings.update_action')" />
                     </div>
                 </form>

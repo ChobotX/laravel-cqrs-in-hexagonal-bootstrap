@@ -93,3 +93,39 @@ it('externist role has read create update at own scope', function (): void {
         ->and($byKey['users.list.create'])->toBe(AccessScope::Own)
         ->and($byKey['users.list.update'])->toBe(AccessScope::Own);
 });
+
+/** @return array<string, array{features: array<string, array{actions: list<string>}>}> */
+function testModulesWithSuperAdminOnlyRecovery(): array
+{
+    return [
+        'users' => [
+            'features' => [
+                'list' => ['actions' => ['read', 'create', 'update', 'delete']],
+            ],
+        ],
+        'user_recovery' => [
+            'features' => [
+                'two_factor' => ['actions' => ['update']],
+            ],
+        ],
+    ];
+}
+
+it('does not grant super-admin-only modules to manager role', function (): void {
+    $repository = new FakeRoleRepository;
+
+    $handler = new SeedDefaultRolesHandler(
+        $repository,
+        new FakeIdGenerator,
+        testModulesWithSuperAdminOnlyRecovery(),
+    );
+
+    $handler->handle(new SeedDefaultRolesCommand);
+
+    $role = findRole($repository, 'Manager');
+
+    $keys = array_map(fn (App\Domain\Authorization\Contract\ValueObject\RolePermission $rolePermission): string => (string) $rolePermission->permissionKey, $role->permissions);
+
+    expect($keys)->toContain('users');
+    expect($keys)->not->toContain('user_recovery');
+});

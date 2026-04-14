@@ -122,6 +122,8 @@ final class TenantSeeder extends Seeder
         $this->createMember('Henry Park', 'henry.park@test.com', self::TEAM_ENGINEERING_ID, $teamLeaderRoleId);
         $this->createMember('Irene Walsh', 'irene.walsh@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
         $this->createMember('Jack Turner', 'jack.turner@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('E2E 2FA TOTP', 'e2e-2fa-totp@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
+        $this->createMember('E2E 2FA Email', 'e2e-2fa-email@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
         $this->createMember('Karen Lopez', 'karen.lopez@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
         $this->createMember('Liam Chen', 'liam.chen@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
         $this->createMember('Mia Rivera', 'mia.rivera@test.com', self::TEAM_ENGINEERING_ID, $teamMemberRoleId);
@@ -198,7 +200,7 @@ final class TenantSeeder extends Seeder
         /** @var array<string, array{features: array<string, array{actions: list<string>}>}> $modules */
         $modules = config('authorization.modules');
 
-        $excludeAdminOnly = ['feature_flags'];
+        $excludeAdminOnly = ['feature_flags', 'user_recovery'];
         $nonAdminModules = $this->excludeModules($modules, $excludeAdminOnly);
 
         $nonAdminAll = $this->allPermissionKeys($nonAdminModules);

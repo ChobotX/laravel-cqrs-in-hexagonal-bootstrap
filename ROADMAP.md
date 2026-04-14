@@ -4,14 +4,6 @@ Planned work that is **not** yet in the codebase (implemented areas such as emai
 
 ## Tenant configuration
 
-### Enforce password rotation
-
-- Including validation that the new password does not match the last one, notifications as the deadline approaches, and a warning on every login during the last 10% of the rotation period.
-
-### 2FA
-
-- (Email OTP or authenticator app, user can choose) plus password policy enforced in tenant settings.
-
 ### SSO
 
 - Evaluate a Laravel-oriented package for common SSO options; tenant-level configuration. SSO may optionally bypass 2FA.

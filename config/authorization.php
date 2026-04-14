@@ -19,6 +19,15 @@ return [
                 ],
             ],
         ],
+        'user_recovery' => [
+            'label' => 'User recovery',
+            'features' => [
+                'two_factor' => [
+                    'label' => 'Second-factor recovery',
+                    'actions' => ['update'],
+                ],
+            ],
+        ],
         'teams' => [
             'label' => 'Teams',
             'features' => [

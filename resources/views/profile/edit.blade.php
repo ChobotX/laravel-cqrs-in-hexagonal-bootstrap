@@ -91,6 +91,14 @@
             </div>
         </x-form-card>
 
+        <x-form-card :title="__('messages.profile.two_factor_title')"
+                     :subtitle="__('messages.profile.two_factor_subtitle')">
+            <x-primary-button skip-permission
+                              :href="route('profile.two-factor')"
+                              testId="profile-two-factor-link"
+                              :label="__('messages.profile.manage_two_factor')" />
+        </x-form-card>
+
         <div class="flex items-center gap-3">
             <x-primary-button skip-permission
                               testId="profile-save-button"

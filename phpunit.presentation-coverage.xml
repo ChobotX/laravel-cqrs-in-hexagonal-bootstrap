@@ -14,14 +14,7 @@
     </testsuites>
     <source>
         <include>
-            <directory>app/Presentation/Console</directory>
-            <directory>app/Presentation/Http/Controller</directory>
-            <directory>app/Presentation/Http/Middleware</directory>
-            <directory>app/Presentation/Http/Request</directory>
-            <directory>app/Presentation/Http/Resource</directory>
-            <directory>app/Presentation/Http/Serialization</directory>
-            <directory>app/Presentation/Http/Security</directory>
-            <directory>app/Presentation/View</directory>
+            <directory>app/Presentation</directory>
         </include>
         <exclude>
             <file>app/Presentation/Console/Tenancy/DropSchemasCommand.php</file>

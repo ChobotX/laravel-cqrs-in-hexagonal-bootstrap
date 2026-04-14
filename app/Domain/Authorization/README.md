@@ -22,6 +22,8 @@ Higher-level grants cascade down:
 ### Resolution Algorithm (deny-wins)
 
 1. If user has super-admin role (system role) → granted with scope `All`
+
+Modules `feature_flags` and `user_recovery` are excluded from default tenant roles (`Manager`, `Team Leader`, …) in `SeedDefaultRolesHandler` and `TenantSeeder`, so only the system super-admin role receives those permissions unless you assign them explicitly.
 2. If impersonating → use impersonated user's permissions (no super-admin bypass)
 3. Collect all role permissions for user (union of all assigned roles)
 4. Apply permission inheritance (module → features → actions)

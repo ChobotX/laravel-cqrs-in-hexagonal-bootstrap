@@ -63,6 +63,10 @@ Controllers must not dispatch bus messages inside loops. Looping over `->dispatc
 
 Enforced by PHPStan rule `NoBusDispatchInControllerLoopsRule`.
 
+## Presentation `Support/`
+
+Small, framework-agnostic helpers used by controllers or view composers (for example `TotpQrSvgGenerator` for rendering a TOTP QR as SVG, or `StackGapClassMap` for layout token resolution). They live under `App\Presentation\Support`, stay free of domain imports beyond contracts if needed, and are covered by presentation-layer tests.
+
 ## View rules
 
 - **Dumb templates** — Blade views must contain zero business logic. All computation, formatting, and decision-making happens in controllers, `View::composer` callbacks, or Presentation-layer view models (e.g. `App\Presentation\View\Sidebar\SidebarNavigationBuilder`) before data reaches the template.
@@ -70,6 +74,64 @@ Enforced by PHPStan rule `NoBusDispatchInControllerLoopsRule`.
 - **Backend over frontend** — prefer server-side calculations over client-side. Templates receive ready-to-render data.
 - **Reusable components** — split views into small, single-responsibility Blade partials/components (`resources/views/components/`). Follow SRP and DRY — extract shared UI into components rather than duplicating markup across pages.
 - **Blade formatting** — all `.blade.php` files must pass `blade-formatter --check-formatted`. Config in `.bladeformatterrc.json` enforces: 4-space indent, 120-char line width, force-aligned attribute wrapping (min 2 attrs), code-guide HTML attribute ordering, Tailwind class sorting, no multiple empty lines. Run `composer format:blade` to auto-fix.
+
+## Layout primitives (`<x-stack>`, `<x-split-row>`)
+
+Use these for vertical rhythm and responsive “media + copy” rows instead of ad-hoc `mt-*` / `mb-*` / `gap-*` on every page.
+
+### `<x-stack>`
+
+Vertical `flex flex-col` with one named `gap` token. Merge root classes (for example `class="mt-8"`) via the normal Blade `class` attribute.
+
+| `gap` | Tailwind | Typical use |
+|-------|-----------|-------------|
+| `none` | `gap-0` | Flush blocks |
+| `xs` | `gap-3` | Tight groups |
+| `sm` | `gap-4` | Dense stacks |
+| `md` | `gap-6` | Related blocks |
+| `default` | `gap-8` | **Default** inner section rhythm |
+| `relaxed` | `gap-10` | Large blocks inside one card |
+| `loose` | `gap-12` | **Between** major sections (e.g. stacked `<x-form-card>` widgets) |
+
+**Stacked settings cards:** wrap siblings in `<x-stack gap="loose">` rather than adding `mt-12` (or similar) on the second card.
+
+### `<x-split-row>`
+
+Responsive **leading + trailing** row: stacked on small viewports with `mb-10` under the leading column until `md`, side-by-side from `md` with `md:gap-10`. Use for QR + instructions, thumbnail + text, etc.
+
+| Slot | Role |
+|------|------|
+| `leading` | Narrow column (wrap QR, icon, image). Width: prop `leadingMaxWidth` (default `max-w-[220px]`). |
+| `trailing` | Main copy and controls. Vertical spacing: prop `contentGap` with the **same token names** as `<x-stack>` `gap` (default `default` → `gap-8`). |
+
+```blade
+<x-split-row>
+    <x-slot:leading>
+        <div class="rounded-lg bg-white p-4 ring-1 ring-gray-950/5">…</div>
+    </x-slot:leading>
+    <x-slot:trailing>
+        <p class="text-sm text-gray-600">…</p>
+    </x-slot:trailing>
+</x-split-row>
+```
+
+### `<x-form-card>`
+
+The outer root merges `$attributes` — pass `class="..."` when a page needs an extra utility on the card shell.
+
+### Blade + Vue parity (canonical gap tokens)
+
+Do **not** duplicate the token → `gap-*` table in Blade `@php` matches or ad-hoc Vue strings. Single source:
+
+| Artifact | Role |
+|----------|------|
+| `resources/shared/ui-stack-gaps.json` | Canonical `stackGap` map for **Vue** (`none` … `loose` → Tailwind classes). |
+| `App\Presentation\Support\StackGapClassMap` | Blade resolver (same map as PHP `private const`); `<x-stack>` / `<x-split-row>` call `forGap()`. `StackGapClassMapTest` asserts PHP and JSON stay aligned. |
+| `resources/js/shared/layout/stack-gap-classes.ts` | Parses `ui-stack-gaps.json` at runtime (`parseStackGapMapFromUnknown`); `stack-gap-classes.test.ts` asserts parity with the JSON on disk and parser guard rails. |
+| `resources/js/shared/components/UiStack.vue` | Vue equivalent of `<x-stack>` (vertical `flex` + tokenized gap). |
+| `resources/js/shared/components/UiSplitRow.vue` | Vue equivalent of `<x-split-row>` (`leading` / `trailing` slots, same responsive rules). |
+
+`resources/css/app.css` includes `@source` for `../js/**/*.ts` / `../js/**/*.vue` plus an `@source inline(...)` listing every stack `gap-*` utility so Tailwind keeps classes used from Vue `computed()` bindings.
 
 ## Dates, times, and JSON instants
 
@@ -206,6 +268,8 @@ Two middleware handle tenant resolution, applied globally to `web` and `api` sta
 - **`EnsureTenantResolved`** (prepended, after resolve) — returns 404 if no tenant was resolved. Fail-safe: all routes require a tenant unless explicitly excluded.
 
 - **`EnforcePasswordRotation`** (web stack, after `SetAuthContextMiddleware`, before `CheckPermission`) — reads password expiry status for the authenticated user and redirects to `profile` when expired, except for profile update, logout, `locale.update`, guest password-reset routes, and **`settings.password-rotation` / `settings.password-rotation.update`** (so a tenant admin can adjust or disable the policy while their own password is expired). Successful login may flash `password_rotation` (`warning` / `expired` string values); `resources/views/components/password-rotation-banner.blade.php` compares those literals so Blade stays Presentation-only.
+- **`EnforceTwoFactor`** (web stack, after `EnforcePasswordRotation`, before `CheckPermission`) — when tenant policy requires 2FA for all users, blocks app navigation until the authenticated user either completes setup (`profile.two-factor`) or passes a challenge (`two-factor.challenge`). Route allowlist keeps logout, locale switching, setup, `profile.two-factor.backup-codes.download` (pending TOTP recovery codes), and challenge endpoints reachable during enforcement.
+- **Own authenticator (TOTP) UI** — `resources/views/settings/two-factor.blade.php` uses the same toggle + `autoSubmit` pattern as email OTP. `PUT profile.two-factor` sends `action=totp-save` with `totp_two_factor_enabled`; `UpdateOwnTwoFactorSettingsController` starts setup only when turning on and no secret exists, and dispatches disable when turning off while a secret exists. QR, recovery codes, and confirm/cancel controls render only while `GetTotpSetup` returns a secret (pending enrollment or already confirmed).
 
 Root domain routes (`routes/root.php`) opt out via `Route::withoutMiddleware(EnsureTenantResolved::class)`.
 
@@ -503,12 +567,14 @@ When a user's session expires, the app redirects them to login and returns them 
 Guest routes (`routes/web.php`, `guest` middleware group):
 
 - **Login** — `GET /login` (ShowLoginController), `POST /login` (LoginController)
+- **Two-factor challenge (post-login)** — `GET /two-factor` (ShowTwoFactorChallengeController), `POST /two-factor/verify` (VerifyTwoFactorChallengeController), `POST /two-factor/email-code` (IssueTwoFactorEmailCodeController). These are authenticated routes used only when tenant policy enforces 2FA.
 - **Invite acceptance** — `GET /invite/{userId}` (ShowAcceptInviteController), `POST /invite/{userId}` (AcceptInviteController). Uses `signed` middleware — invite links are HMAC-signed with 72h expiry via `URL::temporarySignedRoute()`. User sets their password to activate their account.
 - **Password reset** — `GET /forgot-password` (ShowForgotPasswordController), `POST /forgot-password` (ForgotPasswordController), `GET /reset-password/{token}` (ShowResetPasswordController), `POST /reset-password` (ResetPasswordController). Uses Laravel's Password Broker for token generation/validation. Rate-limited at 3 requests/min per email+IP.
 
 Authenticated routes:
 
 - **Resend invite** — `POST /users/{userId}/resend-invite` (ResendInviteController). Available for non-activated users. Requires `users.list.update` permission.
+- **Reset user second factor** — `POST /users/{userId}/reset-two-factor` (ResetUserTwoFactorController). Clears email OTP, TOTP, recovery hashes, and pending email challenges for the target user. Requires `user_recovery.two_factor.update` (granted to the system super-admin role only by default — see `config/authorization.php` and `SeedDefaultRolesHandler`).
 
 All auth controllers use `#[SkipPermissionCheck]` (guest actions) or `#[RequiresPermission]` (admin actions).
 

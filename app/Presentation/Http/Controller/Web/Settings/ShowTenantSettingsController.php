@@ -9,6 +9,7 @@ use App\Application\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationSettingsQuery;
+use App\Domain\User\Contract\Query\GetTwoFactorSettingsQuery;
 use App\Domain\User\Contract\ValueObject\PasswordRotationSettings;
 use App\Presentation\Http\Request\Web\Settings\ShowTenantSettingsRequest;
 use DateTimeZone;
@@ -34,6 +35,7 @@ final readonly class ShowTenantSettingsController
             tenantId: $tenantId,
         ));
         $passwordRotationSettings = $this->queryBus->dispatch(new GetPasswordRotationSettingsQuery);
+        $twoFactorSettings = $this->queryBus->dispatch(new GetTwoFactorSettingsQuery);
 
         return view('settings.tenant', [
             'settings' => $tenantSettings,
@@ -46,6 +48,9 @@ final readonly class ShowTenantSettingsController
             'maxPasswordAgeDays' => PasswordRotationSettings::MAX_PASSWORD_AGE_DAYS,
             'minHistoryCount' => PasswordRotationSettings::MIN_HISTORY_COUNT,
             'maxHistoryCount' => PasswordRotationSettings::MAX_HISTORY_COUNT,
+            'twoFactorRequiredForAllUsers' => $twoFactorSettings->requiredForAllUsers,
+            'twoFactorEmailOtpEnabled' => $twoFactorSettings->emailOtpEnabled,
+            'twoFactorTotpEnabled' => $twoFactorSettings->totpEnabled,
         ]);
     }
 }

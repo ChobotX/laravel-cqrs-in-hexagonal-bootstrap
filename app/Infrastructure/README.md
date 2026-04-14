@@ -4,11 +4,11 @@ Concrete implementations of contracts and framework integrations. All classes mu
 
 ## Thin adapters vs Domain orchestration
 
-Infrastructure classes implement **ports** such as repositories, mailers, cache decorators, and framework bridges. They must not call `EventCollector::collect()`, must not type-hint `EventCollector` on properties or method return types (the collector is a domain-side concern), must not take `CommandBus` or `QueryBus` as dependencies (except under `Infrastructure\Bus\*` and `Infrastructure\Provider\*`, where the buses are implemented or wired), must not resolve buses via `app()` / `App::make()`, and must not implement multi-step workflows that span bounded contexts.
+Infrastructure classes implement **ports** such as repositories, mailers, cache decorators, and framework bridges. They must not call `EventCollector::collect()`, must not type-hint `EventCollector` on properties or method return types (the collector is a domain-side concern), must not take `CommandBus` or `QueryBus` as dependencies (except under `Infrastructure\Bus\*` and `Infrastructure\Provider\*`, where the buses are implemented or wired), must not resolve buses via `app()` / `App::make()`, must not call translation helpers (`__`, `trans`, `trans_choice`), and must not implement multi-step workflows that span bounded contexts.
 
 Outside those wiring and persistence namespaces, a `use` statement that pulls in another module’s code must import only from that module’s `Contract\` tree (`App\Domain\{X}\Contract\…`). Adapters that belong to the same domain module may still import internal types from that module, such as value objects, exceptions, or schema types.
 
-Orchestration, raising domain events, and policy decisions stay in `App\Domain\` command handlers (or controller/CLI entrypoints before dispatch). Infrastructure does one thing per adapter and avoids multi-step coordination logic. PHPStan enforces this boundary with `NoInfrastructureEventCollectorCollectRule`, `NoInfrastructureEventCollectorInjectionRule`, `NoApplicationBusInInfrastructureRule`, `NoApplicationBusFromAppHelperInInfrastructureRule`, `InfrastructureCrossDomainImportsRule`, and `InfrastructureCrossDomainGroupUseImportsRule`. For the architectural rationale, see [ADR.md](../../ADR.md) (section on thin Infrastructure adapters).
+Orchestration, raising domain events, and policy decisions stay in `App\Domain\` command handlers (or controller/CLI entrypoints before dispatch). Infrastructure does one thing per adapter and avoids multi-step coordination logic. PHPStan enforces this boundary with `NoInfrastructureEventCollectorCollectRule`, `NoInfrastructureEventCollectorInjectionRule`, `NoApplicationBusInInfrastructureRule`, `NoApplicationBusFromAppHelperInInfrastructureRule`, `NoTranslationHelperInInfrastructureRule`, `InfrastructureCrossDomainImportsRule`, and `InfrastructureCrossDomainGroupUseImportsRule`. For the architectural rationale, see [ADR.md](../../ADR.md) (section on thin Infrastructure adapters).
 
 ## BusServiceProvider registration
 
@@ -61,6 +61,10 @@ Middleware is business logic and lives outside Infrastructure. See [Application 
 ## Repository + Mapper pattern
 
 Repositories implement contract interfaces and use Eloquent models internally. Domain objects are never Eloquent models — mappers translate between Eloquent models and domain objects.
+
+Tenant-level singleton policy repositories follow the same pattern as password rotation and 2FA settings (`EloquentPasswordRotationSettingsRepository`, `EloquentTwoFactorSettingsRepository`), while user-state adapters (`EloquentUserTwoFactorStateRepository`, `EloquentEmailTwoFactorChallengeRepository`) stay persistence-only and leave policy decisions to domain handlers.
+
+`SimpleTwoFactorManager` issues TOTP secrets as RFC 4648 Base32 (160-bit random keys) and decodes them for HMAC-SHA1 per RFC 6238 so `otpauth://` QR codes work with Google Authenticator and other standard apps.
 
 The `HasOptimisticLocking` trait (`app/Infrastructure/Eloquent/HasOptimisticLocking.php`) provides optimistic concurrency control. It overrides `performUpdate()` to add `WHERE version = ?` and increment the version column atomically. If 0 rows are affected (stale version), it throws `ConcurrentModificationException` (HTTP 409). The version is set to 1 on creation automatically.
 

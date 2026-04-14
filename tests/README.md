@@ -6,7 +6,7 @@
 - `tests/Architecture/PHPStan/` — custom PHPStan rules
 - `tests/Unit/Domain/` — domain unit tests (100% coverage required)
 - `tests/Unit/Infrastructure/` — infrastructure unit tests
-- `tests/Unit/Presentation/` — presentation unit tests (e.g. `View/` for Blade view models and composers)
+- `tests/Unit/Presentation/` — presentation unit tests (e.g. `View/` for Blade view models and composers, `Support/` for helpers such as `TotpQrSvgGenerator`)
 - `tests/Feature/` — integration/feature tests
 - `tests/Helper/` — shared test utilities
 - `tests/e2e/` — Playwright end-to-end tests (browser-based, against running app)
@@ -14,7 +14,7 @@
 ## Test rules
 
 - **Unreachable code must not exist** — every line must be exercisable by tests. No `@codeCoverageIgnore` or coverage suppression of any kind.
-- **100% coverage** — required across domain, infrastructure, and presentation layers. Enforced by `phpunit.coverage.xml` (unified, used by `check-and-fix`) and per-layer configs `phpunit.domain-coverage.xml`, `phpunit.infrastructure-coverage.xml`, `phpunit.presentation-coverage.xml` (used by `check` and for debugging which layer dropped).
+- **100% coverage** — required across domain, infrastructure, and presentation layers. Enforced by `phpunit.coverage.xml` (unified, used by `check-and-fix`) and per-layer configs `phpunit.domain-coverage.xml`, `phpunit.infrastructure-coverage.xml`, `phpunit.presentation-coverage.xml` (used by `check` and for debugging which layer dropped). Presentation sources are all of `app/Presentation` (only `.php` files are instrumented); opt-outs use `<exclude>` in those configs (for example `DropSchemasCommand.php`).
 - **No Mockery in domain tests** — `tests/Unit/Domain/` must not use `Mockery`. Use fake implementations instead. Enforced by `NoMockeryInDomainTestsRule`.
 - **Transactional isolation** — all Feature tests use `TenantAwareRefreshDatabase` applied centrally in `Pest.php`. This trait creates landlord + tenant schemas once per suite and wraps each test in transactions on both connections. Individual test files must not import database traits directly. `LazilyRefreshDatabase`, `DatabaseMigrations`, and `DatabaseTransactions` are forbidden everywhere. Enforced by `NoDatabaseTraitsInTestsRule`.
 
@@ -60,6 +60,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `NoInfrastructureEventCollectorInjectionRule` | Infrastructure must not type-hint `EventCollector` on properties or method return types (except `InMemoryEventCollector` implementation) |
 | `NoApplicationBusInInfrastructureRule` | Infrastructure must not inject `CommandBus` or `QueryBus` (except `Infrastructure\Bus\*` and `Infrastructure\Provider\*`) |
 | `NoApplicationBusFromAppHelperInInfrastructureRule` | Infrastructure must not obtain `CommandBus` or `QueryBus` via `app()` / `App::make()` |
+| `NoTranslationHelperInInfrastructureRule` | Infrastructure must not call translation helpers (`__`, `trans`, `trans_choice`) — translate outside adapters and pass rendered strings via ports |
 | `InfrastructureCrossDomainImportsRule` | Outside the excluded wiring namespaces, Infrastructure may not import another bounded context’s internal types; imports from `App\Domain\{Other}\…` must stay under `App\Domain\{Other}\Contract\` unless `{Other}` is the adapter’s own module (covers `use`, `use function`, and `use const`) |
 | `InfrastructureCrossDomainGroupUseImportsRule` | Same boundary as `InfrastructureCrossDomainImportsRule` for brace `use { … }` imports |
 | `NoBusDispatchInControllerLoopsRule` | Controllers must not call `->dispatch()` inside foreach loops — use batch queries or aggregate commands instead |

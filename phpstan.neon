@@ -212,6 +212,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\NoTranslationHelperInInfrastructureRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\InfrastructureCrossDomainImportsRule
         factory: ['Tests\Architecture\PHPStan\InfrastructureCrossDomainImportsRule', 'createWithDefaultBoundary']
         tags:

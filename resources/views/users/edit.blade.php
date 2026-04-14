@@ -84,6 +84,23 @@
             @endif
         </div>
 
+        @if ($canResetUserTwoFactor)
+            <x-form-card :title="__('messages.users.two_factor_reset_section_title')"
+                         :subtitle="__('messages.users.two_factor_reset_section_subtitle')">
+                <form data-confirm-delete
+                      method="POST"
+                      action="{{ route('users.reset-two-factor', $user->id->value) }}">
+                    @csrf
+                    <button class="rounded-lg bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-amber-500"
+                            data-confirm-title="{{ __('messages.users.two_factor_reset_confirm_title') }}"
+                            data-confirm-message="{{ __('messages.users.two_factor_reset_confirm_message', ['name' => $user->name->value]) }}"
+                            type="submit">
+                        {{ __('messages.users.two_factor_reset_action') }}
+                    </button>
+                </form>
+            </x-form-card>
+        @endif
+
         <div class="flex items-center gap-3 pb-6">
             <x-primary-button skip-permission
                               :label="__('messages.users.update_action')" />

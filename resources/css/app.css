@@ -2,6 +2,11 @@
 @import "tailwindcss";
 
 @source "../views/**/*.blade.php";
+@source "../js/**/*.ts";
+@source "../js/**/*.vue";
+
+/* Layout tokens: keep in sync with resources/shared/ui-stack-gaps.json (Vue + Blade stack gap). */
+@source inline("gap-0 gap-3 gap-4 gap-6 gap-8 gap-10 gap-12");
 
 @theme {
     --font-sans: 'Inter', system-ui, sans-serif;

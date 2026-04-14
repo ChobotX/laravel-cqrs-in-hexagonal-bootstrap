@@ -7,8 +7,10 @@ namespace Database\Seeders;
 use App\Infrastructure\Eloquent\Registry\DefinitionModel;
 use App\Infrastructure\Eloquent\Registry\DefinitionVersionModel;
 use App\Infrastructure\Eloquent\Registry\EntryModel;
+use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 final class RegistrySeeder extends Seeder
 {
@@ -18,14 +20,17 @@ final class RegistrySeeder extends Seeder
 
     private const string DEF_PRIORITY_ID = '00000000-0000-0000-0000-000000000102';
 
+    private const string DEFAULT_SEED_CREATOR_EMAIL = 'admin@test.com';
+
     public function run(): void
     {
-        $this->seedManufacturers();
-        $this->seedCars();
-        $this->seedPriorities();
+        $creatorId = $this->resolveCreatorId();
+        $this->seedManufacturers($creatorId);
+        $this->seedCars($creatorId);
+        $this->seedPriorities($creatorId);
     }
 
-    private function seedManufacturers(): void
+    private function seedManufacturers(string $creatorId): void
     {
         DefinitionModel::create([
             'id' => self::DEF_MANUFACTURER_ID,
@@ -77,11 +82,12 @@ final class RegistrySeeder extends Seeder
                 'namespace' => 'enumerations',
                 'title' => $manufacturer['title'],
                 'data' => $manufacturer['data'],
+                'created_by_user_id' => $creatorId,
             ]);
         }
     }
 
-    private function seedCars(): void
+    private function seedCars(string $creatorId): void
     {
         DefinitionModel::create([
             'id' => self::DEF_CAR_ID,
@@ -154,11 +160,12 @@ final class RegistrySeeder extends Seeder
                 'namespace' => 'enumerations',
                 'title' => $car['title'],
                 'data' => $car['data'],
+                'created_by_user_id' => $creatorId,
             ]);
         }
     }
 
-    private function seedPriorities(): void
+    private function seedPriorities(string $creatorId): void
     {
         DefinitionModel::create([
             'id' => self::DEF_PRIORITY_ID,
@@ -209,7 +216,25 @@ final class RegistrySeeder extends Seeder
                 'namespace' => 'enumerations',
                 'title' => $priority['title'],
                 'data' => $priority['data'],
+                'created_by_user_id' => $creatorId,
             ]);
         }
+    }
+
+    private function resolveCreatorId(): string
+    {
+        $creatorId = UserModel::query()->where('email', self::DEFAULT_SEED_CREATOR_EMAIL)->value('id');
+
+        if (is_string($creatorId) && $creatorId !== '') {
+            return $creatorId;
+        }
+
+        $fallbackId = UserModel::query()->value('id');
+
+        if (is_string($fallbackId) && $fallbackId !== '') {
+            return $fallbackId;
+        }
+
+        throw new RuntimeException('Cannot seed registry entries without an existing tenant user.');
     }
 }

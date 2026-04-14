@@ -21,6 +21,18 @@ final readonly class UserMapper
             $passwordChangedAt = DateTimeImmutable::createFromInterface($userModel->password_changed_at);
         }
 
+        $emailTwoFactorConfirmedAt = null;
+
+        if ($userModel->email_two_factor_confirmed_at !== null) {
+            $emailTwoFactorConfirmedAt = DateTimeImmutable::createFromInterface($userModel->email_two_factor_confirmed_at);
+        }
+
+        $totpConfirmedAt = null;
+
+        if ($userModel->totp_confirmed_at !== null) {
+            $totpConfirmedAt = DateTimeImmutable::createFromInterface($userModel->totp_confirmed_at);
+        }
+
         return new User(
             id: new UserId($userModel->id),
             name: new UserName($userModel->name),
@@ -28,6 +40,10 @@ final readonly class UserMapper
             isActivated: $userModel->password !== null,
             avatarFileId: $userModel->avatar_file_id !== null ? new FileId($userModel->avatar_file_id) : null,
             passwordChangedAt: $passwordChangedAt,
+            emailTwoFactorEnabled: $userModel->email_two_factor_enabled,
+            emailTwoFactorConfirmedAt: $emailTwoFactorConfirmedAt,
+            totpSecret: is_string($userModel->totp_secret) ? $userModel->totp_secret : null,
+            totpConfirmedAt: $totpConfirmedAt,
         );
     }
 }

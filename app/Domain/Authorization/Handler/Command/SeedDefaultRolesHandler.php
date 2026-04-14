@@ -25,6 +25,9 @@ use App\Domain\Authorization\ValueObject\PermissionKey;
 #[SkipDomainEvent(reason: 'Data initialization — seeds default roles during setup, no domain events needed')]
 final readonly class SeedDefaultRolesHandler implements CommandHandler
 {
+    /** @var list<string> Modules only the system super-admin role receives (not Manager / Team Leader / …). */
+    private const array SUPER_ADMIN_ONLY_MODULES = ['feature_flags', 'user_recovery'];
+
     /**
      * @param  array<string, array{features: array<string, array{actions: list<string>}>}>  $availableModules
      */
@@ -62,12 +65,20 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
         }
     }
 
+    /**
+     * @return array<string, array{features: array<string, array{actions: list<string>}>}>
+     */
+    private function modulesForDefaultRoles(): array
+    {
+        return array_diff_key($this->availableModules, array_flip(self::SUPER_ADMIN_ONLY_MODULES));
+    }
+
     /** @return list<PermissionKey> */
     private function buildAllPermissions(): array
     {
         $keys = [];
 
-        foreach (array_keys($this->availableModules) as $moduleName) {
+        foreach (array_keys($this->modulesForDefaultRoles()) as $moduleName) {
             $keys[] = new PermissionKey(new Module($moduleName));
         }
 
@@ -79,7 +90,7 @@ final readonly class SeedDefaultRolesHandler implements CommandHandler
     {
         $keys = [];
 
-        foreach ($this->availableModules as $moduleName => $moduleConfig) {
+        foreach ($this->modulesForDefaultRoles() as $moduleName => $moduleConfig) {
             foreach ($moduleConfig['features'] as $featureName => $featureConfig) {
                 $this->collectMatchingActions($moduleName, $featureName, $featureConfig, $actions, $keys);
             }

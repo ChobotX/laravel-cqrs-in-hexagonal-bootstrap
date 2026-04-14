@@ -39,7 +39,7 @@ const chromiumDevice = { ...devices['Desktop Chrome'] };
 /*
  * Execution phases (enforced via project dependencies):
  *
- *   setup → auth-tests → profile-tests → settings-password-rotation-tests → tenant-tests → teardown
+ *   setup → auth-tests → profile-tests → settings-password-rotation-tests → tenant-tests → two-factor-tests → teardown
  *
  * Why sequential phases instead of parallel:
  * - auth-tests and profile-tests share the admin user (admin@test.com),
@@ -50,6 +50,8 @@ const chromiumDevice = { ...devices['Desktop Chrome'] };
  * - settings-password-rotation-tests reuse the authenticated admin session.
  * - tenant-tests create/destroy schemas and run artisan commands that can
  *   affect server-side connection state.
+ * - two-factor-tests use guest storage, enable tenant-wide 2FA in beforeAll,
+ *   and reset policy plus dedicated seed users in afterAll (also in e2e-reset).
  *
  * As the suite grows, tests that use independent users and don't share
  * rate-limited endpoints can be grouped into parallel projects.
@@ -97,6 +99,12 @@ export default defineConfig({
             use: { ...chromiumDevice, storageState: authFile },
             testMatch: /tenant-invite\.spec\.ts$/,
             dependencies: ['settings-password-rotation-tests'],
+        },
+        {
+            name: 'two-factor-tests',
+            use: { ...chromiumDevice, storageState: { cookies: [], origins: [] } },
+            testMatch: /two-factor\.spec\.ts$/,
+            dependencies: ['tenant-tests'],
             teardown: 'teardown',
         },
         { name: 'teardown', testMatch: /.*\.teardown\.ts/ },

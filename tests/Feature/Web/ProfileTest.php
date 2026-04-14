@@ -21,7 +21,9 @@ it('shows profile page for authenticated user', function (): void {
         ->get('/profile')
         ->assertOk()
         ->assertSee('Profile User')
-        ->assertSee(__('messages.profile.subtitle'));
+        ->assertSee(__('messages.profile.subtitle'))
+        ->assertSee(__('messages.profile.manage_two_factor'))
+        ->assertSee(route('profile.two-factor'));
 });
 
 it('redirects unauthenticated user to login', function (): void {

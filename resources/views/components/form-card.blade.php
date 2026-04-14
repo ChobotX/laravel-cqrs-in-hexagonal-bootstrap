@@ -3,7 +3,7 @@
     'subtitle' => null,
 ])
 
-<div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
+<div {{ $attributes->class('rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5') }}>
     @if ($title || $subtitle)
         <div class="border-b border-gray-200 px-6 py-4">
             @if ($title)

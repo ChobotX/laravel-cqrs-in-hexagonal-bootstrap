@@ -10,11 +10,13 @@ final class ShowTenantSettingsRequest extends FormRequest
 {
     public const string PASSWORD_ROTATION_TAB = 'password-rotation';
 
+    public const string TWO_FACTOR_TAB = 'two-factor';
+
     /** @return array<string, list<string>> */
     public function rules(): array
     {
         return [
-            'tab' => ['nullable', 'in:'.self::PASSWORD_ROTATION_TAB],
+            'tab' => ['nullable', 'in:'.self::PASSWORD_ROTATION_TAB.','.self::TWO_FACTOR_TAB],
         ];
     }
 
@@ -22,8 +24,18 @@ final class ShowTenantSettingsRequest extends FormRequest
     {
         $tab = $this->query('tab');
 
-        return is_string($tab) && $tab === self::PASSWORD_ROTATION_TAB
-            ? self::PASSWORD_ROTATION_TAB
-            : 'general';
+        if (! is_string($tab)) {
+            return 'general';
+        }
+
+        if ($tab === self::PASSWORD_ROTATION_TAB) {
+            return self::PASSWORD_ROTATION_TAB;
+        }
+
+        if ($tab === self::TWO_FACTOR_TAB) {
+            return self::TWO_FACTOR_TAB;
+        }
+
+        return 'general';
     }
 }

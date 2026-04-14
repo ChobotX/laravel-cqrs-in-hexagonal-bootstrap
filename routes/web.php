@@ -6,6 +6,7 @@ use App\Presentation\Http\Controller\Web\AuditLog\ListAuditLogController;
 use App\Presentation\Http\Controller\Web\AuditLog\ShowAuditLogTraceController;
 use App\Presentation\Http\Controller\Web\Auth\AcceptInviteController;
 use App\Presentation\Http\Controller\Web\Auth\ForgotPasswordController;
+use App\Presentation\Http\Controller\Web\Auth\IssueTwoFactorEmailCodeController;
 use App\Presentation\Http\Controller\Web\Auth\LoginController;
 use App\Presentation\Http\Controller\Web\Auth\LogoutController;
 use App\Presentation\Http\Controller\Web\Auth\ResetPasswordController;
@@ -13,6 +14,8 @@ use App\Presentation\Http\Controller\Web\Auth\ShowAcceptInviteController;
 use App\Presentation\Http\Controller\Web\Auth\ShowForgotPasswordController;
 use App\Presentation\Http\Controller\Web\Auth\ShowLoginController;
 use App\Presentation\Http\Controller\Web\Auth\ShowResetPasswordController;
+use App\Presentation\Http\Controller\Web\Auth\ShowTwoFactorChallengeController;
+use App\Presentation\Http\Controller\Web\Auth\VerifyTwoFactorChallengeController;
 use App\Presentation\Http\Controller\Web\Authorization\CreateRoleController as WebCreateRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\DeleteRoleController as WebDeleteRoleController;
 use App\Presentation\Http\Controller\Web\Authorization\ListRolesController as WebListRolesController;
@@ -49,16 +52,21 @@ use App\Presentation\Http\Controller\Web\Registry\ShowEditDefinitionController;
 use App\Presentation\Http\Controller\Web\Registry\ShowEditEntryController;
 use App\Presentation\Http\Controller\Web\Registry\UpdateDefinitionController;
 use App\Presentation\Http\Controller\Web\Registry\UpdateEntryController;
+use App\Presentation\Http\Controller\Web\Settings\DownloadOwnTotpBackupCodesController;
 use App\Presentation\Http\Controller\Web\Settings\EditEmailTemplateController;
 use App\Presentation\Http\Controller\Web\Settings\ListEmailLogsController;
 use App\Presentation\Http\Controller\Web\Settings\ListEmailTemplatesController;
 use App\Presentation\Http\Controller\Web\Settings\PreviewEmailTemplateController;
 use App\Presentation\Http\Controller\Web\Settings\ResetEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\ShowOwnTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowPasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
+use App\Presentation\Http\Controller\Web\Settings\ShowTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\UpdateOwnTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdatePasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
+use App\Presentation\Http\Controller\Web\Settings\UpdateTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Team\CreateTeamController;
 use App\Presentation\Http\Controller\Web\Team\DeleteTeamController;
 use App\Presentation\Http\Controller\Web\Team\ListTeamsController;
@@ -71,6 +79,7 @@ use App\Presentation\Http\Controller\Web\User\CreateUserController;
 use App\Presentation\Http\Controller\Web\User\DeleteUserController;
 use App\Presentation\Http\Controller\Web\User\ListUsersController;
 use App\Presentation\Http\Controller\Web\User\ResendInviteController;
+use App\Presentation\Http\Controller\Web\User\ResetUserTwoFactorController;
 use App\Presentation\Http\Controller\Web\User\ShowCreateUserController;
 use App\Presentation\Http\Controller\Web\User\ShowEditUserController;
 use App\Presentation\Http\Controller\Web\User\ShowProfileController;
@@ -97,8 +106,14 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::get('/profile', ShowProfileController::class)->name('profile');
     Route::put('/profile', UpdateProfileController::class)->name('profile.update');
+    Route::get('/profile/two-factor', ShowOwnTwoFactorSettingsController::class)->name('profile.two-factor');
+    Route::get('/profile/two-factor/backup-codes', DownloadOwnTotpBackupCodesController::class)->name('profile.two-factor.backup-codes.download');
+    Route::put('/profile/two-factor', UpdateOwnTwoFactorSettingsController::class)->name('profile.two-factor.update');
     Route::get('/notifications', ShowNotificationsController::class)->name('notifications.index');
     Route::post('/logout', LogoutController::class)->name('logout');
+    Route::get('/two-factor', ShowTwoFactorChallengeController::class)->name('two-factor.challenge');
+    Route::post('/two-factor/verify', VerifyTwoFactorChallengeController::class)->name('two-factor.verify');
+    Route::post('/two-factor/email-code', IssueTwoFactorEmailCodeController::class)->name('two-factor.email-code');
 
     Route::get('/files/{fileId}', ServeFileController::class)->name('files.show');
 
@@ -110,6 +125,7 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/users/{userId}', DeleteUserController::class)->name('users.destroy');
     Route::post('/users/{userId}/permissions', ManageUserPermissionsController::class)->name('users.permissions.manage');
     Route::post('/users/{userId}/resend-invite', ResendInviteController::class)->name('users.resend-invite');
+    Route::post('/users/{userId}/reset-two-factor', ResetUserTwoFactorController::class)->name('users.reset-two-factor');
 
     Route::get('/roles', WebListRolesController::class)->name('roles.index');
     Route::get('/roles/create', ShowCreateRoleController::class)->name('roles.create');
@@ -132,6 +148,8 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/settings', UpdateTenantSettingsController::class)->name('settings.update');
     Route::get('/settings/password-rotation', ShowPasswordRotationSettingsController::class)->name('settings.password-rotation');
     Route::put('/settings/password-rotation', UpdatePasswordRotationSettingsController::class)->name('settings.password-rotation.update');
+    Route::get('/settings/two-factor', ShowTwoFactorSettingsController::class)->name('settings.two-factor');
+    Route::put('/settings/two-factor', UpdateTwoFactorSettingsController::class)->name('settings.two-factor.update');
 
     // Email Templates
     Route::get('/settings/email-templates', ListEmailTemplatesController::class)->name('settings.email-templates.index');

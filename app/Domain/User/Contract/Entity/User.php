@@ -28,5 +28,13 @@ final readonly class User
         public ?FileId $avatarFileId = null,
         /** When password last changed; null if never set. */
         public ?DateTimeImmutable $passwordChangedAt = null,
+        /** Whether email OTP is enabled for this user. */
+        public bool $emailTwoFactorEnabled = false,
+        /** When email OTP method was confirmed. */
+        public ?DateTimeImmutable $emailTwoFactorConfirmedAt = null,
+        /** Shared secret for TOTP method, null when not initialized. */
+        public ?string $totpSecret = null,
+        /** When TOTP method was confirmed. */
+        public ?DateTimeImmutable $totpConfirmedAt = null,
     ) {}
 }

@@ -110,7 +110,7 @@ Tests that mutate shared state (e.g., password) must include `afterAll` cleanup 
 Tests run in sequential project phases via Playwright dependencies (see `playwright.config.ts`):
 
 ```
-setup → auth-tests → profile-tests → settings-password-rotation-tests → tenant-tests → teardown
+setup → auth-tests → profile-tests → settings-password-rotation-tests → tenant-tests → two-factor-tests → teardown
 ```
 
 Why sequential instead of parallel:
@@ -118,6 +118,7 @@ Why sequential instead of parallel:
 - Profile tests mutate admin password (change + revert)
 - Settings password rotation tests reuse the saved admin session
 - Tenant tests create/destroy schemas affecting server-side state
+- Two-factor tests (`two-factor.spec.ts`) turn on `required_for_all_users` for tenant `alpha`, use dedicated seed users (`e2e-2fa-totp@test.com`, `e2e-2fa-email@test.com`), and restore policy plus user rows in `afterAll` (also reset in `bin/e2e-reset.sh`).
 
 As the suite grows, tests using independent users and non-shared endpoints can be grouped into parallel projects.
 
@@ -182,5 +183,8 @@ tests/e2e/
 ├── profile-password.spec.ts    # Profile password change tests
 ├── password-rotation-settings.spec.ts # Tenant password rotation policy UI
 ├── tenant-invite.spec.ts       # Tenant registration + member invitation
+├── two-factor.spec.ts          # TOTP + email OTP setup and post-login challenge
+├── totp-code.ts                # RFC 6238 TOTP helper for authenticator e2e
+├── alpha-tenant-tinker.ts      # `php artisan tinker` against tenant `alpha` schema
 └── README.md                   # This file
 ```
