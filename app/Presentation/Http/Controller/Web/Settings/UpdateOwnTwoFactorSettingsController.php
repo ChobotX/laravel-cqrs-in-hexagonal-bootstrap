@@ -16,6 +16,7 @@ use App\Domain\User\Contract\Query\GetTotpSetupQuery;
 use App\Presentation\Http\Request\Web\Settings\UpdateOwnTwoFactorRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 #[SkipPermissionCheck('Authenticated users can manage own two-factor settings')]
 final readonly class UpdateOwnTwoFactorSettingsController
@@ -47,6 +48,12 @@ final readonly class UpdateOwnTwoFactorSettingsController
             self::ACTION_TOTP_DISABLE => $this->commandBus->dispatch(new DisableTotpTwoFactorCommand($userId)),
             default => null,
         };
+
+        if ($action === self::ACTION_TOTP_CONFIRM
+            || ($action === self::ACTION_EMAIL_SAVE && $updateOwnTwoFactorRequest->boolean('email_two_factor_enabled'))) {
+            Session::put('two_factor_passed', true);
+            Session::save();
+        }
 
         return redirect()->route('profile.two-factor')->with('success', __('messages.settings.two_factor_updated'));
     }

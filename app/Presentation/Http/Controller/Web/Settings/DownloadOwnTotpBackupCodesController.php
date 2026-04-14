@@ -11,7 +11,6 @@ use App\Domain\User\Contract\Command\MarkTotpBackupCodesDownloadedCommand;
 use App\Domain\User\Contract\Query\GetPendingTotpBackupCodesPayloadQuery;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 #[SkipPermissionCheck('Authenticated users download own pending TOTP backup codes')]
 final readonly class DownloadOwnTotpBackupCodesController
@@ -23,7 +22,7 @@ final readonly class DownloadOwnTotpBackupCodesController
         private CommandBus $commandBus,
     ) {}
 
-    public function __invoke(): StreamedResponse
+    public function __invoke(): Response
     {
         $userId = (string) Auth::id();
         $codes = $this->queryBus->dispatch(new GetPendingTotpBackupCodesPayloadQuery($userId));
@@ -34,10 +33,9 @@ final readonly class DownloadOwnTotpBackupCodesController
 
         $this->commandBus->dispatch(new MarkTotpBackupCodesDownloadedCommand($userId));
 
-        return response()->streamDownload(static function () use ($codes): void {
-            echo implode(PHP_EOL, $codes);
-        }, self::DOWNLOAD_FILENAME, [
+        return response(implode(PHP_EOL, $codes), Response::HTTP_OK, [
             'Content-Type' => 'text/plain; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.self::DOWNLOAD_FILENAME.'"',
         ]);
     }
 }

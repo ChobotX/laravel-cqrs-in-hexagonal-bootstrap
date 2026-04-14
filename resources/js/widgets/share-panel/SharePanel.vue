@@ -18,10 +18,10 @@ interface UserOption {
 }
 
 function isUserOption(value: unknown): value is UserOption {
-    if (!isRecord(value) || typeof value['id'] !== 'string' || typeof value['name'] !== 'string') {
+    if (!isRecord(value) || typeof value.id !== 'string' || typeof value.name !== 'string') {
         return false;
     }
-    const email = value['email'];
+    const email = value.email;
     return email === undefined || typeof email === 'string';
 }
 
@@ -38,10 +38,10 @@ function buildUserSearchQueryUrl(searchUrl: string, term: string, excludeIds: st
 }
 
 function parseUserSearchBody(body: unknown): UserOption[] {
-    if (!isRecord(body) || !Array.isArray(body['data'])) {
+    if (!isRecord(body) || !Array.isArray(body.data)) {
         return [];
     }
-    return body['data'].filter(isUserOption);
+    return body.data.filter(isUserOption);
 }
 
 const props = defineProps<{

@@ -9,9 +9,9 @@ export interface TemplateVariableConfig {
 function isTemplateVariableConfig(value: unknown): value is TemplateVariableConfig {
     return (
         isRecord(value) &&
-        typeof value['description'] === 'string' &&
-        typeof value['sensitive'] === 'boolean' &&
-        typeof value['sample'] === 'string'
+        typeof value.description === 'string' &&
+        typeof value.sensitive === 'boolean' &&
+        typeof value.sample === 'string'
     );
 }
 

@@ -1,4 +1,4 @@
-function isRecord(value: unknown): value is Record<string, unknown> {
+export function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null;
 }
 
@@ -40,10 +40,21 @@ export function parseMailpitMessageBody(value: unknown): MailpitMessageBody {
     if (!isRecord(value)) {
         return {};
     }
-    const html = value.HTML;
-    const text = value.Text;
+    let html: string | undefined;
+    if (typeof value.HTML === 'string') {
+        html = value.HTML;
+    } else if (typeof value.Html === 'string') {
+        html = value.Html;
+    }
+    let text: string | undefined;
+    if (typeof value.Text === 'string') {
+        text = value.Text;
+    } else if (typeof value.text === 'string') {
+        text = value.text;
+    }
+
     return {
-        HTML: typeof html === 'string' ? html : undefined,
-        Text: typeof text === 'string' ? text : undefined,
+        HTML: html,
+        Text: text,
     };
 }

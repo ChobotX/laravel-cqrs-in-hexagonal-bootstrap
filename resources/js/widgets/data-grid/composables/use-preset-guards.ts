@@ -5,19 +5,19 @@ export function isPreset(value: unknown): value is Preset {
     if (!isRecord(value)) {
         return false;
     }
-    const scope = value['scope'];
-    const teamId = value['team_id'];
+    const scope = value.scope;
+    const teamId = value.team_id;
     return (
-        typeof value['id'] === 'string' &&
-        typeof value['name'] === 'string' &&
-        typeof value['filters'] === 'string' &&
-        typeof value['sorting'] === 'string' &&
-        typeof value['search'] === 'string' &&
-        typeof value['is_default'] === 'boolean' &&
-        typeof value['position'] === 'number' &&
+        typeof value.id === 'string' &&
+        typeof value.name === 'string' &&
+        typeof value.filters === 'string' &&
+        typeof value.sorting === 'string' &&
+        typeof value.search === 'string' &&
+        typeof value.is_default === 'boolean' &&
+        typeof value.position === 'number' &&
         (scope === 'personal' || scope === 'team' || scope === 'global') &&
         (teamId === null || typeof teamId === 'string') &&
-        typeof value['is_owner'] === 'boolean'
+        typeof value.is_owner === 'boolean'
     );
 }
 
@@ -63,8 +63,8 @@ export function tryParseStringRecordFromJson(json: string): Record<string, strin
 }
 
 export function parsePresetsListBody(value: unknown): Preset[] | null {
-    if (!isRecord(value) || !Array.isArray(value['data'])) {
+    if (!isRecord(value) || !Array.isArray(value.data)) {
         return null;
     }
-    return value['data'].filter(isPreset);
+    return value.data.filter(isPreset);
 }

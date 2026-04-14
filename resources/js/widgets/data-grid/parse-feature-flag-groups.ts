@@ -6,7 +6,7 @@ export interface FeatureFlagGroupOption {
 }
 
 function isFeatureFlagGroupOption(value: unknown): value is FeatureFlagGroupOption {
-    return isRecord(value) && typeof value['key'] === 'string' && typeof value['label'] === 'string';
+    return isRecord(value) && typeof value.key === 'string' && typeof value.label === 'string';
 }
 
 export function parseFeatureFlagGroupsJson(json: string): FeatureFlagGroupOption[] {

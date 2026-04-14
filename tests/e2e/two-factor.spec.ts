@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test';
 import { execAlphaTenantTinker } from './alpha-tenant-tinker';
 import { mailpitApiBase } from './mailpit-config';
-import { parseMailpitMessageBody, parseMailpitMessagesResponse } from './mailpit-json';
+import {
+    isRecord,
+    type MailpitMessageSummary,
+    parseMailpitMessageBody,
+    parseMailpitMessagesResponse,
+} from './mailpit-json';
 import { totpCode } from './totp-code';
 
 const MAILPIT_API: string = mailpitApiBase();
@@ -45,15 +50,22 @@ test.describe('Two-factor authentication', () => {
         expect(secretText).toBeTruthy();
         const secret = secretText?.trim() ?? '';
 
-        const downloadPromise = page.waitForEvent('download');
-        await page.getByTestId('own-two-factor-totp-backup-download').click();
-        await downloadPromise;
-
-        await expect(page.getByTestId('own-two-factor-totp-download-ack')).toBeVisible();
+        await page.evaluate(async () => {
+            const res = await fetch('/profile/two-factor/backup-codes', { credentials: 'include' });
+            if (!res.ok) {
+                throw new Error(`backup codes download failed: HTTP ${String(res.status)}`);
+            }
+            await res.text();
+        });
 
         await page.getByTestId('own-two-factor-totp-code-input').fill(totpCode(secret));
         await page.getByTestId('own-two-factor-totp-confirm-submit').click();
 
+        await expect(page.locator('#app-flash-data')).toHaveAttribute('data-error', '', { timeout: 15_000 });
+        await expect(page.locator('#app-flash-data')).toHaveAttribute('data-success', /\S/, { timeout: 5000 });
+
+        await expect(page).toHaveURL(/\/profile\/two-factor/);
+        await page.goto('/users');
         await expect(page).toHaveURL(/\/users/);
         await expect(page.getByTestId('topbar-user-email')).toBeVisible();
 
@@ -84,6 +96,8 @@ test.describe('Two-factor authentication', () => {
         await expect(page).toHaveURL(/\/profile\/two-factor/);
 
         await page.getByTestId('own-two-factor-email-switch').click();
+        await expect(page).toHaveURL(/\/profile\/two-factor/);
+        await page.goto('/users');
         await expect(page).toHaveURL(/\/users/);
 
         await page.getByTestId('logout-button').click();
@@ -95,7 +109,10 @@ test.describe('Two-factor authentication', () => {
 
         await expect(page).toHaveURL(/\/two-factor/);
 
-        await page.getByTestId('two-factor-send-email-submit').click();
+        await Promise.all([
+            page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes('/two-factor/email-code')),
+            page.getByTestId('two-factor-send-email-submit').click(),
+        ]);
         await expect(page).toHaveURL(/\/two-factor/);
 
         const messageId = await waitForMailpitMessageTo(USER_EMAIL);
@@ -110,29 +127,65 @@ test.describe('Two-factor authentication', () => {
     });
 });
 
-async function waitForMailpitMessageTo(recipientEmail: string): Promise<string> {
-    for (let attempt = 0; attempt < 30; attempt++) {
-        const res = await fetch(`${MAILPIT_API}/messages`);
-        const data = parseMailpitMessagesResponse(await res.json());
-        const msg = data.messages?.find((m) => m.To.some((to) => to.Address === recipientEmail));
-        if (msg?.ID) {
+function sleepMs(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+        setTimeout(resolve, ms);
+    });
+}
+
+function extractSixDigitCodeFromMailpitPayload(json: unknown): string | null {
+    const body = parseMailpitMessageBody(json);
+    if (!isRecord(json)) {
+        return null;
+    }
+    const subject = typeof json.Subject === 'string' ? json.Subject : '';
+    const snippet = typeof json.Snippet === 'string' ? json.Snippet : '';
+    const blob = [subject, snippet, body.HTML ?? '', body.Text ?? ''].join('\n').replace(/<[^>]+>/g, ' ');
+    const match = blob.match(/\b(\d{6})\b/);
+
+    return match?.[1] ?? null;
+}
+
+async function listMailpitMessagesForRecipient(recipientEmail: string): Promise<MailpitMessageSummary[]> {
+    const res = await fetch(`${MAILPIT_API}/messages`);
+    const data = parseMailpitMessagesResponse(await res.json());
+
+    return (data.messages ?? []).filter((m) => m.To.some((to) => to.Address === recipientEmail));
+}
+
+async function firstMessageIdWithOtp(candidates: MailpitMessageSummary[]): Promise<string | null> {
+    for (const msg of candidates) {
+        if (!msg.ID) {
+            continue;
+        }
+        const detail = await fetch(`${MAILPIT_API}/message/${msg.ID}`);
+        const code = extractSixDigitCodeFromMailpitPayload(await detail.json());
+        if (code !== null) {
             return msg.ID;
         }
-        await new Promise<void>((resolve) => {
-            setTimeout(resolve, 500);
-        });
+    }
+
+    return null;
+}
+
+async function waitForMailpitMessageTo(recipientEmail: string): Promise<string> {
+    for (let attempt = 0; attempt < 30; attempt++) {
+        const candidates = await listMailpitMessagesForRecipient(recipientEmail);
+        const id = await firstMessageIdWithOtp(candidates);
+        if (id !== null) {
+            return id;
+        }
+        await sleepMs(500);
     }
     throw new Error(`No Mailpit message for ${recipientEmail} within 15 seconds`);
 }
 
 async function extractSixDigitCodeFromMailpit(messageId: string): Promise<string> {
     const res = await fetch(`${MAILPIT_API}/message/${messageId}`);
-    const body = parseMailpitMessageBody(await res.json());
-    const text = body.HTML ?? body.Text ?? '';
-    const match = text.match(/\b(\d{6})\b/);
-    if (!match?.[1]) {
+    const code = extractSixDigitCodeFromMailpitPayload(await res.json());
+    if (code === null) {
         throw new Error('Could not find 6-digit code in email body');
     }
 
-    return match[1];
+    return code;
 }

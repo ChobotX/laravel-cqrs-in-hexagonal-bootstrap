@@ -25,13 +25,13 @@ function isRawNotification(value: unknown): value is RawNotification {
         return false;
     }
     return (
-        typeof value['id'] === 'string' &&
-        typeof value['level'] === 'string' &&
-        typeof value['title'] === 'string' &&
-        typeof value['body'] === 'string' &&
-        (value['link_url'] === null || typeof value['link_url'] === 'string') &&
-        (value['read_at'] === null || typeof value['read_at'] === 'string') &&
-        typeof value['created_at'] === 'string'
+        typeof value.id === 'string' &&
+        typeof value.level === 'string' &&
+        typeof value.title === 'string' &&
+        typeof value.body === 'string' &&
+        (value.link_url === null || typeof value.link_url === 'string') &&
+        (value.read_at === null || typeof value.read_at === 'string') &&
+        typeof value.created_at === 'string'
     );
 }
 
@@ -40,18 +40,18 @@ function isListMeta(value: unknown): value is NotificationListResponse['meta'] {
         return false;
     }
     return (
-        typeof value['current_page'] === 'number' &&
-        typeof value['per_page'] === 'number' &&
-        typeof value['total'] === 'number' &&
-        typeof value['total_pages'] === 'number'
+        typeof value.current_page === 'number' &&
+        typeof value.per_page === 'number' &&
+        typeof value.total === 'number' &&
+        typeof value.total_pages === 'number'
     );
 }
 
 export function parseNotificationListResponse(value: unknown): NotificationListResponse {
-    if (!isRecord(value) || !Array.isArray(value['data']) || !isListMeta(value['meta'])) {
+    if (!isRecord(value) || !Array.isArray(value.data) || !isListMeta(value.meta)) {
         throw new Error('Invalid notifications list JSON');
     }
-    const rows = value['data'].filter(isRawNotification);
+    const rows = value.data.filter(isRawNotification);
     return {
         data: rows.map(
             (raw): NotificationEntry => ({
@@ -64,13 +64,13 @@ export function parseNotificationListResponse(value: unknown): NotificationListR
                 createdAt: raw.created_at,
             }),
         ),
-        meta: value['meta'],
+        meta: value.meta,
     };
 }
 
 export function parseUnreadCountJson(value: unknown): number {
-    if (!isRecord(value) || typeof value['count'] !== 'number') {
+    if (!isRecord(value) || typeof value.count !== 'number') {
         throw new Error('Invalid unread count JSON');
     }
-    return value['count'];
+    return value.count;
 }

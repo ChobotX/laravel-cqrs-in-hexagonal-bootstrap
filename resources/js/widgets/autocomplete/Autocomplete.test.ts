@@ -280,7 +280,7 @@ describe('Autocomplete', () => {
         await typeAndFetch(wrapper, 'test');
 
         const init = mockedFetchFirstInitRecord(global.fetch);
-        const fetchHeaders = init['headers'];
+        const fetchHeaders = init.headers;
         expect(isRecord(fetchHeaders)).toBe(true);
         if (!isRecord(fetchHeaders)) {
             throw new Error('expected headers object');

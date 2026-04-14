@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Infrastructure\Eloquent\User\UserModel;
 use Illuminate\Support\Facades\Hash;
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 it('returns 404 when no pending totp backup codes exist in session', function (): void {
     $user = UserModel::create([
@@ -41,11 +40,8 @@ it('streams pending totp backup codes after starting totp setup', function (): v
     $response->assertOk()
         ->assertHeader('content-type', 'text/plain; charset=UTF-8');
 
-    $base = $response->baseResponse;
-    expect($base)->toBeInstanceOf(StreamedResponse::class);
-    ob_start();
-    $base->sendContent();
-    $body = ob_get_clean();
-    expect($body)->toBeString()->not->toBe('')
-        ->and(strlen($body))->toBeGreaterThan(10);
+    $body = $response->getContent();
+    expect($body)->not->toBeFalse();
+    assert(is_string($body));
+    expect(strlen($body))->toBeGreaterThan(10);
 });

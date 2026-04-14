@@ -6,10 +6,10 @@ function isFetchMeta(value: unknown): value is FetchResult<unknown>['meta'] {
         return false;
     }
     return (
-        typeof value['current_page'] === 'number' &&
-        typeof value['per_page'] === 'number' &&
-        typeof value['total'] === 'number' &&
-        typeof value['total_pages'] === 'number'
+        typeof value.current_page === 'number' &&
+        typeof value.per_page === 'number' &&
+        typeof value.total === 'number' &&
+        typeof value.total_pages === 'number'
     );
 }
 
@@ -18,8 +18,8 @@ export function isFetchResultUnknown(value: unknown): value is FetchResult<unkno
     if (!isRecord(value)) {
         return false;
     }
-    if (!Array.isArray(value['data'])) {
+    if (!Array.isArray(value.data)) {
         return false;
     }
-    return isFetchMeta(value['meta']);
+    return isFetchMeta(value.meta);
 }

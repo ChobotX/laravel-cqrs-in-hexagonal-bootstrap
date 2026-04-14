@@ -2,10 +2,10 @@ import { isRecord } from '../../shared/type-guards/is-record';
 import type { ChipOption } from './ChipSelector.vue';
 
 function isChipOption(value: unknown): value is ChipOption {
-    if (!isRecord(value) || typeof value['id'] !== 'string' || typeof value['name'] !== 'string') {
+    if (!isRecord(value) || typeof value.id !== 'string' || typeof value.name !== 'string') {
         return false;
     }
-    if ('badge' in value && value['badge'] !== undefined && typeof value['badge'] !== 'string') {
+    if ('badge' in value && value.badge !== undefined && typeof value.badge !== 'string') {
         return false;
     }
     return true;

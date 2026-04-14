@@ -260,7 +260,7 @@ describe('LazyChipSelector', () => {
         await flushPromises();
 
         const init = mockedFetchFirstInitRecord(global.fetch);
-        const fetchHeaders = init['headers'];
+        const fetchHeaders = init.headers;
         expect(isRecord(fetchHeaders)).toBe(true);
         if (!isRecord(fetchHeaders)) {
             throw new Error('expected headers');
@@ -375,14 +375,14 @@ describe('LazyChipSelector', () => {
         expect(createCall).toBeDefined();
         expect(createCall?.[0]).toBe('/internal-api/labels');
         const createInit = createCall?.[1];
-        expect(isRecord(createInit) && typeof createInit['body'] === 'string').toBe(true);
-        if (!isRecord(createInit) || typeof createInit['body'] !== 'string') {
+        expect(isRecord(createInit) && typeof createInit.body === 'string').toBe(true);
+        if (!isRecord(createInit) || typeof createInit.body !== 'string') {
             throw new Error('expected POST body');
         }
-        const body = JSON.parse(createInit['body']);
+        const body = JSON.parse(createInit.body);
         expect(body).toEqual({ namespace: 'users', name: 'newlabel' });
 
-        const createHeaders = createInit['headers'];
+        const createHeaders = createInit.headers;
         expect(isRecord(createHeaders)).toBe(true);
         if (!isRecord(createHeaders)) {
             throw new Error('expected headers');
