@@ -190,7 +190,7 @@ it('omits roles when user lacks users.roles.read permission', function (): void 
     expect($companyNode['members'][0]['roles'])->toBe([]);
 });
 
-it('sets parentId to empty when parent is filtered out by scope', function (): void {
+it('sets parentId to empty when parent is filtered out by direct team scope', function (): void {
     $user = UserModel::create([
         'id' => '550e8400-e29b-41d4-a716-446655440f30',
         'name' => 'Scoped User',
@@ -222,8 +222,8 @@ it('sets parentId to empty when parent is filtered out by scope', function (): v
 
     $names = array_column($data, 'name');
 
-    expect($names)->toContain('Engineering', 'Backend');
-    expect($names)->not()->toContain('Company');
+    expect($names)->toContain('Engineering');
+    expect($names)->not()->toContain('Company', 'Backend');
 
     $engineering = null;
 

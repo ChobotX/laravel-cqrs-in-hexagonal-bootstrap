@@ -18,7 +18,7 @@ final class CreateRoleRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'permissions' => ['nullable', 'array'],
             'permissions.*.enabled' => ['sometimes', 'string'],
-            'permissions.*.scope' => ['sometimes', 'string'],
+            'permissions.*.scope' => ['sometimes', 'in:all,team_tree,team,own'],
         ];
     }
 

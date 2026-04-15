@@ -8,17 +8,19 @@ Hierarchical team structure with membership management and scope filtering.
 - `TeamMember` — read model for team membership (userId, teamId, userName, userEmail, joinedAt)
 - `TeamRepository` — `findAll(?onlyIds)`, `findById()`, `findBySlug()`, `create()`, `update()`, `delete()`
 - `TeamTreeNode` — read model for tree view (team + members)
-- `TeamMemberRepository` — `add()`, `remove()`, `isMember()`, `memberTeamIds()`, `directMemberTeamIds()`, `listMembers()`, `visibleUserIds()`, `removeAllByUser()`
+- `TeamMemberRepository` — `add()`, `remove()`, `isMember()`, `memberTeamIds()`, `directMemberTeamIds()`, `listMembers()`, `visibleUserIds()`, `directVisibleUserIds()`, `removeAllByUser()`
 
 ## Team Hierarchy
 
 Teams form a tree via `parentTeamId`. A team with no parent is a root team.
 
-`memberTeamIds()` returns the user's direct team IDs **plus all descendant team IDs** via recursive CTE. This powers `AccessScope::Team` filtering — a member of "Engineering" also sees data from "Backend", "Frontend", and all sub-teams.
+`memberTeamIds()` returns the user's direct team IDs **plus all descendant team IDs** via recursive CTE. This powers `AccessScope::TeamTree` filtering — a member of "Engineering" also sees data from "Backend", "Frontend", and all sub-teams.
 
-`directMemberTeamIds()` returns only directly assigned team IDs (for membership management UI).
+`directMemberTeamIds()` returns only directly assigned team IDs. This powers `AccessScope::Team` (direct-only scope).
 
 `visibleUserIds()` returns all user IDs visible to a given user under team scope — members of the user's teams and all descendant teams, always including the user themselves. Implemented as a single recursive CTE query to avoid N+1 (previously required one `listMembers()` call per team).
+
+`directVisibleUserIds()` returns only users from directly assigned teams (no descendant expansion), always including the user themselves.
 
 ## Commands
 

@@ -29,6 +29,30 @@ it('memoizes visibleUserIds per userId', function (): void {
         ->and($inner->visibleUserIdsCallCount)->toBe(1);
 });
 
+it('memoizes directMemberTeamIds per userId', function (): void {
+    $inner = new CachedCheckerTestTrackingChecker(directMemberTeamIds: ['team-1']);
+    $cached = new CachedTeamMembershipChecker($inner);
+
+    $first = $cached->directMemberTeamIds('user-1');
+    $second = $cached->directMemberTeamIds('user-1');
+
+    expect($first)->toBe(['team-1'])
+        ->and($second)->toBe(['team-1'])
+        ->and($inner->directMemberTeamIdsCallCount)->toBe(1);
+});
+
+it('memoizes directVisibleUserIds per userId', function (): void {
+    $inner = new CachedCheckerTestTrackingChecker(directVisibleUserIds: ['user-1', 'user-2']);
+    $cached = new CachedTeamMembershipChecker($inner);
+
+    $first = $cached->directVisibleUserIds('user-1');
+    $second = $cached->directVisibleUserIds('user-1');
+
+    expect($first)->toBe(['user-1', 'user-2'])
+        ->and($second)->toBe(['user-1', 'user-2'])
+        ->and($inner->directVisibleUserIdsCallCount)->toBe(1);
+});
+
 it('separates cache by userId', function (): void {
     $inner = new CachedCheckerTestTrackingChecker(memberTeamIds: ['team-1']);
     $cached = new CachedTeamMembershipChecker($inner);
@@ -55,15 +79,23 @@ final class CachedCheckerTestTrackingChecker implements TeamMembershipChecker
 
     public int $visibleUserIdsCallCount = 0;
 
+    public int $directMemberTeamIdsCallCount = 0;
+
+    public int $directVisibleUserIdsCallCount = 0;
+
     public int $isTeamMemberCallCount = 0;
 
     /**
      * @param  list<string>  $memberTeamIds
      * @param  list<string>  $visibleUserIds
+     * @param  list<string>  $directMemberTeamIds
+     * @param  list<string>  $directVisibleUserIds
      */
     public function __construct(
         private readonly array $memberTeamIds = [],
         private readonly array $visibleUserIds = [],
+        private readonly array $directMemberTeamIds = [],
+        private readonly array $directVisibleUserIds = [],
     ) {}
 
     public function isTeamMember(string $userId, string $teamId): bool
@@ -87,5 +119,21 @@ final class CachedCheckerTestTrackingChecker implements TeamMembershipChecker
         $this->visibleUserIdsCallCount++;
 
         return $this->visibleUserIds;
+    }
+
+    /** @return list<string> */
+    public function directMemberTeamIds(string $userId): array
+    {
+        $this->directMemberTeamIdsCallCount++;
+
+        return $this->directMemberTeamIds;
+    }
+
+    /** @return list<string> */
+    public function directVisibleUserIds(string $userId): array
+    {
+        $this->directVisibleUserIdsCallCount++;
+
+        return $this->directVisibleUserIds;
     }
 }

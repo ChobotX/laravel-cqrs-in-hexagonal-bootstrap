@@ -218,7 +218,8 @@ return [
 
     'scopes' => [
         'all' => 'All',
-        'team' => 'Team + Shared',
+        'team_tree' => 'Team Tree + Shared',
+        'team' => 'Direct Team + Shared',
         'own' => 'Own + Shared',
     ],
 

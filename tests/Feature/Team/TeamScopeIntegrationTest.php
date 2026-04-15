@@ -97,19 +97,35 @@ it('TeamMembershipChecker delegates to repository for scope resolution', functio
 
     $teamMembershipChecker = app(TeamMembershipChecker::class);
 
-    // Manager sees all 3 teams
+    // team_tree: Manager sees all 3 teams
     $managerTeamIds = $teamMembershipChecker->memberTeamIds($manager->id);
     expect($managerTeamIds)->toHaveCount(3);
 
-    // Engineer sees only Engineering
+    // team_tree: Engineer sees only Engineering
     $engineerTeamIds = $teamMembershipChecker->memberTeamIds($engineer->id);
     expect($engineerTeamIds)->toHaveCount(1)
         ->and($engineerTeamIds)->toContain('00000000-0000-0000-0000-100000000002');
+
+    // team: direct membership only
+    $managerDirectTeamIds = $teamMembershipChecker->directMemberTeamIds($manager->id);
+    expect($managerDirectTeamIds)->toBe(['00000000-0000-0000-0000-100000000001']);
 
     // Direct membership checks
     expect($teamMembershipChecker->isTeamMember($manager->id, '00000000-0000-0000-0000-100000000001'))->toBeTrue()
         ->and($teamMembershipChecker->isTeamMember($engineer->id, '00000000-0000-0000-0000-100000000001'))->toBeFalse()
         ->and($teamMembershipChecker->isTeamMember($engineer->id, '00000000-0000-0000-0000-100000000002'))->toBeTrue();
+});
+
+it('direct visible users exclude descendants while team tree includes them', function (): void {
+    [$manager, $engineer, $designer, $repo] = scopeTestSetup();
+
+    $managerDirectVisible = $repo->directVisibleUserIds($manager->id);
+    $managerTreeVisible = $repo->visibleUserIds($manager->id);
+
+    expect($managerDirectVisible)->toContain($manager->id)
+        ->and($managerDirectVisible)->not->toContain($engineer->id, $designer->id);
+
+    expect($managerTreeVisible)->toContain($manager->id, $engineer->id, $designer->id);
 });
 
 it('directMemberTeamIds returns only direct assignments', function (): void {

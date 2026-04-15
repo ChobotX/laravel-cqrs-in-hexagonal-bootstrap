@@ -159,6 +159,39 @@ it('returns visible user ids from teams and descendants in single query', functi
         ->and($ids)->not->toContain($outsider->id);
 });
 
+it('returns direct visible user ids without descendant expansion', function (): void {
+    $userModel = createTeamMemberTestUser();
+    $peer = createTeamMemberTestUser();
+    $descendantUser = createTeamMemberTestUser();
+
+    $parentId = '550e8400-e29b-41d4-a716-446655440d13';
+    $childId = '550e8400-e29b-41d4-a716-446655440d14';
+
+    createTeamMemberTestTeam($parentId);
+    createTeamMemberTestTeam($childId, $parentId);
+
+    $eloquentTeamMemberRepository = teamMemberRepo();
+    $eloquentTeamMemberRepository->add($userModel->id, $parentId);
+    $eloquentTeamMemberRepository->add($peer->id, $parentId);
+    $eloquentTeamMemberRepository->add($descendantUser->id, $childId);
+
+    $ids = $eloquentTeamMemberRepository->directVisibleUserIds($userModel->id);
+
+    expect($ids)->toContain($userModel->id, $peer->id)
+        ->and($ids)->not->toContain($descendantUser->id);
+});
+
+it('returns only self for direct visible user ids when user has no teams', function (): void {
+    $userModel = createTeamMemberTestUser();
+    createTeamMemberTestTeam('550e8400-e29b-41d4-a716-446655440d15');
+
+    $eloquentTeamMemberRepository = teamMemberRepo();
+
+    $ids = $eloquentTeamMemberRepository->directVisibleUserIds($userModel->id);
+
+    expect($ids)->toBe([$userModel->id]);
+});
+
 it('returns only self when user has no teams', function (): void {
     $userModel = createTeamMemberTestUser();
 

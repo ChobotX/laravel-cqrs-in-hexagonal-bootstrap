@@ -10,10 +10,13 @@ namespace App\Domain\Authorization\Contract\Enum;
 enum AccessScope: string
 {
     case All = 'all';
+    case TeamTree = 'team_tree';
     case Team = 'team';
     case Own = 'own';
 
-    private const int ORDER_ALL = 3;
+    private const int ORDER_ALL = 4;
+
+    private const int ORDER_TEAM_TREE = 3;
 
     private const int ORDER_TEAM = 2;
 
@@ -28,6 +31,7 @@ enum AccessScope: string
     {
         return match ($this) {
             self::All => self::ORDER_ALL,
+            self::TeamTree => self::ORDER_TEAM_TREE,
             self::Team => self::ORDER_TEAM,
             self::Own => self::ORDER_OWN,
         };

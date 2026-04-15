@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Presentation\Support\StackGapClassMap;
-use RuntimeException;
 
 it('resolves stack gap tokens', function (): void {
     expect(StackGapClassMap::forGap('loose'))->toBe('gap-12')

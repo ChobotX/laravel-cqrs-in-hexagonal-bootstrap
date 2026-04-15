@@ -218,7 +218,8 @@ return [
 
     'scopes' => [
         'all' => 'Vše',
-        'team' => 'Tým + Sdílené',
+        'team_tree' => 'Strom týmů + Sdílené',
+        'team' => 'Přímý tým + Sdílené',
         'own' => 'Vlastní + Sdílené',
     ],
 

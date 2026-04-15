@@ -16,7 +16,7 @@ final class SetPermissionOverrideRequest extends FormRequest
         return [
             'permission' => ['required', 'string'],
             'type' => ['required', 'in:grant,deny'],
-            'scope' => ['required', 'in:all,team,own,shared'],
+            'scope' => ['required', 'in:all,team_tree,team,own'],
         ];
     }
 }

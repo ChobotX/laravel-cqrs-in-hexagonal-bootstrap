@@ -122,6 +122,30 @@ final class FakeTeamMemberRepository implements TeamMemberRepository
         return array_values(array_unique($userIds));
     }
 
+    /** @return list<string> */
+    public function directVisibleUserIds(string $userId): array
+    {
+        $teamIds = $this->directMemberTeamIds($userId);
+
+        if ($teamIds === []) {
+            return [$userId];
+        }
+
+        $userIds = [$userId];
+
+        foreach ($this->memberships as $otherUserId => $otherTeamIds) {
+            foreach ($otherTeamIds as $otherTeamId) {
+                if (in_array($otherTeamId, $teamIds, true)) {
+                    $userIds[] = $otherUserId;
+
+                    break;
+                }
+            }
+        }
+
+        return array_values(array_unique($userIds));
+    }
+
     public function removeAllByUser(string $userId): void
     {
         unset($this->memberships[$userId]);

@@ -14,7 +14,9 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
 {
     private const int SYSTEM_ROLE_SCORE = 999999;
 
-    private const int SCOPE_WEIGHT_ALL = 3;
+    private const int SCOPE_WEIGHT_ALL = 4;
+
+    private const int SCOPE_WEIGHT_TEAM_TREE = 2;
 
     private const int SCOPE_WEIGHT_TEAM = 2;
 
@@ -133,6 +135,7 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
             if ($sorting->column === Sorting::PERMISSION_SCORE) {
                 $sys = self::SYSTEM_ROLE_SCORE;
                 $all = self::SCOPE_WEIGHT_ALL;
+                $teamTree = self::SCOPE_WEIGHT_TEAM_TREE;
                 $team = self::SCOPE_WEIGHT_TEAM;
                 $own = self::SCOPE_WEIGHT_OWN;
                 $grant = self::GRANT_WEIGHT;
@@ -147,7 +150,7 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
                     ) THEN {$sys}
                     ELSE (
                         COALESCE((
-                            SELECT SUM(CASE rp.scope WHEN 'all' THEN {$all} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0 END)
+                            SELECT SUM(CASE rp.scope WHEN 'all' THEN {$all} WHEN 'team_tree' THEN {$teamTree} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0 END)
                             FROM user_roles ur
                             JOIN roles r ON ur.role_id = r.id AND r.deleted_at IS NULL
                             JOIN role_permissions rp ON r.id = rp.role_id
@@ -157,7 +160,7 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
                         COALESCE((
                             SELECT SUM(
                                 CASE upo.type WHEN 'grant' THEN {$grant} WHEN 'deny' THEN {$deny} ELSE 0 END
-                                * CASE upo.scope WHEN 'all' THEN {$all} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0 END
+                                * CASE upo.scope WHEN 'all' THEN {$all} WHEN 'team_tree' THEN {$teamTree} WHEN 'team' THEN {$team} WHEN 'own' THEN {$own} ELSE 0 END
                             )
                             FROM user_permission_overrides upo
                             WHERE upo.user_id = team_members.user_id
@@ -189,6 +192,32 @@ final readonly class EloquentTeamMemberRepository implements TeamMemberRepositor
             SELECT DISTINCT tm.user_id
             FROM team_members tm
             JOIN team_tree tt ON tm.team_id = tt.id
+            SQL, [$userId]);
+
+        $userIds = array_map(fn (object $row): string => $row->user_id, $rows);
+
+        if (! in_array($userId, $userIds, true)) {
+            $userIds[] = $userId;
+        }
+
+        return $userIds;
+    }
+
+    /** @return list<string> */
+    public function directVisibleUserIds(string $userId): array
+    {
+        /** @var list<object{user_id: string}> $rows */
+        $rows = DB::select(<<<'SQL'
+            SELECT DISTINCT tm.user_id
+            FROM team_members tm
+            JOIN teams t ON t.id = tm.team_id
+            WHERE tm.team_id IN (
+                SELECT tm2.team_id
+                FROM team_members tm2
+                JOIN teams t2 ON t2.id = tm2.team_id AND t2.deleted_at IS NULL
+                WHERE tm2.user_id = ?
+            )
+            AND t.deleted_at IS NULL
             SQL, [$userId]);
 
         $userIds = array_map(fn (object $row): string => $row->user_id, $rows);

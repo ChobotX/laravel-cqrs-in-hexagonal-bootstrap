@@ -10,10 +10,10 @@ Enterprise-grade authorization with hierarchical permissions, RBAC, per-user ove
 Module (e.g. "users", "crm")
   └── Feature (e.g. "list", "contacts", "roles")
        └── Action (read | create | update | delete)
-            └── Scope (all | team | own)
+           └── Scope (all | team_tree | team | own)
 ```
 
-Three access scopes: `All` > `Team` > `Own`. The `Own` scope implicitly includes shared resources — there is no separate `Shared` scope.
+Four access scopes: `All` > `TeamTree` > `Team` > `Own`. The `Own` scope implicitly includes shared resources — there is no separate `Shared` scope.
 
 Higher-level grants cascade down:
 - `users` grants everything under `users.*.*`
@@ -28,14 +28,14 @@ Modules `feature_flags` and `user_recovery` are excluded from default tenant rol
 3. Collect all role permissions for user (union of all assigned roles)
 4. Apply permission inheritance (module → features → actions)
 5. Merge with per-user overrides: **any explicit deny wins** over any grant
-6. For scope: when multiple grants exist, most permissive scope wins (`All` > `Team` > `Own`)
+6. For scope: when multiple grants exist, most permissive scope wins (`All` > `TeamTree` > `Team` > `Own`)
 
 ### Key Contracts
 
 - `AuthorizationChecker` — main entry point for permission checks
 - `AuthenticatedUser` — provides current user context including impersonation
 - `ImpersonationManager` — manages impersonation sessions
-- `TeamMembershipChecker` — resolves team memberships with descendant expansion for `AccessScope::Team` filtering (see [Team module](../Team/README.md))
+- `TeamMembershipChecker` — resolves team memberships for both direct-team and descendant-tree filtering (see [Team module](../Team/README.md))
 
 ## Adding a New Module
 
@@ -112,7 +112,9 @@ Scope filtering is handled transparently by the `ResolveScopeFilter` bus middlew
 - `visibleIds = []` — no visible records
 - `sharedResourceIds` — resource IDs shared with the actor (populated only when the query implements `ShareableScopeQuery` and the scope is not `All`). Null otherwise.
 
-The `team` scope uses `TeamMembershipChecker::visibleUserIds()` which returns user IDs from the user's direct teams **plus all descendant teams** via recursive CTE. This means a member of "Engineering" also sees users from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Team module](../Team/README.md).
+The `team` scope uses direct membership resolution (`directVisibleUserIds()` / `directMemberTeamIds()`), so descendants are excluded.
+
+The `team_tree` scope uses recursive membership resolution (`visibleUserIds()` / `memberTeamIds()`) which returns IDs from the user's direct teams **plus all descendant teams** via recursive CTE. This means a member of "Engineering" also sees users from "Backend", "Frontend", and all sub-teams. Implementation details are in the [Team module](../Team/README.md).
 
 **Enforcement:** Controllers are blocked from doing scope resolution by three architecture rules:
 - `NoScopeResolutionInPresentationRule` — blocks `canWithScope()` calls in Presentation

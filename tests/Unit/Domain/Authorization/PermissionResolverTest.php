@@ -286,11 +286,13 @@ it('grant override replaces role grant with different scope', function (): void 
         ->and($usersRead->source)->toBe('user:grant');
 });
 
-it('scope hierarchy is all > team > own', function (): void {
-    expect(AccessScope::All->isMorePermissiveThan(AccessScope::Team))->toBeTrue()
+it('scope hierarchy is all > team_tree > team > own', function (): void {
+    expect(AccessScope::All->isMorePermissiveThan(AccessScope::TeamTree))->toBeTrue()
+        ->and(AccessScope::TeamTree->isMorePermissiveThan(AccessScope::Team))->toBeTrue()
         ->and(AccessScope::Team->isMorePermissiveThan(AccessScope::Own))->toBeTrue()
         ->and(AccessScope::Own->isMorePermissiveThan(AccessScope::All))->toBeFalse()
-        ->and(AccessScope::Team->isMorePermissiveThan(AccessScope::All))->toBeFalse();
+        ->and(AccessScope::Team->isMorePermissiveThan(AccessScope::All))->toBeFalse()
+        ->and(AccessScope::Team->isMorePermissiveThan(AccessScope::TeamTree))->toBeFalse();
 });
 
 it('returns empty for modules not in available modules', function (): void {

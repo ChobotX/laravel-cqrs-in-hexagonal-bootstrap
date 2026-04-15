@@ -52,7 +52,7 @@ Middleware is business logic and lives outside Infrastructure. See [Application 
 
 ## Scope Resolution
 
-`CachedTeamMembershipChecker` is a request-scoped decorator (registered via `scoped()`) that memoizes `memberTeamIds()` and `visibleUserIds()` per userId within a single request. This prevents redundant DB calls when multiple scope-aware queries run in the same request.
+`CachedTeamMembershipChecker` is a request-scoped decorator (registered via `scoped()`) that memoizes `memberTeamIds()`, `directMemberTeamIds()`, `visibleUserIds()`, and `directVisibleUserIds()` per userId within a single request. This prevents redundant DB calls when multiple scope-aware queries run in the same request.
 
 ## Logging
 

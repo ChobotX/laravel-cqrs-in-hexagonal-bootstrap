@@ -12,7 +12,13 @@ final class CachedTeamMembershipChecker implements TeamMembershipChecker
     private array $memberTeamIdsCache = [];
 
     /** @var array<string, list<string>> */
+    private array $directMemberTeamIdsCache = [];
+
+    /** @var array<string, list<string>> */
     private array $visibleUserIdsCache = [];
+
+    /** @var array<string, list<string>> */
+    private array $directVisibleUserIdsCache = [];
 
     public function __construct(
         private readonly TeamMembershipChecker $teamMembershipChecker,
@@ -30,8 +36,20 @@ final class CachedTeamMembershipChecker implements TeamMembershipChecker
     }
 
     /** @return list<string> */
+    public function directMemberTeamIds(string $userId): array
+    {
+        return $this->directMemberTeamIdsCache[$userId] ??= $this->teamMembershipChecker->directMemberTeamIds($userId);
+    }
+
+    /** @return list<string> */
     public function visibleUserIds(string $userId): array
     {
         return $this->visibleUserIdsCache[$userId] ??= $this->teamMembershipChecker->visibleUserIds($userId);
+    }
+
+    /** @return list<string> */
+    public function directVisibleUserIds(string $userId): array
+    {
+        return $this->directVisibleUserIdsCache[$userId] ??= $this->teamMembershipChecker->directVisibleUserIds($userId);
     }
 }

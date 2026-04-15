@@ -60,6 +60,10 @@ final readonly class ResolveScopeFilter implements Middleware
                 ScopeTarget::Team => [],
             },
             AccessScope::Team => match ($message->scopeTarget()) {
+                ScopeTarget::User => $this->teamMembershipChecker->directVisibleUserIds($userId),
+                ScopeTarget::Team => $this->teamMembershipChecker->directMemberTeamIds($userId),
+            },
+            AccessScope::TeamTree => match ($message->scopeTarget()) {
                 ScopeTarget::User => $this->teamMembershipChecker->visibleUserIds($userId),
                 ScopeTarget::Team => $this->teamMembershipChecker->memberTeamIds($userId),
             },

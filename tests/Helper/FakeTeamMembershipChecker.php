@@ -27,7 +27,19 @@ final readonly class FakeTeamMembershipChecker implements TeamMembershipChecker
     }
 
     /** @return list<string> */
+    public function directMemberTeamIds(string $userId): array
+    {
+        return $this->userTeams[$userId] ?? [];
+    }
+
+    /** @return list<string> */
     public function visibleUserIds(string $userId): array
+    {
+        return [];
+    }
+
+    /** @return list<string> */
+    public function directVisibleUserIds(string $userId): array
     {
         return [];
     }

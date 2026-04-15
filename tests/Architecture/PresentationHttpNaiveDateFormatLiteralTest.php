@@ -20,7 +20,7 @@ final class PresentationHttpNaiveDateFormatLiteralTest extends TestCase
     public function presentation_http_avoids_naive_datetime_format_literal(): void
     {
         $violations = [];
-        $root = base_path('app/Presentation/Http');
+        $root = dirname(__DIR__, 2).'/app/Presentation/Http';
 
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(

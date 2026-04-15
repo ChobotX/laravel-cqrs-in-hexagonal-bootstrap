@@ -20,7 +20,7 @@ final class CreateRoleRequest extends FormRequest
             'description' => ['required', 'string'],
             'permissions' => ['required', 'array'],
             'permissions.*.permission' => ['required', 'string'],
-            'permissions.*.scope' => ['required', 'in:all,team,own,shared'],
+            'permissions.*.scope' => ['required', 'in:all,team_tree,team,own'],
         ];
     }
 

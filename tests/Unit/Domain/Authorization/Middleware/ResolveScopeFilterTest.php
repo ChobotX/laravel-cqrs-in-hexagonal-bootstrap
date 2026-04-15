@@ -18,14 +18,18 @@ use App\Domain\User\Contract\Service\AuthenticatedUser;
 
 /**
  * @param  list<string>|null  $teamVisibleUserIds
+ * @param  list<string>|null  $directTeamVisibleUserIds
  * @param  list<string>|null  $memberTeamIds
+ * @param  list<string>|null  $directMemberTeamIds
  * @param  list<string>  $sharedResourceIds
  */
 function buildScopeMiddleware(
     ?string $userId = 'user-1',
     string $scope = 'all',
     ?array $teamVisibleUserIds = null,
+    ?array $directTeamVisibleUserIds = null,
     ?array $memberTeamIds = null,
+    ?array $directMemberTeamIds = null,
     array $sharedResourceIds = [],
 ): ResolveScopeFilter {
     $authenticatedUser = new readonly class($userId) implements AuthenticatedUser
@@ -106,15 +110,28 @@ function buildScopeMiddleware(
         }
     };
 
-    $teamMembershipChecker = new readonly class($teamVisibleUserIds ?? [], $memberTeamIds ?? []) implements TeamMembershipChecker
+    /** @var list<string> $treeVisibleUserIds */
+    $treeVisibleUserIds = $teamVisibleUserIds ?? [];
+    /** @var list<string> $directVisibleUserIds */
+    $directVisibleUserIds = $directTeamVisibleUserIds ?? [];
+    /** @var list<string> $treeTeamIds */
+    $treeTeamIds = $memberTeamIds ?? [];
+    /** @var list<string> $directTeamIds */
+    $directTeamIds = $directMemberTeamIds ?? [];
+
+    $teamMembershipChecker = new readonly class($treeVisibleUserIds, $directVisibleUserIds, $treeTeamIds, $directTeamIds) implements TeamMembershipChecker
     {
         /**
-         * @param  list<string>  $visibleUserIds
-         * @param  list<string>  $teamIds
+         * @param  list<string>  $treeVisibleUserIds
+         * @param  list<string>  $directVisibleUserIds
+         * @param  list<string>  $treeTeamIds
+         * @param  list<string>  $directTeamIds
          */
         public function __construct(
-            private array $visibleUserIds,
-            private array $teamIds,
+            private array $treeVisibleUserIds,
+            private array $directVisibleUserIds,
+            private array $treeTeamIds,
+            private array $directTeamIds,
         ) {}
 
         public function isTeamMember(string $userId, string $teamId): bool
@@ -125,13 +142,25 @@ function buildScopeMiddleware(
         /** @return list<string> */
         public function memberTeamIds(string $userId): array
         {
-            return $this->teamIds;
+            return $this->treeTeamIds;
+        }
+
+        /** @return list<string> */
+        public function directMemberTeamIds(string $userId): array
+        {
+            return $this->directTeamIds;
         }
 
         /** @return list<string> */
         public function visibleUserIds(string $userId): array
         {
-            return $this->visibleUserIds;
+            return $this->treeVisibleUserIds;
+        }
+
+        /** @return list<string> */
+        public function directVisibleUserIds(string $userId): array
+        {
+            return $this->directVisibleUserIds;
         }
     };
 
@@ -213,7 +242,7 @@ it('resolves Team scope with visible user ids for User target', function (): voi
     $resolveScopeFilter = buildScopeMiddleware(
         userId: 'user-1',
         scope: 'team',
-        teamVisibleUserIds: ['user-1', 'user-2', 'user-3'],
+        directTeamVisibleUserIds: ['user-1', 'user-2'],
     );
     $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
     assert($result instanceof ResolveScopeFilterTestQuery);
@@ -222,6 +251,22 @@ it('resolves Team scope with visible user ids for User target', function (): voi
     assert($context instanceof AccessContext);
 
     expect($context->scope)->toBe(AccessScope::Team);
+    expect($context->visibleIds)->toBe(['user-1', 'user-2']);
+});
+
+it('resolves TeamTree scope with visible user ids for User target', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(
+        userId: 'user-1',
+        scope: 'team_tree',
+        teamVisibleUserIds: ['user-1', 'user-2', 'user-3'],
+    );
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestQuery);
+    assert($result instanceof ResolveScopeFilterTestQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::TeamTree);
     expect($context->visibleIds)->toBe(['user-1', 'user-2', 'user-3']);
 });
 
@@ -253,7 +298,7 @@ it('resolves Team scope with member team ids for Team target', function (): void
     $resolveScopeFilter = buildScopeMiddleware(
         userId: 'user-1',
         scope: 'team',
-        memberTeamIds: ['team-1', 'team-2'],
+        directMemberTeamIds: ['team-1', 'team-2'],
     );
     $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestTeamQuery);
     assert($result instanceof ResolveScopeFilterTestTeamQuery);
@@ -262,6 +307,22 @@ it('resolves Team scope with member team ids for Team target', function (): void
     assert($context instanceof AccessContext);
 
     expect($context->scope)->toBe(AccessScope::Team);
+    expect($context->visibleIds)->toBe(['team-1', 'team-2']);
+});
+
+it('resolves TeamTree scope with member team ids for Team target', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(
+        userId: 'user-1',
+        scope: 'team_tree',
+        memberTeamIds: ['team-1', 'team-2'],
+    );
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestTeamQuery);
+    assert($result instanceof ResolveScopeFilterTestTeamQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::TeamTree);
     expect($context->visibleIds)->toBe(['team-1', 'team-2']);
 });
 
@@ -309,7 +370,7 @@ it('populates sharedResourceIds for shareable queries under Team scope', functio
     $resolveScopeFilter = buildScopeMiddleware(
         userId: 'user-1',
         scope: 'team',
-        teamVisibleUserIds: ['user-1', 'user-2'],
+        directTeamVisibleUserIds: ['user-1', 'user-2'],
         sharedResourceIds: ['res-3'],
     );
     $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestShareableQuery);
@@ -321,6 +382,24 @@ it('populates sharedResourceIds for shareable queries under Team scope', functio
     expect($context->scope)->toBe(AccessScope::Team);
     expect($context->visibleIds)->toBe(['user-1', 'user-2']);
     expect($context->sharedResourceIds)->toBe(['res-3']);
+});
+
+it('populates sharedResourceIds for shareable queries under TeamTree scope', function (): void {
+    $resolveScopeFilter = buildScopeMiddleware(
+        userId: 'user-1',
+        scope: 'team_tree',
+        teamVisibleUserIds: ['user-1', 'user-2', 'user-3'],
+        sharedResourceIds: ['res-4'],
+    );
+    $result = dispatchScopeQuery($resolveScopeFilter, new ResolveScopeFilterTestShareableQuery);
+    assert($result instanceof ResolveScopeFilterTestShareableQuery);
+
+    $context = $result->accessContext();
+    assert($context instanceof AccessContext);
+
+    expect($context->scope)->toBe(AccessScope::TeamTree);
+    expect($context->visibleIds)->toBe(['user-1', 'user-2', 'user-3']);
+    expect($context->sharedResourceIds)->toBe(['res-4']);
 });
 
 /** @implements Query<list<string>> */

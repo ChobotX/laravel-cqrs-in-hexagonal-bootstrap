@@ -19,7 +19,7 @@ final class ManageUserPermissionsRequest extends FormRequest
             'role_id' => ['required_if:_action,assign_role,revoke_role', 'uuid'],
             'permission' => ['required_if:_action,set_override,remove_override', 'string'],
             'type' => ['required_if:_action,set_override', 'in:grant,deny'],
-            'scope' => ['required_if:_action,set_override', 'in:all,team,own'],
+            'scope' => ['required_if:_action,set_override', 'in:all,team_tree,team,own'],
         ];
     }
 
