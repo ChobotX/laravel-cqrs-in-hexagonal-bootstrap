@@ -6,7 +6,7 @@ Planned work that is **not** yet in the codebase (implemented areas such as emai
 
 ### SSO
 
-- Evaluate a Laravel-oriented package for common SSO options; tenant-level configuration. SSO may optionally bypass 2FA.
+- Evaluate a Laravel-oriented package for common SSO options; tenant-level configuration.
 
 ### Enable overriding default email provider
 
