@@ -36,6 +36,9 @@ final readonly class DownloadOwnTotpBackupCodesController
         return response(implode(PHP_EOL, $codes), Response::HTTP_OK, [
             'Content-Type' => 'text/plain; charset=UTF-8',
             'Content-Disposition' => 'attachment; filename="'.self::DOWNLOAD_FILENAME.'"',
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0, private',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
         ]);
     }
 }

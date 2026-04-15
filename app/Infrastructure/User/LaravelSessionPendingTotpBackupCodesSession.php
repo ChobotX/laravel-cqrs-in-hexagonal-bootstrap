@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace App\Infrastructure\User;
 
 use App\Domain\User\Contract\Service\PendingTotpBackupCodesSession;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Session;
 
 final readonly class LaravelSessionPendingTotpBackupCodesSession implements PendingTotpBackupCodesSession
 {
     private const string SESSION_PREFIX = 'totp_pending_backup.';
 
+    private const string DOWNLOAD_FLAG_PREFIX = 'totp_pending_backup_downloaded.';
+
+    private const int DOWNLOAD_FLAG_TTL_HOURS = 2;
+
     public function remember(string $userId, array $plaintextCodes): void
     {
         Session::put(self::SESSION_PREFIX.$userId.'.codes', $plaintextCodes);
-        Session::put(self::SESSION_PREFIX.$userId.'.downloaded', false);
+        Cache::put(self::DOWNLOAD_FLAG_PREFIX.$userId, false, now()->addHours(self::DOWNLOAD_FLAG_TTL_HOURS));
     }
 
     public function plaintextCodes(string $userId): ?array
@@ -37,20 +42,20 @@ final readonly class LaravelSessionPendingTotpBackupCodesSession implements Pend
 
     public function markDownloadRecorded(string $userId): void
     {
-        Session::put(self::SESSION_PREFIX.$userId.'.downloaded', true);
-        Session::save();
+        Cache::put(self::DOWNLOAD_FLAG_PREFIX.$userId, true, now()->addHours(self::DOWNLOAD_FLAG_TTL_HOURS));
     }
 
     public function hasRecordedDownload(string $userId): bool
     {
-        return (bool) Session::get(self::SESSION_PREFIX.$userId.'.downloaded', false);
+        return (bool) Cache::get(self::DOWNLOAD_FLAG_PREFIX.$userId, false);
     }
 
     public function forget(string $userId): void
     {
         Session::forget([
             self::SESSION_PREFIX.$userId.'.codes',
-            self::SESSION_PREFIX.$userId.'.downloaded',
         ]);
+
+        Cache::forget(self::DOWNLOAD_FLAG_PREFIX.$userId);
     }
 }

@@ -136,6 +136,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\NoDirectMailSendingRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\NoMagicStringsRule
         tags:
             - phpstan.rules.rule

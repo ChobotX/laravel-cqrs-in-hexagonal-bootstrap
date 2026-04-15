@@ -16,10 +16,9 @@ final readonly class LaravelEmailSender implements EmailSender
 
     public function sendHtml(string $recipientEmail, string $subject, string $htmlBody): void
     {
-        $this->mailer->send([], [], static function (Message $message) use ($recipientEmail, $subject, $htmlBody): void {
+        $this->mailer->html($htmlBody, static function (Message $message) use ($recipientEmail, $subject): void {
             $message->to($recipientEmail);
             $message->subject($subject);
-            $message->html($htmlBody);
         });
     }
 }

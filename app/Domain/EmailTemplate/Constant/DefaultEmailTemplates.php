@@ -56,6 +56,24 @@ BLADE,
 <p style="color: #6b7280; font-size: 14px;">Tento odkaz vyprší za 60 minut. Pokud jste o obnovení hesla nežádali, můžete tento email ignorovat.</p>
 BLADE,
         ],
+        'two_factor_challenge:en' => [
+            'subject' => 'Your verification code for {{ $tenantName }}',
+            'body' => <<<'BLADE'
+<h2>Verify your sign in</h2>
+<p>Use this one-time code to finish signing in to <strong>{{ $tenantName }}</strong>:</p>
+<p style="font-size: 28px; font-weight: 700; letter-spacing: 0.25em; text-align: center; margin: 24px 0;">{{ $code }}</p>
+<p style="color: #6b7280; font-size: 14px;">This code expires in 10 minutes. If you did not request it, you can ignore this email.</p>
+BLADE,
+        ],
+        'two_factor_challenge:cs' => [
+            'subject' => 'Váš ověřovací kód pro {{ $tenantName }}',
+            'body' => <<<'BLADE'
+<h2>Ověření přihlášení</h2>
+<p>Použijte tento jednorázový kód pro dokončení přihlášení do <strong>{{ $tenantName }}</strong>:</p>
+<p style="font-size: 28px; font-weight: 700; letter-spacing: 0.25em; text-align: center; margin: 24px 0;">{{ $code }}</p>
+<p style="color: #6b7280; font-size: 14px;">Kód vyprší za 10 minut. Pokud jste ho nevyžádali, tento email ignorujte.</p>
+BLADE,
+        ],
         'notification:en' => [
             'subject' => '{{ $title }}',
             'body' => <<<'BLADE'

@@ -48,7 +48,7 @@ Middleware is business logic and lives outside Infrastructure. See [Application 
 - `PasswordManager` → `EloquentPasswordManager` — hashes and stores passwords via `Hash::make()`
 - `InviteLinkGenerator` → `LaravelInviteLinkGenerator` — generates signed invite URLs via `URL::temporarySignedRoute()` (72h expiry)
 - `PasswordResetBroker` → `LaravelPasswordResetBroker` — wraps Laravel's `Password::broker()` for token creation/validation
-- `DirectEmailSender` → `LaravelDirectEmailSender` — sends transactional emails (invites, password resets) via `Mailer`, bypassing notification preferences
+- `TemplatedEmailDispatcher` → `DefaultTemplatedEmailDispatcher` — all system emails (invites, password reset, 2FA code, notifications) must render and send through email templates; direct `Mail::` sending is forbidden by architecture rule
 
 ## Scope Resolution
 

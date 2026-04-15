@@ -35,6 +35,9 @@ final class E2eAlphaTwoFactorUsersSeeder extends Seeder
         $schemaManager->switchTo($tenant);
 
         try {
+            // Keep e2e tenant templates in sync with current default template catalog.
+            app(EmailTemplateSeeder::class)->run();
+
             $roleId = RoleModel::query()->where('name', 'Team Member')->value('id');
             if ($roleId === null) {
                 throw new RuntimeException('Team Member role is missing on tenant alpha; run tenant:setup to seed the tenant.');

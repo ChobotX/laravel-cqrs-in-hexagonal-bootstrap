@@ -38,7 +38,18 @@ it('streams pending totp backup codes after starting totp setup', function (): v
         ->get(route('profile.two-factor.backup-codes.download'));
 
     $response->assertOk()
-        ->assertHeader('content-type', 'text/plain; charset=UTF-8');
+        ->assertHeader('content-type', 'text/plain; charset=UTF-8')
+        ->assertHeader('pragma', 'no-cache')
+        ->assertHeader('expires', '0');
+
+    $cacheControl = $response->headers->get('cache-control');
+    expect($cacheControl)->toBeString();
+    assert(is_string($cacheControl));
+    expect($cacheControl)->toContain('no-store')
+        ->toContain('no-cache')
+        ->toContain('must-revalidate')
+        ->toContain('max-age=0')
+        ->toContain('private');
 
     $body = $response->getContent();
     expect($body)->not->toBeFalse();

@@ -33,7 +33,12 @@ export function bindOwnTwoFactorTotp(root: Document): void {
 
         void (async (): Promise<void> => {
             try {
-                const response = await fetch(url, { credentials: 'include' });
+                const downloadUrl = new URL(url, window.location.origin);
+                downloadUrl.searchParams.set('_download', String(Date.now()));
+                const response = await fetch(downloadUrl.toString(), {
+                    credentials: 'include',
+                    cache: 'no-store',
+                });
                 if (!response.ok) {
                     return;
                 }

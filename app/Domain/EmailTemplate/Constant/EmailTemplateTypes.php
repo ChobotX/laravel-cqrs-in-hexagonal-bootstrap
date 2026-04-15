@@ -25,6 +25,14 @@ final readonly class EmailTemplateTypes
                 'tenantName' => ['description' => 'Organization name', 'sensitive' => false, 'sample' => 'Acme Corp'],
             ],
         ],
+        'two_factor_challenge' => [
+            'name' => 'Two-Factor Email Challenge',
+            'description' => 'Sent when a user requests an email one-time code during two-factor challenge',
+            'variables' => [
+                'code' => ['description' => 'One-time 2FA code (6 digits)', 'sensitive' => true, 'sample' => '123456'],
+                'tenantName' => ['description' => 'Organization name', 'sensitive' => false, 'sample' => 'Acme Corp'],
+            ],
+        ],
         'notification' => [
             'name' => 'Notification Email',
             'description' => 'Wraps in-app notifications sent via email channel',

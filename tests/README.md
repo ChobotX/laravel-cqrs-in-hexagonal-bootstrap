@@ -45,6 +45,7 @@ Custom rules in `tests/Architecture/PHPStan/`:
 | `NoScopeResolutionInPresentationRule` | Blocks `canWithScope()` calls in Presentation — scope resolution belongs in bus middleware |
 | `NoSilentCatchRule` | Catch blocks in `app/` must rethrow, log, or carry a `// @silent: <reason>` comment |
 | `NoDirectLoggingRule` | Bans `Log::`, `logger()`, `report()` in `app/` — use `Logger` interface instead |
+| `NoDirectMailSendingRule` | Bans direct `Mail::` and `mail()` in `app/` (except template sender adapter) — system emails must go through `TemplatedEmailDispatcher` |
 | `NoMagicStringsRule` | No string literals in `===`/`!==` comparisons or `match()` arms — use enums or class constants |
 | `NoMagicNumbersRule` | No numeric literals (except `0`, `1`, `-1`) in `app/` — use class constants |
 | `EloquentModelRequiresTraitsRule` | Entity models must use `HasOptimisticLocking` and either `SoftDeletes` or `#[HardDelete(reason:)]` |

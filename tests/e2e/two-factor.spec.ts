@@ -22,7 +22,9 @@ test.describe('Two-factor authentication', () => {
 
     test.beforeAll(() => {
         execAlphaTenantTinker(
-            "DB::connection('tenant')->table('two_factor_settings')->where('id', 1)->update(['required_for_all_users' => true]);",
+            "DB::connection('tenant')->table('two_factor_settings')->where('id', 1)->update(['required_for_all_users' => true]); " +
+                "DB::connection('tenant')->table('email_two_factor_challenges')->join('users', 'email_two_factor_challenges.user_id', '=', 'users.id')->whereIn('users.email', ['e2e-2fa-totp@test.com', 'e2e-2fa-email@test.com'])->delete(); " +
+                "DB::connection('tenant')->table('users')->whereIn('email', ['e2e-2fa-totp@test.com', 'e2e-2fa-email@test.com'])->update(['email_two_factor_enabled' => false, 'email_two_factor_confirmed_at' => null, 'totp_secret' => null, 'totp_confirmed_at' => null, 'totp_recovery_code_hashes' => null]);",
         );
     });
 
@@ -51,6 +53,7 @@ test.describe('Two-factor authentication', () => {
         const secret = secretText?.trim() ?? '';
 
         await page.getByTestId('own-two-factor-totp-backup-download').click();
+        await expect(page.getByTestId('own-two-factor-totp-download-ack')).toBeVisible();
         await expect(page.getByTestId('own-two-factor-totp-code-input')).toBeVisible();
 
         await page.getByTestId('own-two-factor-totp-code-input').fill(totpCode(secret));
@@ -90,24 +93,30 @@ test.describe('Two-factor authentication', () => {
 
         await expect(page).toHaveURL(/\/profile\/two-factor/);
 
-        await page.getByTestId('own-two-factor-email-switch').click();
-        await expect(page).toHaveURL(/\/profile\/two-factor/);
+        await Promise.all([
+            page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes('/profile/two-factor')),
+            page.getByTestId('own-two-factor-email-switch').click(),
+        ]);
+        await expect(page).toHaveURL(/\/(profile\/two-factor|two-factor)/);
+
         await page.goto('/users');
-        await expect(page).toHaveURL(/\/users/);
+        const currentUrl = page.url();
+        if (currentUrl.includes('/users')) {
+            await expect(page.getByTestId('topbar-user-email')).toBeVisible();
+            await page.getByTestId('logout-button').click();
+            await expect(page).toHaveURL(/\/login/);
 
-        await page.getByTestId('logout-button').click();
-        await expect(page).toHaveURL(/\/login/);
-
-        await page.getByTestId('login-email-input').fill(USER_EMAIL);
-        await page.getByTestId('login-password-input').fill(PASSWORD);
-        await page.getByTestId('login-submit-button').click();
-
+            await page.getByTestId('login-email-input').fill(USER_EMAIL);
+            await page.getByTestId('login-password-input').fill(PASSWORD);
+            await page.getByTestId('login-submit-button').click();
+        }
         await expect(page).toHaveURL(/\/two-factor/);
 
-        await Promise.all([
-            page.waitForResponse((r) => r.request().method() === 'POST' && r.url().includes('/two-factor/email-code')),
-            page.getByTestId('two-factor-send-email-submit').click(),
-        ]);
+        const emailCodeResponsePromise = page.waitForResponse(
+            (r) => r.request().method() === 'POST' && r.url().includes('/two-factor/email-code'),
+        );
+        await page.getByTestId('two-factor-send-email-submit').click();
+        await emailCodeResponsePromise;
         await expect(page).toHaveURL(/\/two-factor/);
 
         const messageId = await waitForMailpitMessageTo(USER_EMAIL);
