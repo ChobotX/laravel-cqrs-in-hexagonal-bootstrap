@@ -65,8 +65,16 @@
                     </div>
 
                     @if (filled($totpSetup->secret))
+                        @php
+                            $totpBackupCodesListShown =
+                                is_array($totpSetup->backupCodesPlaintext) && $totpSetup->backupCodesPlaintext !== [];
+                            $totpConfirmPanelGated =
+                                $totpBackupCodesListShown && !$totpSetup->backupCodesDownloadRecorded;
+                            $totpConfirmPanelVisible = !$totpConfirmPanelGated;
+                        @endphp
                         @if (!$totpSetup->confirmed && $totpQrSvg)
-                            <div class="rounded-xl border border-gray-200 bg-gray-50 p-6 ring-1 ring-gray-950/5">
+                            <div class="rounded-xl border border-gray-200 bg-gray-50 p-6 ring-1 ring-gray-950/5"
+                                 data-own-two-factor-totp-setup-card>
                                 <x-split-row>
                                     <x-slot:leading>
                                         <div class="rounded-lg bg-white p-4 shadow-sm ring-1 ring-gray-950/5 [&_svg]:block [&_svg]:h-auto [&_svg]:w-full"
@@ -93,20 +101,20 @@
                                                 </ol>
                                                 <div class="mt-5">
                                                     <a class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-indigo-500"
+                                                       data-own-two-factor-totp-backup-download
                                                        data-testid="own-two-factor-totp-backup-download"
                                                        data-tooltip="{{ __('messages.settings.totp_backup_codes_download') }}"
-                                                       href="{{ route('profile.two-factor.backup-codes.download') }}"
+                                                       href="{{ route('profile.two-factor.backup-codes.download', absolute: false) }}"
                                                        download>{{ __('messages.settings.totp_backup_codes_download') }}</a>
                                                 </div>
-                                                @if (!$totpSetup->backupCodesDownloadRecorded)
-                                                    <p class="mt-4 text-sm font-medium text-red-800">
-                                                        {{ __('messages.settings.totp_backup_codes_download_required_hint') }}
-                                                    </p>
-                                                @else
-                                                    <p class="mt-4 text-sm font-medium text-green-900"
-                                                       data-testid="own-two-factor-totp-download-ack">
-                                                        {{ __('messages.settings.totp_backup_codes_downloaded_ack') }}</p>
-                                                @endif
+                                                <p class="@if ($totpSetup->backupCodesDownloadRecorded) hidden @endif mt-4 text-sm font-medium text-red-800"
+                                                   data-own-two-factor-totp-pending-hint>
+                                                    {{ __('messages.settings.totp_backup_codes_download_required_hint') }}
+                                                </p>
+                                                <p class="@if (!$totpSetup->backupCodesDownloadRecorded) hidden @endif mt-4 text-sm font-medium text-green-900"
+                                                   data-own-two-factor-totp-downloaded-ack
+                                                   data-testid="own-two-factor-totp-download-ack">
+                                                    {{ __('messages.settings.totp_backup_codes_downloaded_ack') }}</p>
                                             </div>
                                         @endif
                                         <details class="rounded-lg border border-gray-200 bg-white p-4 sm:p-5"
@@ -123,7 +131,9 @@
                             </div>
 
                             <div class="border-t border-gray-200 pt-8">
-                                <div class="flex flex-col gap-5">
+                                <div class="@if ($totpConfirmPanelVisible) flex flex-col gap-5 @else hidden @endif"
+                                     data-own-two-factor-totp-confirm-panel
+                                     data-own-two-factor-totp-confirm-visible="{{ $totpConfirmPanelVisible ? '1' : '0' }}">
                                     <form class="space-y-6"
                                           method="POST"
                                           action="{{ route('profile.two-factor.update') }}">
@@ -151,34 +161,9 @@
                                                               :label="__('messages.settings.confirm_totp_setup')" />
                                         </div>
                                     </form>
-
-                                    <form method="POST"
-                                          action="{{ route('profile.two-factor.update') }}">
-                                        @csrf
-                                        @method('PUT')
-                                        <input name="action"
-                                               type="hidden"
-                                               value="totp-disable">
-                                        <x-primary-button skip-permission
-                                                          variant="secondary"
-                                                          :label="__('messages.settings.cancel_totp_setup')" />
-                                    </form>
                                 </div>
                             </div>
-                        @elseif (!$totpSetup->confirmed)
-                            <form class="border-t border-gray-200 pt-8"
-                                  method="POST"
-                                  action="{{ route('profile.two-factor.update') }}">
-                                @csrf
-                                @method('PUT')
-                                <input name="action"
-                                       type="hidden"
-                                       value="totp-disable">
-                                <x-primary-button skip-permission
-                                                  variant="secondary"
-                                                  :label="__('messages.settings.cancel_totp_setup')" />
-                            </form>
-                        @else
+                        @elseif ($totpSetup->confirmed)
                             <p class="border-t border-gray-200 pt-6 text-sm text-gray-600">
                                 {{ __('messages.settings.totp_enabled_active_hint') }}</p>
                         @endif

@@ -12,6 +12,7 @@ import './behaviors/permission-matrix';
 import './widgets/chip-selector/chip-selector-app';
 import './widgets/share-panel/share-panel-app';
 import './behaviors/auto-submit';
+import './behaviors/own-two-factor-totp';
 import './behaviors/local-datetime';
 import './widgets/autocomplete/autocomplete-app';
 import './widgets/team-tree/team-tree-app';

@@ -38,6 +38,7 @@ final readonly class LaravelSessionPendingTotpBackupCodesSession implements Pend
     public function markDownloadRecorded(string $userId): void
     {
         Session::put(self::SESSION_PREFIX.$userId.'.downloaded', true);
+        Session::save();
     }
 
     public function hasRecordedDownload(string $userId): bool

@@ -19,8 +19,51 @@ it('renders inline totp qr svg when user has pending totp secret', function (): 
         ->assertSee('<svg', false)
         ->assertSee(__('messages.settings.totp_qr_aria'), false)
         ->assertSee(__('messages.settings.totp_switch_label'))
-        ->assertSee(__('messages.settings.cancel_totp_setup'))
+        ->assertSee(__('messages.settings.confirm_totp_setup'))
+        ->assertDontSee(__('messages.settings.cancel_totp_setup'))
         ->assertDontSee(__('messages.settings.totp_enabled_active_hint'));
+});
+
+it('hides totp confirm until backup codes are downloaded when pending codes exist', function (): void {
+    $user = UserModel::create([
+        'name' => 'Totp Gate User',
+        'email' => 'totp-gate-view@example.com',
+        'password' => Hash::make('password'),
+    ]);
+
+    $this->actingAs($user)
+        ->from(route('profile.two-factor'))
+        ->put(route('profile.two-factor.update'), [
+            'action' => 'totp-save',
+            'totp_two_factor_enabled' => '1',
+        ])
+        ->assertRedirect(route('profile.two-factor'));
+
+    $beforeDownload = $this->actingAs($user)
+        ->get(route('profile.two-factor'))
+        ->assertOk()
+        ->getContent();
+    assert(is_string($beforeDownload));
+    expect($beforeDownload)->toContain('data-own-two-factor-totp-confirm-visible="0"');
+    expect((bool) preg_match(
+        '/class="[^"]*\bhidden\b[^"]*"[\s\S]*?data-own-two-factor-totp-confirm-panel/',
+        $beforeDownload,
+    ))->toBeTrue();
+
+    $this->actingAs($user)
+        ->get(route('profile.two-factor.backup-codes.download'))
+        ->assertOk();
+
+    $afterDownload = $this->actingAs($user)
+        ->get(route('profile.two-factor'))
+        ->assertOk()
+        ->getContent();
+    assert(is_string($afterDownload));
+    expect($afterDownload)->toContain('data-own-two-factor-totp-confirm-visible="1"');
+    expect((bool) preg_match(
+        '/class="[^"]*\bflex\b[^"]*\bflex-col\b[^"]*\bgap-5\b[^"]*"[\s\S]*?data-own-two-factor-totp-confirm-panel/',
+        $afterDownload,
+    ))->toBeTrue();
 });
 
 it('shows only authenticator toggle when totp is not configured', function (): void {

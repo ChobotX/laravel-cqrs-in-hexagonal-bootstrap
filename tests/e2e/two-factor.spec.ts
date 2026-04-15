@@ -50,13 +50,8 @@ test.describe('Two-factor authentication', () => {
         expect(secretText).toBeTruthy();
         const secret = secretText?.trim() ?? '';
 
-        await page.evaluate(async () => {
-            const res = await fetch('/profile/two-factor/backup-codes', { credentials: 'include' });
-            if (!res.ok) {
-                throw new Error(`backup codes download failed: HTTP ${String(res.status)}`);
-            }
-            await res.text();
-        });
+        await page.getByTestId('own-two-factor-totp-backup-download').click();
+        await expect(page.getByTestId('own-two-factor-totp-code-input')).toBeVisible();
 
         await page.getByTestId('own-two-factor-totp-code-input').fill(totpCode(secret));
         await page.getByTestId('own-two-factor-totp-confirm-submit').click();
