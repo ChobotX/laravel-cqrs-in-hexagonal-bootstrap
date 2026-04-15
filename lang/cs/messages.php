@@ -524,6 +524,10 @@ return [
                 'name' => 'Obnovení hesla',
                 'description' => 'Odesláno při žádosti o obnovení hesla',
             ],
+            'two_factor_challenge' => [
+                'name' => 'E-mailový kód pro dvoufaktor',
+                'description' => 'Odesláno při vyžádání jednorázového kódu e-mailem během dvoufaktorového ověření',
+            ],
             'notification' => [
                 'name' => 'Notifikační email',
                 'description' => 'Obaluje notifikace odeslané emailovým kanálem',

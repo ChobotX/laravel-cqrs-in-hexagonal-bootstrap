@@ -532,6 +532,10 @@ return [
                 'name' => 'Password Reset',
                 'description' => 'Sent when a user requests a password reset',
             ],
+            'two_factor_challenge' => [
+                'name' => 'Two-Factor Email Challenge',
+                'description' => 'Sent when a user requests an email one-time code during two-factor challenge',
+            ],
             'notification' => [
                 'name' => 'Notification Email',
                 'description' => 'Wraps in-app notifications sent via email channel',

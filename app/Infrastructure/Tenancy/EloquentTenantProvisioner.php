@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
+use App\Domain\Tenancy\Contract\Service\TenantDefaultEmailTemplateSeeder;
 use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
 use App\Infrastructure\Eloquent\Tenancy\TenantDomainModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
@@ -14,6 +15,7 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
         private TenantMigrator $tenantMigrator,
         private TenantResolver $tenantResolver,
         private TenantSchemaManager $tenantSchemaManager,
+        private TenantDefaultEmailTemplateSeeder $tenantDefaultEmailTemplateSeeder,
         private TenantDisplayPreferencesSync $tenantDisplayPreferencesSync,
     ) {}
 
@@ -54,6 +56,8 @@ final readonly class EloquentTenantProvisioner implements TenantProvisioner
         $this->tenantSchemaManager->switchTo($tenantModel);
 
         try {
+            // Keep tenant email template catalog complete when new default types/locales are introduced.
+            $this->tenantDefaultEmailTemplateSeeder->seed();
             $this->tenantDisplayPreferencesSync->sync($slug, $displayName);
         } finally {
             $this->tenantSchemaManager->reset();
