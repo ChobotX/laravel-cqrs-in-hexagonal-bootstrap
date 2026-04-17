@@ -66,8 +66,6 @@ final class ArchitectureTest
     {
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Presentation'))
-            // Dev-only CLI commands may depend on dev infrastructure
-            ->excluding(Selector::classname(\App\Presentation\Console\Tenancy\DropSchemasCommand::class))
             ->shouldNotDependOn()
             ->classes(Selector::inNamespace('App\Infrastructure'));
     }

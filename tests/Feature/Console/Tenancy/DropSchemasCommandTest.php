@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Infrastructure\Dev\DevSchemaResetter;
+use App\Domain\Tenancy\Contract\Service\DevSchemaResetter;
+use App\Infrastructure\Dev\DevSchemaResetter as DevSchemaResetterImpl;
 use Illuminate\Database\DatabaseManager;
 
 it('calls DevSchemaResetter and outputs success', function (): void {
@@ -14,7 +15,7 @@ it('calls DevSchemaResetter and outputs success', function (): void {
     $databaseManager->shouldReceive('connection')->with('landlord')->andReturn($mock);
     $databaseManager->shouldReceive('purge')->with('landlord');
 
-    $this->app->instance(DevSchemaResetter::class, new DevSchemaResetter($databaseManager));
+    $this->app->instance(DevSchemaResetter::class, new DevSchemaResetterImpl($databaseManager));
 
     $this->artisan('tenant:drop-schemas')
         ->expectsOutput('All schemas dropped and landlord reset.')

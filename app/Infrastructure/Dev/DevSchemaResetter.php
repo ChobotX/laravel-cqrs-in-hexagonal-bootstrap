@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Dev;
 
+use App\Domain\Tenancy\Contract\Service\DevSchemaResetter as DevSchemaResetterContract;
 use Illuminate\Database\DatabaseManager;
+use Override;
 
-final readonly class DevSchemaResetter
+final readonly class DevSchemaResetter implements DevSchemaResetterContract
 {
     public function __construct(
         private DatabaseManager $databaseManager,
     ) {}
 
+    #[Override]
     public function resetAll(): void
     {
         $connection = $this->databaseManager->connection('landlord');

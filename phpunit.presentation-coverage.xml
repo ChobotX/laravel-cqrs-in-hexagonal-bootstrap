@@ -16,9 +16,6 @@
         <include>
             <directory>app/Presentation</directory>
         </include>
-        <exclude>
-            <file>app/Presentation/Console/Tenancy/DropSchemasCommand.php</file>
-        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

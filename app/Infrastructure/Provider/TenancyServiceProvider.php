@@ -8,10 +8,12 @@ use App\Contract\Tenancy\TenantBootstrapper;
 use App\Contract\Tenancy\TenantContext;
 use App\Contract\Tenancy\TenantLogoStorage;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\Service\DevSchemaResetter;
 use App\Domain\Tenancy\Contract\Service\TenantDefaultEmailTemplateSeeder;
 use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
 use App\Domain\User\Contract\Service\TenantAdminUserSnapshotFactory;
 use App\Domain\User\Service\DefaultTenantAdminUserSnapshotFactory;
+use App\Infrastructure\Dev\DevSchemaResetter as DevSchemaResetterImpl;
 use App\Infrastructure\File\TenantLogoFileStorage;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
 use App\Infrastructure\Tenancy\EloquentTenantDefaultEmailTemplateSeeder;
@@ -51,6 +53,7 @@ final class TenancyServiceProvider extends ServiceProvider
             filesystem: $this->app->make(FilesystemManager::class)->disk('public'),
         ));
         $this->app->bind(TenantSettingsRepository::class, EloquentTenantSettingsRepository::class);
+        $this->app->bind(DevSchemaResetter::class, DevSchemaResetterImpl::class);
     }
 
     public function boot(): void
