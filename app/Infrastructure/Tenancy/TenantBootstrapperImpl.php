@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Contract\Tenancy\TenantBootstrapper;
-use App\Contract\Tenancy\TenantLogoStorage;
+use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
+use App\Domain\Tenancy\Contract\Service\TenantLogoStorage;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 

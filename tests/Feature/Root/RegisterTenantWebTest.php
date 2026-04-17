@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Tenancy\TenantBootstrapper;
+use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
 use Illuminate\Support\Facades\DB;
 
 it('shows registration form', function (): void {

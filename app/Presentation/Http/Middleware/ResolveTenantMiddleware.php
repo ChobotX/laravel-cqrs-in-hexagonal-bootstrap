@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Middleware;
 
 use App\Contract\Http\HttpStatus;
-use App\Contract\Tenancy\TenantBootstrapper;
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
 use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
+use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;

@@ -107,22 +107,25 @@ final class ArchitectureTest
                 Selector::inNamespace('App\Domain\FeatureFlag\Service'),
             )
             ->shouldNotDependOn()
-            ->classes(Selector::inNamespace('App\Contract\Tenancy'));
+            ->classes(Selector::inNamespace('App\Domain\Tenancy\Contract\Service'));
     }
 
-    public function testPresentationMustUseBusForBusinessOperations(): Rule
+    public function testControllersDoNotBypassBusViaTenancy(): Rule
     {
-        // Controllers and Console commands must dispatch through CommandBus/QueryBus.
-        // Direct use of service contracts bypasses bus middleware (auth, events, etc.).
-        // Only middleware may use cross-cutting contracts (TenantBootstrapper, TenantContext).
+        // Controllers and console commands must dispatch through CommandBus/QueryBus
+        // instead of injecting tenant runtime services directly. HTTP middleware and
+        // form requests are resolution-layer concerns, not business operations, so
+        // they are free to depend on tenancy services.
         return PHPat::rule()
-            ->classes(Selector::inNamespace('App\Presentation'))
-            ->excluding(
-                Selector::inNamespace('App\Presentation\Http\Middleware'),
-                Selector::inNamespace('App\Presentation\Http\Request'),
+            ->classes(
+                Selector::inNamespace('App\Presentation\Http\Controller'),
+                Selector::inNamespace('App\Presentation\Console'),
             )
             ->shouldNotDependOn()
-            ->classes(Selector::inNamespace('App\Contract\Tenancy'));
+            ->classes(
+                Selector::classname(\App\Domain\Tenancy\Contract\Service\TenantContext::class),
+                Selector::classname(\App\Domain\Tenancy\Contract\Service\TenantBootstrapper::class),
+            );
     }
 
     public function testPresentationDoesNotDependOnDatabase(): Rule

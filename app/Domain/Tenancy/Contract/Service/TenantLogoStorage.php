@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Tenancy;
+namespace App\Domain\Tenancy\Contract\Service;
 
 /**
  * Persists tenant logo files on disk or object storage and exposes public URLs for {@see TenantContext::currentTenantLogoUrl()}.

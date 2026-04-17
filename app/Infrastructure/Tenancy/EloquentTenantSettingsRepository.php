@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Contract\Tenancy\TenantLogoStorage;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
+use App\Domain\Tenancy\Contract\Service\TenantLogoStorage;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;

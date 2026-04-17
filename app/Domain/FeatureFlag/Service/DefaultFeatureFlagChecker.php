@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\FeatureFlag\Service;
 
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\FeatureFlag\Contract\Repository\FeatureFlagOverrideRepository;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagChecker;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagDefinitionProvider;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 
 final readonly class DefaultFeatureFlagChecker implements FeatureFlagChecker
 {

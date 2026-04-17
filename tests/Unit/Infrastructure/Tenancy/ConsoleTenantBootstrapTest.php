@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Tenancy\TenantAwareCommand;
-use App\Contract\Tenancy\TenantBootstrapper;
+use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
 use App\Infrastructure\Tenancy\MissingTenantOptionException;
 use Illuminate\Console\Events\CommandStarting;

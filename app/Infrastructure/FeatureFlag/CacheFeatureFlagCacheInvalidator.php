@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\FeatureFlag;
 
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagCacheInvalidator;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 final readonly class CacheFeatureFlagCacheInvalidator implements FeatureFlagCacheInvalidator

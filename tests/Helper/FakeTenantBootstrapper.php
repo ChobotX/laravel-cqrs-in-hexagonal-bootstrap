@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Contract\Tenancy\TenantBootstrapper;
+use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
 
 final class FakeTenantBootstrapper implements TenantBootstrapper
 {

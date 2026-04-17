@@ -73,4 +73,4 @@ Queue connections use `after_commit: true` — jobs are only dispatched to the q
 
 ## Domain Isolation
 
-The domain layer is fully tenant-agnostic. Enforced by PHPat rule `testDomainDoesNotDependOnTenancy` — `App\Domain\*` cannot import `App\Contract\Tenancy\*`.
+Non-tenancy domain contexts are tenant-agnostic. Enforced by PHPat rule `testNonTenancyDomainDoesNotDependOnTenancy` — `App\Domain\*` cannot import `App\Domain\Tenancy\Contract\Service\*` (except `Domain\Tenancy` itself and the explicitly allowed `EmailTemplate\Service`, `FeatureFlag\Service`).

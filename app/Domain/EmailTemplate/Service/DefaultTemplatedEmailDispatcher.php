@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\EmailTemplate\Service;
 
 use App\Contract\IdGenerator;
-use App\Contract\Tenancy\TenantContext;
 use App\Contract\Tracing\TraceContext;
 use App\Domain\EmailTemplate\Constant\EmailTemplateTypes;
 use App\Domain\EmailTemplate\Contract\Entity\EmailTemplate;
@@ -15,6 +14,7 @@ use App\Domain\EmailTemplate\Contract\Service\EmailSender;
 use App\Domain\EmailTemplate\Contract\Service\TemplateCompiler;
 use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
 use App\Domain\EmailTemplate\Exception\EmailTemplateNotFoundException;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Repository\UserRepository;

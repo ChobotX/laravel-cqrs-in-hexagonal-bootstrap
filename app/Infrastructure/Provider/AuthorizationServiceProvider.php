@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Infrastructure\Provider;
 
 use App\Application\Authorization\ShareableResourceRegistry;
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
@@ -20,6 +19,7 @@ use App\Domain\Authorization\Handler\Query\GetEffectivePermissionsHandler;
 use App\Domain\Authorization\Handler\Query\GetOwnEffectivePermissionsHandler;
 use App\Domain\Authorization\Service\PermissionResolver;
 use App\Domain\Team\Contract\Service\TeamMembershipChecker;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Infrastructure\Authorization\CacheAuthorizationRefresher;
 use App\Infrastructure\Authorization\CachedAuthorizationChecker;

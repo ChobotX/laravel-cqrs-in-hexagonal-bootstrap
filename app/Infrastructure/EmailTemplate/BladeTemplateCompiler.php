@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\EmailTemplate;
 
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\EmailTemplate\Contract\Service\TemplateCompiler;
 use App\Domain\EmailTemplate\Contract\ValueObject\RenderedEmail;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 
 final readonly class BladeTemplateCompiler implements TemplateCompiler

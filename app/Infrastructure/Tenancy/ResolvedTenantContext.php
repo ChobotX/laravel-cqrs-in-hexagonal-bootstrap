@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Contract\Tenancy\TenantContext;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 
 final class ResolvedTenantContext implements TenantContext
 {

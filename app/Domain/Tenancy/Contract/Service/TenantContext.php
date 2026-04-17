@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Contract\Tenancy;
+namespace App\Domain\Tenancy\Contract\Service;
 
 /**
  * Read-only view of the tenant bound to the current request after bootstrap (ids, branding, resolution state).

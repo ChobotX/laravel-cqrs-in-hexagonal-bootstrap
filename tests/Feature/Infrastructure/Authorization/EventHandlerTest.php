@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChange;
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\Authorization\Constant\RoleFields;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideSet;
@@ -17,6 +16,7 @@ use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleAssigned;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleDeleted;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleRevoked;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\UserRoleModel;
 use App\Infrastructure\Eloquent\User\UserModel;

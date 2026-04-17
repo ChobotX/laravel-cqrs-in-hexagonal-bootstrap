@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\FeatureFlag\Contract\Enum\FlagType;
 use App\Domain\FeatureFlag\Contract\Repository\FeatureFlagOverrideRepository;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagCacheInvalidator;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagChecker;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagDefinitionProvider;
 use App\Domain\FeatureFlag\Service\DefaultFeatureFlagChecker;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use App\Infrastructure\Eloquent\FeatureFlag\EloquentFeatureFlagOverrideRepository;
 use App\Infrastructure\FeatureFlag\CachedFeatureFlagChecker;
 use App\Infrastructure\FeatureFlag\CacheFeatureFlagCacheInvalidator;

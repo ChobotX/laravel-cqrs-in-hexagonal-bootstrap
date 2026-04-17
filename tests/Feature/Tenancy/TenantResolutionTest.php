@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Contract\Tenancy\TenantBootstrapper;
-use App\Contract\Tenancy\TenantContext;
 use App\Domain\Tenancy\Contract\Exception\InactiveTenantException;
 use App\Domain\Tenancy\Contract\Exception\TenantNotFoundException;
+use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 use App\Infrastructure\Eloquent\Tenancy\TenantModel;
 use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;
 use Illuminate\Support\Facades\Storage;
