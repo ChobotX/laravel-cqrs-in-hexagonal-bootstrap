@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Auth;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class VerifyTwoFactorChallengeRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     public function authorize(): bool
     {
         return true;

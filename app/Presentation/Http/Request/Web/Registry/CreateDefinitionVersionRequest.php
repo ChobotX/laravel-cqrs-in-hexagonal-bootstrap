@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Registry;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class CreateDefinitionVersionRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string>> */
     public function rules(): array
     {

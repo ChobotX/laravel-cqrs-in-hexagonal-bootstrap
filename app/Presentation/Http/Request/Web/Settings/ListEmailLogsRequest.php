@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Request\Web\Settings;
 
 use App\Application\Pagination\Pagination;
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class ListEmailLogsRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string>> */
     public function rules(): array
     {

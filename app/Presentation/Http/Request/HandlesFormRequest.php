@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Request;
 
 use App\Presentation\Http\Request\Exception\InvalidRouteParameterException;
-use Illuminate\Foundation\Http\FormRequest as BaseFormRequest;
 
-abstract class FormRequest extends BaseFormRequest
+trait HandlesFormRequest
 {
     public function routeString(string $param): string
     {

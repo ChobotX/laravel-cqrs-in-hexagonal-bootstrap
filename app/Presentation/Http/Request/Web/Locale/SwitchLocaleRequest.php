@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Locale;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Contracts\Config\Repository;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class SwitchLocaleRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     public function __construct(
         private readonly Repository $repository,
     ) {

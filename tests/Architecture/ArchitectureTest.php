@@ -176,11 +176,7 @@ final class ArchitectureTest
     {
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Presentation'))
-            ->excluding(
-                Selector::isTrait(),
-                // Abstract base FormRequest is extended by concrete form requests
-                Selector::isAbstract(),
-            )
+            ->excluding(Selector::isTrait())
             ->shouldBeFinal();
     }
 
@@ -246,8 +242,6 @@ final class ArchitectureTest
     {
         return PHPat::rule()
             ->classes(Selector::inNamespace('App'))
-            // Form requests extend our abstract FormRequest base
-            ->excluding(Selector::inNamespace('App\Presentation\Http\Request'))
             ->shouldNotExtend()
             ->classes(Selector::inNamespace('App'));
     }

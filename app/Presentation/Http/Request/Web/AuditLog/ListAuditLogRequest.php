@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\AuditLog;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
 use DateTimeImmutable;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class ListAuditLogRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string>> */
     public function rules(): array
     {

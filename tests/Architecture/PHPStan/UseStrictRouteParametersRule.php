@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Presentation\Http\Request\FormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
@@ -34,12 +34,17 @@ final class UseStrictRouteParametersRule implements Rule
             return [];
         }
 
+        // Skip when the call lives inside a trait (e.g. HandlesFormRequest::routeString).
+        if ($scope->isInTrait()) {
+            return [];
+        }
+
         $classReflection = $scope->getClassReflection();
         if (! $classReflection instanceof ClassReflection || ! $classReflection->isSubclassOf(FormRequest::class)) {
             return [];
         }
 
-        if ($classReflection->getName() === FormRequest::class) {
+        if (! str_starts_with($classReflection->getName(), 'App\\Presentation\\Http\\Request\\')) {
             return [];
         }
 

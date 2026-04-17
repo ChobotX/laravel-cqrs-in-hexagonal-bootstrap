@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\User;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 final class UpdateProfileRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string|\Illuminate\Contracts\Validation\ValidationRule|\Illuminate\Validation\Rules\Unique>> */
     public function rules(): array
     {

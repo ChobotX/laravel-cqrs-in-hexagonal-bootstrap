@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Settings;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
 use Closure;
+use Illuminate\Foundation\Http\FormRequest;
 
 use function in_array;
 use function is_string;
@@ -13,6 +14,8 @@ use function timezone_identifiers_list;
 
 final class UpdateTenantSettingsRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<int, string|Closure>> */
     public function rules(): array
     {

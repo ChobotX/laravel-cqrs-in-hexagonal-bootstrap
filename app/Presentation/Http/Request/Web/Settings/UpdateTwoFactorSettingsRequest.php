@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Settings;
 
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 use Override;
 
 final class UpdateTwoFactorSettingsRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     public function authorize(): bool
     {
         return true;

@@ -7,10 +7,13 @@ namespace App\Presentation\Http\Request\Web;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class PaginationRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string>> */
     public function rules(): array
     {

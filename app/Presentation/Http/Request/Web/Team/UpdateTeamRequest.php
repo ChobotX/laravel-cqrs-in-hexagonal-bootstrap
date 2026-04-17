@@ -6,10 +6,13 @@ namespace App\Presentation\Http\Request\Web\Team;
 
 use App\Domain\Team\Contract\Command\UpdateTeamCommand;
 use App\Domain\Team\Contract\ValueObject\TeamSlug;
-use App\Presentation\Http\Request\FormRequest;
+use App\Presentation\Http\Request\HandlesFormRequest;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class UpdateTeamRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string>> */
     public function rules(): array
     {

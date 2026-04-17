@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Request;
 
 use App\Application\Pagination\Pagination;
+use Illuminate\Foundation\Http\FormRequest;
 
 final class PaginationRequest extends FormRequest
 {
+    use HandlesFormRequest;
+
     /** @return array<string, array<string>> */
     public function rules(): array
     {
