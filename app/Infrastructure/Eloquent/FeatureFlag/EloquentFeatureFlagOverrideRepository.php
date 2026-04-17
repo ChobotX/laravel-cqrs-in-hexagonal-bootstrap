@@ -7,11 +7,13 @@ namespace App\Infrastructure\Eloquent\FeatureFlag;
 use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
 use App\Domain\FeatureFlag\Contract\Repository\FeatureFlagOverrideRepository;
 use App\Domain\FeatureFlag\Contract\ValueObject\FlagKey;
+use App\Domain\Tenancy\Contract\Service\TenantContext;
 
 final readonly class EloquentFeatureFlagOverrideRepository implements FeatureFlagOverrideRepository
 {
     public function __construct(
         private FeatureFlagOverrideMapper $featureFlagOverrideMapper,
+        private TenantContext $tenantContext,
     ) {}
 
     /**
@@ -19,6 +21,10 @@ final readonly class EloquentFeatureFlagOverrideRepository implements FeatureFla
      */
     public function findAll(): array
     {
+        if (! $this->tenantContext->isResolved()) {
+            return [];
+        }
+
         $models = FeatureFlagOverrideModel::all();
 
         $result = [];

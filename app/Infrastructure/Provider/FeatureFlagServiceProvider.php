@@ -51,7 +51,6 @@ final class FeatureFlagServiceProvider extends ServiceProvider
                 new DefaultFeatureFlagChecker(
                     $this->app->make(FeatureFlagDefinitionProvider::class),
                     $this->app->make(FeatureFlagOverrideRepository::class),
-                    $tenantContext,
                 ),
                 $this->app->make(CacheRepository::class),
                 $tenantContext,

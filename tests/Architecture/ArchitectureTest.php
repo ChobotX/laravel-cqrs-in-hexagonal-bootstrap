@@ -100,11 +100,7 @@ final class ArchitectureTest
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Domain'))
             // Domain\Tenancy naturally depends on its own contracts
-            ->excluding(
-                Selector::inNamespace('App\Domain\Tenancy'),
-                // FeatureFlag reads tenant-resolved state via TenantContext; to be removed once #5b lands.
-                Selector::inNamespace('App\Domain\FeatureFlag\Service'),
-            )
+            ->excluding(Selector::inNamespace('App\Domain\Tenancy'))
             ->shouldNotDependOn()
             ->classes(Selector::inNamespace('App\Domain\Tenancy\Contract\Service'));
     }

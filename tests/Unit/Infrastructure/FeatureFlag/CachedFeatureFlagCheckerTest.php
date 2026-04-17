@@ -52,16 +52,13 @@ function checkerSetup(
     array $overrides = [],
     ?string $tenantId = 'tenant-1',
 ): CachedFeatureFlagChecker {
-    $tenantContext = new FakeTenantContext($tenantId);
-
     return new CachedFeatureFlagChecker(
         new DefaultFeatureFlagChecker(
             new FakeFeatureFlagDefinitionProvider($definitions),
             new FakeFeatureFlagOverrideRepository($overrides),
-            $tenantContext,
         ),
         new CacheRepository(new ArrayStore),
-        $tenantContext,
+        new FakeTenantContext($tenantId),
         300,
     );
 }
@@ -87,16 +84,20 @@ it('returns overridden values', function (): void {
     ]);
 });
 
-it('returns defaults when tenant is not resolved', function (): void {
-    $cachedFeatureFlagChecker = checkerSetup(
-        [booleanDef()],
-        ['billing.stripe' => new FeatureFlagOverride('billing.stripe', '1', true)],
-        null,
+it('bypasses cache when tenant is not resolved', function (): void {
+    $cache = new CacheRepository(new ArrayStore);
+    $checker = new CachedFeatureFlagChecker(
+        new DefaultFeatureFlagChecker(
+            new FakeFeatureFlagDefinitionProvider([booleanDef()]),
+            new FakeFeatureFlagOverrideRepository([]),
+        ),
+        $cache,
+        new FakeTenantContext,
+        300,
     );
 
-    expect($cachedFeatureFlagChecker->all())->toBe([
-        'billing.stripe' => ['enabled' => false, 'value' => '0'],
-    ]);
+    expect($checker->all())->toBe(['billing.stripe' => ['enabled' => false, 'value' => '0']])
+        ->and($cache->has('feature-flags:'))->toBeFalse();
 });
 
 it('caches resolved values on second call', function (): void {
@@ -109,7 +110,6 @@ it('caches resolved values on second call', function (): void {
         new DefaultFeatureFlagChecker(
             new FakeFeatureFlagDefinitionProvider($definitions),
             new FakeFeatureFlagOverrideRepository($overrides),
-            $tenantContext,
         ),
         $cache,
         $tenantContext,

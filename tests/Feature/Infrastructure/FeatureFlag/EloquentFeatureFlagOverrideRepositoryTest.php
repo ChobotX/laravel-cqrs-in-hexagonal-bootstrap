@@ -6,11 +6,18 @@ use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
 use App\Domain\FeatureFlag\Contract\ValueObject\FlagKey;
 use App\Infrastructure\Eloquent\FeatureFlag\EloquentFeatureFlagOverrideRepository;
 use App\Infrastructure\Eloquent\FeatureFlag\FeatureFlagOverrideMapper;
+use Tests\Helper\FakeTenantContext;
 
 function featureFlagRepo(): EloquentFeatureFlagOverrideRepository
 {
-    return new EloquentFeatureFlagOverrideRepository(new FeatureFlagOverrideMapper);
+    return new EloquentFeatureFlagOverrideRepository(new FeatureFlagOverrideMapper, new FakeTenantContext('tenant-1'));
 }
+
+it('returns empty list when tenant is not resolved', function (): void {
+    $repository = new EloquentFeatureFlagOverrideRepository(new FeatureFlagOverrideMapper, new FakeTenantContext);
+
+    expect($repository->findAll())->toBe([]);
+});
 
 it('saves and finds an override by key', function (): void {
     $eloquentFeatureFlagOverrideRepository = featureFlagRepo();
