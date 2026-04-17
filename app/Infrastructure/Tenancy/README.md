@@ -73,4 +73,4 @@ Queue connections use `after_commit: true` — jobs are only dispatched to the q
 
 ## Domain Isolation
 
-Non-tenancy domain contexts are tenant-agnostic. Enforced by PHPat rule `testNonTenancyDomainDoesNotDependOnTenancy` — `App\Domain\*` cannot import `App\Domain\Tenancy\Contract\Service\*` (except `Domain\Tenancy` itself and the explicitly allowed `EmailTemplate\Service`, `FeatureFlag\Service`).
+Non-tenancy domain contexts are tenant-agnostic. Enforced by PHPat rule `testNonTenancyDomainDoesNotDependOnTenancy` — `App\Domain\*` cannot import `App\Domain\Tenancy\Contract\Service\*` (except `Domain\Tenancy` itself). Use-cases that previously read tenant state directly now go through the bus: `GetCurrentTenantNameQuery` exposes the display name, and the `TenantContext` null-object guard lives behind the Infrastructure repositories.

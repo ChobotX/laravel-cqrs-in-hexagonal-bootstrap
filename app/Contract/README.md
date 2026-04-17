@@ -52,7 +52,7 @@ Rules (aligned with Pint `no_empty_phpdoc` / `no_superfluous_phpdoc_tags`):
  *
  * @template TResult
  */
-interface Middleware
+interface BusMiddleware
 {
     // ...
 }

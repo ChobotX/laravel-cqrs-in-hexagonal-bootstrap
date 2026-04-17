@@ -15,7 +15,7 @@ When adding a new API version, create `Controller\Api\V2\{Context}\` and add a `
 
 ## Form requests
 
-Form requests extend `App\Presentation\Http\Request\FormRequest` (not Laravel's base).
+Form requests extend Laravel's `Illuminate\Foundation\Http\FormRequest` and `use App\Presentation\Http\Request\HandlesFormRequest` for typed route accessors. No `App\` base class — `testNoCustomInheritance` forbids App→App inheritance across all layers.
 
 **Use `routeString()`** to extract route parameters with type safety:
 ```php

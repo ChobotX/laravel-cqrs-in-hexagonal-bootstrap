@@ -102,7 +102,7 @@ No `@phpstan-ignore`, no baseline file, no `@codeCoverageIgnore`.
 
 Each tenant gets a dedicated PostgreSQL schema. The domain layer is fully tenant-agnostic — it reads/writes "the database" without knowing which tenant is active. Infrastructure transparently routes queries to the correct schema via `search_path`.
 **Why:** Enterprise-grade isolation. Per-tenant users, jobs, cache — zero cross-tenant data leakage by architecture. GDPR-compliant tenant deletion = `DROP SCHEMA CASCADE`.
-**Enforced by:** PHPat rule `testDomainDoesNotDependOnTenancy` (domain cannot import `App\Contract\Tenancy`), PHPStan rule `ConsoleCommandRequiresTenantAttributeRule` (every console command must declare `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]`).
+**Enforced by:** PHPat rule `testNonTenancyDomainDoesNotDependOnTenancy` (non-tenancy domain cannot import `App\Domain\Tenancy\Contract\Service\*`), PHPStan rule `ConsoleCommandRequiresTenantAttributeRule` (every console command must declare `#[TenantAwareCommand]` or `#[TenantAgnosticCommand]`).
 
 ### Every console command needs tenant attribute
 
@@ -116,11 +116,11 @@ Scope-based data filtering (All/Team/Own) is domain logic that must not leak int
 **Why:** Scope filtering was originally done in controllers — fetching all records and filtering in PHP. This violated hexagonal architecture (domain logic in presentation), harmed performance (full table loads), and duplicated logic across controllers.
 **Enforced by:** PHPStan rule `NoScopeResolutionInPresentationRule` (blocks `canWithScope()` in Presentation), PHPat rules `testPresentationDoesNotDependOnTeamMembershipChecker` and `testPresentationDoesNotDependOnAccessContext` (block scope-related imports). See [app/Domain/Authorization/README.md](app/Domain/Authorization/README.md).
 
-### Middleware lives in business layers, not Infrastructure
+### Bus middleware lives in business layers, not Infrastructure
 
-Bus middleware is business logic — the decision of *what to do* around handler execution (authorize, transact, log, dispatch events). Infrastructure only provides the framework implementations of contracts these middleware depend on. Context-specific middleware lives in its domain (`Domain\Authorization\Middleware\`), shared middleware lives in Application (`Application\Bus\Middleware\`).
+Bus middleware (`App\Contract\Bus\BusMiddleware`) is business logic — the decision of *what to do* around handler execution (authorize, transact, log, dispatch events). Infrastructure only provides the framework implementations of contracts these middleware depend on. Context-specific middleware lives in its domain (`Domain\Authorization\Middleware\`), shared middleware lives in Application (`Application\Bus\Middleware\`). The contract is named `BusMiddleware` (not `Middleware`) to avoid collision with Laravel's HTTP middleware under `App\Presentation\Http\Middleware\*`.
 **Why:** Middleware was originally in Infrastructure alongside framework plumbing. But the decisions it encodes (check permissions, wrap in transaction, log with trace context) are business rules. Putting them in Infrastructure violates the principle: "decision is domain, implementation is infra." Infrastructure dependencies (database, context facade) are abstracted behind contracts (`TransactionManager`, `TraceContext`).
-**Enforced by:** PHPat rule `testMiddlewareDoesNotLiveInInfrastructure` in `tests/Architecture/ArchitectureTest.php`.
+**Enforced by:** PHPat rule `testMiddlewareDoesNotLiveInInfrastructure` in `tests/Architecture/ArchitectureTest.php` (checks no `App\Infrastructure\*` class implements `BusMiddleware`).
 
 ### URL-based API versioning
 

@@ -35,7 +35,7 @@ PostgreSQL schema-based isolation. Each tenant is a self-contained schema with z
 - **Per-tenant users** — like Slack workspaces. No shared user store. GDPR-compliant by architecture
 - **Subdomain routing** — `tenant-a.laravel-bootstrap.local` resolves to `tenant_alpha` schema
 - **Root domain** — landing page + tenant registration (no auth required)
-- **Domain-agnostic** — `App\Domain` has zero dependencies on `App\Contract\Tenancy` (enforced by PHPat)
+- **Tenancy contracts in Domain** — `TenantContext`, `TenantBootstrapper`, `TenantLogoStorage`, and `DevSchemaResetter` live under `App\Domain\Tenancy\Contract\Service`. Non-tenancy domain contexts cannot import them (enforced by PHPat `testNonTenancyDomainDoesNotDependOnTenancy`)
 
 See [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) for implementation details.
 
