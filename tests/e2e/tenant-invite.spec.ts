@@ -43,7 +43,7 @@ function processQueue(tenantSlug: string): void {
     const tenantUrl = `https://${tenantSlug}.laravel-bootstrap.local`;
     sail(
         `php artisan tinker --execute="` +
-            `app(App\\\\Contract\\\\Tenancy\\\\TenantBootstrapper::class)->bootstrapBySlug('${tenantSlug}');` +
+            `app(App\\\\Domain\\\\Tenancy\\\\Contract\\\\Service\\\\TenantBootstrapper::class)->bootstrapBySlug('${tenantSlug}');` +
             `config(['app.url' => '${tenantUrl}']);` +
             `URL::forceRootUrl('${tenantUrl}');` +
             `Artisan::call('queue:work', ['--stop-when-empty' => true, '--queue' => 'default']);"`,
