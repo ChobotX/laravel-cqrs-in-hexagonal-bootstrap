@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\EmailTemplate\Service;
 
+use App\Application\Bus\QueryBus;
 use App\Contract\IdGenerator;
 use App\Contract\Tracing\TraceContext;
 use App\Domain\EmailTemplate\Constant\EmailTemplateTypes;
@@ -14,7 +15,7 @@ use App\Domain\EmailTemplate\Contract\Service\EmailSender;
 use App\Domain\EmailTemplate\Contract\Service\TemplateCompiler;
 use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
 use App\Domain\EmailTemplate\Exception\EmailTemplateNotFoundException;
-use App\Domain\Tenancy\Contract\Service\TenantContext;
+use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Repository\UserRepository;
@@ -32,7 +33,7 @@ final readonly class DefaultTemplatedEmailDispatcher implements TemplatedEmailDi
         private UserRepository $userRepository,
         private TemplateCompiler $templateCompiler,
         private EmailSender $emailSender,
-        private TenantContext $tenantContext,
+        private QueryBus $queryBus,
         private TraceContext $traceContext,
         private IdGenerator $idGenerator,
     ) {}
@@ -56,7 +57,7 @@ final readonly class DefaultTemplatedEmailDispatcher implements TemplatedEmailDi
             throw new UserNotFoundException($userId);
         }
 
-        $variables['tenantName'] = $this->tenantContext->currentTenantName();
+        $variables['tenantName'] = $this->queryBus->dispatch(new GetCurrentTenantNameQuery);
 
         $renderedEmail = $this->templateCompiler->compile(
             $template->subjectTemplate,

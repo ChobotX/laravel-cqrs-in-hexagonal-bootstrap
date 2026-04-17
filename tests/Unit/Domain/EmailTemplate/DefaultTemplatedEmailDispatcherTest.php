@@ -8,6 +8,7 @@ use App\Domain\EmailTemplate\Contract\ValueObject\EmailTemplateLocale;
 use App\Domain\EmailTemplate\Contract\ValueObject\EmailTemplateType;
 use App\Domain\EmailTemplate\Exception\EmailTemplateNotFoundException;
 use App\Domain\EmailTemplate\Service\DefaultTemplatedEmailDispatcher;
+use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\ValueObject\UserId;
@@ -16,8 +17,8 @@ use App\Domain\User\ValueObject\UserName;
 use Tests\Helper\FakeEmailSender;
 use Tests\Helper\FakeEmailTemplateRepository;
 use Tests\Helper\FakeIdGenerator;
+use Tests\Helper\FakeQueryBus;
 use Tests\Helper\FakeTemplateCompiler;
-use Tests\Helper\FakeTenantContext;
 use Tests\Helper\FakeUserRepository;
 
 function makeDefaultDispatcher(
@@ -30,7 +31,7 @@ function makeDefaultDispatcher(
         $fakeUserRepository,
         new FakeTemplateCompiler,
         $fakeEmailSender ?? new FakeEmailSender,
-        new FakeTenantContext(tenantName: 'Test Org'),
+        new FakeQueryBus([GetCurrentTenantNameQuery::class => 'Test Org']),
         new readonly class implements App\Contract\Tracing\TraceContext
         {
             public function traceId(): ?string

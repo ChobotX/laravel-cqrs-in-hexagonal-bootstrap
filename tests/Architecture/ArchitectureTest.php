@@ -102,8 +102,7 @@ final class ArchitectureTest
             // Domain\Tenancy naturally depends on its own contracts
             ->excluding(
                 Selector::inNamespace('App\Domain\Tenancy'),
-                // Email templating and feature flags read tenant slice at runtime (same as prior infra adapters).
-                Selector::inNamespace('App\Domain\EmailTemplate\Service'),
+                // FeatureFlag reads tenant-resolved state via TenantContext; to be removed once #5b lands.
                 Selector::inNamespace('App\Domain\FeatureFlag\Service'),
             )
             ->shouldNotDependOn()

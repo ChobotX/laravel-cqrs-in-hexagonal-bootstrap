@@ -271,6 +271,7 @@ use App\Domain\Tenancy\Contract\Command\MigrateAllTenantsCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Domain\Tenancy\Contract\Event\TenantSettingsUpdated;
+use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\Tenancy\Contract\Service\TenantContext;
 use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
@@ -278,6 +279,7 @@ use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\UpdateTenantSettingsHandler;
+use App\Domain\Tenancy\Handler\Query\GetCurrentTenantNameHandler;
 use App\Domain\Tenancy\Handler\Query\GetTenantSettingsHandler;
 use App\Domain\User\Contract\Command\AcceptInviteCommand;
 use App\Domain\User\Contract\Command\AdminResetUserTwoFactorCommand;
@@ -568,6 +570,7 @@ final class BusServiceProvider extends ServiceProvider
                 GetDefaultGridPresetQuery::class => GetDefaultGridPresetHandler::class,
                 GetPresetShareCapabilitiesQuery::class => GetPresetShareCapabilitiesHandler::class,
                 GetTenantSettingsQuery::class => GetTenantSettingsHandler::class,
+                GetCurrentTenantNameQuery::class => GetCurrentTenantNameHandler::class,
                 ListAuditLogQuery::class => ListAuditLogHandler::class,
                 GetAuditLogByTraceIdQuery::class => GetAuditLogByTraceIdHandler::class,
                 GetEmailTemplateQuery::class => GetEmailTemplateHandler::class,
