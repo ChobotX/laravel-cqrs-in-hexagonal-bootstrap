@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Tenancy\Query\GetTenantSettings;
+namespace App\Domain\Tenancy\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;

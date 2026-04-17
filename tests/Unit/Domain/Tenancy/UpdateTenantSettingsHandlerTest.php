@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 use App\Application\Event\PropertyChangeBuilder;
-use App\Domain\Tenancy\Command\UpdateTenantSettings\UpdateTenantSettingsHandler;
 use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Domain\Tenancy\Contract\Event\TenantSettingsUpdated;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\Tenancy\Exception\InvalidTenantDisplayTimezoneException;
 use App\Domain\Tenancy\Exception\InvalidTenantNameException;
 use App\Domain\Tenancy\Exception\TenantNotFoundException;
+use App\Domain\Tenancy\Handler\Command\UpdateTenantSettingsHandler;
 use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeTenantSettingsRepository;
 

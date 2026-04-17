@@ -5,7 +5,7 @@ declare(strict_types=1);
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\Tenancy\Exception\TenantNotFoundException;
-use App\Domain\Tenancy\Query\GetTenantSettings\GetTenantSettingsHandler;
+use App\Domain\Tenancy\Handler\Query\GetTenantSettingsHandler;
 use Tests\Helper\FakeTenantSettingsRepository;
 
 it('returns tenant settings when found', function (): void {

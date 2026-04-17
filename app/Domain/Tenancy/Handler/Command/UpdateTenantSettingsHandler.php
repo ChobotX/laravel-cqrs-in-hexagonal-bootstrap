@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Tenancy\Command\UpdateTenantSettings;
+namespace App\Domain\Tenancy\Handler\Command;
 
 use App\Application\Event\PropertyChangeBuilder;
 use App\Contract\Command\Command;
