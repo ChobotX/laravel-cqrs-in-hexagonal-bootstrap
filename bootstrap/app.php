@@ -34,6 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
         App\Infrastructure\Provider\AppServiceProvider::class,
         App\Infrastructure\Provider\TenancyServiceProvider::class,
         App\Infrastructure\Provider\FeatureFlagServiceProvider::class,
+        App\Presentation\Provider\ViewServiceProvider::class,
     ])
     ->withCommands([
         __DIR__.'/../app/Presentation/Console/User',

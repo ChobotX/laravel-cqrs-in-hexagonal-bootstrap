@@ -58,8 +58,6 @@ final class ArchitectureTest
     {
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Infrastructure'))
-            // Service providers wire both layers — exclude them from this rule
-            ->excluding(Selector::inNamespace('App\Infrastructure\Provider'))
             ->shouldNotDependOn()
             ->classes(Selector::inNamespace('App\Presentation'));
     }

@@ -12,13 +12,10 @@ use App\Infrastructure\Logging\LaravelLogger;
 use App\Infrastructure\Persistence\LaravelTransactionManager;
 use App\Infrastructure\Tracing\LaravelTraceContext;
 use App\Infrastructure\Translation\LaravelTranslator;
-use App\Presentation\View\Sidebar\SidebarNavigationBuilder;
-use App\Presentation\View\Sidebar\SidebarNavigationComposer;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Override;
@@ -40,12 +37,10 @@ final class AppServiceProvider extends ServiceProvider
         $this->app->bind(Translator::class, LaravelTranslator::class);
         $this->app->bind(TransactionManager::class, LaravelTransactionManager::class);
         $this->app->bind(TraceContext::class, LaravelTraceContext::class);
-        $this->app->singleton(SidebarNavigationBuilder::class);
     }
 
     public function boot(): void
     {
-        View::composer('components.sidebar-nav', SidebarNavigationComposer::class);
         $appUrl = config('app.url');
 
         if (is_string($appUrl) && str_starts_with($appUrl, 'https://')) {
