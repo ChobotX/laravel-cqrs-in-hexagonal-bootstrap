@@ -232,7 +232,7 @@ final class ArchitectureTest
         return PHPat::rule()
             ->classes(Selector::inNamespace('App\Infrastructure'))
             ->shouldNotImplement()
-            ->classes(Selector::classname(\App\Contract\Bus\Middleware::class))
+            ->classes(Selector::classname(\App\Contract\Bus\BusMiddleware::class))
             ->because('Middleware is business logic — place in Domain (context-specific) or Application (shared).');
     }
 

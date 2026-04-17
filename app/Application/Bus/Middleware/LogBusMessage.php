@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Application\Bus\Middleware;
 
 use App\Application\Bus\SensitiveDataMasker;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Logging\Logger;
 use App\Contract\Tracing\TraceContext;
 use Closure;
 use Throwable;
 
-final readonly class LogBusMessage implements Middleware
+final readonly class LogBusMessage implements BusMiddleware
 {
     private const int NANOSECONDS_PER_MILLISECOND = 1_000_000;
 

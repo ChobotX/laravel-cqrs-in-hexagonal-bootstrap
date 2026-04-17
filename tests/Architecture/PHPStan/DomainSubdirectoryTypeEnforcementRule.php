@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Exception\DomainException;
@@ -92,7 +92,7 @@ final readonly class DomainSubdirectoryTypeEnforcementRule implements Rule
             'Enum' => $this->mustBeEnum($node, $className),
             'ValueObject', 'Service', 'Policy', 'Constant' => $this->mustBeClass($node, $className, $subDir),
             'EventHandler' => $this->mustImplementInterface($node, $className, DomainEventHandler::class, 'EventHandler'),
-            'Middleware' => $this->mustImplementInterface($node, $className, Middleware::class, 'Middleware'),
+            'Middleware' => $this->mustImplementInterface($node, $className, BusMiddleware::class, 'Middleware'),
             'Exception' => $this->mustImplementInterface($node, $className, DomainException::class, 'Exception'),
             default => [],
         };

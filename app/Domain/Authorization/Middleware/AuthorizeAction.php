@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\Middleware;
 
 use App\Application\Authorization\RequiresPermission;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Domain\Authorization\Contract\Exception\PermissionDeniedException;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use ReflectionClass;
 
-final readonly class AuthorizeAction implements Middleware
+final readonly class AuthorizeAction implements BusMiddleware
 {
     public function __construct(
         private AuthenticatedUser $authenticatedUser,

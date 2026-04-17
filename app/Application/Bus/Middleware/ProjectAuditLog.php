@@ -7,7 +7,7 @@ namespace App\Application\Bus\Middleware;
 use App\Application\Bus\SensitiveDataMasker;
 use App\Application\Event\EntityUpdated;
 use App\Application\Event\PropertyChange;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
@@ -20,7 +20,7 @@ use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use Illuminate\Http\Request;
 
-final readonly class ProjectAuditLog implements Middleware
+final readonly class ProjectAuditLog implements BusMiddleware
 {
     public function __construct(
         private EventCollector $eventCollector,

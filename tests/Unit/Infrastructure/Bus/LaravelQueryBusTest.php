@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Authorization\SkipPermissionCheck;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Infrastructure\Bus\HandlerNotFoundException;
@@ -59,7 +59,7 @@ it('throws InvalidHandlerException when middleware passes wrong message type', f
     $container = new Container;
     $container->instance($handler::class, $handler);
 
-    $maliciousMiddleware = new class implements Middleware
+    $maliciousMiddleware = new class implements BusMiddleware
     {
         public function handle(object $message, Closure $next): mixed
         {

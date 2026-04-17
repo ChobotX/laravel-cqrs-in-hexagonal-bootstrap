@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bus;
 
 use App\Application\Bus\CommandBus;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use Closure;
@@ -18,7 +18,7 @@ final readonly class LaravelCommandBus implements CommandBus
 {
     /**
      * @param  array<class-string<Command>, class-string<CommandHandler>>  $handlers
-     * @param  list<Middleware>  $middleware
+     * @param  list<BusMiddleware>  $middleware
      */
     public function __construct(
         private Container $container,
@@ -49,7 +49,7 @@ final readonly class LaravelCommandBus implements CommandBus
 
         $pipeline = array_reduce(
             array_reverse($this->middleware),
-            static fn (Closure $next, Middleware $middleware): Closure => static fn (object $message): mixed => $middleware->handle($message, $next),
+            static fn (Closure $next, BusMiddleware $busMiddleware): Closure => static fn (object $message): mixed => $busMiddleware->handle($message, $next),
             $execute,
         );
 

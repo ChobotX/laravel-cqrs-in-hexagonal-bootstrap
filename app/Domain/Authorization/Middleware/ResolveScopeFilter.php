@@ -9,7 +9,7 @@ use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\ShareableScopeQuery;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
@@ -18,7 +18,7 @@ use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use ReflectionClass;
 
-final readonly class ResolveScopeFilter implements Middleware
+final readonly class ResolveScopeFilter implements BusMiddleware
 {
     public function __construct(
         private AuthenticatedUser $authenticatedUser,

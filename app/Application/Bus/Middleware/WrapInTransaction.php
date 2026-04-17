@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Application\Bus\Middleware;
 
 use App\Application\Bus\SkipTransaction;
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Persistence\TransactionManager;
 use Closure;
 use ReflectionClass;
 
-final readonly class WrapInTransaction implements Middleware
+final readonly class WrapInTransaction implements BusMiddleware
 {
     public function __construct(
         private TransactionManager $transactionManager,

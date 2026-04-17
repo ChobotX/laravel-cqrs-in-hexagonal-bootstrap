@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Contract\Bus\Middleware;
+use App\Contract\Bus\BusMiddleware;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Infrastructure\Bus\HandlerNotFoundException;
@@ -77,7 +77,7 @@ it('throws InvalidHandlerException when middleware passes wrong message type', f
     $container = new Container;
     $container->instance($handler::class, $handler);
 
-    $maliciousMiddleware = new class implements Middleware
+    $maliciousMiddleware = new class implements BusMiddleware
     {
         public function handle(object $message, Closure $next): mixed
         {
