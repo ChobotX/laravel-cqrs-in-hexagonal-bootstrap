@@ -56,6 +56,7 @@ $buildHandler = fn (
     new FakeSsoAuthenticatorRegistry($fakeSsoAuthenticator),
     $fakeCommandBus,
     $fakeEventCollector,
+    new Tests\Helper\FakeSsoLoginSession,
 );
 
 it('logs in an already-linked identity without provisioning', function () use ($ssoUser, $loginCommand, $buildHandler): void {

@@ -100,6 +100,11 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/forgot-password', ForgotPasswordController::class)->name('password.email')->middleware('throttle:password-reset');
     Route::get('/reset-password/{token}', ShowResetPasswordController::class)->name('password.reset');
     Route::post('/reset-password', ResetPasswordController::class)->name('password.update');
+
+    Route::get('/auth/sso/saml/{slug}/metadata', App\Presentation\Http\Controller\Web\Auth\Sso\SamlMetadataController::class)->name('sso.saml.metadata');
+    Route::get('/auth/sso/{slug}', App\Presentation\Http\Controller\Web\Auth\Sso\InitiateSsoLoginController::class)->name('sso.initiate');
+    Route::get('/auth/sso/{slug}/callback', App\Presentation\Http\Controller\Web\Auth\Sso\SsoCallbackController::class)->name('sso.callback');
+    Route::post('/auth/sso/saml/{slug}/acs', App\Presentation\Http\Controller\Web\Auth\Sso\SamlAcsController::class)->name('sso.saml.acs')->withoutMiddleware('VerifyCsrfToken');
 });
 
 Route::middleware('auth')->group(function (): void {
@@ -163,6 +168,15 @@ Route::middleware('auth')->group(function (): void {
 
     // Email Logs
     Route::get('/settings/email-logs', ListEmailLogsController::class)->name('settings.email-logs.index');
+
+    // SSO admin
+    Route::get('/settings/sso', App\Presentation\Http\Controller\Web\Sso\ListSsoConfigurationsController::class)->name('settings.sso.index');
+    Route::get('/settings/sso/create', App\Presentation\Http\Controller\Web\Sso\ShowCreateSsoConfigurationController::class)->name('settings.sso.create');
+    Route::post('/settings/sso', App\Presentation\Http\Controller\Web\Sso\StoreSsoConfigurationController::class)->name('settings.sso.store');
+    Route::get('/settings/sso/{id}/edit', App\Presentation\Http\Controller\Web\Sso\ShowEditSsoConfigurationController::class)->name('settings.sso.edit');
+    Route::put('/settings/sso/{id}', App\Presentation\Http\Controller\Web\Sso\UpdateSsoConfigurationController::class)->name('settings.sso.update');
+    Route::delete('/settings/sso/{id}', App\Presentation\Http\Controller\Web\Sso\DeleteSsoConfigurationController::class)->name('settings.sso.destroy');
+    Route::post('/settings/sso/{id}/test', App\Presentation\Http\Controller\Web\Sso\TestSsoConfigurationController::class)->name('settings.sso.test');
 
     Route::post('/impersonate/{userId}', WebStartImpersonationController::class)->name('impersonation.start');
     Route::post('/stop-impersonation', WebStopImpersonationController::class)->name('impersonation.stop');

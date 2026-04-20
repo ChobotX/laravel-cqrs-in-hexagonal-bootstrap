@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controller\Web\Auth;
 
 use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Bus\QueryBus;
+use App\Domain\Sso\Contract\Query\IsSsoEnforcedQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationStatusQuery;
 use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;
 use App\Domain\User\Contract\ValueObject\PasswordRotationUiStatus;
@@ -19,6 +20,10 @@ final readonly class LoginController
     public function __invoke(LoginRequest $loginRequest, QueryBus $queryBus): RedirectResponse
     {
         $credentials = $loginRequest->only('email', 'password');
+
+        if ($queryBus->dispatch(new IsSsoEnforcedQuery)) {
+            return back()->withErrors(['email' => __('messages.exceptions.sso_enforcement_violation')])->onlyInput('email');
+        }
 
         if (! Auth::attempt($credentials)) {
             return back()->withErrors(['email' => __('messages.auth.invalid_credentials')])->onlyInput('email');

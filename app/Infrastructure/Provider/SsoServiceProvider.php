@@ -7,8 +7,10 @@ namespace App\Infrastructure\Provider;
 use App\Domain\Sso\Contract\Repository\SsoConfigurationRepository;
 use App\Domain\Sso\Contract\Repository\UserSsoIdentityRepository;
 use App\Domain\Sso\Contract\Service\SsoAuthenticatorRegistry as RegistryContract;
+use App\Domain\Sso\Contract\Service\SsoLoginSession;
 use App\Infrastructure\Eloquent\Sso\EloquentSsoConfigurationRepository;
 use App\Infrastructure\Eloquent\Sso\EloquentUserSsoIdentityRepository;
+use App\Infrastructure\Sso\LaravelSsoLoginSession;
 use App\Infrastructure\Sso\SsoAuthenticatorRegistry;
 use Illuminate\Support\ServiceProvider;
 use Override;
@@ -21,5 +23,6 @@ final class SsoServiceProvider extends ServiceProvider
         $this->app->singleton(SsoConfigurationRepository::class, EloquentSsoConfigurationRepository::class);
         $this->app->singleton(UserSsoIdentityRepository::class, EloquentUserSsoIdentityRepository::class);
         $this->app->singleton(RegistryContract::class, SsoAuthenticatorRegistry::class);
+        $this->app->scoped(SsoLoginSession::class, LaravelSsoLoginSession::class);
     }
 }

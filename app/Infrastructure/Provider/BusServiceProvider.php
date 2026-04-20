@@ -249,8 +249,10 @@ use App\Domain\Sso\Contract\Event\SsoIdentityLinked;
 use App\Domain\Sso\Contract\Event\SsoIdentityUnlinked;
 use App\Domain\Sso\Contract\Event\SsoLoginFailed;
 use App\Domain\Sso\Contract\Event\SsoLoginSucceeded;
+use App\Domain\Sso\Contract\Query\BuildSsoRedirectInstructionQuery;
 use App\Domain\Sso\Contract\Query\GetEnabledSsoProvidersQuery;
 use App\Domain\Sso\Contract\Query\GetSsoConfigurationByIdQuery;
+use App\Domain\Sso\Contract\Query\IsSsoEnforcedQuery;
 use App\Domain\Sso\Contract\Query\ListSsoConfigurationsQuery;
 use App\Domain\Sso\Contract\Query\ListUserSsoIdentitiesQuery;
 use App\Domain\Sso\Contract\Query\TestSsoConfigurationQuery;
@@ -260,8 +262,10 @@ use App\Domain\Sso\Handler\Command\LinkSsoIdentityHandler;
 use App\Domain\Sso\Handler\Command\LoginViaSsoHandler;
 use App\Domain\Sso\Handler\Command\UnlinkSsoIdentityHandler;
 use App\Domain\Sso\Handler\Command\UpdateSsoConfigurationHandler;
+use App\Domain\Sso\Handler\Query\BuildSsoRedirectInstructionHandler;
 use App\Domain\Sso\Handler\Query\GetEnabledSsoProvidersHandler;
 use App\Domain\Sso\Handler\Query\GetSsoConfigurationByIdHandler;
+use App\Domain\Sso\Handler\Query\IsSsoEnforcedHandler;
 use App\Domain\Sso\Handler\Query\ListSsoConfigurationsHandler;
 use App\Domain\Sso\Handler\Query\ListUserSsoIdentitiesHandler;
 use App\Domain\Sso\Handler\Query\TestSsoConfigurationHandler;
@@ -623,6 +627,8 @@ final class BusServiceProvider extends ServiceProvider
                 GetEmailTemplatePreviewQuery::class => GetEmailTemplatePreviewHandler::class,
                 ListEmailLogsQuery::class => ListEmailLogsHandler::class,
                 GetEnabledSsoProvidersQuery::class => GetEnabledSsoProvidersHandler::class,
+                BuildSsoRedirectInstructionQuery::class => BuildSsoRedirectInstructionHandler::class,
+                IsSsoEnforcedQuery::class => IsSsoEnforcedHandler::class,
                 ListSsoConfigurationsQuery::class => ListSsoConfigurationsHandler::class,
                 GetSsoConfigurationByIdQuery::class => GetSsoConfigurationByIdHandler::class,
                 ListUserSsoIdentitiesQuery::class => ListUserSsoIdentitiesHandler::class,

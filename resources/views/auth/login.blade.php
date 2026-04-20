@@ -73,4 +73,20 @@
            href="{{ route('password.request') }}"
            title="{{ __('messages.auth.forgot_password') }}">{{ __('messages.auth.forgot_password') }}</a>
     </p>
+
+    @feature('sso.enabled')
+        @if (! empty($ssoProviders))
+            <div class="mt-6 border-t border-gray-200 pt-6">
+                <p class="mb-3 text-center text-base text-gray-500 sm:text-sm">{{ __('messages.sso.or_continue_with') }}</p>
+                <div class="space-y-2">
+                    @foreach ($ssoProviders as $provider)
+                        <a class="block w-full rounded-lg border border-gray-300 px-4 py-2 text-center text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 sm:text-sm"
+                           data-testid="sso-provider-{{ $provider->slug }}"
+                           href="{{ route('sso.initiate', ['slug' => $provider->slug]) }}"
+                           title="{{ $provider->displayName }}">{{ $provider->displayName }}</a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
+    @endfeature
 @endsection

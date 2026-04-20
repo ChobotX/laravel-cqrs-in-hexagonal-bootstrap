@@ -20,6 +20,7 @@ use App\Domain\Sso\Contract\Exception\SsoLoginRejectedException;
 use App\Domain\Sso\Contract\Repository\SsoConfigurationRepository;
 use App\Domain\Sso\Contract\Repository\UserSsoIdentityRepository;
 use App\Domain\Sso\Contract\Service\SsoAuthenticatorRegistry;
+use App\Domain\Sso\Contract\Service\SsoLoginSession;
 use App\Domain\Sso\Contract\ValueObject\SsoConfigurationId;
 use App\Domain\Sso\Contract\ValueObject\SsoIdentity;
 use App\Domain\User\Contract\Command\CreateUserCommand;
@@ -39,6 +40,7 @@ final readonly class LoginViaSsoHandler implements CommandHandler
         private SsoAuthenticatorRegistry $ssoAuthenticatorRegistry,
         private CommandBus $commandBus,
         private EventCollector $eventCollector,
+        private SsoLoginSession $ssoLoginSession,
     ) {}
 
     public function handle(Command $command): void
@@ -68,6 +70,7 @@ final readonly class LoginViaSsoHandler implements CommandHandler
 
         if ($linked instanceof UserSsoIdentity) {
             $this->recordSuccess($configuration->id->value, $linked->userId->value, $identity, userProvisioned: false);
+            $this->ssoLoginSession->setLastResolvedUserId($linked->userId->value);
 
             return;
         }
@@ -88,6 +91,7 @@ final readonly class LoginViaSsoHandler implements CommandHandler
             $identity,
             userProvisioned: $provisioned,
         );
+        $this->ssoLoginSession->setLastResolvedUserId($user->id->value);
     }
 
     /** @return array{0: User, 1: bool} */
