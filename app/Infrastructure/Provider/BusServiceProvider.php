@@ -236,6 +236,35 @@ use App\Domain\Registry\Handler\Query\ListDefinitionsHandler;
 use App\Domain\Registry\Handler\Query\ListDefinitionVersionsHandler;
 use App\Domain\Registry\Handler\Query\ListEntriesByDefinitionSlugHandler;
 use App\Domain\Registry\Handler\Query\ListEntriesHandler;
+use App\Domain\Sso\Contract\Command\ConfigureSsoConfigurationCommand;
+use App\Domain\Sso\Contract\Command\DeleteSsoConfigurationCommand;
+use App\Domain\Sso\Contract\Command\LinkSsoIdentityCommand;
+use App\Domain\Sso\Contract\Command\LoginViaSsoCommand;
+use App\Domain\Sso\Contract\Command\UnlinkSsoIdentityCommand;
+use App\Domain\Sso\Contract\Command\UpdateSsoConfigurationCommand;
+use App\Domain\Sso\Contract\Event\SsoConfigurationCreated;
+use App\Domain\Sso\Contract\Event\SsoConfigurationDeleted;
+use App\Domain\Sso\Contract\Event\SsoConfigurationUpdated;
+use App\Domain\Sso\Contract\Event\SsoIdentityLinked;
+use App\Domain\Sso\Contract\Event\SsoIdentityUnlinked;
+use App\Domain\Sso\Contract\Event\SsoLoginFailed;
+use App\Domain\Sso\Contract\Event\SsoLoginSucceeded;
+use App\Domain\Sso\Contract\Query\GetEnabledSsoProvidersQuery;
+use App\Domain\Sso\Contract\Query\GetSsoConfigurationByIdQuery;
+use App\Domain\Sso\Contract\Query\ListSsoConfigurationsQuery;
+use App\Domain\Sso\Contract\Query\ListUserSsoIdentitiesQuery;
+use App\Domain\Sso\Contract\Query\TestSsoConfigurationQuery;
+use App\Domain\Sso\Handler\Command\ConfigureSsoConfigurationHandler;
+use App\Domain\Sso\Handler\Command\DeleteSsoConfigurationHandler;
+use App\Domain\Sso\Handler\Command\LinkSsoIdentityHandler;
+use App\Domain\Sso\Handler\Command\LoginViaSsoHandler;
+use App\Domain\Sso\Handler\Command\UnlinkSsoIdentityHandler;
+use App\Domain\Sso\Handler\Command\UpdateSsoConfigurationHandler;
+use App\Domain\Sso\Handler\Query\GetEnabledSsoProvidersHandler;
+use App\Domain\Sso\Handler\Query\GetSsoConfigurationByIdHandler;
+use App\Domain\Sso\Handler\Query\ListSsoConfigurationsHandler;
+use App\Domain\Sso\Handler\Query\ListUserSsoIdentitiesHandler;
+use App\Domain\Sso\Handler\Query\TestSsoConfigurationHandler;
 use App\Domain\Team\Contract\Command\AddTeamMemberCommand;
 use App\Domain\Team\Contract\Command\CreateTeamCommand;
 use App\Domain\Team\Contract\Command\DeleteTeamCommand;
@@ -291,6 +320,7 @@ use App\Domain\User\Contract\Command\DisableTotpTwoFactorCommand;
 use App\Domain\User\Contract\Command\EnableEmailTwoFactorCommand;
 use App\Domain\User\Contract\Command\IssueEmailTwoFactorChallengeCommand;
 use App\Domain\User\Contract\Command\MarkTotpBackupCodesDownloadedCommand;
+use App\Domain\User\Contract\Command\MarkUserActivatedCommand;
 use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
 use App\Domain\User\Contract\Command\ResendUserInviteCommand;
 use App\Domain\User\Contract\Command\ResetPasswordCommand;
@@ -333,6 +363,7 @@ use App\Domain\User\Handler\Command\DisableTotpTwoFactorHandler;
 use App\Domain\User\Handler\Command\EnableEmailTwoFactorHandler;
 use App\Domain\User\Handler\Command\IssueEmailTwoFactorChallengeHandler;
 use App\Domain\User\Handler\Command\MarkTotpBackupCodesDownloadedHandler;
+use App\Domain\User\Handler\Command\MarkUserActivatedHandler;
 use App\Domain\User\Handler\Command\RequestPasswordResetHandler;
 use App\Domain\User\Handler\Command\ResendUserInviteHandler;
 use App\Domain\User\Handler\Command\ResetPasswordHandler;
@@ -413,6 +444,13 @@ final class BusServiceProvider extends ServiceProvider
                 EmailTemplateUpdated::class => [],
                 EmailTemplateReset::class => [],
                 TenantSettingsUpdated::class => [],
+                SsoConfigurationCreated::class => [],
+                SsoConfigurationUpdated::class => [],
+                SsoConfigurationDeleted::class => [],
+                SsoLoginSucceeded::class => [],
+                SsoLoginFailed::class => [],
+                SsoIdentityLinked::class => [],
+                SsoIdentityUnlinked::class => [],
             ],
             tenantContext: $this->app->make(TenantContext::class),
         ));
@@ -494,6 +532,13 @@ final class BusServiceProvider extends ServiceProvider
                 SendTemplatedEmailCommand::class => SendTemplatedEmailHandler::class,
                 UpdateEmailTemplateCommand::class => UpdateEmailTemplateHandler::class,
                 ResetEmailTemplateCommand::class => ResetEmailTemplateHandler::class,
+                MarkUserActivatedCommand::class => MarkUserActivatedHandler::class,
+                ConfigureSsoConfigurationCommand::class => ConfigureSsoConfigurationHandler::class,
+                UpdateSsoConfigurationCommand::class => UpdateSsoConfigurationHandler::class,
+                DeleteSsoConfigurationCommand::class => DeleteSsoConfigurationHandler::class,
+                LoginViaSsoCommand::class => LoginViaSsoHandler::class,
+                LinkSsoIdentityCommand::class => LinkSsoIdentityHandler::class,
+                UnlinkSsoIdentityCommand::class => UnlinkSsoIdentityHandler::class,
             ],
             middleware: [
                 $this->app->make(LogBusMessage::class),
@@ -577,6 +622,11 @@ final class BusServiceProvider extends ServiceProvider
                 ListEmailTemplatesQuery::class => ListEmailTemplatesHandler::class,
                 GetEmailTemplatePreviewQuery::class => GetEmailTemplatePreviewHandler::class,
                 ListEmailLogsQuery::class => ListEmailLogsHandler::class,
+                GetEnabledSsoProvidersQuery::class => GetEnabledSsoProvidersHandler::class,
+                ListSsoConfigurationsQuery::class => ListSsoConfigurationsHandler::class,
+                GetSsoConfigurationByIdQuery::class => GetSsoConfigurationByIdHandler::class,
+                ListUserSsoIdentitiesQuery::class => ListUserSsoIdentitiesHandler::class,
+                TestSsoConfigurationQuery::class => TestSsoConfigurationHandler::class,
             ],
             middleware: [
                 $this->app->make(AuthorizeAction::class),

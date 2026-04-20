@@ -23,7 +23,7 @@ Higher-level grants cascade down:
 
 1. If user has super-admin role (system role) → granted with scope `All`
 
-Modules `feature_flags` and `user_recovery` are excluded from default tenant roles (`Manager`, `Team Leader`, …) in `SeedDefaultRolesHandler` and `TenantSeeder`, so only the system super-admin role receives those permissions unless you assign them explicitly.
+Modules `feature_flags`, `user_recovery`, and `sso` are excluded from default tenant roles (`Manager`, `Team Leader`, …) in `SeedDefaultRolesHandler` and `TenantSeeder`, so only the system super-admin role receives those permissions unless you assign them explicitly. The `sso.management` feature exposes `read`, `create`, `update`, `delete`, `test` actions; `sso.identities.unlink` controls breaking an existing IdP-subject ↔ user link.
 2. If impersonating → use impersonated user's permissions (no super-admin bypass)
 3. Collect all role permissions for user (union of all assigned roles)
 4. Apply permission inheritance (module → features → actions)

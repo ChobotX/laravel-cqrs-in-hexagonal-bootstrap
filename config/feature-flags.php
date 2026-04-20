@@ -16,5 +16,16 @@ return [
                 ],
             ],
         ],
+        'sso' => [
+            'label' => 'messages.feature_flags.groups.sso.label',
+            'flags' => [
+                'enabled' => [
+                    'type' => 'boolean',
+                    'default' => false,
+                    'label' => 'messages.feature_flags.groups.sso.flags.enabled.label',
+                    'description' => 'messages.feature_flags.groups.sso.flags.enabled.description',
+                ],
+            ],
+        ],
     ],
 ];

@@ -336,6 +336,15 @@ return [
                     ],
                 ],
             ],
+            'sso' => [
+                'label' => 'Single Sign-On',
+                'flags' => [
+                    'enabled' => [
+                        'label' => 'Enable SSO',
+                        'description' => 'Show per-tenant SSO providers on the login page and expose the admin UI.',
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -491,6 +500,13 @@ return [
         'invalid_password_rotation_history' => 'History length must be between 1 and 24 previous passwords.',
         'invalid_two_factor_policy_requires_method' => 'At least one two-factor method must stay enabled when enforcement is required.',
         'password_previously_used' => 'Choose a password you have not used recently.',
+        'invalid_sso_configuration_id' => 'Value [:value] is not a valid SSO configuration UUID.',
+        'invalid_sso_slug' => 'Value [:value] is not a valid SSO slug.',
+        'sso_configuration_not_found' => 'SSO configuration with id [:id] not found.',
+        'sso_configuration_conflict' => 'An SSO configuration with provider [:providerType] and slug [:slug] already exists.',
+        'sso_login_rejected' => 'SSO login could not be completed: :reason.',
+        'sso_enforcement_violation' => 'Password login is disabled for this tenant; sign in via SSO.',
+        'sso_identity_not_found' => 'SSO identity with id [:id] not found.',
     ],
 
     'email_templates' => [

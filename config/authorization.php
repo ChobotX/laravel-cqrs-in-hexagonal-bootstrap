@@ -112,6 +112,19 @@ return [
                 ],
             ],
         ],
+        'sso' => [
+            'label' => 'Single Sign-On',
+            'features' => [
+                'management' => [
+                    'label' => 'SSO Configurations',
+                    'actions' => ['read', 'create', 'update', 'delete', 'test'],
+                ],
+                'identities' => [
+                    'label' => 'User SSO Identities',
+                    'actions' => ['unlink'],
+                ],
+            ],
+        ],
     ],
     'default_roles' => ['manager', 'team-leader', 'team-member', 'externist'],
 ];

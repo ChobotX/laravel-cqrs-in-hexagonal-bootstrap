@@ -23,6 +23,7 @@ Laravel CQRS hexagonal bootstrap — a stateless, strictly enforced 5-layer arch
 | [app/Domain/Registry/README.md](app/Domain/Registry/README.md) | Registry module — dynamic schema-driven CRUD, versioned definitions, typed entries |
 | [app/Domain/FeatureFlag/README.md](app/Domain/FeatureFlag/README.md) | Feature flag module — code-defined flags, per-tenant overrides, boolean/select/input types |
 | [app/Domain/GridPreset/README.md](app/Domain/GridPreset/README.md) | Grid preset module — saved filter/sort/search presets per user, default views |
+| [app/Domain/Sso/README.md](app/Domain/Sso/README.md) | SSO module — per-tenant OIDC/social/SAML providers, JIT provisioning, optional enforcement |
 | [app/Infrastructure/Tenancy/README.md](app/Infrastructure/Tenancy/README.md) | Tenancy — schema isolation, tenant resolution, migration |
 | [tests/README.md](tests/README.md) | Testing strategy, PHPStan rules, coverage requirements |
 | [tests/Architecture/PHPStan/Fixtures/README.md](tests/Architecture/PHPStan/Fixtures/README.md) | PHPStan rule fixtures — conventions and orphan guard |

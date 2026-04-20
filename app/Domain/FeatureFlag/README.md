@@ -62,6 +62,13 @@ Flag state is passed to the frontend via a `<meta name="feature-flags">` tag in 
 2. Use `FeatureFlagChecker`, `@feature`, or the TypeScript helpers in code
 3. No migration needed — new flags use their config default until overridden
 
+## Built-in flags
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `registry.schema-builder` | `true` | Toggles the dynamic Schema/Entry registry UI. |
+| `sso.enabled` | `false` | Reveals tenant SSO providers on the login page and the SSO admin UI (see [Sso README](../Sso/README.md)). |
+
 ## Commands & Queries
 
 | Type | Class | Permission |
