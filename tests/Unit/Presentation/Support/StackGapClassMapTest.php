@@ -11,7 +11,7 @@ it('resolves stack gap tokens', function (): void {
 });
 
 it('matches resources/shared/ui-stack-gaps.json used by Vue', function (): void {
-    $path = resource_path('shared/ui-stack-gaps.json');
+    $path = __DIR__.'/../../../../resources/shared/ui-stack-gaps.json';
     $raw = file_get_contents($path);
     if ($raw === false) {
         throw new RuntimeException('Cannot read '.$path);
