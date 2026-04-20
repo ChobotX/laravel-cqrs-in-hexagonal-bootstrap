@@ -44,11 +44,11 @@ final readonly class SamlMetadataController
             throw new SsoConfigurationNotFoundException($slug);
         }
 
-        /** @var SsoConfiguration $configuration */
-        $configuration = $this->queryBus->dispatch(new GetSsoConfigurationByIdQuery($configurationId));
+        /** @var SsoConfiguration $ssoConfiguration */
+        $ssoConfiguration = $this->queryBus->dispatch(new GetSsoConfigurationByIdQuery($configurationId));
 
         /** @var array{entityId?: string, assertionConsumerService?: array{url?: string}} $sp */
-        $sp = is_array($configuration->config['sp'] ?? null) ? $configuration->config['sp'] : [];
+        $sp = is_array($ssoConfiguration->config['sp'] ?? null) ? $ssoConfiguration->config['sp'] : [];
         $entityId = $sp['entityId'] ?? '';
         $acsUrl = $sp['assertionConsumerService']['url'] ?? '';
 

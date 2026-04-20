@@ -139,6 +139,14 @@ final readonly class SidebarNavigationBuilder
                 icon: 'heroicon-o-flag',
                 labelKey: 'messages.nav.feature_flags',
             ),
+            $this->maybeItem(
+                userId: $userId,
+                permission: 'sso.management.read',
+                routeName: 'settings.sso.index',
+                routeIsPatterns: ['settings.sso.*'],
+                icon: 'heroicon-o-key',
+                labelKey: 'messages.nav.sso',
+            ),
         ]);
 
         if ($platformItems !== []) {

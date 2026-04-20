@@ -28,9 +28,9 @@ beforeEach(function (): void {
     $model->save();
 });
 
-function bindFakeAuthenticator(FakeSsoAuthenticator $authenticator): void
+function bindFakeAuthenticator(FakeSsoAuthenticator $fakeSsoAuthenticator): void
 {
-    app()->instance(SsoAuthenticatorRegistry::class, new FakeSsoAuthenticatorRegistry($authenticator));
+    app()->instance(SsoAuthenticatorRegistry::class, new FakeSsoAuthenticatorRegistry($fakeSsoAuthenticator));
 }
 
 it('redirects to the IdP via initiate route', function (): void {
@@ -63,7 +63,7 @@ it('completes the OAuth callback for an existing user with linked identity', fun
         'password' => Hash::make('password123'),
     ]);
 
-    \DB::connection('tenant')->table('user_sso_identities')->insert([
+    DB::connection('tenant')->table('user_sso_identities')->insert([
         'id' => '33333333-3333-3333-3333-333333333333',
         'user_id' => '22222222-2222-2222-2222-222222222222',
         'configuration_id' => '11111111-1111-1111-1111-111111111111',
@@ -94,7 +94,7 @@ it('completes the SAML ACS for an existing linked user', function (): void {
         'password' => Hash::make('password123'),
     ]);
 
-    \DB::connection('tenant')->table('user_sso_identities')->insert([
+    DB::connection('tenant')->table('user_sso_identities')->insert([
         'id' => '33333333-3333-3333-3333-333333333333',
         'user_id' => '22222222-2222-2222-2222-222222222222',
         'configuration_id' => '11111111-1111-1111-1111-111111111111',
@@ -145,7 +145,7 @@ it('blocks password login when an SSO configuration enforces it', function (): v
 });
 
 it('shows enabled SSO providers on the login page when feature flag is on', function (): void {
-    \DB::connection('tenant')->table('feature_flag_overrides')->insertOrIgnore([
+    DB::connection('tenant')->table('feature_flag_overrides')->insertOrIgnore([
         'key' => 'sso.enabled',
         'value' => '1',
         'enabled' => true,

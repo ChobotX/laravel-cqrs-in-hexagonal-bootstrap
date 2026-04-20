@@ -33,7 +33,7 @@ final class UpdateSsoConfigurationRequest extends FormRequest
             'display_name' => ['required', 'string', 'max:128'],
             'enabled' => ['sometimes', 'boolean'],
             'enforce' => ['sometimes', 'boolean'],
-            'jit_mode' => ['required', Rule::in(array_map(fn (JitMode $j): string => $j->value, JitMode::cases()))],
+            'jit_mode' => ['required', Rule::in(array_map(fn (JitMode $jitMode): string => $jitMode->value, JitMode::cases()))],
             'allowed_email_domains' => ['nullable', 'string'],
             'config' => ['nullable', 'array'],
         ];

@@ -24,7 +24,8 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-base font-medium text-gray-900">{{ $configuration->displayName }}</p>
-                                <p class="text-base text-gray-500 sm:text-sm">{{ $configuration->providerType->value }} / {{ $configuration->slug }}</p>
+                                <p class="text-base text-gray-500 sm:text-sm">{{ $configuration->providerType->value }} /
+                                    {{ $configuration->slug }}</p>
                             </div>
                             <div class="flex items-center gap-2">
                                 <a class="cursor-pointer rounded-lg border border-gray-300 px-3 py-1.5 text-base text-gray-700 hover:bg-gray-50 sm:text-sm"

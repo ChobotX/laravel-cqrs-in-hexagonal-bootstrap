@@ -4,10 +4,6 @@ Planned work that is **not** yet in the codebase (implemented areas such as emai
 
 ## Tenant configuration
 
-### SSO
-
-- Evaluate a Laravel-oriented package for common SSO options; tenant-level configuration.
-
 ### Enable overriding default email provider
 
 - Offer Mailjet, Mailgun, and Mailpit (or equivalent) as tenant-configurable transports. Invite and password recovery should respect the tenant’s provider and from address.

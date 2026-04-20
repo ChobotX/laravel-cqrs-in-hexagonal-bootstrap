@@ -17,26 +17,17 @@ use App\Domain\Sso\Contract\ValueObject\RedirectInstruction;
 final readonly class BuildSsoRedirectInstructionHandler implements QueryHandler
 {
     public function __construct(
-        private SsoConfigurationRepository $repository,
-        private SsoAuthenticatorRegistry $authenticatorRegistry,
+        private SsoConfigurationRepository $ssoConfigurationRepository,
+        private SsoAuthenticatorRegistry $ssoAuthenticatorRegistry,
     ) {}
 
     public function handle(Query $query): RedirectInstruction
     {
-        $configuration = null;
-
-        foreach ($this->repository->allEnabled() as $candidate) {
-            if ($candidate->slug === $query->slug) {
-                $configuration = $candidate;
-
-                break;
-            }
-        }
-
+        $configuration = array_find($this->ssoConfigurationRepository->allEnabled(), fn ($ssoConfiguration): bool => $ssoConfiguration->slug === $query->slug);
         if (! $configuration instanceof SsoConfiguration) {
             throw new SsoConfigurationNotFoundException($query->slug);
         }
 
-        return $this->authenticatorRegistry->for($configuration->providerType)->initiate($configuration);
+        return $this->ssoAuthenticatorRegistry->for($configuration->providerType)->initiate($configuration);
     }
 }

@@ -75,7 +75,7 @@
     </p>
 
     @feature('sso.enabled')
-        @if (! empty($ssoProviders))
+        @if (!empty($ssoProviders))
             <div class="mt-6 border-t border-gray-200 pt-6">
                 <p class="mb-3 text-center text-base text-gray-500 sm:text-sm">{{ __('messages.sso.or_continue_with') }}</p>
                 <div class="space-y-2">

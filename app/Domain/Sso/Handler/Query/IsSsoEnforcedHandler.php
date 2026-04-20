@@ -13,11 +13,11 @@ use App\Domain\Sso\Contract\Repository\SsoConfigurationRepository;
 final readonly class IsSsoEnforcedHandler implements QueryHandler
 {
     public function __construct(
-        private SsoConfigurationRepository $repository,
+        private SsoConfigurationRepository $ssoConfigurationRepository,
     ) {}
 
     public function handle(Query $query): bool
     {
-        return $this->repository->hasEnforcedConfiguration();
+        return $this->ssoConfigurationRepository->hasEnforcedConfiguration();
     }
 }

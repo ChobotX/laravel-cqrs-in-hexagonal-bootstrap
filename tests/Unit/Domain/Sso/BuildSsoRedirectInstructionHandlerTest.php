@@ -16,13 +16,13 @@ it('returns the IdP redirect for an enabled configuration', function (): void {
     $repository = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $authenticator = new FakeSsoAuthenticator(nextRedirect: new RedirectInstruction('https://idp.example.com/auth'));
 
-    $result = (new BuildSsoRedirectInstructionHandler($repository, new FakeSsoAuthenticatorRegistry($authenticator)))
+    $redirectInstruction = new BuildSsoRedirectInstructionHandler($repository, new FakeSsoAuthenticatorRegistry($authenticator))
         ->handle(new BuildSsoRedirectInstructionQuery($configuration->slug));
 
-    expect($result->url)->toBe('https://idp.example.com/auth');
+    expect($redirectInstruction->url)->toBe('https://idp.example.com/auth');
 });
 
 it('rejects an unknown slug', function (): void {
-    (new BuildSsoRedirectInstructionHandler(new FakeSsoConfigurationRepository, new FakeSsoAuthenticatorRegistry))
+    new BuildSsoRedirectInstructionHandler(new FakeSsoConfigurationRepository, new FakeSsoAuthenticatorRegistry)
         ->handle(new BuildSsoRedirectInstructionQuery('missing'));
 })->throws(SsoConfigurationNotFoundException::class);

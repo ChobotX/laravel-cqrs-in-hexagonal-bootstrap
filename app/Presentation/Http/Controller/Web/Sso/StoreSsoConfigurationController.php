@@ -21,18 +21,18 @@ final readonly class StoreSsoConfigurationController
         private IdGenerator $idGenerator,
     ) {}
 
-    public function __invoke(StoreSsoConfigurationRequest $request): RedirectResponse
+    public function __invoke(StoreSsoConfigurationRequest $storeSsoConfigurationRequest): RedirectResponse
     {
         $this->commandBus->dispatch(new ConfigureSsoConfigurationCommand(
             id: $this->idGenerator->generate(),
-            providerType: $request->providerType(),
-            slug: $request->slug(),
-            displayName: $request->displayName(),
-            enabled: $request->enabled(),
-            enforce: $request->enforce(),
-            jitMode: $request->jitMode(),
-            allowedEmailDomains: $request->allowedEmailDomains(),
-            config: $request->configMap(),
+            providerType: $storeSsoConfigurationRequest->providerType(),
+            slug: $storeSsoConfigurationRequest->slug(),
+            displayName: $storeSsoConfigurationRequest->displayName(),
+            enabled: $storeSsoConfigurationRequest->enabled(),
+            enforce: $storeSsoConfigurationRequest->enforce(),
+            jitMode: $storeSsoConfigurationRequest->jitMode(),
+            allowedEmailDomains: $storeSsoConfigurationRequest->allowedEmailDomains(),
+            config: $storeSsoConfigurationRequest->configMap(),
         ));
 
         return redirect()->route('settings.sso.index')->with('success', __('messages.sso.created'));

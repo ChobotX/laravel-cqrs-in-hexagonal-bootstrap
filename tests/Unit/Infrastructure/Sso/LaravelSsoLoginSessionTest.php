@@ -3,22 +3,24 @@
 declare(strict_types=1);
 
 use App\Infrastructure\Sso\LaravelSsoLoginSession;
-use Illuminate\Contracts\Session\Session;
+use Illuminate\Session\Store;
+use Symfony\Component\HttpFoundation\Session\Storage\Handler\NullSessionHandler;
 
 it('writes and pulls a user id through the session', function (): void {
-    $session = Mockery::mock(Session::class);
-    $session->shouldReceive('put')->once()->with('sso.last_resolved_user_id', 'user-1');
-    $session->shouldReceive('pull')->once()->with('sso.last_resolved_user_id')->andReturn('user-1');
+    $store = new Store('test', new NullSessionHandler);
+    $session = new LaravelSsoLoginSession($store);
 
-    $store = new LaravelSsoLoginSession($session);
-    $store->setLastResolvedUserId('user-1');
+    $session->setLastResolvedUserId('user-1');
 
-    expect($store->pullLastResolvedUserId())->toBe('user-1');
+    expect($session->pullLastResolvedUserId())->toBe('user-1')
+        ->and($session->pullLastResolvedUserId())->toBeNull();
 });
 
-it('returns null when the session value is missing or non-string', function (): void {
-    $session = Mockery::mock(Session::class);
-    $session->shouldReceive('pull')->andReturn(null);
+it('returns null when the stored value is not a string', function (): void {
+    $store = new Store('test', new NullSessionHandler);
+    $store->put('sso.last_resolved_user_id', ['not', 'a', 'string']);
 
-    expect((new LaravelSsoLoginSession($session))->pullLastResolvedUserId())->toBeNull();
+    $session = new LaravelSsoLoginSession($store);
+
+    expect($session->pullLastResolvedUserId())->toBeNull();
 });

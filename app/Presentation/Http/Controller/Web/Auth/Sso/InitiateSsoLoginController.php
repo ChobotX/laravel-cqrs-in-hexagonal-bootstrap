@@ -23,16 +23,16 @@ final readonly class InitiateSsoLoginController
 
     public function __invoke(string $slug): RedirectResponse|View
     {
-        /** @var RedirectInstruction $redirect */
-        $redirect = $this->queryBus->dispatch(new BuildSsoRedirectInstructionQuery($slug));
+        /** @var RedirectInstruction $redirectInstruction */
+        $redirectInstruction = $this->queryBus->dispatch(new BuildSsoRedirectInstructionQuery($slug));
 
-        if ($redirect->usesPostBinding) {
+        if ($redirectInstruction->usesPostBinding) {
             return view('auth.sso.post-redirect', [
-                'actionUrl' => $redirect->url,
-                'fields' => $redirect->formFields,
+                'actionUrl' => $redirectInstruction->url,
+                'fields' => $redirectInstruction->formFields,
             ]);
         }
 
-        return redirect()->away($redirect->url);
+        return redirect()->away($redirectInstruction->url);
     }
 }

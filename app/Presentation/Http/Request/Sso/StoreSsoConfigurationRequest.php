@@ -31,12 +31,12 @@ final class StoreSsoConfigurationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'provider_type' => ['required', Rule::in(array_map(fn (ProviderType $p): string => $p->value, ProviderType::cases()))],
+            'provider_type' => ['required', Rule::in(array_map(fn (ProviderType $providerType): string => $providerType->value, ProviderType::cases()))],
             'slug' => ['required', 'string', 'max:64', 'regex:/^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$/'],
             'display_name' => ['required', 'string', 'max:128'],
             'enabled' => ['sometimes', 'boolean'],
             'enforce' => ['sometimes', 'boolean'],
-            'jit_mode' => ['required', Rule::in(array_map(fn (JitMode $j): string => $j->value, JitMode::cases()))],
+            'jit_mode' => ['required', Rule::in(array_map(fn (JitMode $jitMode): string => $jitMode->value, JitMode::cases()))],
             'allowed_email_domains' => ['nullable', 'string'],
             'config' => ['nullable', 'array'],
         ];

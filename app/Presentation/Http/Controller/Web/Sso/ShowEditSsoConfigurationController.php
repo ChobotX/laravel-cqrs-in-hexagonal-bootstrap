@@ -22,11 +22,11 @@ final readonly class ShowEditSsoConfigurationController
 
     public function __invoke(string $id): View
     {
-        /** @var SsoConfiguration $configuration */
-        $configuration = $this->queryBus->dispatch(new GetSsoConfigurationByIdQuery($id));
+        /** @var SsoConfiguration $ssoConfiguration */
+        $ssoConfiguration = $this->queryBus->dispatch(new GetSsoConfigurationByIdQuery($id));
 
         return view('sso.edit', [
-            'configuration' => $configuration,
+            'configuration' => $ssoConfiguration,
             'jitModes' => JitMode::cases(),
         ]);
     }

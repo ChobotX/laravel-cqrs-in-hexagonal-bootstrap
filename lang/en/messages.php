@@ -22,6 +22,7 @@ return [
         'dashboard' => 'Dashboard',
         'system' => 'System',
         'feature_flags' => 'Feature Flags',
+        'sso' => 'Single Sign-On',
         'audit_log' => 'Audit Log',
         'email_templates' => 'Email Templates',
         'email_logs' => 'Sent Emails',

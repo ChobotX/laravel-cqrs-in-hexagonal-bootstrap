@@ -19,16 +19,16 @@ final readonly class UpdateSsoConfigurationController
         private CommandBus $commandBus,
     ) {}
 
-    public function __invoke(UpdateSsoConfigurationRequest $request, string $id): RedirectResponse
+    public function __invoke(UpdateSsoConfigurationRequest $updateSsoConfigurationRequest, string $id): RedirectResponse
     {
         $this->commandBus->dispatch(new UpdateSsoConfigurationCommand(
             id: $id,
-            displayName: $request->displayName(),
-            enabled: $request->enabled(),
-            enforce: $request->enforce(),
-            jitMode: $request->jitMode(),
-            allowedEmailDomains: $request->allowedEmailDomains(),
-            config: $request->configMap(),
+            displayName: $updateSsoConfigurationRequest->displayName(),
+            enabled: $updateSsoConfigurationRequest->enabled(),
+            enforce: $updateSsoConfigurationRequest->enforce(),
+            jitMode: $updateSsoConfigurationRequest->jitMode(),
+            allowedEmailDomains: $updateSsoConfigurationRequest->allowedEmailDomains(),
+            config: $updateSsoConfigurationRequest->configMap(),
         ));
 
         return redirect()->route('settings.sso.index')->with('success', __('messages.sso.updated'));

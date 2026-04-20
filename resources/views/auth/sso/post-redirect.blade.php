@@ -5,9 +5,9 @@
 @section('content')
     <p class="mb-4 text-center text-base text-gray-500 sm:text-sm">{{ __('messages.sso.redirecting') }}</p>
     <form class="space-y-3"
+          data-testid="sso-post-redirect"
           method="POST"
-          action="{{ $actionUrl }}"
-          data-testid="sso-post-redirect">
+          action="{{ $actionUrl }}">
         @foreach ($fields as $name => $value)
             <input name="{{ $name }}"
                    type="hidden"

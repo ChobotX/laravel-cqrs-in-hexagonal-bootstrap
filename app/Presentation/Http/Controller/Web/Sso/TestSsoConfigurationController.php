@@ -21,10 +21,10 @@ final readonly class TestSsoConfigurationController
 
     public function __invoke(string $id): RedirectResponse
     {
-        /** @var SsoConnectionTestResult $result */
-        $result = $this->queryBus->dispatch(new TestSsoConfigurationQuery($id));
+        /** @var SsoConnectionTestResult $ssoConnectionTestResult */
+        $ssoConnectionTestResult = $this->queryBus->dispatch(new TestSsoConfigurationQuery($id));
 
         return redirect()->route('settings.sso.index')
-            ->with($result->success ? 'success' : 'error', $result->summary);
+            ->with($ssoConnectionTestResult->success ? 'success' : 'error', $ssoConnectionTestResult->summary);
     }
 }

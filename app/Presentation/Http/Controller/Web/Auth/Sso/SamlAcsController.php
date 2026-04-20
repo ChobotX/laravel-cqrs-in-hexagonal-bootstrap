@@ -29,13 +29,13 @@ final readonly class SamlAcsController
         private IdGenerator $idGenerator,
     ) {}
 
-    public function __invoke(SsoCallbackRequest $request, string $slug): RedirectResponse
+    public function __invoke(SsoCallbackRequest $ssoCallbackRequest, string $slug): RedirectResponse
     {
         $configurationId = $this->resolveConfigurationId($slug);
 
         $this->commandBus->dispatch(new LoginViaSsoCommand(
             configurationId: $configurationId,
-            callbackPayload: $request->payload(),
+            callbackPayload: $ssoCallbackRequest->payload(),
             newUserIdIfProvisioned: $this->idGenerator->generate(),
             newIdentityId: $this->idGenerator->generate(),
         ));
