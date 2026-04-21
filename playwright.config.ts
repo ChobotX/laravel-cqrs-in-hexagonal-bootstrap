@@ -101,10 +101,16 @@ export default defineConfig({
             dependencies: ['settings-password-rotation-tests'],
         },
         {
+            name: 'sso-tests',
+            use: { ...chromiumDevice, storageState: authFile },
+            testMatch: /sso\.spec\.ts$/,
+            dependencies: ['tenant-tests'],
+        },
+        {
             name: 'two-factor-tests',
             use: { ...chromiumDevice, storageState: { cookies: [], origins: [] } },
             testMatch: /two-factor\.spec\.ts$/,
-            dependencies: ['tenant-tests'],
+            dependencies: ['sso-tests'],
             teardown: 'teardown',
         },
         { name: 'teardown', testMatch: /.*\.teardown\.ts/ },
