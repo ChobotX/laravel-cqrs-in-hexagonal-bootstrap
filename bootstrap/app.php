@@ -68,6 +68,7 @@ return Application::configure(basePath: dirname(__DIR__))
             users: '/dashboard',
         );
         $middleware->web(prepend: [ResolveTenantMiddleware::class, EnsureTenantResolved::class]);
+        $middleware->validateCsrfTokens(except: ['auth/sso/saml/*/acs']);
         $middleware->web(append: [SetLocaleMiddleware::class, SetAuthContextMiddleware::class, EnforcePasswordRotation::class, EnforceTwoFactor::class, CheckPermission::class, 'throttle:web']);
         $middleware->priority([
             ResolveTenantMiddleware::class,

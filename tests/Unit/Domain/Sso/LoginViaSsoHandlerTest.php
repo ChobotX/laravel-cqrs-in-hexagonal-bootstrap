@@ -23,6 +23,7 @@ use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeSsoAuthenticator;
 use Tests\Helper\FakeSsoAuthenticatorRegistry;
 use Tests\Helper\FakeSsoConfigurationRepository;
+use Tests\Helper\FakeSsoLoginSession;
 use Tests\Helper\FakeUserRepository;
 use Tests\Helper\FakeUserSsoIdentityRepository;
 use Tests\Helper\SsoFixtures;
@@ -38,6 +39,7 @@ $ssoUser = fn (bool $activated = true, string $email = 'user@example.com'): User
 $loginCommand = fn (): LoginViaSsoCommand => new LoginViaSsoCommand(
     configurationId: SsoFixtures::CONFIG_ID,
     callbackPayload: ['code' => 'abc'],
+    state: '',
     newUserIdIfProvisioned: '99999999-9999-9999-9999-999999999999',
     newIdentityId: SsoFixtures::IDENTITY_ID,
 );
@@ -56,7 +58,7 @@ $buildHandler = fn (
     new FakeSsoAuthenticatorRegistry($fakeSsoAuthenticator),
     $fakeCommandBus,
     $fakeEventCollector,
-    new Tests\Helper\FakeSsoLoginSession,
+    new FakeSsoLoginSession,
 );
 
 it('logs in an already-linked identity without provisioning', function () use ($ssoUser, $loginCommand, $buildHandler): void {
@@ -87,6 +89,23 @@ it('rejects a missing configuration', function () use ($loginCommand, $buildHand
 
     $loginViaSsoHandler->handle($loginCommand());
 })->throws(SsoConfigurationNotFoundException::class);
+
+it('rejects the login when state does not match the stored handshake', function () use ($buildHandler): void {
+    $configuration = SsoFixtures::configuration();
+    $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
+    $events = new FakeEventCollector;
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+
+    expect(fn () => $loginViaSsoHandler->handle(new LoginViaSsoCommand(
+        configurationId: SsoFixtures::CONFIG_ID,
+        callbackPayload: ['code' => 'abc'],
+        state: 'no-stored-handshake',
+        newUserIdIfProvisioned: '99999999-9999-9999-9999-999999999999',
+        newIdentityId: SsoFixtures::IDENTITY_ID,
+    )))->toThrow(SsoLoginRejectedException::class, 'state_mismatch');
+
+    expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
+});
 
 it('rejects a disabled configuration and records failure', function () use ($loginCommand, $buildHandler): void {
     $configuration = SsoFixtures::configuration(enabled: false);

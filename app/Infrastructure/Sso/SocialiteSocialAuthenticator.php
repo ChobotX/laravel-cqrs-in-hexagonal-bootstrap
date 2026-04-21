@@ -41,19 +41,23 @@ final readonly class SocialiteSocialAuthenticator implements SsoAuthenticator
     public function initiate(SsoConfiguration $ssoConfiguration): RedirectInstruction
     {
         $endpoints = $this->socialProviderCatalog->endpointsFor($ssoConfiguration->providerType->value);
+        $state = bin2hex(random_bytes(self::STATE_BYTES));
 
         $params = [
             'response_type' => 'code',
             'client_id' => $this->stringConfig($ssoConfiguration, 'client_id'),
             'redirect_uri' => $this->stringConfig($ssoConfiguration, 'redirect_uri'),
             'scope' => $endpoints['scope'],
-            'state' => bin2hex(random_bytes(self::STATE_BYTES)),
+            'state' => $state,
         ];
 
-        return new RedirectInstruction($endpoints['authorize'].'?'.http_build_query($params));
+        return new RedirectInstruction(
+            url: $endpoints['authorize'].'?'.http_build_query($params),
+            stateToStore: $state,
+        );
     }
 
-    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload): SsoIdentity
+    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload, ?string $expectedNonce = null): SsoIdentity
     {
         $code = $callbackPayload['code'] ?? null;
 

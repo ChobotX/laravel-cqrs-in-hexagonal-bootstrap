@@ -10,51 +10,69 @@ use App\Domain\Sso\Contract\Service\SsoAuthenticator;
 use App\Domain\Sso\Contract\ValueObject\RedirectInstruction;
 use App\Domain\Sso\Contract\ValueObject\SsoConnectionTestResult;
 use App\Domain\Sso\Contract\ValueObject\SsoIdentity;
+use App\Infrastructure\Sso\Exception\SsoConfigurationInvalidException;
+use Closure;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Factory as HttpFactory;
 use Throwable;
 
 use function bin2hex;
 use function http_build_query;
-use function is_numeric;
 use function is_string;
 use function random_bytes;
-use function time;
 
 /**
  * Generic OpenID Connect adapter (authorization-code flow).
  *
- * Reads IdP endpoints from `discovery_url` on every call so that rotated keys are
- * picked up without admin intervention. The ID token is accepted only after the
- * token endpoint exchange has succeeded (establishes provenance via client secret
- * over TLS) and the `aud`, `iss`, `exp` claims match expectations.
+ * Reads IdP endpoints from `discovery_url` on every call so rotated keys are
+ * picked up without admin intervention. The ID token signature is verified by
+ * an injected closure (default: `DefaultOidcIdTokenVerifier` — RS256 via JWKS);
+ * claim semantics (`aud`, `iss`, `exp`, `nonce`) are enforced by `OidcClaimVerifier`.
  */
 final readonly class SocialiteOidcAuthenticator implements SsoAuthenticator
 {
     private const int STATE_BYTES = 16;
 
+    private const int NONCE_BYTES = 16;
+
+    /** @var Closure(string, string): array<string, scalar|null> */
+    private Closure $idTokenVerifier;
+
+    /**
+     * @param  null|Closure(string $idToken, string $jwksUri): array<string, scalar|null>  $idTokenVerifier
+     */
     public function __construct(
         private HttpFactory $httpFactory,
         private OidcDiscoveryClient $oidcDiscoveryClient,
-        private JwtPayloadDecoder $jwtPayloadDecoder,
-    ) {}
+        ?Closure $idTokenVerifier = null,
+        private OidcClaimVerifier $oidcClaimVerifier = new OidcClaimVerifier,
+    ) {
+        $this->idTokenVerifier = $idTokenVerifier ?? Closure::fromCallable(new DefaultOidcIdTokenVerifier($httpFactory));
+    }
 
     public function initiate(SsoConfiguration $ssoConfiguration): RedirectInstruction
     {
         $endpoints = $this->oidcDiscoveryClient->fetch($this->stringConfig($ssoConfiguration, 'discovery_url'));
+        $state = bin2hex(random_bytes(self::STATE_BYTES));
+        $nonce = bin2hex(random_bytes(self::NONCE_BYTES));
 
         $params = [
             'response_type' => 'code',
             'client_id' => $this->stringConfig($ssoConfiguration, 'client_id'),
             'redirect_uri' => $this->stringConfig($ssoConfiguration, 'redirect_uri'),
             'scope' => $this->stringConfigOrDefault($ssoConfiguration, 'scopes', 'openid email profile'),
-            'state' => bin2hex(random_bytes(self::STATE_BYTES)),
+            'state' => $state,
+            'nonce' => $nonce,
         ];
 
-        return new RedirectInstruction($endpoints['authorization_endpoint'].'?'.http_build_query($params));
+        return new RedirectInstruction(
+            url: $endpoints['authorization_endpoint'].'?'.http_build_query($params),
+            stateToStore: $state,
+            nonceToStore: $nonce,
+        );
     }
 
-    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload): SsoIdentity
+    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload, ?string $expectedNonce = null): SsoIdentity
     {
         $code = $callbackPayload['code'] ?? null;
 
@@ -63,6 +81,12 @@ final readonly class SocialiteOidcAuthenticator implements SsoAuthenticator
         }
 
         $endpoints = $this->oidcDiscoveryClient->fetch($this->stringConfig($ssoConfiguration, 'discovery_url'));
+        $jwksUri = $endpoints['jwks_uri'] ?? '';
+
+        if ($jwksUri === '') {
+            throw new SsoConfigurationInvalidException('Discovery document is missing jwks_uri.');
+        }
+
         $tokens = $this->exchangeCode($ssoConfiguration, $endpoints['token_endpoint'], $code);
         $idToken = $tokens['id_token'] ?? null;
 
@@ -70,10 +94,14 @@ final readonly class SocialiteOidcAuthenticator implements SsoAuthenticator
             throw new SsoLoginRejectedException('missing_id_token');
         }
 
-        $claims = $this->jwtPayloadDecoder->decode($idToken);
-        $this->verifyAudience($ssoConfiguration, $claims);
-        $this->verifyIssuer($endpoints, $claims);
-        $this->verifyExpiration($claims);
+        $claims = ($this->idTokenVerifier)($idToken, $jwksUri);
+
+        $this->oidcClaimVerifier->verify(
+            claims: $claims,
+            endpoints: $endpoints,
+            expectedClientId: $this->stringConfig($ssoConfiguration, 'client_id'),
+            expectedNonce: $expectedNonce,
+        );
 
         return $this->buildIdentity($claims);
     }
@@ -89,12 +117,10 @@ final readonly class SocialiteOidcAuthenticator implements SsoAuthenticator
 
         $warnings = [];
 
-        if (($endpoints['authorization_endpoint'] ?? '') === '') {
-            $warnings[] = 'Missing authorization_endpoint in discovery document.';
-        }
-
-        if (($endpoints['token_endpoint'] ?? '') === '') {
-            $warnings[] = 'Missing token_endpoint in discovery document.';
+        foreach (['authorization_endpoint', 'token_endpoint', 'issuer', 'jwks_uri'] as $required) {
+            if (($endpoints[$required] ?? '') === '') {
+                $warnings[] = 'Missing '.$required.' in discovery document.';
+            }
         }
 
         $success = $warnings === [];
@@ -119,45 +145,6 @@ final readonly class SocialiteOidcAuthenticator implements SsoAuthenticator
         $name = isset($claims['name']) && is_string($claims['name']) ? $claims['name'] : null;
 
         return new SsoIdentity(subject: $subject, email: $email, name: $name);
-    }
-
-    /** @param array<string, scalar|null> $claims */
-    private function verifyAudience(SsoConfiguration $ssoConfiguration, array $claims): void
-    {
-        $audience = isset($claims['aud']) && is_string($claims['aud']) ? $claims['aud'] : null;
-
-        if ($audience !== $this->stringConfig($ssoConfiguration, 'client_id')) {
-            throw new SsoLoginRejectedException('aud_mismatch');
-        }
-    }
-
-    /**
-     * @param  array<string, string>  $endpoints
-     * @param  array<string, scalar|null>  $claims
-     */
-    private function verifyIssuer(array $endpoints, array $claims): void
-    {
-        $expected = $endpoints['issuer'] ?? null;
-
-        if ($expected === null || $expected === '') {
-            return;
-        }
-
-        $issuer = isset($claims['iss']) && is_string($claims['iss']) ? $claims['iss'] : null;
-
-        if ($issuer !== $expected) {
-            throw new SsoLoginRejectedException('iss_mismatch');
-        }
-    }
-
-    /** @param array<string, scalar|null> $claims */
-    private function verifyExpiration(array $claims): void
-    {
-        $expiresAt = isset($claims['exp']) && is_numeric($claims['exp']) ? (int) $claims['exp'] : null;
-
-        if ($expiresAt !== null && $expiresAt < time()) {
-            throw new SsoLoginRejectedException('id_token_expired');
-        }
     }
 
     /** @return array<string, scalar|null> */

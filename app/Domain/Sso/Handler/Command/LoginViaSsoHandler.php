@@ -57,9 +57,17 @@ final readonly class LoginViaSsoHandler implements CommandHandler
             throw new SsoLoginRejectedException('configuration_disabled');
         }
 
+        $expectedNonce = $this->ssoLoginSession->consumeHandshake($configuration->slug, $command->state);
+
+        if ($expectedNonce === null && $command->state !== '') {
+            $this->recordFailure($configuration->id->value, 'state_mismatch', null, null);
+
+            throw new SsoLoginRejectedException('state_mismatch');
+        }
+
         try {
             $identity = $this->ssoAuthenticatorRegistry->for($configuration->providerType)
-                ->complete($configuration, $command->callbackPayload);
+                ->complete($configuration, $command->callbackPayload, $expectedNonce);
         } catch (Throwable) {
             $this->recordFailure($configuration->id->value, 'authenticator_error', null, null);
 

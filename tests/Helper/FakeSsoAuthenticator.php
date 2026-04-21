@@ -28,9 +28,9 @@ final class FakeSsoAuthenticator implements SsoAuthenticator
         return $this->nextRedirect ?? new RedirectInstruction('https://idp.example.com/authorize');
     }
 
-    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload): SsoIdentity
+    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload, ?string $expectedNonce = null): SsoIdentity
     {
-        $this->completed[] = ['configuration' => $ssoConfiguration, 'payload' => $callbackPayload];
+        $this->completed[] = ['configuration' => $ssoConfiguration, 'payload' => $callbackPayload, 'expectedNonce' => $expectedNonce];
 
         if ($this->throwOnComplete) {
             throw new RuntimeException('Authenticator failure');

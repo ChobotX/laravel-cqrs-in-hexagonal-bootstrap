@@ -157,6 +157,48 @@ it('shows enabled SSO providers on the login page when feature flag is on', func
     $this->get('/login')->assertOk()->assertSee('Primary OIDC');
 });
 
+it('rejects the callback when the handler resolves no user id', function (): void {
+    UserModel::create([
+        'id' => '22222222-2222-2222-2222-222222222222',
+        'name' => 'User',
+        'email' => 'user@example.com',
+        'password' => Hash::make('password123'),
+    ]);
+
+    DB::connection('tenant')->table('user_sso_identities')->insert([
+        'id' => '33333333-3333-3333-3333-333333333333',
+        'user_id' => '22222222-2222-2222-2222-222222222222',
+        'configuration_id' => '11111111-1111-1111-1111-111111111111',
+        'subject' => 'subject-1',
+        'email_at_link' => 'user@example.com',
+        'linked_at' => now(),
+    ]);
+
+    bindFakeAuthenticator(new FakeSsoAuthenticator(nextIdentity: new SsoIdentity('subject-1', 'user@example.com', 'User')));
+
+    // Override the session binding with a variant that never hands back a user id.
+    app()->instance(App\Domain\Sso\Contract\Service\SsoLoginSession::class, new class implements App\Domain\Sso\Contract\Service\SsoLoginSession
+    {
+        public function rememberHandshake(string $slug, string $state, ?string $nonce = null): void {}
+
+        public function consumeHandshake(string $slug, string $state): ?string
+        {
+            return null;
+        }
+
+        public function setLastResolvedUserId(string $userId): void {}
+
+        public function pullLastResolvedUserId(): ?string
+        {
+            return null;
+        }
+
+        public function clear(): void {}
+    });
+
+    $this->get('/auth/sso/primary/callback?code=abc')->assertForbidden();
+});
+
 it('returns the connection test summary via the admin endpoint', function (): void {
     bindFakeAuthenticator(new FakeSsoAuthenticator(
         nextProbe: new SsoConnectionTestResult(true, 'OK'),

@@ -23,10 +23,12 @@ interface SsoAuthenticator
      * Validate the IdP callback and return a verified SsoIdentity.
      *
      * Receives the raw callback payload (query string for OAuth/OIDC, SAMLResponse for SAML).
+     * `$expectedNonce` is the OIDC nonce previously stored with the `state`; the adapter
+     * verifies the ID token's `nonce` claim equals it. Null for protocols without nonces.
      *
      * @param  array<string, scalar|array<int|string, mixed>|null>  $callbackPayload
      */
-    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload): SsoIdentity;
+    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload, ?string $expectedNonce = null): SsoIdentity;
 
     /** Non-interactive probe (e.g. fetch OIDC discovery or SAML metadata). */
     public function probe(SsoConfiguration $ssoConfiguration): SsoConnectionTestResult;

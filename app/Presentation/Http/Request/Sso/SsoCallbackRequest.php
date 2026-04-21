@@ -7,6 +7,8 @@ namespace App\Presentation\Http\Request\Sso;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
+use function is_string;
+
 final class SsoCallbackRequest extends FormRequest
 {
     use HandlesFormRequest;
@@ -24,5 +26,12 @@ final class SsoCallbackRequest extends FormRequest
         $all = $this->all();
 
         return $all;
+    }
+
+    public function stateValue(): string
+    {
+        $value = $this->input('state');
+
+        return is_string($value) ? $value : '';
     }
 }

@@ -22,6 +22,8 @@ final readonly class LoginViaSsoCommand implements Command
         public string $configurationId,
         /** Raw callback payload from the IdP (query/body). */
         public array $callbackPayload,
+        /** CSRF `state` echoed back by the IdP; compared against the stored handshake. */
+        public string $state,
         /** UUID to assign to a newly provisioned user (auto_create JitMode); ignored otherwise. */
         public string $newUserIdIfProvisioned,
         /** UUID to assign to a newly created identity link row. */

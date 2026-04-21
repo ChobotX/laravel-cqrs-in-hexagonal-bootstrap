@@ -67,7 +67,7 @@ final readonly class Saml2Authenticator implements SsoAuthenticator
         return new RedirectInstruction($redirectUrl);
     }
 
-    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload): SsoIdentity
+    public function complete(SsoConfiguration $ssoConfiguration, array $callbackPayload, ?string $expectedNonce = null): SsoIdentity
     {
         $samlResponse = $callbackPayload['SAMLResponse'] ?? null;
 
@@ -141,6 +141,7 @@ final readonly class Saml2Authenticator implements SsoAuthenticator
         }
 
         $authnRequestsSigned = $ssoConfiguration->config['sign_authn_requests'] ?? false;
+        $wantMessagesSigned = $ssoConfiguration->config['want_messages_signed'] ?? false;
 
         return [
             'strict' => true,
@@ -150,7 +151,7 @@ final readonly class Saml2Authenticator implements SsoAuthenticator
             'security' => [
                 'authnRequestsSigned' => $authnRequestsSigned === true,
                 'wantAssertionsSigned' => true,
-                'wantMessagesSigned' => false,
+                'wantMessagesSigned' => $wantMessagesSigned === true,
                 'signatureAlgorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
                 'digestAlgorithm' => 'http://www.w3.org/2001/04/xmlenc#sha256',
             ],

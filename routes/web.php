@@ -104,7 +104,7 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/auth/sso/saml/{slug}/metadata', App\Presentation\Http\Controller\Web\Auth\Sso\SamlMetadataController::class)->name('sso.saml.metadata');
     Route::get('/auth/sso/{slug}', App\Presentation\Http\Controller\Web\Auth\Sso\InitiateSsoLoginController::class)->name('sso.initiate');
     Route::get('/auth/sso/{slug}/callback', App\Presentation\Http\Controller\Web\Auth\Sso\SsoCallbackController::class)->name('sso.callback');
-    Route::post('/auth/sso/saml/{slug}/acs', App\Presentation\Http\Controller\Web\Auth\Sso\SamlAcsController::class)->name('sso.saml.acs')->withoutMiddleware('VerifyCsrfToken');
+    Route::post('/auth/sso/saml/{slug}/acs', App\Presentation\Http\Controller\Web\Auth\Sso\SamlAcsController::class)->name('sso.saml.acs');
 });
 
 Route::middleware('auth')->group(function (): void {
