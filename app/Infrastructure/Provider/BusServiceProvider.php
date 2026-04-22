@@ -284,6 +284,7 @@ use App\Domain\Team\Contract\Event\TeamDeleted;
 use App\Domain\Team\Contract\Query\CountTeamsQuery;
 use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
 use App\Domain\Team\Contract\Query\GetTeamsForUsersQuery;
+use App\Domain\Team\Contract\Query\GetTeamTreeGridQuery;
 use App\Domain\Team\Contract\Query\GetTeamTreeQuery;
 use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
 use App\Domain\Team\Contract\Query\ListTeamMembersQuery;
@@ -300,6 +301,7 @@ use App\Domain\Team\Handler\Command\UpdateTeamWithLabelsHandler;
 use App\Domain\Team\Handler\Query\CountTeamsHandler;
 use App\Domain\Team\Handler\Query\GetTeamByIdHandler;
 use App\Domain\Team\Handler\Query\GetTeamsForUsersHandler;
+use App\Domain\Team\Handler\Query\GetTeamTreeGridHandler;
 use App\Domain\Team\Handler\Query\GetTeamTreeHandler;
 use App\Domain\Team\Handler\Query\GetUserTeamsHandler;
 use App\Domain\Team\Handler\Query\ListTeamMembersHandler;
@@ -610,6 +612,7 @@ final class BusServiceProvider extends ServiceProvider
                 CountTeamsQuery::class => CountTeamsHandler::class,
                 GetTeamByIdQuery::class => GetTeamByIdHandler::class,
                 GetTeamTreeQuery::class => GetTeamTreeHandler::class,
+                GetTeamTreeGridQuery::class => GetTeamTreeGridHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,
                 GetUserTeamsQuery::class => GetUserTeamsHandler::class,
                 GetTeamsForUsersQuery::class => GetTeamsForUsersHandler::class,
