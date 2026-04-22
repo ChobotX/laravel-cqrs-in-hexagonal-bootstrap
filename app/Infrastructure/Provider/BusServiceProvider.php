@@ -368,6 +368,7 @@ use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\Query\GetUsersByIdsQuery;
+use App\Domain\User\Contract\Query\ListUsersGridQuery;
 use App\Domain\User\Contract\Query\ListUsersQuery;
 use App\Domain\User\Contract\Query\SearchUsersQuery;
 use App\Domain\User\EventHandler\SendInviteOnUserCreated;
@@ -408,6 +409,7 @@ use App\Domain\User\Handler\Query\GetTwoFactorStatusHandler;
 use App\Domain\User\Handler\Query\GetUserByEmailHandler;
 use App\Domain\User\Handler\Query\GetUserByIdHandler;
 use App\Domain\User\Handler\Query\GetUsersByIdsHandler;
+use App\Domain\User\Handler\Query\ListUsersGridHandler;
 use App\Domain\User\Handler\Query\ListUsersHandler;
 use App\Domain\User\Handler\Query\SearchUsersHandler;
 use App\Infrastructure\Bus\InMemoryEventCollector;
@@ -593,6 +595,7 @@ final class BusServiceProvider extends ServiceProvider
                 GetPendingTotpBackupCodesPayloadQuery::class => GetPendingTotpBackupCodesPayloadHandler::class,
                 GetUserByEmailQuery::class => GetUserByEmailHandler::class,
                 ListUsersQuery::class => ListUsersHandler::class,
+                ListUsersGridQuery::class => ListUsersGridHandler::class,
                 CountUsersQuery::class => CountUsersHandler::class,
                 SearchUsersQuery::class => SearchUsersHandler::class,
                 ListRolesQuery::class => ListRolesHandler::class,
