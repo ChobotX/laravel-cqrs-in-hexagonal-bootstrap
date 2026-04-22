@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Command;
 
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use App\Contract\Translation\Translator;
-use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
+use App\Domain\EmailTemplate\Contract\Command\SendTemplatedEmailCommand;
 use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Event\PasswordResetRequested;
-use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\Service\PasswordResetBroker;
 use DateTimeImmutable;
 
@@ -21,8 +23,8 @@ final readonly class RequestPasswordResetHandler implements CommandHandler
 {
     public function __construct(
         private PasswordResetBroker $passwordResetBroker,
-        private UserRepository $userRepository,
-        private TemplatedEmailDispatcher $templatedEmailDispatcher,
+        private CommandBus $commandBus,
+        private QueryBus $queryBus,
         private EventCollector $eventCollector,
         private Translator $translator,
     ) {}
@@ -35,7 +37,8 @@ final readonly class RequestPasswordResetHandler implements CommandHandler
             return;
         }
 
-        $user = $this->userRepository->findByEmail($command->email);
+        /** @var ?User $user */
+        $user = $this->queryBus->dispatch(new GetUserByEmailQuery(email: $command->email));
 
         if (! $user instanceof User) {
             return;
@@ -43,11 +46,11 @@ final readonly class RequestPasswordResetHandler implements CommandHandler
 
         $locale = $this->translator->locale();
 
-        $this->eventCollector->collect($this->templatedEmailDispatcher->dispatch(
-            $user->id->value,
-            'password_reset',
-            $locale,
-            ['link' => $resetLink],
+        $this->commandBus->dispatch(new SendTemplatedEmailCommand(
+            userId: $user->id->value,
+            templateType: 'password_reset',
+            locale: $locale,
+            variables: ['link' => $resetLink],
         ));
 
         $this->eventCollector->collect(new PasswordResetRequested(

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EventCollector;
-use App\Domain\EmailTemplate\Contract\Event\TemplatedEmailSent;
-use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
+use App\Domain\EmailTemplate\Contract\Command\SendTemplatedEmailCommand;
 use App\Domain\User\Contract\Command\ConfirmTotpSetupCommand;
 use App\Domain\User\Contract\Command\DisableEmailTwoFactorCommand;
 use App\Domain\User\Contract\Command\DisableTotpTwoFactorCommand;
@@ -29,10 +28,14 @@ use App\Domain\User\Handler\Command\EnableEmailTwoFactorHandler;
 use App\Domain\User\Handler\Command\IssueEmailTwoFactorChallengeHandler;
 use App\Domain\User\Handler\Command\StartTotpSetupHandler;
 use App\Domain\User\Handler\Command\VerifyTwoFactorChallengeHandler;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Handler\Query\GetTotpSetupHandler;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;
+use Tests\Helper\FakeCommandBus;
 use Tests\Helper\FakePendingTotpBackupCodesSession;
+use Tests\Helper\FakeQueryBus;
 use Tests\Helper\FakeUserRepository;
 use Tests\Helper\FakeUserTwoFactorStateRepository;
 
@@ -116,28 +119,7 @@ it('covers two-factor command handlers and totp setup query handler', function (
         public function deleteAllForUser(UserId $userId): void {}
     };
 
-    $dispatcher = new class implements TemplatedEmailDispatcher
-    {
-        public bool $dispatched = false;
-
-        public function dispatch(string $userId, string $templateType, string $locale, array $variables): TemplatedEmailSent
-        {
-            $this->dispatched = true;
-
-            return new TemplatedEmailSent(
-                emailLogId: 'log-1',
-                templateType: $templateType,
-                locale: $locale,
-                recipientId: $userId,
-                recipientEmail: 'a@example.com',
-                renderedSubject: 'subject',
-                renderedBodyMasked: 'body',
-                variableKeys: array_keys($variables),
-                traceId: null,
-                occurredAt: new DateTimeImmutable,
-            );
-        }
-    };
+    $commandBus = new FakeCommandBus;
 
     $eventCollector = new class implements EventCollector
     {
@@ -165,8 +147,12 @@ it('covers two-factor command handlers and totp setup query handler', function (
         }
     };
 
-    $userRepository = new FakeUserRepository([
-        $userId->value => new User($userId, new UserName('A'), new Email('a@example.com')),
+    $knownUser = new User($userId, new UserName('A'), new Email('a@example.com'));
+    $userRepository = new FakeUserRepository([$userId->value => $knownUser]);
+    $userByIdBus = new FakeQueryBus([
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $query->id === $userId->value
+            ? $knownUser
+            : throw new UserNotFoundException($query->id),
     ]);
 
     new StartTotpSetupHandler($stateRepository, $manager, $pendingBackupSession)->handle(new StartTotpSetupCommand($userId->value));
@@ -188,7 +174,7 @@ it('covers two-factor command handlers and totp setup query handler', function (
         }
     };
 
-    new IssueEmailTwoFactorChallengeHandler($challengeRepository, $userRepository, $manager, $dispatcher, $eventCollector, $translator)
+    new IssueEmailTwoFactorChallengeHandler($challengeRepository, $commandBus, $userByIdBus, $manager, $translator)
         ->handle(new IssueEmailTwoFactorChallengeCommand($userId->value));
     new VerifyTwoFactorChallengeHandler($stateRepository, $challengeRepository, $manager)
         ->handle(new VerifyTwoFactorChallengeCommand($userId->value, 'email', '123456'));
@@ -196,7 +182,8 @@ it('covers two-factor command handlers and totp setup query handler', function (
     $totpSetup = new GetTotpSetupHandler($stateRepository, $userRepository, $manager, $pendingBackupSession)
         ->handle(new GetTotpSetupQuery($userId->value));
 
-    expect($dispatcher->dispatched)->toBeTrue()
+    expect($commandBus->dispatched)->not->toBeEmpty()
+        ->and($commandBus->dispatched[0])->toBeInstanceOf(SendTemplatedEmailCommand::class)
         ->and($challengeRepository->consumed)->toBeTrue()
         ->and($totpSetup->confirmed)->toBeFalse();
 });
@@ -271,28 +258,10 @@ it('covers exceptional and alternate branches in two-factor handlers', function 
     };
 
     $missingUserRepository = new FakeUserRepository;
-    $dispatcher = new class implements TemplatedEmailDispatcher
-    {
-        public bool $dispatched = false;
-
-        public function dispatch(string $userId, string $templateType, string $locale, array $variables): TemplatedEmailSent
-        {
-            $this->dispatched = true;
-
-            return new TemplatedEmailSent(
-                emailLogId: 'log-1',
-                templateType: $templateType,
-                locale: $locale,
-                recipientId: $userId,
-                recipientEmail: 'a@example.com',
-                renderedSubject: 'subject',
-                renderedBodyMasked: 'body',
-                variableKeys: array_keys($variables),
-                traceId: null,
-                occurredAt: new DateTimeImmutable,
-            );
-        }
-    };
+    $commandBus = new FakeCommandBus;
+    $missingUserBus = new FakeQueryBus([
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => throw new UserNotFoundException($query->id),
+    ]);
 
     $eventCollector = new class implements EventCollector
     {
@@ -334,9 +303,9 @@ it('covers exceptional and alternate branches in two-factor handlers', function 
         }
     };
 
-    new IssueEmailTwoFactorChallengeHandler($challengeRepository, $missingUserRepository, $manager, $dispatcher, $eventCollector, $translator)
+    new IssueEmailTwoFactorChallengeHandler($challengeRepository, $commandBus, $missingUserBus, $manager, $translator)
         ->handle(new IssueEmailTwoFactorChallengeCommand($userId->value));
-    expect($dispatcher->dispatched)->toBeFalse();
+    expect($commandBus->dispatched)->toBeEmpty();
 
     $pendingSession = new FakePendingTotpBackupCodesSession;
     new StartTotpSetupHandler($stateRepository, $manager, $pendingSession)->handle(new StartTotpSetupCommand($userId->value));
