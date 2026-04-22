@@ -19,6 +19,7 @@ use App\Domain\AuditLog\Handler\Query\GetAuditLogByTraceIdHandler;
 use App\Domain\AuditLog\Handler\Query\ListAuditLogHandler;
 use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
 use App\Domain\Authorization\Contract\Command\CreateRoleCommand;
+use App\Domain\Authorization\Contract\Command\CreateSystemRoleCommand;
 use App\Domain\Authorization\Contract\Command\DeleteRoleCommand;
 use App\Domain\Authorization\Contract\Command\ManageUserPermissionsCommand;
 use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
@@ -65,6 +66,7 @@ use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleRevoked;
 use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
 use App\Domain\Authorization\Handler\Command\AssignRoleToUserHandler;
 use App\Domain\Authorization\Handler\Command\CreateRoleHandler;
+use App\Domain\Authorization\Handler\Command\CreateSystemRoleHandler;
 use App\Domain\Authorization\Handler\Command\DeleteRoleHandler;
 use App\Domain\Authorization\Handler\Command\ManageUserPermissionsHandler;
 use App\Domain\Authorization\Handler\Command\RemovePermissionOverrideHandler;
@@ -514,6 +516,7 @@ final class BusServiceProvider extends ServiceProvider
                 RequestPasswordResetCommand::class => RequestPasswordResetHandler::class,
                 ResetPasswordCommand::class => ResetPasswordHandler::class,
                 CreateRoleCommand::class => CreateRoleHandler::class,
+                CreateSystemRoleCommand::class => CreateSystemRoleHandler::class,
                 UpdateRoleCommand::class => UpdateRoleHandler::class,
                 DeleteRoleCommand::class => DeleteRoleHandler::class,
                 AssignRoleToUserCommand::class => AssignRoleToUserHandler::class,

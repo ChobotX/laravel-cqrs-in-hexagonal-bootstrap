@@ -11,8 +11,6 @@ use App\Domain\Tenancy\Contract\Service\DevSchemaResetter;
 use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
 use App\Domain\Tenancy\Contract\Service\TenantDefaultEmailTemplateSeeder;
 use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
-use App\Domain\User\Contract\Service\TenantAdminUserSnapshotFactory;
-use App\Domain\User\Service\DefaultTenantAdminUserSnapshotFactory;
 use App\Infrastructure\Dev\DevSchemaResetter as DevSchemaResetterImpl;
 use App\Infrastructure\File\TenantLogoFileStorage;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
@@ -48,7 +46,6 @@ final class TenancyServiceProvider extends ServiceProvider
         $this->app->singleton(TenantMigrator::class);
         $this->app->bind(TenantProvisioner::class, EloquentTenantProvisioner::class);
         $this->app->bind(TenantDefaultEmailTemplateSeeder::class, EloquentTenantDefaultEmailTemplateSeeder::class);
-        $this->app->bind(TenantAdminUserSnapshotFactory::class, DefaultTenantAdminUserSnapshotFactory::class);
         $this->app->bind(TenantLogoStorage::class, fn (): TenantLogoFileStorage => new TenantLogoFileStorage(
             filesystem: $this->app->make(FilesystemManager::class)->disk('public'),
         ));

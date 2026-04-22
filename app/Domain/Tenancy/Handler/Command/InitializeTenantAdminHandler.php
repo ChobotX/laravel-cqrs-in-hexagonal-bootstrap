@@ -4,28 +4,23 @@ declare(strict_types=1);
 
 namespace App\Domain\Tenancy\Handler\Command;
 
+use App\Contract\Attribute\SkipDomainEvent;
 use App\Contract\Attribute\SkipTransaction;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
-use App\Contract\Event\EventCollector;
 use App\Contract\IdGenerator;
+use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
+use App\Domain\Authorization\Contract\Command\CreateSystemRoleCommand;
 use App\Domain\Authorization\Contract\Command\SeedDefaultRolesCommand;
-use App\Domain\Authorization\Contract\Entity\Role;
-use App\Domain\Authorization\Contract\Repository\RoleRepository;
-use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
-use App\Domain\Authorization\Contract\ValueObject\RoleId;
-use App\Domain\Authorization\Contract\ValueObject\RoleName;
 use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
 use App\Domain\Tenancy\Contract\Service\TenantDefaultEmailTemplateSeeder;
-use App\Domain\User\Contract\Event\UserCreated;
-use App\Domain\User\Contract\Repository\UserRepository;
-use App\Domain\User\Contract\Service\TenantAdminUserSnapshotFactory;
-use DateTimeImmutable;
+use App\Domain\User\Contract\Command\CreateUserCommand;
 
 /** @implements CommandHandler<InitializeTenantAdminCommand> */
 #[SkipTransaction(reason: 'Bootstraps tenant schema — DDL-adjacent initialization')]
+#[SkipDomainEvent(reason: 'Orchestrator — inner CreateUserCommand handler emits UserCreated')]
 final readonly class InitializeTenantAdminHandler implements CommandHandler
 {
     private const string SUPER_ADMIN_NAME = 'Super Admin';
@@ -33,15 +28,10 @@ final readonly class InitializeTenantAdminHandler implements CommandHandler
     private const string SUPER_ADMIN_DESCRIPTION = 'System super admin with all permissions';
 
     public function __construct(
+        private TenantBootstrapper $tenantBootstrapper,
         private TenantDefaultEmailTemplateSeeder $tenantDefaultEmailTemplateSeeder,
         private CommandBus $commandBus,
-        private RoleRepository $roleRepository,
-        private UserRepository $userRepository,
-        private UserPermissionRepository $userPermissionRepository,
         private IdGenerator $idGenerator,
-        private TenantAdminUserSnapshotFactory $tenantAdminUserSnapshotFactory,
-        private TenantBootstrapper $tenantBootstrapper,
-        private EventCollector $eventCollector,
     ) {}
 
     public function handle(Command $command): void
@@ -51,29 +41,23 @@ final readonly class InitializeTenantAdminHandler implements CommandHandler
         $this->tenantDefaultEmailTemplateSeeder->seed();
         $this->commandBus->dispatch(new SeedDefaultRolesCommand);
 
-        $superAdminRole = new Role(
-            id: new RoleId($this->idGenerator->generate()),
-            name: new RoleName(self::SUPER_ADMIN_NAME),
+        $superAdminRoleId = $this->idGenerator->generate();
+
+        $this->commandBus->dispatch(new CreateSystemRoleCommand(
+            id: $superAdminRoleId,
+            name: self::SUPER_ADMIN_NAME,
             description: self::SUPER_ADMIN_DESCRIPTION,
-            isSystem: true,
-            permissions: [],
-        );
+        ));
 
-        $this->roleRepository->create($superAdminRole);
-
-        $adminUser = $this->tenantAdminUserSnapshotFactory->createFromPrimitives(
-            $command->adminId,
-            $command->adminName,
-            $command->adminEmail,
-        );
-        $this->userRepository->create($adminUser);
-        $this->userPermissionRepository->assignRole($command->adminId, $superAdminRole->id);
-
-        $this->eventCollector->collect(new UserCreated(
-            userId: $command->adminId,
+        $this->commandBus->dispatch(new CreateUserCommand(
+            id: $command->adminId,
             name: $command->adminName,
             email: $command->adminEmail,
-            occurredAt: new DateTimeImmutable,
+        ));
+
+        $this->commandBus->dispatch(new AssignRoleToUserCommand(
+            userId: $command->adminId,
+            roleId: $superAdminRoleId,
         ));
 
         // No reset: DispatchCollectedEvents middleware runs after this handler

@@ -2,39 +2,27 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
+use App\Domain\Authorization\Contract\Command\CreateSystemRoleCommand;
 use App\Domain\Authorization\Contract\Command\SeedDefaultRolesCommand;
 use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
-use App\Domain\User\Contract\Event\UserCreated;
-use App\Domain\User\Service\DefaultTenantAdminUserSnapshotFactory;
+use App\Domain\User\Contract\Command\CreateUserCommand;
 use Tests\Helper\FakeCommandBus;
-use Tests\Helper\FakeEventCollector;
 use Tests\Helper\FakeIdGenerator;
-use Tests\Helper\FakeRoleRepository;
 use Tests\Helper\FakeTenantBootstrapper;
 use Tests\Helper\FakeTenantDefaultEmailTemplateSeeder;
-use Tests\Helper\FakeUserPermissionRepository;
-use Tests\Helper\FakeUserRepository;
 
 it('bootstraps tenant and orchestrates tenant admin setup in handler', function (): void {
     $templateSeeder = new FakeTenantDefaultEmailTemplateSeeder;
     $commandBus = new FakeCommandBus;
-    $roleRepository = new FakeRoleRepository;
-    $userRepository = new FakeUserRepository;
-    $userPermissionRepository = new FakeUserPermissionRepository;
     $idGenerator = new FakeIdGenerator;
     $bootstrapper = new FakeTenantBootstrapper;
-    $events = new FakeEventCollector;
     $handler = new InitializeTenantAdminHandler(
+        $bootstrapper,
         $templateSeeder,
         $commandBus,
-        $roleRepository,
-        $userRepository,
-        $userPermissionRepository,
         $idGenerator,
-        new DefaultTenantAdminUserSnapshotFactory,
-        $bootstrapper,
-        $events,
     );
 
     $handler->handle(new InitializeTenantAdminCommand(
@@ -46,11 +34,22 @@ it('bootstraps tenant and orchestrates tenant admin setup in handler', function 
 
     expect($bootstrapper->bootstrappedSlug)->toBe('test-tenant')
         ->and($templateSeeder->seedCallCount)->toBe(1)
-        ->and($commandBus->dispatched)->toHaveCount(1)
+        ->and($commandBus->dispatched)->toHaveCount(4)
         ->and($commandBus->dispatched[0])->toBeInstanceOf(SeedDefaultRolesCommand::class)
-        ->and($roleRepository->saved)->toHaveCount(1)
-        ->and($userRepository->saved)->toHaveCount(1)
-        ->and($userPermissionRepository->assignedRoles)->toHaveCount(1)
-        ->and($events->collected)->toHaveCount(1)
-        ->and($events->collected[0])->toBeInstanceOf(UserCreated::class);
+        ->and($commandBus->dispatched[1])->toBeInstanceOf(CreateSystemRoleCommand::class)
+        ->and($commandBus->dispatched[2])->toBeInstanceOf(CreateUserCommand::class)
+        ->and($commandBus->dispatched[3])->toBeInstanceOf(AssignRoleToUserCommand::class);
+
+    $createUserCommand = $commandBus->dispatched[2];
+    assert($createUserCommand instanceof CreateUserCommand);
+    expect($createUserCommand->id)->toBe('00000000-0000-0000-0000-000000000099')
+        ->and($createUserCommand->name)->toBe('Jane Admin')
+        ->and($createUserCommand->email)->toBe('jane@example.com');
+
+    $assignRoleCommand = $commandBus->dispatched[3];
+    assert($assignRoleCommand instanceof AssignRoleToUserCommand);
+    $createSystemRoleCommand = $commandBus->dispatched[1];
+    assert($createSystemRoleCommand instanceof CreateSystemRoleCommand);
+    expect($assignRoleCommand->userId)->toBe('00000000-0000-0000-0000-000000000099')
+        ->and($assignRoleCommand->roleId)->toBe($createSystemRoleCommand->id);
 });
