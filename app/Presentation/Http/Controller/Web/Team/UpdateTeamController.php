@@ -7,7 +7,6 @@ namespace App\Presentation\Http\Controller\Web\Team;
 use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
-use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Presentation\Http\Request\Web\Team\UpdateTeamRequest;
 use Illuminate\Http\RedirectResponse;
 
@@ -21,12 +20,9 @@ final readonly class UpdateTeamController
 
     public function __invoke(UpdateTeamRequest $updateTeamRequest): RedirectResponse
     {
-        $updateTeamCommand = $updateTeamRequest->toCommand();
-        $this->commandBus->dispatch($updateTeamCommand);
-
-        /** @var list<string>|null $submittedLabelIds */
-        $submittedLabelIds = $updateTeamRequest->has('labels') ? $updateTeamRequest->input('labels', []) : null;
-        $this->commandBus->dispatch(new SyncEntityLabelsCommand($updateTeamCommand->id, 'teams', $submittedLabelIds, $this->authenticatedUser->id() ?? ''));
+        $this->commandBus->dispatch($updateTeamRequest->toCommand(
+            $this->authenticatedUser->id() ?? '',
+        ));
 
         return redirect()->route('teams.index')->with('success', __('messages.teams.updated'));
     }

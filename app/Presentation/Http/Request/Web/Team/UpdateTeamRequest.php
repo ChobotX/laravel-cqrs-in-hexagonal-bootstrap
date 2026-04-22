@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Team;
 
-use App\Domain\Team\Contract\Command\UpdateTeamCommand;
+use App\Domain\Team\Contract\Command\UpdateTeamWithLabelsCommand;
 use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,16 +26,20 @@ final class UpdateTeamRequest extends FormRequest
         ];
     }
 
-    public function toCommand(): UpdateTeamCommand
+    public function toCommand(string $actorId): UpdateTeamWithLabelsCommand
     {
         $parentTeamId = $this->string('parent_team_id')->toString();
+        /** @var list<string>|null $labelIds */
+        $labelIds = $this->has('labels') ? $this->input('labels', []) : null;
 
-        return new UpdateTeamCommand(
+        return new UpdateTeamWithLabelsCommand(
             id: $this->routeString('teamId'),
             name: $this->string('name')->toString(),
             slug: $this->string('slug')->toString(),
             description: $this->string('description')->toString(),
             parentTeamId: $parentTeamId !== '' ? $parentTeamId : null,
+            actorId: $actorId,
+            labelIds: $labelIds,
         );
     }
 }

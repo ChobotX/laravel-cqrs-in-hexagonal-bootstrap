@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
-use App\Domain\User\Contract\Query\GetTotpSetupQuery;
+use App\Domain\User\Contract\Command\ManageOwnTwoFactorSettingsCommand;
+use App\Domain\User\Contract\Enum\TwoFactorSettingsAction;
 use App\Domain\User\Contract\ValueObject\TotpSetup;
 use App\Domain\User\Contract\ValueObject\TwoFactorUiStatus;
 use App\Infrastructure\Eloquent\User\UserModel;
@@ -34,13 +35,11 @@ it('covers own two-factor settings controllers', function (): void {
     $showView = $showController();
 
     $commandBus = Mockery::mock(CommandBus::class);
-    $commandBus->shouldReceive('dispatch')->times(5);
-    $updateQueryBus = Mockery::mock(QueryBus::class);
-    $updateQueryBus->shouldReceive('dispatch')
-        ->once()
-        ->with(Mockery::type(GetTotpSetupQuery::class))
-        ->andReturn(new TotpSetup(null, null, false, null, false));
-    $updateController = new UpdateOwnTwoFactorSettingsController($commandBus, $updateQueryBus);
+    $commandBus->shouldReceive('dispatch')
+        ->times(5)
+        ->with(Mockery::type(ManageOwnTwoFactorSettingsCommand::class));
+
+    $updateController = new UpdateOwnTwoFactorSettingsController($commandBus);
     $actions = [
         ['action' => 'email-save', 'email_two_factor_enabled' => '1'],
         ['action' => 'email-save', 'email_two_factor_enabled' => '0'],
@@ -63,26 +62,6 @@ it('covers own two-factor settings controllers', function (): void {
         ->and($tabRedirect->getTargetUrl())->toContain('tab=two-factor');
 });
 
-it('covers default action branch for own two-factor update controller', function (): void {
-    $user = UserModel::create([
-        'id' => '550e8400-e29b-41d4-a716-446655440891',
-        'name' => 'Own Two Factor User 2',
-        'email' => 'own-two-factor-2@example.com',
-        'password' => Hash::make('password'),
-    ]);
-    Auth::login($user);
-
-    $mock = Mockery::mock(CommandBus::class);
-    $mock->shouldNotReceive('dispatch');
-
-    $queryBus = Mockery::mock(QueryBus::class);
-    $queryBus->shouldNotReceive('dispatch');
-
-    $controller = new UpdateOwnTwoFactorSettingsController($mock, $queryBus);
-    $updateOwnTwoFactorRequest = UpdateOwnTwoFactorRequest::create('/profile/two-factor', 'PUT', ['action' => 'unknown']);
-    $updateOwnTwoFactorRequest->setContainer(app());
-
-    $redirectResponse = $controller($updateOwnTwoFactorRequest);
-
-    expect($redirectResponse->getTargetUrl())->toContain('/profile/two-factor');
+it('exposes enum cases', function (): void {
+    expect(TwoFactorSettingsAction::cases())->toHaveCount(4);
 });

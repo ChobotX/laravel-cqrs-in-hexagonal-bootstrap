@@ -279,6 +279,7 @@ use App\Domain\Team\Contract\Command\ManageTeamMembershipCommand;
 use App\Domain\Team\Contract\Command\RemoveTeamMemberCommand;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\Team\Contract\Command\UpdateTeamCommand;
+use App\Domain\Team\Contract\Command\UpdateTeamWithLabelsCommand;
 use App\Domain\Team\Contract\Event\TeamDeleted;
 use App\Domain\Team\Contract\Query\CountTeamsQuery;
 use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
@@ -295,6 +296,7 @@ use App\Domain\Team\Handler\Command\ManageTeamMembershipHandler;
 use App\Domain\Team\Handler\Command\RemoveTeamMemberHandler;
 use App\Domain\Team\Handler\Command\SyncUserTeamsHandler;
 use App\Domain\Team\Handler\Command\UpdateTeamHandler;
+use App\Domain\Team\Handler\Command\UpdateTeamWithLabelsHandler;
 use App\Domain\Team\Handler\Query\CountTeamsHandler;
 use App\Domain\Team\Handler\Query\GetTeamByIdHandler;
 use App\Domain\Team\Handler\Query\GetTeamsForUsersHandler;
@@ -307,6 +309,7 @@ use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateAllTenantsCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
+use App\Domain\Tenancy\Contract\Command\RegisterTenantWithAdminCommand;
 use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
 use App\Domain\Tenancy\Contract\Event\TenantSettingsUpdated;
 use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
@@ -315,6 +318,7 @@ use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
+use App\Domain\Tenancy\Handler\Command\RegisterTenantWithAdminHandler;
 use App\Domain\Tenancy\Handler\Command\UpdateTenantSettingsHandler;
 use App\Domain\Tenancy\Handler\Query\GetCurrentTenantNameHandler;
 use App\Domain\Tenancy\Handler\Query\GetTenantSettingsHandler;
@@ -328,6 +332,7 @@ use App\Domain\User\Contract\Command\DisableEmailTwoFactorCommand;
 use App\Domain\User\Contract\Command\DisableTotpTwoFactorCommand;
 use App\Domain\User\Contract\Command\EnableEmailTwoFactorCommand;
 use App\Domain\User\Contract\Command\IssueEmailTwoFactorChallengeCommand;
+use App\Domain\User\Contract\Command\ManageOwnTwoFactorSettingsCommand;
 use App\Domain\User\Contract\Command\MarkTotpBackupCodesDownloadedCommand;
 use App\Domain\User\Contract\Command\MarkUserActivatedCommand;
 use App\Domain\User\Contract\Command\RequestPasswordResetCommand;
@@ -374,6 +379,7 @@ use App\Domain\User\Handler\Command\DisableEmailTwoFactorHandler;
 use App\Domain\User\Handler\Command\DisableTotpTwoFactorHandler;
 use App\Domain\User\Handler\Command\EnableEmailTwoFactorHandler;
 use App\Domain\User\Handler\Command\IssueEmailTwoFactorChallengeHandler;
+use App\Domain\User\Handler\Command\ManageOwnTwoFactorSettingsHandler;
 use App\Domain\User\Handler\Command\MarkTotpBackupCodesDownloadedHandler;
 use App\Domain\User\Handler\Command\MarkUserActivatedHandler;
 use App\Domain\User\Handler\Command\RequestPasswordResetHandler;
@@ -489,6 +495,7 @@ final class BusServiceProvider extends ServiceProvider
                 DisableTotpTwoFactorCommand::class => DisableTotpTwoFactorHandler::class,
                 MarkTotpBackupCodesDownloadedCommand::class => MarkTotpBackupCodesDownloadedHandler::class,
                 IssueEmailTwoFactorChallengeCommand::class => IssueEmailTwoFactorChallengeHandler::class,
+                ManageOwnTwoFactorSettingsCommand::class => ManageOwnTwoFactorSettingsHandler::class,
                 VerifyTwoFactorChallengeCommand::class => VerifyTwoFactorChallengeHandler::class,
                 AdminResetUserTwoFactorCommand::class => AdminResetUserTwoFactorHandler::class,
                 SendUserInviteCommand::class => SendUserInviteHandler::class,
@@ -512,6 +519,7 @@ final class BusServiceProvider extends ServiceProvider
                 SeedDefaultRolesCommand::class => SeedDefaultRolesHandler::class,
                 CreateTeamCommand::class => CreateTeamHandler::class,
                 UpdateTeamCommand::class => UpdateTeamHandler::class,
+                UpdateTeamWithLabelsCommand::class => UpdateTeamWithLabelsHandler::class,
                 DeleteTeamCommand::class => DeleteTeamHandler::class,
                 AddTeamMemberCommand::class => AddTeamMemberHandler::class,
                 ManageTeamMembershipCommand::class => ManageTeamMembershipHandler::class,
@@ -528,6 +536,7 @@ final class BusServiceProvider extends ServiceProvider
                 UpdateNotificationPreferencesCommand::class => UpdateNotificationPreferencesHandler::class,
                 CreateTenantCommand::class => CreateTenantHandler::class,
                 InitializeTenantAdminCommand::class => InitializeTenantAdminHandler::class,
+                RegisterTenantWithAdminCommand::class => RegisterTenantWithAdminHandler::class,
                 MigrateTenantCommand::class => MigrateTenantHandler::class,
                 MigrateAllTenantsCommand::class => MigrateAllTenantsHandler::class,
                 StoreFileCommand::class => StoreFileHandler::class,

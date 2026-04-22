@@ -184,6 +184,10 @@ services:
         tags:
             - phpstan.rules.rule
     -
+        class: Tests\Architecture\PHPStan\ControllerSingleCommandDispatchRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\NoLooseFilesInDomainModuleRule
         tags:
             - phpstan.rules.rule

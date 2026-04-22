@@ -5,8 +5,7 @@ declare(strict_types=1);
 use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 use App\Contract\IdGenerator;
-use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
-use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
+use App\Domain\Tenancy\Contract\Command\RegisterTenantWithAdminCommand;
 use App\Presentation\Http\Controller\Web\Root\RegisterTenantController;
 use App\Presentation\Http\Request\Root\RegisterTenantFormRequest;
 use Illuminate\Http\RedirectResponse;
@@ -14,7 +13,7 @@ use Illuminate\Routing\Redirector;
 
 uses(Tests\TestCase::class);
 
-it('dispatches tenant commands then redirects to tenant login', function (): void {
+it('dispatches RegisterTenantWithAdminCommand then redirects to tenant login', function (): void {
     $slug = 'regcov'.bin2hex(random_bytes(4));
     $domain = $slug;
 
@@ -58,7 +57,11 @@ it('dispatches tenant commands then redirects to tenant login', function (): voi
     expect($redirectResponse)->toBeInstanceOf(RedirectResponse::class)
         ->and($redirectResponse->getTargetUrl())->toBe('http://'.$domain.'.laravel-bootstrap.local/login');
 
-    expect($commandBus->dispatched)->toHaveCount(2)
-        ->and($commandBus->dispatched[0])->toBeInstanceOf(CreateTenantCommand::class)
-        ->and($commandBus->dispatched[1])->toBeInstanceOf(InitializeTenantAdminCommand::class);
+    expect($commandBus->dispatched)->toHaveCount(1);
+    $cmd = $commandBus->dispatched[0];
+    assert($cmd instanceof RegisterTenantWithAdminCommand);
+    expect($cmd->slug)->toBe($slug)
+        ->and($cmd->domain)->toBe($domain)
+        ->and($cmd->adminId)->toBe('00000000-0000-0000-0000-0000000000aa')
+        ->and($cmd->adminEmail)->toBe('admin@example.test');
 });
