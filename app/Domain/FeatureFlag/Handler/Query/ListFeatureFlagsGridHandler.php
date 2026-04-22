@@ -49,7 +49,7 @@ final readonly class ListFeatureFlagsGridHandler implements QueryHandler
         $flags = array_slice($flags, $query->pagination->offset(), $query->pagination->perPage);
 
         return new FeatureFlagsGridResult(
-            rows: array_map(fn (ResolvedFlag $flag): FeatureFlagGridRow => $this->mapRow($flag), $flags),
+            rows: array_map($this->mapRow(...), $flags),
             total: $total,
             page: $query->pagination->page,
             perPage: $query->pagination->perPage,
@@ -72,7 +72,7 @@ final readonly class ListFeatureFlagsGridHandler implements QueryHandler
 
         return array_values(array_filter(
             $flags,
-            static fn (ResolvedFlag $flag): bool => $flag->definition->group === $group,
+            static fn (ResolvedFlag $resolvedFlag): bool => $resolvedFlag->definition->group === $group,
         ));
     }
 
@@ -90,9 +90,9 @@ final readonly class ListFeatureFlagsGridHandler implements QueryHandler
 
         return array_values(array_filter(
             $flags,
-            static fn (ResolvedFlag $flag): bool => str_contains(mb_strtolower($flag->definition->key->value), $term)
-                || str_contains(mb_strtolower($flag->definition->label), $term)
-                || str_contains(mb_strtolower($flag->definition->description), $term),
+            static fn (ResolvedFlag $resolvedFlag): bool => str_contains(mb_strtolower($resolvedFlag->definition->key->value), $term)
+                || str_contains(mb_strtolower($resolvedFlag->definition->label), $term)
+                || str_contains(mb_strtolower($resolvedFlag->definition->description), $term),
         ));
     }
 
@@ -119,30 +119,30 @@ final readonly class ListFeatureFlagsGridHandler implements QueryHandler
         return $flags;
     }
 
-    private function sortValue(ResolvedFlag $flag, string $column): string
+    private function sortValue(ResolvedFlag $resolvedFlag, string $column): string
     {
         return match ($column) {
-            self::SORT_KEY => $flag->definition->key->value,
-            self::SORT_LABEL => $flag->definition->label,
-            self::SORT_TYPE => $flag->definition->type->value,
-            self::SORT_GROUP => $flag->definition->groupLabel,
+            self::SORT_KEY => $resolvedFlag->definition->key->value,
+            self::SORT_LABEL => $resolvedFlag->definition->label,
+            self::SORT_TYPE => $resolvedFlag->definition->type->value,
+            self::SORT_GROUP => $resolvedFlag->definition->groupLabel,
             default => '',
         };
     }
 
-    private function mapRow(ResolvedFlag $flag): FeatureFlagGridRow
+    private function mapRow(ResolvedFlag $resolvedFlag): FeatureFlagGridRow
     {
         return new FeatureFlagGridRow(
-            key: $flag->definition->key->value,
-            label: $flag->definition->label,
-            description: $flag->definition->description,
-            type: $flag->definition->type->value,
-            group: $flag->definition->group,
-            groupLabel: $flag->definition->groupLabel,
-            enabled: $flag->enabled,
-            value: $flag->value,
-            isOverridden: $flag->isOverridden,
-            hasOptions: $flag->definition->type !== FlagType::Boolean,
+            key: $resolvedFlag->definition->key->value,
+            label: $resolvedFlag->definition->label,
+            description: $resolvedFlag->definition->description,
+            type: $resolvedFlag->definition->type->value,
+            group: $resolvedFlag->definition->group,
+            groupLabel: $resolvedFlag->definition->groupLabel,
+            enabled: $resolvedFlag->enabled,
+            value: $resolvedFlag->value,
+            isOverridden: $resolvedFlag->isOverridden,
+            hasOptions: $resolvedFlag->definition->type !== FlagType::Boolean,
         );
     }
 }

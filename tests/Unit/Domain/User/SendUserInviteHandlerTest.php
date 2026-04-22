@@ -31,12 +31,11 @@ function fakeInviteLinkGenerator(string $url = 'https://app.test/invite/abc123')
     };
 }
 
-/** @param ?User $user */
 function sendUserInviteUserBus(?User $user): FakeQueryBus
 {
     return new FakeQueryBus([
-        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $user
-            ?? throw new UserNotFoundException($query->id),
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => $user
+            ?? throw new UserNotFoundException($getUserByIdQuery->id),
     ]);
 }
 

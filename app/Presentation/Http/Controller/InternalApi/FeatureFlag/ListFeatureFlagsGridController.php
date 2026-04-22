@@ -23,8 +23,8 @@ final readonly class ListFeatureFlagsGridController
 
     public function __invoke(PaginationRequest $paginationRequest): JsonResponse
     {
-        /** @var FeatureFlagsGridResult $result */
-        $result = $this->queryBus->dispatch(new ListFeatureFlagsGridQuery(
+        /** @var FeatureFlagsGridResult $featureFlagsGridResult */
+        $featureFlagsGridResult = $this->queryBus->dispatch(new ListFeatureFlagsGridQuery(
             pagination: $paginationRequest->pagination(),
             sorting: $paginationRequest->sorting(),
             search: $paginationRequest->search(),
@@ -33,28 +33,28 @@ final readonly class ListFeatureFlagsGridController
         ));
 
         return new JsonResponse([
-            'data' => array_map(fn (FeatureFlagGridRow $row): array => [
-                'key' => $row->key,
-                'label' => $row->label,
-                'description' => $row->description,
-                'type' => $row->type,
-                'group' => $row->group,
-                'group_label' => $row->groupLabel,
-                'enabled' => $row->enabled,
-                'value' => $row->value,
-                'is_overridden' => $row->isOverridden,
-                'has_options' => $row->hasOptions,
-                'edit_url' => route('feature-flags.edit', $row->key),
-                'reset_url' => route('feature-flags.reset', $row->key),
-            ], $result->rows),
+            'data' => array_map(fn (FeatureFlagGridRow $featureFlagGridRow): array => [
+                'key' => $featureFlagGridRow->key,
+                'label' => $featureFlagGridRow->label,
+                'description' => $featureFlagGridRow->description,
+                'type' => $featureFlagGridRow->type,
+                'group' => $featureFlagGridRow->group,
+                'group_label' => $featureFlagGridRow->groupLabel,
+                'enabled' => $featureFlagGridRow->enabled,
+                'value' => $featureFlagGridRow->value,
+                'is_overridden' => $featureFlagGridRow->isOverridden,
+                'has_options' => $featureFlagGridRow->hasOptions,
+                'edit_url' => route('feature-flags.edit', $featureFlagGridRow->key),
+                'reset_url' => route('feature-flags.reset', $featureFlagGridRow->key),
+            ], $featureFlagsGridResult->rows),
             'meta' => [
-                'current_page' => $result->page,
-                'per_page' => $result->perPage,
-                'total' => $result->total,
-                'total_pages' => $result->totalPages,
+                'current_page' => $featureFlagsGridResult->page,
+                'per_page' => $featureFlagsGridResult->perPage,
+                'total' => $featureFlagsGridResult->total,
+                'total_pages' => $featureFlagsGridResult->totalPages,
             ],
             'permissions' => [
-                'can_update' => $result->permissions->canUpdate,
+                'can_update' => $featureFlagsGridResult->permissions->canUpdate,
             ],
         ]);
     }

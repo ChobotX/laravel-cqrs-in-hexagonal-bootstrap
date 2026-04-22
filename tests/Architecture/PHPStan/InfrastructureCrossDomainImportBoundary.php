@@ -13,6 +13,22 @@ use PHPStan\Rules\RuleErrorBuilder;
 final readonly class InfrastructureCrossDomainImportBoundary
 {
     /**
+     * Only these Contract subdirectories may cross module boundaries. Repository and Service
+     * contracts must stay home-bound — cross-domain callers go via the bus instead.
+     *
+     * @var list<string>
+     */
+    private const array DISPATCHABLE_CONTRACT_SUBDIRS = [
+        'Command',
+        'Query',
+        'Event',
+        'Entity',
+        'ValueObject',
+        'Enum',
+        'Exception',
+    ];
+
+    /**
      * @param  array<string, string>  $domainAliases  Infrastructure top-level segment => Domain module name
      */
     public function __construct(
@@ -51,15 +67,16 @@ final readonly class InfrastructureCrossDomainImportBoundary
             return null;
         }
 
-        if ($this->isForeignDomainContractImport($imported, $referencedDomain)) {
+        if ($this->isForeignDomainDispatchableContractImport($imported, $referencedDomain)) {
             return null;
         }
 
         return RuleErrorBuilder::message(sprintf(
-            'Infrastructure may not import %s from another domain (%s). Use App\\Domain\\%s\\Contract\\* or move composition to Domain.',
+            'Infrastructure may not import %s from another domain (%s). Cross-module imports must reference App\\Domain\\%s\\Contract\\{%s} — use the bus for anything else.',
             $imported,
             $referencedDomain,
             $referencedDomain,
+            implode('|', self::DISPATCHABLE_CONTRACT_SUBDIRS),
         ))
             ->identifier('infrastructure.foreignDomainRequiresContract')
             ->line($line)
@@ -110,8 +127,8 @@ final readonly class InfrastructureCrossDomainImportBoundary
         return $parts[2];
     }
 
-    private function isForeignDomainContractImport(string $imported, string $referencedDomain): bool
+    private function isForeignDomainDispatchableContractImport(string $imported, string $referencedDomain): bool
     {
-        return str_starts_with($imported, sprintf('App\\Domain\\%s\\Contract\\', $referencedDomain));
+        return array_any(self::DISPATCHABLE_CONTRACT_SUBDIRS, fn ($subdir): bool => str_starts_with($imported, sprintf('App\\Domain\\%s\\Contract\\%s\\', $referencedDomain, $subdir)));
     }
 }

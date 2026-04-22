@@ -62,8 +62,8 @@ function userBusForNotificationRecipients(): FakeQueryBus
     }
 
     return new FakeQueryBus([
-        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $users[$query->id]
-            ?? throw new UserNotFoundException($query->id),
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => $users[$getUserByIdQuery->id]
+            ?? throw new UserNotFoundException($getUserByIdQuery->id),
     ]);
 }
 

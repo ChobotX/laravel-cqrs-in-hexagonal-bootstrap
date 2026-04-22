@@ -13,7 +13,9 @@ use App\Domain\User\Contract\Command\IssueEmailTwoFactorChallengeCommand;
 use App\Domain\User\Contract\Command\StartTotpSetupCommand;
 use App\Domain\User\Contract\Command\VerifyTwoFactorChallengeCommand;
 use App\Domain\User\Contract\Entity\User;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Query\GetTotpSetupQuery;
+use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\Repository\EmailTwoFactorChallengeRepository;
 use App\Domain\User\Contract\Service\TwoFactorManager;
 use App\Domain\User\Contract\ValueObject\EmailTwoFactorChallenge;
@@ -28,8 +30,6 @@ use App\Domain\User\Handler\Command\EnableEmailTwoFactorHandler;
 use App\Domain\User\Handler\Command\IssueEmailTwoFactorChallengeHandler;
 use App\Domain\User\Handler\Command\StartTotpSetupHandler;
 use App\Domain\User\Handler\Command\VerifyTwoFactorChallengeHandler;
-use App\Domain\User\Contract\Exception\UserNotFoundException;
-use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Handler\Query\GetTotpSetupHandler;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;
@@ -150,9 +150,9 @@ it('covers two-factor command handlers and totp setup query handler', function (
     $knownUser = new User($userId, new UserName('A'), new Email('a@example.com'));
     $userRepository = new FakeUserRepository([$userId->value => $knownUser]);
     $userByIdBus = new FakeQueryBus([
-        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $query->id === $userId->value
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => $getUserByIdQuery->id === $userId->value
             ? $knownUser
-            : throw new UserNotFoundException($query->id),
+            : throw new UserNotFoundException($getUserByIdQuery->id),
     ]);
 
     new StartTotpSetupHandler($stateRepository, $manager, $pendingBackupSession)->handle(new StartTotpSetupCommand($userId->value));
@@ -260,7 +260,7 @@ it('covers exceptional and alternate branches in two-factor handlers', function 
     $missingUserRepository = new FakeUserRepository;
     $commandBus = new FakeCommandBus;
     $missingUserBus = new FakeQueryBus([
-        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => throw new UserNotFoundException($query->id),
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => throw new UserNotFoundException($getUserByIdQuery->id),
     ]);
 
     $eventCollector = new class implements EventCollector

@@ -17,16 +17,27 @@ final class InfrastructureCrossDomainImportsRuleTest extends AbstractPHPStanRule
     {
         $this->analyse([__DIR__.'/Fixtures/CrossDomainSimulatorConstantImport.php'], [
             [
-                'Infrastructure may not import App\Domain\EmailTemplate\Constant\DefaultEmailTemplates from another domain (EmailTemplate). Use App\Domain\EmailTemplate\Contract\* or move composition to Domain.',
+                'Infrastructure may not import App\Domain\EmailTemplate\Constant\DefaultEmailTemplates from another domain (EmailTemplate). Cross-module imports must reference App\Domain\EmailTemplate\Contract\{Command|Query|Event|Entity|ValueObject|Enum|Exception} — use the bus for anything else.',
                 7,
             ],
         ]);
     }
 
     #[Test]
-    public function it_allows_cross_domain_imports_under_contract(): void
+    public function it_allows_cross_domain_dispatchable_contract_imports(): void
     {
         $this->analyse([__DIR__.'/Fixtures/CrossDomainSimulatorContractImport.php'], []);
+    }
+
+    #[Test]
+    public function it_flags_cross_domain_service_contract_imports(): void
+    {
+        $this->analyse([__DIR__.'/Fixtures/CrossDomainSimulatorServiceImport.php'], [
+            [
+                'Infrastructure may not import App\Domain\EmailTemplate\Contract\Service\EmailSender from another domain (EmailTemplate). Cross-module imports must reference App\Domain\EmailTemplate\Contract\{Command|Query|Event|Entity|ValueObject|Enum|Exception} — use the bus for anything else.',
+                7,
+            ],
+        ]);
     }
 
     #[Test]
@@ -34,7 +45,7 @@ final class InfrastructureCrossDomainImportsRuleTest extends AbstractPHPStanRule
     {
         $this->analyse([__DIR__.'/Fixtures/CrossDomainSimulatorUseFunctionImport.php'], [
             [
-                'Infrastructure may not import App\Domain\User\PhpStanFixtureInternal\stan_cross_domain_fixture_function from another domain (User). Use App\Domain\User\Contract\* or move composition to Domain.',
+                'Infrastructure may not import App\Domain\User\PhpStanFixtureInternal\stan_cross_domain_fixture_function from another domain (User). Cross-module imports must reference App\Domain\User\Contract\{Command|Query|Event|Entity|ValueObject|Enum|Exception} — use the bus for anything else.',
                 7,
             ],
         ]);
@@ -45,7 +56,7 @@ final class InfrastructureCrossDomainImportsRuleTest extends AbstractPHPStanRule
     {
         $this->analyse([__DIR__.'/Fixtures/CrossDomainSimulatorUseConstImport.php'], [
             [
-                'Infrastructure may not import App\Domain\User\PhpStanFixtureInternal\STAN_CROSS_DOMAIN_FIXTURE_CONST from another domain (User). Use App\Domain\User\Contract\* or move composition to Domain.',
+                'Infrastructure may not import App\Domain\User\PhpStanFixtureInternal\STAN_CROSS_DOMAIN_FIXTURE_CONST from another domain (User). Cross-module imports must reference App\Domain\User\Contract\{Command|Query|Event|Entity|ValueObject|Enum|Exception} — use the bus for anything else.',
                 7,
             ],
         ]);

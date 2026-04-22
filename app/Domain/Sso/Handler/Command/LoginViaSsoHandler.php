@@ -44,14 +44,6 @@ final readonly class LoginViaSsoHandler implements CommandHandler
         private SsoLoginSession $ssoLoginSession,
     ) {}
 
-    private function findUserByEmail(string $email): ?User
-    {
-        /** @var ?User $result */
-        $result = $this->queryBus->dispatch(new GetUserByEmailQuery(email: $email));
-
-        return $result;
-    }
-
     public function handle(Command $command): void
     {
         $configuration = $this->ssoConfigurationRepository->findById(new SsoConfigurationId($command->configurationId));
@@ -109,6 +101,14 @@ final readonly class LoginViaSsoHandler implements CommandHandler
             userProvisioned: $provisioned,
         );
         $this->ssoLoginSession->setLastResolvedUserId($user->id->value);
+    }
+
+    private function findUserByEmail(string $email): ?User
+    {
+        /** @var ?User $result */
+        $result = $this->queryBus->dispatch(new GetUserByEmailQuery(email: $email));
+
+        return $result;
     }
 
     /** @return array{0: User, 1: bool} */

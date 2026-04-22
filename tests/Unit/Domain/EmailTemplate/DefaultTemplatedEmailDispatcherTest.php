@@ -33,8 +33,8 @@ function makeDefaultDispatcher(
         $fakeEmailSender ?? new FakeEmailSender,
         new FakeQueryBus([
             GetCurrentTenantNameQuery::class => 'Test Org',
-            GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $usersById[$query->id]
-                ?? throw new UserNotFoundException($query->id),
+            GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => $usersById[$getUserByIdQuery->id]
+                ?? throw new UserNotFoundException($getUserByIdQuery->id),
         ]),
         new readonly class implements App\Contract\Tracing\TraceContext
         {

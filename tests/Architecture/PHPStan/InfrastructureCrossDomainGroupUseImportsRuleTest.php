@@ -17,11 +17,11 @@ final class InfrastructureCrossDomainGroupUseImportsRuleTest extends AbstractPHP
     {
         $this->analyse([__DIR__.'/Fixtures/CrossDomainSimulatorGroupUseImport.php'], [
             [
-                'Infrastructure may not import App\Domain\EmailTemplate\Constant\DefaultEmailTemplates from another domain (EmailTemplate). Use App\Domain\EmailTemplate\Contract\* or move composition to Domain.',
+                'Infrastructure may not import App\Domain\EmailTemplate\Constant\DefaultEmailTemplates from another domain (EmailTemplate). Cross-module imports must reference App\Domain\EmailTemplate\Contract\{Command|Query|Event|Entity|ValueObject|Enum|Exception} — use the bus for anything else.',
                 7,
             ],
             [
-                'Infrastructure may not import App\Domain\EmailTemplate\Constant\EmailTemplateTypes from another domain (EmailTemplate). Use App\Domain\EmailTemplate\Contract\* or move composition to Domain.',
+                'Infrastructure may not import App\Domain\EmailTemplate\Constant\EmailTemplateTypes from another domain (EmailTemplate). Cross-module imports must reference App\Domain\EmailTemplate\Contract\{Command|Query|Event|Entity|ValueObject|Enum|Exception} — use the bus for anything else.',
                 7,
             ],
         ]);

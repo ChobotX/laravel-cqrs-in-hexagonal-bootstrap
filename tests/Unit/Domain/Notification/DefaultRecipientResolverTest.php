@@ -9,7 +9,7 @@ use Tests\Helper\FakeQueryBus;
 
 it('delegates resolveTeamMembers to the query bus', function (): void {
     $queryBus = new FakeQueryBus([
-        ListTeamMemberUserIdsQuery::class => fn (ListTeamMemberUserIdsQuery $query): array => $query->teamId === 'team-a'
+        ListTeamMemberUserIdsQuery::class => fn (ListTeamMemberUserIdsQuery $listTeamMemberUserIdsQuery): array => $listTeamMemberUserIdsQuery->teamId === 'team-a'
             ? ['u1', 'u2']
             : [],
     ]);

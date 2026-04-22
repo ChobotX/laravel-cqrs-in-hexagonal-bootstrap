@@ -35,8 +35,8 @@ function resendFakeInviteLinkGenerator(string $url = 'https://app.test/invite/ab
 function resendInviteUserBus(?User $user): FakeQueryBus
 {
     return new FakeQueryBus([
-        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $user
-            ?? throw new UserNotFoundException($query->id),
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => $user
+            ?? throw new UserNotFoundException($getUserByIdQuery->id),
     ]);
 }
 

@@ -29,11 +29,11 @@ function seedDataPort(array $templates): DefaultEmailTemplateSeedData
 
 it('inserts each missing default template', function (): void {
     $repository = new FakeEmailTemplateRepository;
-    $seedData = seedDataPort([
+    $defaultEmailTemplateSeedData = seedDataPort([
         'user_invite:en' => ['subject' => 'Subject A', 'body' => 'Body A'],
         'password_reset:cs' => ['subject' => 'Předmět', 'body' => 'Tělo'],
     ]);
-    $handler = new SeedDefaultEmailTemplatesHandler($repository, $seedData, new FakeIdGenerator);
+    $handler = new SeedDefaultEmailTemplatesHandler($repository, $defaultEmailTemplateSeedData, new FakeIdGenerator);
 
     $handler->handle(new SeedDefaultEmailTemplatesCommand);
 
@@ -56,11 +56,11 @@ it('skips templates that already exist', function (): void {
         updatedAt: new DateTimeImmutable('2026-01-01T00:00:00+00:00'),
     );
     $repository = new FakeEmailTemplateRepository(['user_invite:en' => $existing]);
-    $seedData = seedDataPort([
+    $defaultEmailTemplateSeedData = seedDataPort([
         'user_invite:en' => ['subject' => 'New subject', 'body' => 'New body'],
         'password_reset:en' => ['subject' => 'Reset', 'body' => 'Body'],
     ]);
-    $handler = new SeedDefaultEmailTemplatesHandler($repository, $seedData, new FakeIdGenerator);
+    $handler = new SeedDefaultEmailTemplatesHandler($repository, $defaultEmailTemplateSeedData, new FakeIdGenerator);
 
     $handler->handle(new SeedDefaultEmailTemplatesCommand);
 
