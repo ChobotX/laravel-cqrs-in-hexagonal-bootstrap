@@ -118,11 +118,13 @@ use App\Domain\FeatureFlag\Contract\Event\FeatureFlagReset;
 use App\Domain\FeatureFlag\Contract\Event\FeatureFlagUpdated;
 use App\Domain\FeatureFlag\Contract\Query\GetAllFeatureFlagValuesQuery;
 use App\Domain\FeatureFlag\Contract\Query\GetFeatureFlagQuery;
+use App\Domain\FeatureFlag\Contract\Query\ListFeatureFlagsGridQuery;
 use App\Domain\FeatureFlag\Contract\Query\ListFeatureFlagsQuery;
 use App\Domain\FeatureFlag\Handler\Command\ResetFeatureFlagHandler;
 use App\Domain\FeatureFlag\Handler\Command\UpdateFeatureFlagHandler;
 use App\Domain\FeatureFlag\Handler\Query\GetAllFeatureFlagValuesHandler;
 use App\Domain\FeatureFlag\Handler\Query\GetFeatureFlagHandler;
+use App\Domain\FeatureFlag\Handler\Query\ListFeatureFlagsGridHandler;
 use App\Domain\FeatureFlag\Handler\Query\ListFeatureFlagsHandler;
 use App\Domain\File\Contract\Command\DeleteFileCommand;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
@@ -643,6 +645,7 @@ final class BusServiceProvider extends ServiceProvider
                 ListEntriesQuery::class => ListEntriesHandler::class,
                 ListEntriesByDefinitionSlugQuery::class => ListEntriesByDefinitionSlugHandler::class,
                 ListFeatureFlagsQuery::class => ListFeatureFlagsHandler::class,
+                ListFeatureFlagsGridQuery::class => ListFeatureFlagsGridHandler::class,
                 GetFeatureFlagQuery::class => GetFeatureFlagHandler::class,
                 GetAllFeatureFlagValuesQuery::class => GetAllFeatureFlagValuesHandler::class,
                 ListGridPresetsQuery::class => ListGridPresetsHandler::class,
