@@ -8,14 +8,8 @@ use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\IdGenerator;
-use App\Domain\File\Contract\Command\StoreAvatarCommand;
-use App\Domain\File\Contract\Constant\AvatarNamespace;
-use App\Domain\File\Contract\ValueObject\FileName;
-use App\Domain\File\Contract\ValueObject\FileUpload;
-use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Presentation\Http\Request\Web\User\CreateUserRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\UploadedFile;
 
 #[RequiresPermission('users.list.create')]
 final readonly class CreateUserController
@@ -28,37 +22,11 @@ final readonly class CreateUserController
 
     public function __invoke(CreateUserRequest $createUserRequest): RedirectResponse
     {
-        $avatarFileId = $this->uploadAvatar($createUserRequest);
-
-        $createUserCommand = $createUserRequest->toCommand($this->idGenerator->generate(), $avatarFileId);
-
-        $this->commandBus->dispatch($createUserCommand);
-
-        return redirect('/users')->with('success', __('messages.users.created'));
-    }
-
-    private function uploadAvatar(CreateUserRequest $createUserRequest): ?string
-    {
-        $file = $createUserRequest->file('avatar');
-
-        if (! $file instanceof UploadedFile) {
-            return null;
-        }
-
-        $fileId = $this->idGenerator->generate();
-
-        $this->commandBus->dispatch(new StoreAvatarCommand(
-            id: $fileId,
-            namespace: AvatarNamespace::VALUE,
-            uploadedBy: $this->authenticatedUser->id() ?? '',
-            upload: new FileUpload(
-                originalName: new FileName($file->getClientOriginalName()),
-                mimeType: new MimeType($file->getMimeType() ?? 'image/jpeg'),
-                sizeInBytes: (int) $file->getSize(),
-                file: $file,
-            ),
+        $this->commandBus->dispatch($createUserRequest->toCommand(
+            $this->idGenerator->generate(),
+            $this->authenticatedUser->id() ?? '',
         ));
 
-        return $fileId;
+        return redirect('/users')->with('success', __('messages.users.created'));
     }
 }

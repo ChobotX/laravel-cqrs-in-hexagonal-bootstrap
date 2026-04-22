@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\User;
 
-use App\Domain\User\Contract\Command\UpdateUserCommand;
+use App\Domain\File\Contract\ValueObject\FileName;
+use App\Domain\File\Contract\ValueObject\FileUpload;
+use App\Domain\File\Contract\ValueObject\MimeType;
+use App\Domain\User\Contract\Command\UpdateUserWithAvatarAndRelationsCommand;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
 
 final class UpdateUserRequest extends FormRequest
@@ -30,13 +34,35 @@ final class UpdateUserRequest extends FormRequest
         ];
     }
 
-    public function toCommand(string $email, ?string $avatarFileId = null): UpdateUserCommand
+    public function toCommand(string $actorId): UpdateUserWithAvatarAndRelationsCommand
     {
-        return new UpdateUserCommand(
+        $file = $this->file('avatar');
+        $avatarUpload = $file instanceof UploadedFile
+            ? new FileUpload(
+                originalName: new FileName($file->getClientOriginalName()),
+                mimeType: new MimeType($file->getMimeType() ?? 'image/jpeg'),
+                sizeInBytes: (int) $file->getSize(),
+                file: $file,
+            )
+            : null;
+
+        /** @var list<string>|null $roleIds */
+        $roleIds = $this->has('roles') ? $this->input('roles', []) : null;
+        /** @var list<string>|null $teamIds */
+        $teamIds = $this->has('teams') ? $this->input('teams', []) : null;
+        /** @var list<string>|null $labelIds */
+        $labelIds = $this->has('labels') ? $this->input('labels', []) : null;
+
+        return new UpdateUserWithAvatarAndRelationsCommand(
             id: $this->routeString('userId'),
             name: $this->string('name')->toString(),
-            email: $email,
-            avatarFileId: $avatarFileId,
+            email: $this->has('email') ? $this->string('email')->toString() : null,
+            actorId: $actorId,
+            avatarUpload: $avatarUpload,
+            removeAvatar: $this->boolean('remove_avatar'),
+            roleIds: $roleIds,
+            teamIds: $teamIds,
+            labelIds: $labelIds,
         );
     }
 }

@@ -115,6 +115,23 @@ it('skips non-assignable roles', function (): void {
         ->and($eventCollector->collected)->toBeEmpty();
 });
 
+it('returns early without reading repositories when submittedRoleIds is null', function (): void {
+    $userPermRepo = new FakeUserPermissionRepository;
+    $roleRepo = new FakeRoleRepository;
+    $eventCollector = new FakeEventCollector;
+    $syncUserRolesHandler = createSyncRolesHandler($userPermRepo, $roleRepo, $eventCollector);
+
+    $syncUserRolesHandler->handle(new SyncUserRolesCommand(
+        targetUserId: 'target-user',
+        submittedRoleIds: null,
+        actingUserId: 'acting-user',
+    ));
+
+    expect($userPermRepo->assignedRoles)->toBeEmpty()
+        ->and($userPermRepo->revokedRoles)->toBeEmpty()
+        ->and($eventCollector->collected)->toBeEmpty();
+});
+
 it('does nothing when submitted matches current', function (): void {
     $roleA = createRole('00000000-0000-0000-0000-00000000000a', 'Role A');
 

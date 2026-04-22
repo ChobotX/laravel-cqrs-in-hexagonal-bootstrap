@@ -322,6 +322,7 @@ use App\Domain\User\Contract\Command\AcceptInviteCommand;
 use App\Domain\User\Contract\Command\AdminResetUserTwoFactorCommand;
 use App\Domain\User\Contract\Command\ConfirmTotpSetupCommand;
 use App\Domain\User\Contract\Command\CreateUserCommand;
+use App\Domain\User\Contract\Command\CreateUserWithAvatarCommand;
 use App\Domain\User\Contract\Command\DeleteUserCommand;
 use App\Domain\User\Contract\Command\DisableEmailTwoFactorCommand;
 use App\Domain\User\Contract\Command\DisableTotpTwoFactorCommand;
@@ -337,8 +338,10 @@ use App\Domain\User\Contract\Command\SetPasswordCommand;
 use App\Domain\User\Contract\Command\StartTotpSetupCommand;
 use App\Domain\User\Contract\Command\UpdatePasswordRotationSettingsCommand;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
+use App\Domain\User\Contract\Command\UpdateProfileWithAvatarAndPreferencesCommand;
 use App\Domain\User\Contract\Command\UpdateTwoFactorSettingsCommand;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
+use App\Domain\User\Contract\Command\UpdateUserWithAvatarAndRelationsCommand;
 use App\Domain\User\Contract\Command\VerifyTwoFactorChallengeCommand;
 use App\Domain\User\Contract\Event\PasswordChanged;
 use App\Domain\User\Contract\Event\PasswordResetCompleted;
@@ -365,6 +368,7 @@ use App\Domain\User\Handler\Command\AcceptInviteHandler;
 use App\Domain\User\Handler\Command\AdminResetUserTwoFactorHandler;
 use App\Domain\User\Handler\Command\ConfirmTotpSetupHandler;
 use App\Domain\User\Handler\Command\CreateUserHandler;
+use App\Domain\User\Handler\Command\CreateUserWithAvatarHandler;
 use App\Domain\User\Handler\Command\DeleteUserHandler;
 use App\Domain\User\Handler\Command\DisableEmailTwoFactorHandler;
 use App\Domain\User\Handler\Command\DisableTotpTwoFactorHandler;
@@ -380,8 +384,10 @@ use App\Domain\User\Handler\Command\SetPasswordHandler;
 use App\Domain\User\Handler\Command\StartTotpSetupHandler;
 use App\Domain\User\Handler\Command\UpdatePasswordRotationSettingsHandler;
 use App\Domain\User\Handler\Command\UpdateProfileHandler;
+use App\Domain\User\Handler\Command\UpdateProfileWithAvatarAndPreferencesHandler;
 use App\Domain\User\Handler\Command\UpdateTwoFactorSettingsHandler;
 use App\Domain\User\Handler\Command\UpdateUserHandler;
+use App\Domain\User\Handler\Command\UpdateUserWithAvatarAndRelationsHandler;
 use App\Domain\User\Handler\Command\VerifyTwoFactorChallengeHandler;
 use App\Domain\User\Handler\Query\CountUsersHandler;
 use App\Domain\User\Handler\Query\GetOwnProfileHandler;
@@ -467,8 +473,11 @@ final class BusServiceProvider extends ServiceProvider
             container: $this->app,
             handlers: [
                 CreateUserCommand::class => CreateUserHandler::class,
+                CreateUserWithAvatarCommand::class => CreateUserWithAvatarHandler::class,
                 UpdateUserCommand::class => UpdateUserHandler::class,
+                UpdateUserWithAvatarAndRelationsCommand::class => UpdateUserWithAvatarAndRelationsHandler::class,
                 UpdateProfileCommand::class => UpdateProfileHandler::class,
+                UpdateProfileWithAvatarAndPreferencesCommand::class => UpdateProfileWithAvatarAndPreferencesHandler::class,
                 UpdatePasswordRotationSettingsCommand::class => UpdatePasswordRotationSettingsHandler::class,
                 UpdateTwoFactorSettingsCommand::class => UpdateTwoFactorSettingsHandler::class,
                 DeleteUserCommand::class => DeleteUserHandler::class,
