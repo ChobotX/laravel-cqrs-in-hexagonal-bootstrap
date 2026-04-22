@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Domain\Team\Contract\Query;
 
 use App\Application\Authorization\AccessContext;
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Application\Filtering\Filter;
@@ -15,6 +14,7 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Team\Contract\Entity\Team;
 

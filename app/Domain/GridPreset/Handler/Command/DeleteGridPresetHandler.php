@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\GridPreset\Handler\Command;
 
-use App\Application\Bus\SkipDomainEvent;
+use App\Contract\Attribute\SkipDomainEvent;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Domain\Authorization\Contract\Enum\AccessScope;

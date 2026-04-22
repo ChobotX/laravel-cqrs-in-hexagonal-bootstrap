@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Sso;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Sso\Contract\Entity\SsoConfiguration;
 use App\Domain\Sso\Contract\Enum\JitMode;
 use App\Domain\Sso\Contract\Query\GetSsoConfigurationByIdQuery;

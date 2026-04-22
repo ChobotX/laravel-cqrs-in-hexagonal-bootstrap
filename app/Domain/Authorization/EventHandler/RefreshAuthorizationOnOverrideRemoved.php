@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\EventHandler;
 
-use App\Application\Event\RetryPolicy;
+use App\Contract\Attribute\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\Authorization\Contract\Event\PermissionOverrideRemoved;

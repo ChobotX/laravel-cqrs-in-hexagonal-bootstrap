@@ -1,12 +1,12 @@
 # Application Layer
 
-Shared business logic layer. Contains bus interfaces, shared bus middleware, and cross-cutting orchestration that doesn't belong to a specific domain context.
+Shared cross-cutting primitives used by Domain handlers: bus middleware, value objects (pagination, sorting, filtering, access context, property changes), scope-resolution markers, and utilities. Bus ports and attributes are part of the public Contract surface and live under `App\Contract\` (see [Contract README](../Contract/README.md)).
 
-## Bus interfaces
+## Bus interfaces (in Contract)
 
-- `App\Application\Bus\CommandBus` — dispatches commands to domain handlers
-- `App\Application\Bus\QueryBus` — dispatches queries to domain handlers
-- `App\Application\Bus\EventBus` — dispatches domain events to async handlers
+- `App\Contract\Bus\CommandBus` — dispatches commands to domain handlers
+- `App\Contract\Bus\QueryBus` — dispatches queries to domain handlers
+- `App\Contract\Bus\EventBus` — dispatches domain events to async handlers
 
 Usage from Presentation or Infrastructure:
 
@@ -25,16 +25,16 @@ Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus
 
 ## Sensitive Data Masking
 
-- `App\Application\Bus\Sensitive` — attribute marking a command/query/event property as sensitive. Properties annotated with `#[Sensitive]` are replaced with `'***'` in all bus log output. Use on passwords, tokens, and other secrets.
+- `App\Contract\Attribute\Sensitive` — attribute marking a command/query/event property as sensitive. Properties annotated with `#[Sensitive]` are replaced with `'***'` in all bus log output. Use on passwords, tokens, and other secrets.
 - `App\Application\Bus\SensitiveDataMasker` — static utility that reads `#[Sensitive]` attributes via reflection and masks annotated properties. Used by `LogBusMessage` middleware and `HandleDomainEventJob`.
 
 ## Transaction control
 
-- `App\Application\Bus\SkipTransaction` — attribute opting a command out of the `WrapInTransaction` bus middleware. Requires a `reason` string. Use for commands that write to a different connection (e.g. landlord), run DDL/migrations, or manage their own transactions.
+- `App\Contract\Attribute\SkipTransaction` — attribute opting a command out of the `WrapInTransaction` bus middleware. Requires a `reason` string. Use for commands that write to a different connection (e.g. landlord), run DDL/migrations, or manage their own transactions.
 
 ## Domain event control
 
-- `App\Application\Bus\SkipDomainEvent` — attribute opting a command handler out of the `CommandHandlerMustCollectEventsRule` enforcement. Requires a `reason` string. Use for handlers that legitimately produce no domain events (infrastructure provisioning, data initialization).
+- `App\Contract\Attribute\SkipDomainEvent` — attribute opting a command handler out of the `CommandHandlerMustCollectEventsRule` enforcement. Requires a `reason` string. Use for handlers that legitimately produce no domain events (infrastructure provisioning, data initialization).
 
 ## Property changes for update events
 
@@ -42,8 +42,8 @@ Shared middleware in `App\Application\Bus\Middleware\` handles cross-cutting bus
 
 ## Authorization attributes and interfaces
 
-- `App\Application\Authorization\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.
-- `App\Application\Authorization\SkipPermissionCheck` — attribute for commands/queries that intentionally skip authorization.
+- `App\Contract\Attribute\RequiresPermission` — attribute declaring the permission a command/query requires. Read by `AuthorizeAction` and `ResolveScopeFilter` bus middleware.
+- `App\Contract\Attribute\SkipPermissionCheck` — attribute for commands/queries that intentionally skip authorization.
 - `App\Application\Authorization\ScopeAwareQuery` — interface for queries that receive automatic scope resolution via bus middleware. Extends `Query`. See [Domain README](../Domain/README.md) for usage.
 - `App\Application\Authorization\ShareableScopeQuery` — opt-in marker interface (complements `ScopeAwareQuery`). Queries that declare a `shareableResourceType()` automatically have shared resource IDs resolved into `AccessContext::$sharedResourceIds` by `ResolveScopeFilter`.
 - `App\Application\Authorization\ShareableResourceRegistry` — maps `resource_type` to its permission prefix (e.g. `'entry' => 'registry.entries'`). Used by `AuthorizationChecker::canShareResource/canViewResourceShares` so generic share endpoints resolve the right permissions without knowing about specific entity types. Bound in `AuthorizationServiceProvider`.

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Bus\BusMiddleware;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;

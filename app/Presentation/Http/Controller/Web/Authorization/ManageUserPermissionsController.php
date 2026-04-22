@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Authorization;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\CommandBus;
 use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
 use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Command\RevokeRoleFromUserCommand;

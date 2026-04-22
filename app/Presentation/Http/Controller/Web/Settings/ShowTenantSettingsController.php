@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Settings;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationSettingsQuery;

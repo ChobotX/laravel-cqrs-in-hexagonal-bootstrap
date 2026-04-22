@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Provider;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\EventBus;
 use App\Application\Bus\Middleware\DispatchCollectedEvents;
 use App\Application\Bus\Middleware\LogBusMessage;
 use App\Application\Bus\Middleware\ProjectAuditLog;
 use App\Application\Bus\Middleware\WrapInTransaction;
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\EventBus;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Event\EventCollector;
 use App\Domain\AuditLog\Contract\Query\GetAuditLogByTraceId\GetAuditLogByTraceIdQuery;
 use App\Domain\AuditLog\Contract\Query\ListAuditLog\ListAuditLogQuery;

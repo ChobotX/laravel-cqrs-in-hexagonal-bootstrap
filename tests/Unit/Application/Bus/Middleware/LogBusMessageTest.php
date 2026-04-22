@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Bus\Middleware\LogBusMessage;
-use App\Application\Bus\Sensitive;
+use App\Contract\Attribute\Sensitive;
 use App\Contract\Logging\Logger;
 use App\Contract\Tracing\TraceContext;
 

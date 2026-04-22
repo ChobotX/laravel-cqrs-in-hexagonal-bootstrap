@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Notification;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
 use App\Domain\Notification\Contract\Command\DeleteNotificationCommand;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Notification\DeleteNotificationRequest;

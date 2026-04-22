@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console\User;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
-use App\Application\Tenancy\TenantAwareCommand;
+use App\Contract\Attribute\TenantAwareCommand;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Command\SetPasswordCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByEmailQuery;

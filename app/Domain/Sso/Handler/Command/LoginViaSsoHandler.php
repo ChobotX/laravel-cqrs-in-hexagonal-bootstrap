@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Sso\Handler\Command;
 
-use App\Application\Bus\CommandBus;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;

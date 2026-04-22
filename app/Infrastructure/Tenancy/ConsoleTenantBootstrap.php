@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
-use App\Application\Tenancy\TenantAwareCommand;
+use App\Contract\Attribute\TenantAwareCommand;
 use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
 use Illuminate\Console\Events\CommandStarting;
 use ReflectionClass;

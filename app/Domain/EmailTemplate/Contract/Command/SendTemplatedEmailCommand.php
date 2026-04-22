@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Domain\EmailTemplate\Contract\Command;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\Sensitive;
-use App\Application\Bus\SkipTransaction;
+use App\Contract\Attribute\Sensitive;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Attribute\SkipTransaction;
 use App\Contract\Command\Command;
 
 /**

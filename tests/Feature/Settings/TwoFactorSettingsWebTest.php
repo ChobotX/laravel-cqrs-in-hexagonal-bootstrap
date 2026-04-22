@@ -48,7 +48,7 @@ it('updates two-factor tenant settings', function (): void {
 
 it('update controller aborts when tenant_id is missing from context', function (): void {
     Context::flush();
-    $mock = Mockery::mock(App\Application\Bus\CommandBus::class);
+    $mock = Mockery::mock(App\Contract\Bus\CommandBus::class);
     $controller = new UpdateTwoFactorSettingsController($mock);
     $updateTwoFactorSettingsRequest = UpdateTwoFactorSettingsRequest::create('/settings/two-factor', 'PUT', [
         'required_for_all_users' => '1',

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Tenancy\Handler\Command;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\SkipTransaction;
+use App\Contract\Attribute\SkipTransaction;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;

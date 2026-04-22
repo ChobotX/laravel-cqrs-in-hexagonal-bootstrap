@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\File;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\File\Contract\Entity\File;
 use App\Domain\File\Contract\Query\GetFileByIdQuery;
 use App\Domain\File\Contract\Query\GetFileContentQuery;

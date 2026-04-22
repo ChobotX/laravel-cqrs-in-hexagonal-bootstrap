@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;

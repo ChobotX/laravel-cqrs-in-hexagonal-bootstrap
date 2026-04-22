@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\CommandBus;
+use App\Contract\Bus\CommandBus;
 use App\Infrastructure\Eloquent\User\UserModel;
 use App\Presentation\Http\Controller\Web\Settings\ShowPasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdatePasswordRotationSettingsController;

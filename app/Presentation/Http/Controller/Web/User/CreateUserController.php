@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\User;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\CommandBus;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;

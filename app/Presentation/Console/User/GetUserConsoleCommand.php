@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console\User;
 
-use App\Application\Bus\QueryBus;
-use App\Application\Tenancy\TenantAwareCommand;
+use App\Contract\Attribute\TenantAwareCommand;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Presentation\Console\Trait\StrictArguments;

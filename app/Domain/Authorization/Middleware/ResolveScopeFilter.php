@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\Authorization\Middleware;
 
 use App\Application\Authorization\AccessContext;
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\ShareableScopeQuery;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Bus\BusMiddleware;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Enum\Action;

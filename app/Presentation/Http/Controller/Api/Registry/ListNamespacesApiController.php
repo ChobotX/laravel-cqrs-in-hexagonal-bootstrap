@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Api\Registry;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Registry\Contract\Query\ListDefinitionNamespacesQuery;
 use Illuminate\Http\JsonResponse;
 

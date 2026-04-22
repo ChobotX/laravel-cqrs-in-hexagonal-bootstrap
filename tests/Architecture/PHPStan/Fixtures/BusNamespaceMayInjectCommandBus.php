@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bus\PhpStanFixtures;
 
-use App\Application\Bus\CommandBus;
+use App\Contract\Bus\CommandBus;
 
 final class BusNamespaceMayInjectCommandBus
 {

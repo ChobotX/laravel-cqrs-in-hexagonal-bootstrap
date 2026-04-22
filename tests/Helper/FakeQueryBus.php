@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Query\Query;
 use Closure;
 use RuntimeException;

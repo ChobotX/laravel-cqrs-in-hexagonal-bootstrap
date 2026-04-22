@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Dashboard;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Query\CountRolesQuery;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Team\Contract\Query\CountTeamsQuery;

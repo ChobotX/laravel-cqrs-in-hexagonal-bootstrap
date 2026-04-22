@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\Sensitive;
+use App\Contract\Attribute\Sensitive;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Logging\Logger;
@@ -384,7 +384,7 @@ it('logs error and re-throws when handler fails during execution', function (): 
 
     $logger = createJobLoggerSpy();
 
-    $failingHandler = new #[App\Application\Event\RetryPolicy(tries: 1, backoff: [], timeout: 10)] class implements DomainEventHandler
+    $failingHandler = new #[App\Contract\Attribute\RetryPolicy(tries: 1, backoff: [], timeout: 10)] class implements DomainEventHandler
     {
         public function handle(DomainEvent $domainEvent): void
         {

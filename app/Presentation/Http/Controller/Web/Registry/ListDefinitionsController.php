@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Registry;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
 use App\Application\Pagination\PaginatedResult;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Registry\Contract\Entity\Definition;
 use App\Domain\Registry\Contract\Query\ListDefinitionsQuery;
 use App\Presentation\Http\Request\Web\PaginationRequest;

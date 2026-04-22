@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Settings;
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('settings.tenant.read')]

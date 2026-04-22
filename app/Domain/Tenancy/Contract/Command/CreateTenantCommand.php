@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Tenancy\Contract\Command;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\SkipTransaction;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Attribute\SkipTransaction;
 use App\Contract\Command\Command;
 
 /**

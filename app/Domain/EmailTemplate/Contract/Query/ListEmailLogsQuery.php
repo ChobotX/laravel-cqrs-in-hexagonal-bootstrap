@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\EmailTemplate\Contract\Query;
 
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Pagination\PaginableQuery;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\EmailTemplate\Contract\Entity\EmailLog;
 

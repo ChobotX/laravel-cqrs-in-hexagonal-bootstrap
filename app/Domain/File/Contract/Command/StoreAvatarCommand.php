@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\File\Contract\Command;
 
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Command\Command;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\Sensitive;
+use App\Contract\Attribute\Sensitive;
 
 it('can be instantiated', function (): void {
     $attribute = new Sensitive;

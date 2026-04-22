@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\User;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Query\SearchUsersQuery;
 use App\Presentation\Http\Request\Web\User\SearchUsersRequest;
 use App\Presentation\Http\Resource\UserResource;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Application\Bus\CommandBus;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 
 final class FakeCommandBus implements CommandBus

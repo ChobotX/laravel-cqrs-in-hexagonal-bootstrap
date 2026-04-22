@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console\Tenancy;
 
-use App\Application\Tenancy\TenantAgnosticCommand;
+use App\Contract\Attribute\TenantAgnosticCommand;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as Artisan;

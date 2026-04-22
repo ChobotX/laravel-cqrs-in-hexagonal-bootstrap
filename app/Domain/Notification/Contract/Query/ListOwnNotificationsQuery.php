@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\Notification\Contract\Query;
 
-use App\Application\Authorization\SkipPermissionCheck;
 use App\Application\Pagination\PaginableQuery;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
+use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Query\Query;
 use App\Domain\Notification\Contract\Entity\Notification;
 

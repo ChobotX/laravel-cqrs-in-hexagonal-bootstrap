@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\EmailTemplate\Service;
 
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\QueryBus;
 use App\Contract\IdGenerator;
 use App\Contract\Tracing\TraceContext;
 use App\Domain\EmailTemplate\Constant\EmailTemplateTypes;

@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Query\GetTotpSetupQuery;
 use App\Domain\User\Contract\ValueObject\TotpSetup;
 use App\Domain\User\Contract\ValueObject\TwoFactorUiStatus;

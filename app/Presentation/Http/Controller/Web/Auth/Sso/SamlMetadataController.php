@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Auth\Sso;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Sso\Contract\Entity\SsoConfiguration;
 use App\Domain\Sso\Contract\Enum\ProviderType;

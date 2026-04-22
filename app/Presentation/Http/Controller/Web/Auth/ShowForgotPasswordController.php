@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Auth;
 
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 use Illuminate\View\View;
 
 #[SkipPermissionCheck('Guest forgot password page')]

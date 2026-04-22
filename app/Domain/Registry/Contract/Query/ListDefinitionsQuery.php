@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\Registry\Contract\Query;
 
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Pagination\PaginatedResult;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Registry\Contract\Entity\Definition;
 

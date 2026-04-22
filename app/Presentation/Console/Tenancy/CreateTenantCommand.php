@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console\Tenancy;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Tenancy\TenantAgnosticCommand;
+use App\Contract\Attribute\TenantAgnosticCommand;
+use App\Contract\Bus\CommandBus;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand as CreateTenant;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bus;
 
-use App\Application\Bus\QueryBus;
 use App\Contract\Bus\BusMiddleware;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use Closure;

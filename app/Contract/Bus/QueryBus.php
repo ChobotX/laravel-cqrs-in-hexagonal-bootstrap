@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Bus;
+namespace App\Contract\Bus;
 
 use App\Contract\Query\Query;
 

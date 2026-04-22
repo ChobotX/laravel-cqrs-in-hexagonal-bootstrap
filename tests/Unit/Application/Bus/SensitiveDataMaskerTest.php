@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\Sensitive;
 use App\Application\Bus\SensitiveDataMasker;
+use App\Contract\Attribute\Sensitive;
 
 enum TestBackedEnum: string
 {

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Contract\Command;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\Sensitive;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Attribute\Sensitive;
 use App\Contract\Command\Command;
 
 /**

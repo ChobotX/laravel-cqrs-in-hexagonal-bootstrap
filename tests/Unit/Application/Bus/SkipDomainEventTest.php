@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\SkipDomainEvent;
+use App\Contract\Attribute\SkipDomainEvent;
 
 it('stores reason', function (): void {
     $attribute = new SkipDomainEvent('Infrastructure provisioning — no domain state change');

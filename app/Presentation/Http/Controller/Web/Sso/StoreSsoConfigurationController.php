@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Sso;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\CommandBus;
 use App\Contract\IdGenerator;
 use App\Domain\Sso\Contract\Command\ConfigureSsoConfigurationCommand;
 use App\Presentation\Http\Request\Sso\StoreSsoConfigurationRequest;

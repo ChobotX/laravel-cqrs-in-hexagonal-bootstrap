@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Middleware;
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use App\Domain\Authorization\Contract\Exception\PermissionDeniedException;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\User\Contract\Service\AuthenticatedUser;

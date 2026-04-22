@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Auth;
 
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 use App\Presentation\Http\Request\Auth\LogoutRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Application\Bus\SkipDomainEvent;
+use App\Contract\Attribute\SkipDomainEvent;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
 use PhpParser\Node;

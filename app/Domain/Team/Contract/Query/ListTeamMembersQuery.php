@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Team\Contract\Query;
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Team\Contract\ValueObject\TeamMember;
 

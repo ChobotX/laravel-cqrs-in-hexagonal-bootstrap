@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\AuditLog\Contract\Query\GetAuditLogByTraceId;
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\AuditLog\Contract\ValueObject\AuditLogEntry;
 

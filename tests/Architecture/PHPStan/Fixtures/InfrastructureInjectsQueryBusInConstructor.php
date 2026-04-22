@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\PhpStanFixtures;
 
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\QueryBus;
 
 final class InfrastructureInjectsQueryBusInConstructor
 {

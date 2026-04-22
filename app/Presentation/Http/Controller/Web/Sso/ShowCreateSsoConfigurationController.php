@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Sso;
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use App\Domain\Sso\Contract\Enum\JitMode;
 use App\Domain\Sso\Contract\Enum\ProviderType;
 use Illuminate\View\View;

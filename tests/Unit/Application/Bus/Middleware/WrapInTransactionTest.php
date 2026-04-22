@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Application\Bus\Middleware\WrapInTransaction;
-use App\Application\Bus\SkipTransaction;
+use App\Contract\Attribute\SkipTransaction;
 use App\Contract\Persistence\TransactionManager;
 
 it('wraps handler execution in a transaction and returns the result', function (): void {

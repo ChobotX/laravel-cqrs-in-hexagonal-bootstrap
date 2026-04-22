@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\CommandBus;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 use App\Domain\User\Contract\Command\SendUserInviteCommand;
 use App\Domain\User\Contract\Event\UserCreated;

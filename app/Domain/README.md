@@ -8,7 +8,7 @@ In this architecture, handlers ARE the domain-level orchestrators. The `User` ag
 
 The key invariant enforced: nothing mutates users outside the handler flow. All user operations must go through the CQRS bus pipeline.
 
-Handlers live in `App\Domain` (not `App\Application`) because in this architecture, Domain = business logic + use cases. The `Application` layer contains only bus interfaces (ports). No extra indirection layer is needed between Presentation and Domain.
+Handlers live in `App\Domain` (not `App\Application`) because in this architecture, Domain = business logic + use cases. `App\Application` holds cross-cutting primitives (shared bus middleware, pagination/sorting/filtering VOs, scope markers). Bus ports (`CommandBus`/`QueryBus`/`EventBus`) and attributes (`#[RequiresPermission]`, `#[Sensitive]`, etc.) are part of the public Contract surface under `App\Contract`. No extra indirection layer is needed between Presentation and Domain.
 
 Domain services stay narrow and reusable. They should not replace handlers as workflow coordinators; sequencing across multiple steps belongs in handlers.
 
@@ -34,7 +34,7 @@ Custom PHPStan rules in `tests/Architecture/PHPStan/`.
 - **Contract subdirectory types enforced** — `Repository/` and `Service/` must contain interfaces, `Enum/` must contain enums, `Command/`/`Query/`/`Event/`/`Exception/` must implement their respective Contract interfaces (`ContractSubdirectoryTypeEnforcementRule`)
 - **Domain subdirectory types enforced** — `Enum/` must contain enums, `Handler/Command/` must implement `CommandHandler`, `Handler/Query/` must implement `QueryHandler`, `EventHandler/` must implement `DomainEventHandler`, `Middleware/` must implement `Middleware`, `Exception/` must implement `DomainException`. `Registry/Schema/` is exempt (`DomainSubdirectoryTypeEnforcementRule`)
 - **All handlers in Domain** — `CommandHandler`, `QueryHandler`, and `DomainEventHandler` implementations must live in `App\Domain\`; if a handler needs infrastructure, use a `Contract` interface (`HandlersInDomainRule`)
-- **Every command handler must collect domain events** — `CommandHandler` implementations must inject `EventCollector` and fire at least one event. Handlers that legitimately produce no events (infrastructure provisioning, data initialization) must declare `#[SkipDomainEvent(reason: '...')]` from `App\Application\Bus\SkipDomainEvent` (`CommandHandlerMustCollectEventsRule`)
+- **Every command handler must collect domain events** — `CommandHandler` implementations must inject `EventCollector` and fire at least one event. Handlers that legitimately produce no events (infrastructure provisioning, data initialization) must declare `#[SkipDomainEvent(reason: '...')]` from `App\Contract\Attribute\SkipDomainEvent` (`CommandHandlerMustCollectEventsRule`)
 - **Infrastructure must not collect domain events** — `EventCollector::collect()` is forbidden under `App\Infrastructure\` except inside `InMemoryEventCollector` (`NoInfrastructureEventCollectorCollectRule`)
 - **Infrastructure must not inject the application buses** — `CommandBus` and `QueryBus` are forbidden on `App\Infrastructure\` classes except `App\Infrastructure\Bus\*` and `App\Infrastructure\Provider\*` (`NoApplicationBusInInfrastructureRule`)
 - **Infrastructure cross-domain imports** — For Infrastructure classes outside the excluded wiring namespaces (bus, provider, persistence, logging, and related glue), any `use` of `App\Domain\{Other}\…` must resolve under `App\Domain\{Other}\Contract\…` whenever `{Other}` is not the adapter’s inferred home module (`InfrastructureCrossDomainImportsRule`, `InfrastructureCrossDomainGroupUseImportsRule`).
@@ -89,7 +89,7 @@ Document contract types for consumers (class + property intent, no redundant tag
    {Name}Command::class => {Name}Handler::class,
    ```
 
-4. Dispatch via `App\Application\Bus\CommandBus::dispatch()`.
+4. Dispatch via `App\Contract\Bus\CommandBus::dispatch()`.
 
 ### Domain events vs direct service calls
 
@@ -97,7 +97,7 @@ Domain events are for **non-critical asynchronous side effects** (logging, cache
 
 Example: `RequestPasswordResetHandler` calls `TemplatedEmailDispatcher::dispatch()` synchronously (critical — user expects the email). The `TemplatedEmailSent` event is then collected for async logging by `LogEmailOnSent` (non-critical follow-up).
 
-All commands are automatically wrapped in a database transaction by the `WrapInTransaction` middleware. For commands that must not run in a transaction (DDL, migrations, landlord-connection writes), add `#[SkipTransaction(reason: '...')]` from `App\Application\Bus\SkipTransaction`.
+All commands are automatically wrapped in a database transaction by the `WrapInTransaction` middleware. For commands that must not run in a transaction (DDL, migrations, landlord-connection writes), add `#[SkipTransaction(reason: '...')]` from `App\Contract\Attribute\SkipTransaction`.
 
 ### Adding a query
 
@@ -131,7 +131,7 @@ All commands are automatically wrapped in a database transaction by the `WrapInT
    }
    ```
 
-3. Register in `BusServiceProvider` under `QueryBus`. Dispatch via `App\Application\Bus\QueryBus::dispatch()`.
+3. Register in `BusServiceProvider` under `QueryBus`. Dispatch via `App\Contract\Bus\QueryBus::dispatch()`.
    PHPStan infers the return type from `Query<ReturnType>` — no `assert()` or `@var` needed at call sites.
 
 ## Access Context & Scope-Aware Queries

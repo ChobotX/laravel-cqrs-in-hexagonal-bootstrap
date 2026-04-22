@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Domain\Authorization\Contract\Query;
 
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Filtering\Filter;
 use App\Application\Filtering\FilterableQuery;
 use App\Application\Pagination\PaginableQuery;
@@ -12,6 +11,7 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Pagination\Pagination;
 use App\Application\Sorting\SortableQuery;
 use App\Application\Sorting\Sorting;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\Entity\Role;
 

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Api\V1\User;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Presentation\Http\Resource\UserResource;
 

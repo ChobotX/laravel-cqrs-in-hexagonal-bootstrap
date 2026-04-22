@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\InternalApi\Registry;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
 use App\Application\Filtering\Filter;
 use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Registry\Contract\Entity\Entry;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;

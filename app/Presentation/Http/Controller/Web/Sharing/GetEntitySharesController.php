@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Sharing;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Authorization\Contract\Query\GetSharesForResourceQuery;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;

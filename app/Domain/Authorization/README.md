@@ -73,7 +73,7 @@ Just add it to the config. The permission matrix UI will pick it up automaticall
 Every `Command` and `Query` class MUST have either `#[RequiresPermission]` or `#[SkipPermissionCheck]`. This is enforced by a PHPStan rule at static analysis time.
 
 ```php
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 
 #[RequiresPermission('users.list.create')]
 final readonly class CreateUserCommand implements Command { ... }
@@ -86,7 +86,7 @@ The `AuthorizeAction` bus middleware (`App\Domain\Authorization\Middleware\Autho
 For commands/queries that intentionally skip authorization (e.g., login, public endpoints):
 
 ```php
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 
 #[SkipPermissionCheck(reason: 'Public authentication endpoint')]
 final readonly class GetUserByEmailQuery implements Query { ... }

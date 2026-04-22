@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\EventBus;
 use App\Application\Bus\Middleware\DispatchCollectedEvents;
+use App\Contract\Bus\EventBus;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EventCollector;
 

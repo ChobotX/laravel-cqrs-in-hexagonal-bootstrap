@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Bus\Job;
 
 use App\Application\Bus\SensitiveDataMasker;
-use App\Application\Event\RetryPolicy;
+use App\Contract\Attribute\RetryPolicy;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Contract\Logging\Logger;

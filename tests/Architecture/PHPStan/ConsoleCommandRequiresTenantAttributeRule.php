@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Application\Tenancy\TenantAgnosticCommand;
-use App\Application\Tenancy\TenantAwareCommand;
+use App\Contract\Attribute\TenantAgnosticCommand;
+use App\Contract\Attribute\TenantAwareCommand;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Bus\Middleware;
 
-use App\Application\Bus\SkipTransaction;
+use App\Contract\Attribute\SkipTransaction;
 use App\Contract\Bus\BusMiddleware;
 use App\Contract\Persistence\TransactionManager;
 use Closure;

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Authorization;
+namespace App\Contract\Attribute;
 
 use Attribute;
 
 #[Attribute(Attribute::TARGET_CLASS)]
-final readonly class RequiresPermission
+final readonly class SkipDomainEvent
 {
     public function __construct(
-        public string $permission,
+        public string $reason,
     ) {}
 }

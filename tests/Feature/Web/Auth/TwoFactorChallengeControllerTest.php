@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\ValueObject\TwoFactorUiStatus;
 use App\Infrastructure\Eloquent\User\UserModel;
 use App\Presentation\Http\Controller\Web\Auth\IssueTwoFactorEmailCodeController;

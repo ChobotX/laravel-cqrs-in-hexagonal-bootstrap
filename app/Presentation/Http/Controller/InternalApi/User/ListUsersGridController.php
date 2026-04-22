@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\InternalApi\User;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
 use App\Application\Filtering\Filter;
 use App\Application\Filtering\FilterOperator;
 use App\Application\Pagination\PaginatedResult;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetRolesForUsersQuery;
 use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;

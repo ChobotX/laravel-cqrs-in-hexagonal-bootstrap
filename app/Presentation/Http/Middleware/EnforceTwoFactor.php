@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Middleware;
 
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;
 use Closure;
 use Illuminate\Http\Request;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User\EventHandler;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Event\RetryPolicy;
+use App\Contract\Attribute\RetryPolicy;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\User\Contract\Command\SendUserInviteCommand;

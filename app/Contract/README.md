@@ -1,12 +1,13 @@
 # Contract Layer
 
-Pure interfaces only. No classes, no traits, no abstract classes.
+Interfaces, enums, and PHP attributes only — no classes with behavior, no traits, no abstract classes.
 
-The Contract layer defines the boundaries of the hexagonal architecture. Every other layer may depend on Contract, but Contract must not depend on any `App\*` namespace.
+The Contract layer defines the boundaries of the hexagonal architecture. Every other layer may depend on Contract, but Contract must not depend on any `App\*` namespace. Enforced by `ArchitectureTest::testContractHasNoAppDependencies`.
 
 ## Contents
 
-- `Bus/` — `Middleware` interface for bus middleware pipeline (`@template TResult` for type-safe return propagation through the pipeline)
+- `Attribute/` — cross-cutting PHP attributes: `RequiresPermission`, `SkipPermissionCheck`, `Sensitive`, `SkipTransaction`, `SkipDomainEvent`, `RetryPolicy`, `TenantAwareCommand`, `TenantAgnosticCommand`
+- `Bus/` — bus ports (`CommandBus`, `QueryBus`, `EventBus`) and `BusMiddleware` interface (`@template TResult` for type-safe return propagation through the pipeline)
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces (structured “updated” payloads use `App\Application\Event\EntityUpdated` in domain modules — see [Domain README](../Domain/README.md))
 - `Exception/` — `DomainException` interface (requires `userMessage(Translator): string` and `statusCode(): int`)

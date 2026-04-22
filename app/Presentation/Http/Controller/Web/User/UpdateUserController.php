@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\User;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;

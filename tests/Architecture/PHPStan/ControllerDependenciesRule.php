@@ -28,8 +28,8 @@ use function str_contains;
 final class ControllerDependenciesRule implements Rule
 {
     private const array ALLOWED_TYPES = [
-        \App\Application\Bus\CommandBus::class,
-        \App\Application\Bus\QueryBus::class,
+        \App\Contract\Bus\CommandBus::class,
+        \App\Contract\Bus\QueryBus::class,
         \App\Domain\User\Contract\Service\AuthenticatedUser::class,
         \App\Domain\Authorization\Contract\Service\AuthorizationChecker::class,
         \App\Domain\Sso\Contract\Service\SsoLoginSession::class,

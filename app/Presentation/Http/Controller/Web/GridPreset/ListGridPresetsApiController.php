@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\GridPreset;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Domain\GridPreset\Contract\Entity\GridPreset;
 use App\Domain\GridPreset\Contract\Query\ListGridPresetsQuery;
 use App\Domain\User\Contract\Service\AuthenticatedUser;

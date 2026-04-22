@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Command\Command;
 use App\Domain\Authorization\Contract\Exception\PermissionDeniedException;
 use App\Domain\Authorization\Contract\Service\AccessDecision;

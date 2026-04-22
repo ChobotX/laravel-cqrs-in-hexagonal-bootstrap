@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Notification;
 
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 use Illuminate\View\View;
 
 #[SkipPermissionCheck(reason: 'Notifications page is accessible to all authenticated users')]

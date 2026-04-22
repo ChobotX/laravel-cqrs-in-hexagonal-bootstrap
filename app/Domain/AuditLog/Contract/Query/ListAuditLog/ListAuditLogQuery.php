@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\AuditLog\Contract\Query\ListAuditLog;
 
-use App\Application\Authorization\RequiresPermission;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\AuditLog\Contract\ValueObject\AuditLogEntry;
 use DateTimeImmutable;

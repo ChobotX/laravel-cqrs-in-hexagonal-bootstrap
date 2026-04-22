@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\CommandBus;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Command\Command;
 use App\Contract\IdGenerator;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;

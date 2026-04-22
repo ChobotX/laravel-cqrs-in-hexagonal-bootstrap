@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Auth\Sso;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Contract\IdGenerator;
 use App\Domain\Sso\Contract\Service\SsoLoginSession;
 use App\Presentation\Http\Request\Sso\SsoCallbackRequest;

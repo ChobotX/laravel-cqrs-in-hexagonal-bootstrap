@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Settings;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\User\Contract\Command\ConfirmTotpSetupCommand;
 use App\Domain\User\Contract\Command\DisableEmailTwoFactorCommand;
 use App\Domain\User\Contract\Command\DisableTotpTwoFactorCommand;

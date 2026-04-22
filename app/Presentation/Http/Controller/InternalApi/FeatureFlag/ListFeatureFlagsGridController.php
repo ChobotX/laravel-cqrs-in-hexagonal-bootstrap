@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\InternalApi\FeatureFlag;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
 use App\Application\Sorting\SortDirection;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\FeatureFlag\Contract\Enum\FlagType;
 use App\Domain\FeatureFlag\Contract\Query\ListFeatureFlagsQuery;

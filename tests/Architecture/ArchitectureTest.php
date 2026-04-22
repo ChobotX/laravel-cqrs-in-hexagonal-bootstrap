@@ -21,14 +21,13 @@ final class ArchitectureTest
             ->excluding(
                 Selector::inNamespace('App\Domain'),
                 Selector::inNamespace('App\Contract'),
-                // Application-layer attributes and interfaces used by Domain commands/queries
+                // Application-layer VOs and markers still used by Domain commands/queries/handlers
                 Selector::inNamespace('App\Application\Authorization'),
                 Selector::inNamespace('App\Application\Filtering'),
                 Selector::inNamespace('App\Application\Pagination'),
                 Selector::inNamespace('App\Application\Sorting'),
                 Selector::inNamespace('App\Application\Bus'),
                 Selector::inNamespace('App\Application\Event'),
-                Selector::inNamespace('App\Application\Tenancy'),
             );
     }
 
@@ -142,6 +141,8 @@ final class ArchitectureTest
             ->classes(Selector::inNamespace('App\Contract'))
             ->excluding(
                 Selector::isEnum(),
+                // PHP attribute classes are metadata descriptors, not behavior.
+                Selector::inNamespace('App\Contract\Attribute'),
             )
             ->shouldBeInterface();
     }

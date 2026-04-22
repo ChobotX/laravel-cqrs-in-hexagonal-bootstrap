@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Application\Bus;
 
+use App\Contract\Attribute\Sensitive;
 use BackedEnum;
 use ReflectionClass;
 use ReflectionProperty;

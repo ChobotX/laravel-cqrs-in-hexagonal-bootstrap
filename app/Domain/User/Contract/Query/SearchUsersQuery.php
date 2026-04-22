@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Domain\User\Contract\Query;
 
 use App\Application\Authorization\AccessContext;
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
+use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Query\Query;
 use App\Domain\User\Contract\Entity\User;
 

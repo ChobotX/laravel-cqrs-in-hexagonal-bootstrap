@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\SkipTransaction;
+use App\Contract\Attribute\SkipTransaction;
 
 it('stores reason', function (): void {
     $attribute = new SkipTransaction('Writes to landlord connection');

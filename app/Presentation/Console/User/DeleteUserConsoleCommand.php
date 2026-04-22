@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Console\User;
 
-use App\Application\Bus\CommandBus;
-use App\Application\Tenancy\TenantAwareCommand;
+use App\Contract\Attribute\TenantAwareCommand;
+use App\Contract\Bus\CommandBus;
 use App\Domain\User\Contract\Command\DeleteUserCommand;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Presentation\Console\Trait\StrictArguments;

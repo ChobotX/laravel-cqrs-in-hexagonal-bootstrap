@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Settings;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\User\Contract\Command\UpdateTwoFactorSettingsCommand;
 use App\Presentation\Http\Request\Web\Settings\UpdateTwoFactorSettingsRequest;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Bus;
 
-use App\Application\Bus\EventBus;
+use App\Contract\Bus\EventBus;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
 use App\Domain\Tenancy\Contract\Service\TenantContext;

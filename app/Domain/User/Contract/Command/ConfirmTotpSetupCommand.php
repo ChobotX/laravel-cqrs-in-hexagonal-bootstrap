@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Contract\Command;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\Sensitive;
+use App\Contract\Attribute\Sensitive;
+use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Command\Command;
 
 #[SkipPermissionCheck(reason: 'Users can manage own two-factor setup')]

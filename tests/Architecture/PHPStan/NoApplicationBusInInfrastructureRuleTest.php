@@ -17,7 +17,7 @@ final class NoApplicationBusInInfrastructureRuleTest extends AbstractPHPStanRule
     {
         $this->analyse([__DIR__.'/Fixtures/InfrastructureInjectsQueryBusInConstructor.php'], [
             [
-                'Infrastructure class App\Infrastructure\PhpStanFixtures\InfrastructureInjectsQueryBusInConstructor must not depend on App\Application\Bus\QueryBus (constructor parameter $queryBus). Use Domain handlers/services and repository ports instead.',
+                'Infrastructure class App\Infrastructure\PhpStanFixtures\InfrastructureInjectsQueryBusInConstructor must not depend on App\Contract\Bus\QueryBus (constructor parameter $queryBus). Use Domain handlers/services and repository ports instead.',
                 9,
             ],
         ]);
@@ -40,7 +40,7 @@ final class NoApplicationBusInInfrastructureRuleTest extends AbstractPHPStanRule
     {
         $this->analyse([__DIR__.'/Fixtures/InfrastructureMethodParameterQueryBus.php'], [
             [
-                'Infrastructure class App\Infrastructure\SimulatorTenant\InfrastructureMethodParameterQueryBus must not depend on App\Application\Bus\QueryBus (method handle() parameter $queryBus). Use Domain handlers/services and repository ports instead.',
+                'Infrastructure class App\Infrastructure\SimulatorTenant\InfrastructureMethodParameterQueryBus must not depend on App\Contract\Bus\QueryBus (method handle() parameter $queryBus). Use Domain handlers/services and repository ports instead.',
                 9,
             ],
         ]);

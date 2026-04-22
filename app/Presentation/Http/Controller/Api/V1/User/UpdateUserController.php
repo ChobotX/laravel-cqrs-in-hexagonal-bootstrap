@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Api\V1\User;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
 use App\Contract\Http\HttpStatus;
 use App\Presentation\Http\Request\User\UpdateUserRequest;
 use Illuminate\Http\Response;

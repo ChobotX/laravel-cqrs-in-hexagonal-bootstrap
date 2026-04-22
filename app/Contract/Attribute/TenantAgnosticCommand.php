@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Tenancy;
+namespace App\Contract\Attribute;
 
 use Attribute;
 

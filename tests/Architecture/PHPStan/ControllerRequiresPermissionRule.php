@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Architecture\PHPStan;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Attribute\SkipPermissionCheck;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;

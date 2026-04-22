@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Application\Bus\CommandBus;
-use App\Application\Bus\QueryBus;
+use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Tenancy\Contract\ValueObject\TenantSettings;
 use App\Domain\User\Contract\ValueObject\PasswordRotationSettings;
 use App\Infrastructure\Eloquent\Tenancy\TenantPreferenceModel;

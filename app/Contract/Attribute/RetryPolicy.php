@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Event;
+namespace App\Contract\Attribute;
 
 use Attribute;
 

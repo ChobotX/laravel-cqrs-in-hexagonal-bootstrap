@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\SkipPermissionCheck;
 
 it('stores reason', function (): void {
     $attribute = new SkipPermissionCheck('System bootstrap');

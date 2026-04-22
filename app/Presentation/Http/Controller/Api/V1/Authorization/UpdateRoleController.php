@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
 use App\Presentation\Http\Request\Authorization\UpdateRoleRequest;
 use Illuminate\Http\JsonResponse;
 

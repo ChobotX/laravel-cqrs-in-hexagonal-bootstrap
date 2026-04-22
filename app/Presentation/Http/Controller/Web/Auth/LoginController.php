@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Auth;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Sso\Contract\Query\IsSsoEnforcedQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationStatusQuery;
 use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;

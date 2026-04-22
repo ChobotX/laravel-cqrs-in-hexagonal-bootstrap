@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
 use App\Domain\Authorization\Contract\Command\StopImpersonationCommand;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\JsonResponse;

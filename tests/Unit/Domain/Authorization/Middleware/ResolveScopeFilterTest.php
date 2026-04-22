@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 use App\Application\Authorization\AccessContext;
-use App\Application\Authorization\RequiresPermission;
 use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\ShareableScopeQuery;
-use App\Application\Authorization\SkipPermissionCheck;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Service\AccessDecision;

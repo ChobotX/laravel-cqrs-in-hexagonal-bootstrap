@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Team;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
 use App\Domain\Team\Contract\Query\ListTeamMembersQuery;
 use Illuminate\View\View;

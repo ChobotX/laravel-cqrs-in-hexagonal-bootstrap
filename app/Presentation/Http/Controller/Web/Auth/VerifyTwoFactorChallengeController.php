@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Auth;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\CommandBus;
 use App\Domain\User\Contract\Command\VerifyTwoFactorChallengeCommand;
 use App\Presentation\Http\Request\Web\Auth\VerifyTwoFactorChallengeRequest;
 use Illuminate\Http\RedirectResponse;

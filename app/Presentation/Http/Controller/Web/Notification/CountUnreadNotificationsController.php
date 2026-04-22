@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Notification;
 
-use App\Application\Authorization\SkipPermissionCheck;
-use App\Application\Bus\QueryBus;
+use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Bus\QueryBus;
 use App\Domain\Notification\Contract\Query\CountUnreadNotificationsQuery;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\Http\JsonResponse;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controller\Web\Team;
 
-use App\Application\Authorization\RequiresPermission;
-use App\Application\Bus\CommandBus;
+use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Bus\CommandBus;
 use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Team\UpdateTeamRequest;
