@@ -104,12 +104,12 @@ final readonly class CachedAuthorizationChecker implements AuthorizationChecker
 
     private function authVersion(string $userId): int
     {
-        /** @var int $version */
+        /** @var int|string $version */
         $version = $this->cacheRepository->get(
             sprintf('%s:auth:version:%s', $this->tenantPrefix(), $userId),
             0,
         );
 
-        return $version;
+        return (int) $version;
     }
 }
