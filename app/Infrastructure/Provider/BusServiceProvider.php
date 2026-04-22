@@ -20,6 +20,7 @@ use App\Domain\AuditLog\Handler\Query\ListAuditLogHandler;
 use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
 use App\Domain\Authorization\Contract\Command\CreateRoleCommand;
 use App\Domain\Authorization\Contract\Command\DeleteRoleCommand;
+use App\Domain\Authorization\Contract\Command\ManageUserPermissionsCommand;
 use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
 use App\Domain\Authorization\Contract\Command\RevokeRecordShareCommand;
 use App\Domain\Authorization\Contract\Command\RevokeRoleFromUserCommand;
@@ -65,6 +66,7 @@ use App\Domain\Authorization\EventHandler\RefreshAuthorizationOnRoleUpdated;
 use App\Domain\Authorization\Handler\Command\AssignRoleToUserHandler;
 use App\Domain\Authorization\Handler\Command\CreateRoleHandler;
 use App\Domain\Authorization\Handler\Command\DeleteRoleHandler;
+use App\Domain\Authorization\Handler\Command\ManageUserPermissionsHandler;
 use App\Domain\Authorization\Handler\Command\RemovePermissionOverrideHandler;
 use App\Domain\Authorization\Handler\Command\RevokeRecordShareHandler;
 use App\Domain\Authorization\Handler\Command\RevokeRoleFromUserHandler;
@@ -489,6 +491,7 @@ final class BusServiceProvider extends ServiceProvider
                 UpdateRoleCommand::class => UpdateRoleHandler::class,
                 DeleteRoleCommand::class => DeleteRoleHandler::class,
                 AssignRoleToUserCommand::class => AssignRoleToUserHandler::class,
+                ManageUserPermissionsCommand::class => ManageUserPermissionsHandler::class,
                 RevokeRoleFromUserCommand::class => RevokeRoleFromUserHandler::class,
                 SyncUserRolesCommand::class => SyncUserRolesHandler::class,
                 SetPermissionOverrideCommand::class => SetPermissionOverrideHandler::class,

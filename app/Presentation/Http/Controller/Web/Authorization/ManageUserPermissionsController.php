@@ -6,12 +6,8 @@ namespace App\Presentation\Http\Controller\Web\Authorization;
 
 use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Bus\CommandBus;
-use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
-use App\Domain\Authorization\Contract\Command\RemovePermissionOverrideCommand;
-use App\Domain\Authorization\Contract\Command\RevokeRoleFromUserCommand;
-use App\Domain\Authorization\Contract\Command\SetPermissionOverrideCommand;
+use App\Domain\Authorization\Contract\Command\ManageUserPermissionsCommand;
 use App\Presentation\Http\Request\Web\Authorization\ManageUserPermissionsRequest;
-use App\Presentation\Http\Request\Web\Authorization\UserPermissionAction;
 use Illuminate\Http\RedirectResponse;
 
 #[RequiresPermission('users.roles.update')]
@@ -23,35 +19,19 @@ final readonly class ManageUserPermissionsController
 
     public function __invoke(ManageUserPermissionsRequest $manageUserPermissionsRequest, string $userId): RedirectResponse
     {
-        if ($manageUserPermissionsRequest->action() === UserPermissionAction::AssignRole) {
-            $this->commandBus->dispatch(new AssignRoleToUserCommand(
-                userId: $userId,
-                roleId: $manageUserPermissionsRequest->string('role_id')->toString(),
-            ));
-        }
+        $roleId = $manageUserPermissionsRequest->string('role_id')->toString();
+        $permission = $manageUserPermissionsRequest->string('permission')->toString();
+        $overrideType = $manageUserPermissionsRequest->string('type')->toString();
+        $overrideScope = $manageUserPermissionsRequest->string('scope')->toString();
 
-        if ($manageUserPermissionsRequest->action() === UserPermissionAction::RevokeRole) {
-            $this->commandBus->dispatch(new RevokeRoleFromUserCommand(
-                userId: $userId,
-                roleId: $manageUserPermissionsRequest->string('role_id')->toString(),
-            ));
-        }
-
-        if ($manageUserPermissionsRequest->action() === UserPermissionAction::RemoveOverride) {
-            $this->commandBus->dispatch(new RemovePermissionOverrideCommand(
-                userId: $userId,
-                permission: $manageUserPermissionsRequest->string('permission')->toString(),
-            ));
-        }
-
-        if ($manageUserPermissionsRequest->action() === UserPermissionAction::SetOverride) {
-            $this->commandBus->dispatch(new SetPermissionOverrideCommand(
-                userId: $userId,
-                permission: $manageUserPermissionsRequest->string('permission')->toString(),
-                type: $manageUserPermissionsRequest->string('type')->toString(),
-                scope: $manageUserPermissionsRequest->string('scope')->toString(),
-            ));
-        }
+        $this->commandBus->dispatch(new ManageUserPermissionsCommand(
+            userId: $userId,
+            action: $manageUserPermissionsRequest->action(),
+            roleId: $roleId !== '' ? $roleId : null,
+            permission: $permission !== '' ? $permission : null,
+            overrideType: $overrideType !== '' ? $overrideType : null,
+            overrideScope: $overrideScope !== '' ? $overrideScope : null,
+        ));
 
         return redirect()->back()->with('success', __('messages.permissions.updated'));
     }

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Domain\Authorization\Contract\Enum\UserPermissionAction;
 use App\Infrastructure\Eloquent\Authorization\RoleModel;
 use App\Infrastructure\Eloquent\Authorization\RolePermissionModel;
 use App\Infrastructure\Eloquent\User\UserModel;
-use App\Presentation\Http\Request\Web\Authorization\UserPermissionAction;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 

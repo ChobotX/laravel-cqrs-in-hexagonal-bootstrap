@@ -2,8 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Presentation\Http\Request\Web\Authorization;
+namespace App\Domain\Authorization\Contract\Enum;
 
+/**
+ * Discriminator for {@see \App\Domain\Authorization\Contract\Command\ManageUserPermissionsCommand}.
+ */
 enum UserPermissionAction: string
 {
     case AssignRole = 'assign_role';

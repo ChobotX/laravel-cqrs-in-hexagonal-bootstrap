@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Request\Web\Authorization;
 
+use App\Domain\Authorization\Contract\Enum\UserPermissionAction;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
