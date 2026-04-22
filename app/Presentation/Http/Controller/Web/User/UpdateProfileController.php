@@ -10,6 +10,7 @@ use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
 use App\Contract\IdGenerator;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
+use App\Domain\File\Contract\Constant\AvatarNamespace;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;
@@ -25,8 +26,6 @@ use Illuminate\Http\UploadedFile;
 #[SkipPermissionCheck(reason: 'Profile update is available to all authenticated users')]
 final readonly class UpdateProfileController
 {
-    private const string AVATAR_NAMESPACE = 'user-avatars';
-
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
@@ -67,7 +66,7 @@ final readonly class UpdateProfileController
 
             $this->commandBus->dispatch(new StoreAvatarCommand(
                 id: $fileId,
-                namespace: self::AVATAR_NAMESPACE,
+                namespace: AvatarNamespace::VALUE,
                 uploadedBy: $userId,
                 upload: new FileUpload(
                     originalName: new FileName($file->getClientOriginalName()),

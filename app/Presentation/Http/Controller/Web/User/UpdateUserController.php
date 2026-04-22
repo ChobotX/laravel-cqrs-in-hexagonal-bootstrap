@@ -11,6 +11,7 @@ use App\Contract\Bus\QueryBus;
 use App\Contract\IdGenerator;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
+use App\Domain\File\Contract\Constant\AvatarNamespace;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;
@@ -25,8 +26,6 @@ use Illuminate\Http\UploadedFile;
 #[RequiresPermission('users.list.update')]
 final readonly class UpdateUserController
 {
-    private const string AVATAR_NAMESPACE = 'user-avatars';
-
     public function __construct(
         private CommandBus $commandBus,
         private QueryBus $queryBus,
@@ -79,7 +78,7 @@ final readonly class UpdateUserController
 
             $this->commandBus->dispatch(new StoreAvatarCommand(
                 id: $fileId,
-                namespace: self::AVATAR_NAMESPACE,
+                namespace: AvatarNamespace::VALUE,
                 uploadedBy: $this->authenticatedUser->id() ?? '',
                 upload: new FileUpload(
                     originalName: new FileName($file->getClientOriginalName()),

@@ -9,6 +9,7 @@ use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\IdGenerator;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
+use App\Domain\File\Contract\Constant\AvatarNamespace;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;
@@ -19,8 +20,6 @@ use Illuminate\Http\UploadedFile;
 #[RequiresPermission('users.list.create')]
 final readonly class CreateUserController
 {
-    private const string AVATAR_NAMESPACE = 'user-avatars';
-
     public function __construct(
         private CommandBus $commandBus,
         private AuthenticatedUser $authenticatedUser,
@@ -50,7 +49,7 @@ final readonly class CreateUserController
 
         $this->commandBus->dispatch(new StoreAvatarCommand(
             id: $fileId,
-            namespace: self::AVATAR_NAMESPACE,
+            namespace: AvatarNamespace::VALUE,
             uploadedBy: $this->authenticatedUser->id() ?? '',
             upload: new FileUpload(
                 originalName: new FileName($file->getClientOriginalName()),
