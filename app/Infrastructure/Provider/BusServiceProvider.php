@@ -273,6 +273,7 @@ use App\Domain\Sso\Handler\Query\TestSsoConfigurationHandler;
 use App\Domain\Team\Contract\Command\AddTeamMemberCommand;
 use App\Domain\Team\Contract\Command\CreateTeamCommand;
 use App\Domain\Team\Contract\Command\DeleteTeamCommand;
+use App\Domain\Team\Contract\Command\ManageTeamMembershipCommand;
 use App\Domain\Team\Contract\Command\RemoveTeamMemberCommand;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\Team\Contract\Command\UpdateTeamCommand;
@@ -288,6 +289,7 @@ use App\Domain\Team\Contract\Query\SearchTeamsQuery;
 use App\Domain\Team\Handler\Command\AddTeamMemberHandler;
 use App\Domain\Team\Handler\Command\CreateTeamHandler;
 use App\Domain\Team\Handler\Command\DeleteTeamHandler;
+use App\Domain\Team\Handler\Command\ManageTeamMembershipHandler;
 use App\Domain\Team\Handler\Command\RemoveTeamMemberHandler;
 use App\Domain\Team\Handler\Command\SyncUserTeamsHandler;
 use App\Domain\Team\Handler\Command\UpdateTeamHandler;
@@ -500,6 +502,7 @@ final class BusServiceProvider extends ServiceProvider
                 UpdateTeamCommand::class => UpdateTeamHandler::class,
                 DeleteTeamCommand::class => DeleteTeamHandler::class,
                 AddTeamMemberCommand::class => AddTeamMemberHandler::class,
+                ManageTeamMembershipCommand::class => ManageTeamMembershipHandler::class,
                 RemoveTeamMemberCommand::class => RemoveTeamMemberHandler::class,
                 SyncUserTeamsCommand::class => SyncUserTeamsHandler::class,
                 CreateLabelCommand::class => CreateLabelHandler::class,
