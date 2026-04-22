@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Domain\User\Handler\Command;
 
 use App\Application\Event\PropertyChangeBuilder;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\File\Contract\ValueObject\FileId;
 use App\Domain\User\Constant\UserFields;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;

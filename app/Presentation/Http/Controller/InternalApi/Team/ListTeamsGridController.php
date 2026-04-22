@@ -10,13 +10,13 @@ use App\Application\Pagination\PaginatedResult;
 use App\Application\Sorting\SortDirection;
 use App\Application\Sorting\Sorting;
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\GetLabelsForEntitiesQuery;
 use App\Domain\Team\Contract\Entity\Team;
 use App\Domain\Team\Contract\Query\ListTeamsQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\PaginationRequest;
 use Illuminate\Http\JsonResponse;
 

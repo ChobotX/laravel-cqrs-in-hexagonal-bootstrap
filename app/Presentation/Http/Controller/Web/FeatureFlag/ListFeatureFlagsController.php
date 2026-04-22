@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\FeatureFlag;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\FeatureFlag\Contract\Query\ListFeatureFlagsQuery;
 use App\Domain\FeatureFlag\Contract\ValueObject\ResolvedFlag;
 use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[RequiresPermission('feature_flags.management.read')]

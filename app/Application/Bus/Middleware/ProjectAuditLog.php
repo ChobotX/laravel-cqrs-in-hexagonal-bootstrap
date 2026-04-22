@@ -7,6 +7,7 @@ namespace App\Application\Bus\Middleware;
 use App\Application\Bus\SensitiveDataMasker;
 use App\Application\Event\EntityUpdated;
 use App\Application\Event\PropertyChange;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\BusMiddleware;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\EventCollector;
@@ -16,7 +17,6 @@ use App\Domain\AuditLog\Contract\Enum\AuditLogStatus;
 use App\Domain\AuditLog\Contract\Repository\AuditLogWriter;
 use App\Domain\AuditLog\Contract\ValueObject\AuditLogEntry;
 use App\Domain\AuditLog\ValueObject\AuditLogId;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use Illuminate\Http\Request;
 

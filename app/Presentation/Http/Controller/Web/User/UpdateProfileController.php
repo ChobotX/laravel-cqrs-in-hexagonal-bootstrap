@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
@@ -16,7 +17,6 @@ use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\User\UpdateProfileRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;

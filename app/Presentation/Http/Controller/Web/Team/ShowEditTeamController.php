@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Team;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\GetEntityLabelsQuery;
 use App\Domain\Team\Contract\Query\GetTeamByIdQuery;
 use App\Domain\Team\Contract\Query\ListTeamsQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[RequiresPermission('teams.management.update')]

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Query;
 
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;
 use App\Domain\User\Contract\Repository\TwoFactorSettingsRepository;
 use App\Domain\User\Contract\Repository\UserTwoFactorStateRepository;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Domain\User\Contract\ValueObject\TwoFactorUiStatus;
 use App\Domain\User\Contract\ValueObject\UserId;
 

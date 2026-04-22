@@ -7,6 +7,7 @@ The Contract layer defines the boundaries of the hexagonal architecture. Every o
 ## Contents
 
 - `Attribute/` — cross-cutting PHP attributes: `RequiresPermission`, `SkipPermissionCheck`, `Sensitive`, `SkipTransaction`, `SkipDomainEvent`, `RetryPolicy`, `TenantAwareCommand`, `TenantAgnosticCommand`
+- `Auth/` — ambient auth ports consumed by bus middleware and orchestration handlers: `AuthenticatedUser`, `AuthorizationChecker` (+ `AccessDecision`), `ImpersonationManager`, `TeamMembershipChecker`
 - `Bus/` — bus ports (`CommandBus`, `QueryBus`, `EventBus`) and `BusMiddleware` interface (`@template TResult` for type-safe return propagation through the pipeline)
 - `Command/` — `Command`, `CommandHandler` interfaces
 - `Event/` — `DomainEvent`, `DomainEventHandler`, `EventCollector`, `EntityDeleted` interfaces (structured “updated” payloads use `App\Application\Event\EntityUpdated` in domain modules — see [Domain README](../Domain/README.md))

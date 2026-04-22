@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\GridPreset;
 
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\QueryBus;
 use App\Domain\GridPreset\Contract\Entity\GridPreset;
 use App\Domain\GridPreset\Contract\Query\ListGridPresetsQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\GridPreset\ListGridPresetsRequest;
 use Illuminate\Http\JsonResponse;
 

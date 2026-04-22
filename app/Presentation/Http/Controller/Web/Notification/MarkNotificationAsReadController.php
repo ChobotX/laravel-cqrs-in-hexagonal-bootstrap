@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Notification;
 
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Domain\Notification\Contract\Command\MarkNotificationAsReadCommand;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Notification\MarkNotificationReadRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\GridPreset\Handler\Query;
 
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
 use App\Domain\GridPreset\Contract\ValueObject\PresetShareCapabilities;
 use App\Domain\Team\Contract\Entity\Team;

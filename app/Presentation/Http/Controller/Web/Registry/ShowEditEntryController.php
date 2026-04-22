@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Registry;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
 use App\Domain\Registry\Contract\Query\GetEntryByIdQuery;
 use App\Domain\Registry\Contract\Query\GetSerializedSchemaQuery;
 use App\Domain\Registry\Contract\ValueObject\JsonSchema;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[RequiresPermission('registry.entries.update')]

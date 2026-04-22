@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Infrastructure\Authorization;
 
 use App\Application\Authorization\ShareableResourceRegistry;
+use App\Contract\Auth\AccessDecision;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Domain\Authorization\Contract\Enum\Action;
 use App\Domain\Authorization\Contract\Repository\RecordShareRepository;
 use App\Domain\Authorization\Contract\Repository\UserPermissionRepository;
-use App\Domain\Authorization\Contract\Service\AccessDecision;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Authorization\Contract\ValueObject\EffectivePermission;
 use App\Domain\Authorization\Service\PermissionResolver;
 

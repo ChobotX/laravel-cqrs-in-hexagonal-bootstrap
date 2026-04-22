@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Domain\GridPreset\Handler\Command;
 
 use App\Contract\Attribute\SkipDomainEvent;
+use App\Contract\Auth\AuthorizationChecker;
+use App\Contract\Auth\TeamMembershipChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\GridPreset\Contract\Command\SaveGridPresetCommand;
 use App\Domain\GridPreset\Contract\Entity\GridPreset;
 use App\Domain\GridPreset\Contract\Enum\PresetScope;
 use App\Domain\GridPreset\Contract\Repository\GridPresetRepository;
 use App\Domain\GridPreset\Contract\ValueObject\GridPresetId;
 use App\Domain\GridPreset\Exception\GridPresetScopePermissionException;
-use App\Domain\Team\Contract\Service\TeamMembershipChecker;
 
 /** @implements CommandHandler<SaveGridPresetCommand> */
 #[SkipDomainEvent(reason: 'UI convenience — grid preset save produces no business event')]

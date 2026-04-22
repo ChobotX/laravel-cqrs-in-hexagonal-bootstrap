@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Domain\User\Handler\Query;
 
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetPasswordRotationStatusQuery;
 use App\Domain\User\Contract\Repository\PasswordRotationSettingsRepository;
 use App\Domain\User\Contract\Repository\UserRepository;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Domain\User\Contract\ValueObject\PasswordRotationSettings;
 use App\Domain\User\Contract\ValueObject\PasswordRotationUiStatus;
 use App\Domain\User\Contract\ValueObject\UserId;

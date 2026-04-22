@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Entity\Role;
 use App\Domain\Authorization\Contract\Query\GetAssignableRolesQuery;
@@ -12,12 +14,10 @@ use App\Domain\Authorization\Contract\Query\GetAvailableModulesQuery;
 use App\Domain\Authorization\Contract\Query\GetEffectivePermissionsQuery;
 use App\Domain\Authorization\Contract\Query\GetUserOverridesQuery;
 use App\Domain\Authorization\Contract\Query\GetUserRolesQuery;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Query\GetEntityLabelsQuery;
 use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[RequiresPermission('users.list.update')]

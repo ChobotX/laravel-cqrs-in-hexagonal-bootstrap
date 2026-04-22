@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
@@ -16,7 +17,6 @@ use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\User\UpdateUserRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;

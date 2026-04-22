@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\User;
 
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\QueryBus;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Notification\Contract\Enum\NotificationChannel;
 use App\Domain\Notification\Contract\Query\GetNotificationPreferencesQuery;
 use App\Domain\Notification\Contract\ValueObject\ChannelPreference;
 use App\Domain\User\Contract\Query\GetOwnProfileQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[SkipPermissionCheck(reason: 'Profile page is accessible to all authenticated users')]

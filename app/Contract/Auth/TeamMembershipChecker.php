@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Team\Contract\Service;
+namespace App\Contract\Auth;
 
 /**
- * Domain service contract for team membership in the Team bounded context.
+ * Cross-cutting team membership read port — resolves a user's team scope for bus middleware and orchestration handlers.
  */
 interface TeamMembershipChecker
 {
-    /** Evaluates the rule without mutating domain state. */
     public function isTeamMember(string $userId, string $teamId): bool;
 
     /** @return list<string> Team IDs including descendant teams */

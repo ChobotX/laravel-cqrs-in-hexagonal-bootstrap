@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\GridPreset;
 
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\IdGenerator;
 use App\Domain\GridPreset\Contract\Command\SaveGridPresetCommand;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\GridPreset\SaveGridPresetRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;

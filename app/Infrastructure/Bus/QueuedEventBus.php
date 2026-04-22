@@ -7,7 +7,7 @@ namespace App\Infrastructure\Bus;
 use App\Contract\Bus\EventBus;
 use App\Contract\Event\DomainEvent;
 use App\Contract\Event\DomainEventHandler;
-use App\Domain\Tenancy\Contract\Service\TenantContext;
+use App\Contract\Tenancy\TenantContext;
 use App\Infrastructure\Bus\Job\HandleDomainEventJob;
 use Illuminate\Contracts\Bus\Dispatcher;
 

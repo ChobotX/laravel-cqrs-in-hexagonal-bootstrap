@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Label\Handler\Command;
 
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Domain\Label\Contract\Entity\Label;
 use App\Domain\Label\Contract\Event\LabelAssigned;

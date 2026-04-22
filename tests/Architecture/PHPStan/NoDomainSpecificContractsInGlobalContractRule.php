@@ -27,6 +27,7 @@ final class NoDomainSpecificContractsInGlobalContractRule implements Rule
     /** @var list<string> */
     private const array ALLOWED_SUB_NAMESPACES = [
         'Attribute',
+        'Auth',
         'Bus',
         'Command',
         'Event',

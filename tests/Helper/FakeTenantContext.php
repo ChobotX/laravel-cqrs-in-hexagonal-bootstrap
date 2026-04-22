@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Tenancy\Contract\Service\TenantContext;
+use App\Contract\Tenancy\TenantContext;
 use RuntimeException;
 
 final readonly class FakeTenantContext implements TenantContext

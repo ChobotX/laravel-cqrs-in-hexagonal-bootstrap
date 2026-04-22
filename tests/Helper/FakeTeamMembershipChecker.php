@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helper;
 
-use App\Domain\Team\Contract\Service\TeamMembershipChecker;
+use App\Contract\Auth\TeamMembershipChecker;
 
 final readonly class FakeTeamMembershipChecker implements TeamMembershipChecker
 {

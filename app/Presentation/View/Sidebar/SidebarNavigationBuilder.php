@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Presentation\View\Sidebar;
 
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Translation\Translator;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagChecker;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\Http\Request;
 
 final readonly class SidebarNavigationBuilder

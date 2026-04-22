@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Registry;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Contract\IdGenerator;
 use App\Domain\Registry\Contract\Command\CreateEntryCommand;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Registry\CreateEntryRequest;
 use Illuminate\Http\RedirectResponse;
 

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Sharing;
 
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\Authorization\Contract\Command\ShareRecordCommand;
 use App\Domain\Authorization\Contract\Enum\Action;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Sharing\ShareEntityRequest;
 use Illuminate\Http\JsonResponse;
 

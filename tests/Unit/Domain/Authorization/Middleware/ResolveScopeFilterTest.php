@@ -8,13 +8,13 @@ use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\ShareableScopeQuery;
 use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AccessDecision;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
+use App\Contract\Auth\TeamMembershipChecker;
 use App\Contract\Query\Query;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
-use App\Domain\Authorization\Contract\Service\AccessDecision;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\Authorization\Middleware\ResolveScopeFilter;
-use App\Domain\Team\Contract\Service\TeamMembershipChecker;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 
 /**
  * @param  list<string>|null  $teamVisibleUserIds

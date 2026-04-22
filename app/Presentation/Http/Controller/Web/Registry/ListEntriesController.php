@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Controller\Web\Registry;
 
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
 use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
 use App\Domain\Registry\Contract\Query\GetDefinitionBySlugQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Illuminate\View\View;
 
 #[RequiresPermission('registry.entries.read')]

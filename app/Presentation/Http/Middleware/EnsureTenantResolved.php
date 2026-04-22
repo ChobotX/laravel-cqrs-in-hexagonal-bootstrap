@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Middleware;
 
 use App\Contract\Http\HttpStatus;
-use App\Domain\Tenancy\Contract\Service\TenantContext;
+use App\Contract\Tenancy\TenantContext;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;

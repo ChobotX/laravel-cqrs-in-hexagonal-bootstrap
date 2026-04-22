@@ -6,8 +6,8 @@ namespace App\Domain\Tenancy\Handler\Query;
 
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
+use App\Contract\Tenancy\TenantContext;
 use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
-use App\Domain\Tenancy\Contract\Service\TenantContext;
 
 /**
  * @implements QueryHandler<GetCurrentTenantNameQuery, ?string>

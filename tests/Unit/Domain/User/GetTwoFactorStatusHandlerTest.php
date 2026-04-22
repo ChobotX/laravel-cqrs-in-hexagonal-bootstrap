@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Contract\Auth\AuthenticatedUser;
 use App\Domain\User\Contract\Query\GetTwoFactorStatusQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Domain\User\Contract\ValueObject\TwoFactorSettings;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\Contract\ValueObject\UserTwoFactorState;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Authorization;
 
-use App\Domain\Authorization\Contract\Service\AccessDecision;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
-use App\Domain\Tenancy\Contract\Service\TenantContext;
+use App\Contract\Auth\AccessDecision;
+use App\Contract\Auth\AuthorizationChecker;
+use App\Contract\Tenancy\TenantContext;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 
 final readonly class CachedAuthorizationChecker implements AuthorizationChecker

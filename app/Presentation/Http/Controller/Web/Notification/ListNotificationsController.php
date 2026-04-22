@@ -6,10 +6,10 @@ namespace App\Presentation\Http\Controller\Web\Notification;
 
 use App\Application\Pagination\Pagination;
 use App\Contract\Attribute\SkipPermissionCheck;
+use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\QueryBus;
 use App\Domain\Notification\Contract\Entity\Notification;
 use App\Domain\Notification\Contract\Query\ListOwnNotificationsQuery;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\Http\Request\Web\Notification\ListNotificationsRequest;
 use App\Presentation\Http\Request\Web\Notification\NotificationFilter;
 use App\Presentation\Http\Serialization\InstantJson;

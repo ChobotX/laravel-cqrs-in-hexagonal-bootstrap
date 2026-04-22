@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Eloquent\FeatureFlag;
 
+use App\Contract\Tenancy\TenantContext;
 use App\Domain\FeatureFlag\Contract\Entity\FeatureFlagOverride;
 use App\Domain\FeatureFlag\Contract\Repository\FeatureFlagOverrideRepository;
 use App\Domain\FeatureFlag\Contract\ValueObject\FlagKey;
-use App\Domain\Tenancy\Contract\Service\TenantContext;
 
 final readonly class EloquentFeatureFlagOverrideRepository implements FeatureFlagOverrideRepository
 {

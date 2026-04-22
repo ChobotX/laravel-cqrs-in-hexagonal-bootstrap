@@ -2,17 +2,15 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Authorization\Contract\Service;
+namespace App\Contract\Auth;
 
 /**
- * Domain service contract for authorization in the Authorization bounded context.
+ * Cross-cutting permission + record-sharing gate used by bus middleware and orchestration handlers.
  */
 interface AuthorizationChecker
 {
-    /** Contract operation `can`; see infrastructure for behavior. */
     public function can(string $userId, string $permission): bool;
 
-    /** Contract operation `canWithScope`; see infrastructure for behavior. */
     public function canWithScope(string $userId, string $permission): AccessDecision;
 
     /** @return list<string> */

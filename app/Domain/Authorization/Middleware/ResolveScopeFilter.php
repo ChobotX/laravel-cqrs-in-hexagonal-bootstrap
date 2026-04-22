@@ -9,12 +9,12 @@ use App\Application\Authorization\ScopeAwareQuery;
 use App\Application\Authorization\ScopeTarget;
 use App\Application\Authorization\ShareableScopeQuery;
 use App\Contract\Attribute\RequiresPermission;
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
+use App\Contract\Auth\TeamMembershipChecker;
 use App\Contract\Bus\BusMiddleware;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\Authorization\Contract\Enum\Action;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
-use App\Domain\Team\Contract\Service\TeamMembershipChecker;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use Closure;
 use ReflectionClass;
 

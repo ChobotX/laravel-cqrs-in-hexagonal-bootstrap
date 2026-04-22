@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Contract\Auth\AuthenticatedUser;
+use App\Contract\Auth\AuthorizationChecker;
 use App\Contract\Translation\Translator;
-use App\Domain\Authorization\Contract\Service\AuthorizationChecker;
 use App\Domain\FeatureFlag\Contract\Service\FeatureFlagChecker;
-use App\Domain\User\Contract\Service\AuthenticatedUser;
 use App\Presentation\View\Sidebar\SidebarNavigationBuilder;
 use App\Presentation\View\Sidebar\SidebarNavViewData;
 use Illuminate\Http\Request;
