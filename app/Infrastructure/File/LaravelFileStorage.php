@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\File;
 
+use App\Contract\IdGenerator;
 use App\Domain\File\Contract\Service\FileStorage;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Exception\FileStorageException;
@@ -11,7 +12,6 @@ use App\Domain\File\ValueObject\FileNamespace;
 use App\Domain\File\ValueObject\StoragePath;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\File;
-use Illuminate\Support\Str;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 
@@ -19,12 +19,13 @@ final readonly class LaravelFileStorage implements FileStorage
 {
     public function __construct(
         private Filesystem $filesystem,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function store(FileNamespace $fileNamespace, FileUpload $fileUpload): StoragePath
     {
         $extension = pathinfo($fileUpload->originalName->value, PATHINFO_EXTENSION);
-        $uuid = Str::uuid()->toString();
+        $uuid = $this->idGenerator->generate();
 
         $filename = $extension !== ''
             ? sprintf('%s.%s', $uuid, $extension)

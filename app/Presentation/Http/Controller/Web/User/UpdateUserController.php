@@ -8,6 +8,7 @@ use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
+use App\Contract\IdGenerator;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;
@@ -20,7 +21,6 @@ use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Presentation\Http\Request\Web\User\UpdateUserRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 
 #[RequiresPermission('users.list.update')]
 final readonly class UpdateUserController
@@ -31,6 +31,7 @@ final readonly class UpdateUserController
         private CommandBus $commandBus,
         private QueryBus $queryBus,
         private AuthenticatedUser $authenticatedUser,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function __invoke(UpdateUserRequest $updateUserRequest): RedirectResponse
@@ -74,7 +75,7 @@ final readonly class UpdateUserController
         $file = $updateUserRequest->file('avatar');
 
         if ($file instanceof UploadedFile) {
-            $fileId = Str::uuid()->toString();
+            $fileId = $this->idGenerator->generate();
 
             $this->commandBus->dispatch(new StoreAvatarCommand(
                 id: $fileId,

@@ -8,6 +8,7 @@ use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
 use App\Contract\Bus\QueryBus;
+use App\Contract\IdGenerator;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
@@ -20,7 +21,6 @@ use App\Domain\User\Contract\Query\GetOwnProfileQuery;
 use App\Presentation\Http\Request\Web\User\UpdateProfileRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 
 #[SkipPermissionCheck(reason: 'Profile update is available to all authenticated users')]
 final readonly class UpdateProfileController
@@ -31,6 +31,7 @@ final readonly class UpdateProfileController
         private CommandBus $commandBus,
         private QueryBus $queryBus,
         private AuthenticatedUser $authenticatedUser,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function __invoke(UpdateProfileRequest $updateProfileRequest): RedirectResponse
@@ -62,7 +63,7 @@ final readonly class UpdateProfileController
         $file = $updateProfileRequest->file('avatar');
 
         if ($file instanceof UploadedFile) {
-            $fileId = Str::uuid()->toString();
+            $fileId = $this->idGenerator->generate();
 
             $this->commandBus->dispatch(new StoreAvatarCommand(
                 id: $fileId,

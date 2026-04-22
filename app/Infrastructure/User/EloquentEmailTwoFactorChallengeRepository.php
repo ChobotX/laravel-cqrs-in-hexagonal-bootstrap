@@ -4,20 +4,24 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\User;
 
+use App\Contract\IdGenerator;
 use App\Domain\User\Contract\Repository\EmailTwoFactorChallengeRepository;
 use App\Domain\User\Contract\ValueObject\EmailTwoFactorChallenge;
 use App\Domain\User\Contract\ValueObject\UserId;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use stdClass;
 
 final readonly class EloquentEmailTwoFactorChallengeRepository implements EmailTwoFactorChallengeRepository
 {
+    public function __construct(
+        private IdGenerator $idGenerator,
+    ) {}
+
     public function issue(UserId $userId, string $codeHash, DateTimeImmutable $expiresAt): void
     {
         DB::connection('tenant')->table('email_two_factor_challenges')->insert([
-            'id' => (string) Str::uuid(),
+            'id' => $this->idGenerator->generate(),
             'user_id' => $userId->value,
             'code_hash' => $codeHash,
             'expires_at' => $expiresAt,

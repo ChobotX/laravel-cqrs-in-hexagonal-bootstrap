@@ -8,7 +8,6 @@ use App\Domain\Team\Contract\Command\CreateTeamCommand;
 use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 
 final class CreateTeamRequest extends FormRequest
 {
@@ -25,12 +24,12 @@ final class CreateTeamRequest extends FormRequest
         ];
     }
 
-    public function toCommand(): CreateTeamCommand
+    public function toCommand(string $id): CreateTeamCommand
     {
         $parentTeamId = $this->string('parent_team_id')->toString();
 
         return new CreateTeamCommand(
-            id: Str::uuid()->toString(),
+            id: $id,
             name: $this->string('name')->toString(),
             slug: $this->string('slug')->toString(),
             description: $this->string('description')->toString(),

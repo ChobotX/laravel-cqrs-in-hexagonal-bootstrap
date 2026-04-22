@@ -19,7 +19,7 @@ function impersonationManager(?string $token = null, ?string $guardId = null): S
     $mock = Mockery::mock(Guard::class);
     $mock->allows('id')->andReturn($guardId);
 
-    return new SessionImpersonationManager($request, $mock);
+    return new SessionImpersonationManager($request, $mock, new Tests\Helper\FakeIdGenerator);
 }
 
 it('starts an impersonation session', function (): void {

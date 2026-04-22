@@ -7,7 +7,6 @@ namespace App\Presentation\Http\Request\User;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 
 final class CreateUserRequest extends FormRequest
 {
@@ -24,10 +23,10 @@ final class CreateUserRequest extends FormRequest
         ];
     }
 
-    public function toCommand(): CreateUserCommand
+    public function toCommand(string $id): CreateUserCommand
     {
         return new CreateUserCommand(
-            id: Str::uuid()->toString(),
+            id: $id,
             name: $this->string('name')->toString(),
             email: $this->string('email')->toString(),
         );

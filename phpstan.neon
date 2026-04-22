@@ -12,6 +12,10 @@ services:
         tags:
             - phpat.test
     -
+        class: Tests\Architecture\PHPStan\NoStrUuidOutsideIdGeneratorRule
+        tags:
+            - phpstan.rules.rule
+    -
         class: Tests\Architecture\PHPStan\NoStaticMethodDeclarationsInDomainRule
         tags:
             - phpstan.rules.rule

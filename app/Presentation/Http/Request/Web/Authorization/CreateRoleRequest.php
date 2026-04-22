@@ -7,7 +7,6 @@ namespace App\Presentation\Http\Request\Web\Authorization;
 use App\Domain\Authorization\Contract\Command\CreateRoleCommand;
 use App\Presentation\Http\Request\HandlesFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
 
 final class CreateRoleRequest extends FormRequest
 {
@@ -25,10 +24,10 @@ final class CreateRoleRequest extends FormRequest
         ];
     }
 
-    public function toCommand(): CreateRoleCommand
+    public function toCommand(string $id): CreateRoleCommand
     {
         return new CreateRoleCommand(
-            id: Str::uuid()->toString(),
+            id: $id,
             name: $this->string('name')->toString(),
             description: $this->string('description')->toString(),
             permissions: $this->buildPermissions(),

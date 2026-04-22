@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 it('stores a file and returns a storage path', function (): void {
     Storage::fake('files');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
     $namespace = new FileNamespace('documents');
 
     $tempPath = tempnam(sys_get_temp_dir(), 'file-test');
@@ -41,7 +41,7 @@ it('stores a file and returns a storage path', function (): void {
 it('stores a file without extension', function (): void {
     Storage::fake('files');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
     $namespace = new FileNamespace('binaries');
 
     $tempPath = tempnam(sys_get_temp_dir(), 'file-test');
@@ -69,7 +69,7 @@ it('retrieves stored file contents', function (): void {
 
     Storage::disk('files')->put('documents/test.pdf', 'pdf-content');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
     $contents = $storage->retrieve(new StoragePath('documents/test.pdf'));
 
     expect($contents)->toBe('pdf-content');
@@ -78,7 +78,7 @@ it('retrieves stored file contents', function (): void {
 it('throws on retrieve when file does not exist', function (): void {
     Storage::fake('files');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
 
     $storage->retrieve(new StoragePath('documents/nonexistent.pdf'));
 })->throws(FileStorageException::class);
@@ -88,7 +88,7 @@ it('deletes a file', function (): void {
 
     Storage::disk('files')->put('documents/to-delete.pdf', 'content');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
     $storage->delete(new StoragePath('documents/to-delete.pdf'));
 
     Storage::disk('files')->assertMissing('documents/to-delete.pdf');
@@ -99,7 +99,7 @@ it('checks file existence', function (): void {
 
     Storage::disk('files')->put('documents/exists.pdf', 'content');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
 
     expect($storage->exists(new StoragePath('documents/exists.pdf')))->toBeTrue()
         ->and($storage->exists(new StoragePath('documents/missing.pdf')))->toBeFalse();
@@ -108,7 +108,7 @@ it('checks file existence', function (): void {
 it('throws FileStorageException when source file cannot be opened', function (): void {
     Storage::fake('files');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
 
     $upload = new FileUpload(
         originalName: new FileName('ghost.pdf'),
@@ -123,7 +123,7 @@ it('throws FileStorageException when source file cannot be opened', function ():
 it('generates url for a file', function (): void {
     Storage::fake('files');
 
-    $storage = new LaravelFileStorage(Storage::disk('files'));
+    $storage = new LaravelFileStorage(Storage::disk('files'), new Tests\Helper\FakeIdGenerator);
     $url = $storage->url(new StoragePath('documents/file.pdf'));
 
     expect($url)->toContain('documents/file.pdf');

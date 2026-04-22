@@ -7,6 +7,7 @@ namespace App\Presentation\Http\Controller\Web\User;
 use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Auth\AuthenticatedUser;
 use App\Contract\Bus\CommandBus;
+use App\Contract\IdGenerator;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
@@ -14,7 +15,6 @@ use App\Domain\File\Contract\ValueObject\MimeType;
 use App\Presentation\Http\Request\Web\User\CreateUserRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 
 #[RequiresPermission('users.list.create')]
 final readonly class CreateUserController
@@ -24,13 +24,14 @@ final readonly class CreateUserController
     public function __construct(
         private CommandBus $commandBus,
         private AuthenticatedUser $authenticatedUser,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function __invoke(CreateUserRequest $createUserRequest): RedirectResponse
     {
         $avatarFileId = $this->uploadAvatar($createUserRequest);
 
-        $createUserCommand = $createUserRequest->toCommand($avatarFileId);
+        $createUserCommand = $createUserRequest->toCommand($this->idGenerator->generate(), $avatarFileId);
 
         $this->commandBus->dispatch($createUserCommand);
 
@@ -45,7 +46,7 @@ final readonly class CreateUserController
             return null;
         }
 
-        $fileId = Str::uuid()->toString();
+        $fileId = $this->idGenerator->generate();
 
         $this->commandBus->dispatch(new StoreAvatarCommand(
             id: $fileId,

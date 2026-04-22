@@ -4,15 +4,16 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tenancy;
 
+use App\Contract\IdGenerator;
 use App\Domain\EmailTemplate\Contract\Service\DefaultEmailTemplateSeedData;
 use App\Domain\Tenancy\Contract\Service\TenantDefaultEmailTemplateSeeder;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 final readonly class EloquentTenantDefaultEmailTemplateSeeder implements TenantDefaultEmailTemplateSeeder
 {
     public function __construct(
         private DefaultEmailTemplateSeedData $defaultEmailTemplateSeedData,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function seed(): void
@@ -21,7 +22,7 @@ final readonly class EloquentTenantDefaultEmailTemplateSeeder implements TenantD
             [$type, $locale] = explode(':', $key);
 
             DB::connection('tenant')->table('email_templates')->insertOrIgnore([
-                'id' => Str::uuid()->toString(),
+                'id' => $this->idGenerator->generate(),
                 'type' => $type,
                 'locale' => $locale,
                 'subject_template' => $template['subject'],

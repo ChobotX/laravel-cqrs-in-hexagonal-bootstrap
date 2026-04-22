@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Middleware;
 
+use App\Contract\IdGenerator;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Context;
-use Illuminate\Support\Str;
 use OpenTelemetry\API\Trace\Span;
 use Symfony\Component\HttpFoundation\Response;
 
 final readonly class SetTraceIdMiddleware
 {
+    public function __construct(
+        private IdGenerator $idGenerator,
+    ) {}
+
     /**
      * @param  Closure(Request): Response  $next
      */
@@ -47,6 +51,6 @@ final readonly class SetTraceIdMiddleware
             return $matches[1];
         }
 
-        return Str::uuid()->toString();
+        return $this->idGenerator->generate();
     }
 }

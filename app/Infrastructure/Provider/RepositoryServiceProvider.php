@@ -113,6 +113,7 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(FileRepository::class, EloquentFileRepository::class);
         $this->app->bind(FileStorage::class, fn (): LaravelFileStorage => new LaravelFileStorage(
             $this->app->make(FilesystemFactory::class)->disk('files'),
+            $this->app->make(IdGenerator::class),
         ));
         $this->app->bind(ImageProcessor::class, GdImageProcessor::class);
         $this->app->bind(AuditLogRepository::class, EloquentAuditLogRepository::class);

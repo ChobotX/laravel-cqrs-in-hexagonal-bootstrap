@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Tracing;
 
+use App\Contract\IdGenerator;
 use Illuminate\Log\Context\Repository;
-use Illuminate\Support\Str;
 use OpenTelemetry\API\Trace\Span;
 
 final readonly class SetConsoleTraceId
 {
     public function __construct(
         private Repository $repository,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function __invoke(): void
@@ -20,7 +21,7 @@ final readonly class SetConsoleTraceId
 
         $traceId = $spanContext->isValid()
             ? $spanContext->getTraceId()
-            : Str::uuid()->toString();
+            : $this->idGenerator->generate();
 
         $this->repository->add('trace_id', $traceId);
     }

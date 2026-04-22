@@ -6,10 +6,10 @@ namespace App\Presentation\Console\User;
 
 use App\Contract\Attribute\TenantAwareCommand;
 use App\Contract\Bus\CommandBus;
+use App\Contract\IdGenerator;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Presentation\Console\Trait\StrictArguments;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 #[TenantAwareCommand]
 final class CreateUserConsoleCommand extends Command
@@ -20,9 +20,9 @@ final class CreateUserConsoleCommand extends Command
 
     protected $description = 'Create a new user';
 
-    public function handle(CommandBus $commandBus): void
+    public function handle(CommandBus $commandBus, IdGenerator $idGenerator): void
     {
-        $id = Str::uuid()->toString();
+        $id = $idGenerator->generate();
 
         $name = $this->stringArgument('name');
         $email = $this->stringArgument('email');

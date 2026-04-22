@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Infrastructure\Authorization;
 
 use App\Contract\Auth\ImpersonationManager;
+use App\Contract\IdGenerator;
 use App\Infrastructure\Eloquent\Authorization\ImpersonationSessionModel;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 final readonly class SessionImpersonationManager implements ImpersonationManager
 {
     public function __construct(
         private Request $request,
         private Guard $guard,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function start(string $impersonatorId, string $targetUserId): void
@@ -26,7 +27,7 @@ final readonly class SessionImpersonationManager implements ImpersonationManager
         $impersonationSessionModel = new ImpersonationSessionModel;
         $impersonationSessionModel->impersonator_user_id = $impersonatorId;
         $impersonationSessionModel->impersonated_user_id = $targetUserId;
-        $impersonationSessionModel->token = Str::uuid()->toString();
+        $impersonationSessionModel->token = $this->idGenerator->generate();
         $impersonationSessionModel->started_at = now()->toDateTimeString();
         $impersonationSessionModel->save();
     }

@@ -6,6 +6,7 @@ namespace App\Presentation\Http\Controller\Api\V1\Authorization;
 
 use App\Contract\Attribute\SkipPermissionCheck;
 use App\Contract\Bus\CommandBus;
+use App\Contract\IdGenerator;
 use App\Presentation\Http\Request\Authorization\CreateRoleRequest;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,11 +16,12 @@ final readonly class CreateRoleController
 {
     public function __construct(
         private CommandBus $commandBus,
+        private IdGenerator $idGenerator,
     ) {}
 
     public function __invoke(CreateRoleRequest $createRoleRequest): JsonResponse
     {
-        $createRoleCommand = $createRoleRequest->toCommand();
+        $createRoleCommand = $createRoleRequest->toCommand($this->idGenerator->generate());
 
         $this->commandBus->dispatch($createRoleCommand);
 

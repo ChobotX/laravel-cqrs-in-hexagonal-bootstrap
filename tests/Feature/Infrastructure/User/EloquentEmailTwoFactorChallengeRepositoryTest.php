@@ -15,7 +15,7 @@ it('issues, reads, marks attempt, and consumes email two-factor challenges', fun
         'updated_at' => now(),
     ]);
 
-    $repository = new EloquentEmailTwoFactorChallengeRepository;
+    $repository = new EloquentEmailTwoFactorChallengeRepository(new Tests\Helper\FakeIdGenerator);
     $userId = new UserId('550e8400-e29b-41d4-a716-446655440888');
     $repository->issue($userId, 'hash-code', new DateTimeImmutable('+10 minutes'));
 
@@ -32,7 +32,7 @@ it('issues, reads, marks attempt, and consumes email two-factor challenges', fun
 });
 
 it('handles consume and latest when no challenge exists', function (): void {
-    $repository = new EloquentEmailTwoFactorChallengeRepository;
+    $repository = new EloquentEmailTwoFactorChallengeRepository(new Tests\Helper\FakeIdGenerator);
     $userId = new UserId('550e8400-e29b-41d4-a716-446655440899');
 
     expect($repository->latest($userId))->toBeNull();
@@ -51,7 +51,7 @@ it('deletes all challenges for a user', function (): void {
         'updated_at' => now(),
     ]);
 
-    $repository = new EloquentEmailTwoFactorChallengeRepository;
+    $repository = new EloquentEmailTwoFactorChallengeRepository(new Tests\Helper\FakeIdGenerator);
     $userId = new UserId('550e8400-e29b-41d4-a716-446655440877');
     $repository->issue($userId, 'hash-a', new DateTimeImmutable('+10 minutes'));
     $repository->issue($userId, 'hash-b', new DateTimeImmutable('+10 minutes'));

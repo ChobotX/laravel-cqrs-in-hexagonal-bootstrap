@@ -11,7 +11,7 @@ use OpenTelemetry\Context\Context;
 
 it('adds trace id to context on command starting', function (): void {
     $repository = new Repository(new Dispatcher);
-    $listener = new SetConsoleTraceId($repository);
+    $listener = new SetConsoleTraceId($repository, new Tests\Helper\FakeIdGenerator);
 
     $listener();
 
@@ -28,7 +28,7 @@ it('uses otel trace id when active span exists', function (): void {
 
     try {
         $repository = new Repository(new Dispatcher);
-        $listener = new SetConsoleTraceId($repository);
+        $listener = new SetConsoleTraceId($repository, new Tests\Helper\FakeIdGenerator);
 
         $listener();
 
