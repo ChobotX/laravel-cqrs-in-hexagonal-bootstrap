@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\File;
 
+use App\Contract\Tenancy\TenantLogoStorage;
 use App\Domain\Tenancy\Contract\Exception\TenantLogoStorageException;
-use App\Domain\Tenancy\Contract\Service\TenantLogoStorage;
 use Illuminate\Contracts\Filesystem\Filesystem;
 
 final readonly class TenantLogoFileStorage implements TenantLogoStorage
