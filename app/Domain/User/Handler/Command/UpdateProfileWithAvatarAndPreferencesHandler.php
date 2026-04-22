@@ -11,7 +11,7 @@ use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
-use App\Domain\File\Contract\Constant\AvatarNamespace;
+use App\Domain\File\Contract\ValueObject\AvatarNamespace;
 use App\Domain\Notification\Contract\Command\UpdateNotificationPreferencesCommand;
 use App\Domain\User\Contract\Command\UpdateProfileCommand;
 use App\Domain\User\Contract\Command\UpdateProfileWithAvatarAndPreferencesCommand;

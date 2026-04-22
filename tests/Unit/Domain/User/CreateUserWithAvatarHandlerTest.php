@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
-use App\Domain\File\Contract\Constant\AvatarNamespace;
+use App\Domain\File\Contract\ValueObject\AvatarNamespace;
 use App\Domain\File\Contract\ValueObject\FileName;
 use App\Domain\File\Contract\ValueObject\FileUpload;
 use App\Domain\File\Contract\ValueObject\MimeType;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\File\Contract\Constant;
+namespace App\Domain\File\Contract\ValueObject;
 
 /**
  * Canonical namespace key under which user avatar files are stored.

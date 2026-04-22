@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Sso\Handler\Command;
 
 use App\Contract\Bus\CommandBus;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -26,7 +27,7 @@ use App\Domain\Sso\Contract\ValueObject\SsoIdentity;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Domain\User\Contract\Command\MarkUserActivatedCommand;
 use App\Domain\User\Contract\Entity\User;
-use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use DateTimeImmutable;
 use Throwable;
 
@@ -36,12 +37,20 @@ final readonly class LoginViaSsoHandler implements CommandHandler
     public function __construct(
         private SsoConfigurationRepository $ssoConfigurationRepository,
         private UserSsoIdentityRepository $userSsoIdentityRepository,
-        private UserRepository $userRepository,
         private SsoAuthenticatorRegistry $ssoAuthenticatorRegistry,
         private CommandBus $commandBus,
+        private QueryBus $queryBus,
         private EventCollector $eventCollector,
         private SsoLoginSession $ssoLoginSession,
     ) {}
+
+    private function findUserByEmail(string $email): ?User
+    {
+        /** @var ?User $result */
+        $result = $this->queryBus->dispatch(new GetUserByEmailQuery(email: $email));
+
+        return $result;
+    }
 
     public function handle(Command $command): void
     {
@@ -105,7 +114,7 @@ final readonly class LoginViaSsoHandler implements CommandHandler
     /** @return array{0: User, 1: bool} */
     private function provisionUser(SsoConfiguration $ssoConfiguration, SsoIdentity $ssoIdentity, string $newUserId): array
     {
-        $existing = $this->userRepository->findByEmail($ssoIdentity->email);
+        $existing = $this->findUserByEmail($ssoIdentity->email);
 
         return match ($ssoConfiguration->jitMode) {
             JitMode::LinkedOnly => $this->requireLinkedUser($ssoConfiguration->id->value, $ssoIdentity),
@@ -163,7 +172,7 @@ final readonly class LoginViaSsoHandler implements CommandHandler
 
         $this->commandBus->dispatch(new MarkUserActivatedCommand(userId: $newUserId));
 
-        $created = $this->userRepository->findByEmail($ssoIdentity->email);
+        $created = $this->findUserByEmail($ssoIdentity->email);
 
         if (! $created instanceof User) {
             $this->recordFailure($ssoConfiguration->id->value, 'user_creation_failed', $ssoIdentity->email, $ssoIdentity->subject);

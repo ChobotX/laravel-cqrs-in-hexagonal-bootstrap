@@ -14,20 +14,19 @@ use App\Domain\Sso\Handler\Command\LoginViaSsoHandler;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 use App\Domain\User\Contract\Command\MarkUserActivatedCommand;
 use App\Domain\User\Contract\Entity\User;
-use App\Domain\User\Contract\Repository\UserRepository;
+use App\Domain\User\Contract\Query\GetUserByEmailQuery;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;
 use Tests\Helper\FakeCommandBus;
 use Tests\Helper\FakeEventCollector;
+use Tests\Helper\FakeQueryBus;
 use Tests\Helper\FakeSsoAuthenticator;
 use Tests\Helper\FakeSsoAuthenticatorRegistry;
 use Tests\Helper\FakeSsoConfigurationRepository;
 use Tests\Helper\FakeSsoLoginSession;
-use Tests\Helper\FakeUserRepository;
 use Tests\Helper\FakeUserSsoIdentityRepository;
 use Tests\Helper\SsoFixtures;
-use Tests\Helper\StagedUserRepository;
 
 $ssoUser = fn (bool $activated = true, string $email = 'user@example.com'): User => new User(
     id: new UserId(SsoFixtures::USER_ID),
@@ -44,32 +43,47 @@ $loginCommand = fn (): LoginViaSsoCommand => new LoginViaSsoCommand(
     newIdentityId: SsoFixtures::IDENTITY_ID,
 );
 
+$userByEmailBus = fn (?User $user): FakeQueryBus => new FakeQueryBus([
+    GetUserByEmailQuery::class => $user,
+]);
+
+$stagedUserBus = function (?User $user): FakeQueryBus {
+    $calls = 0;
+
+    return new FakeQueryBus([
+        GetUserByEmailQuery::class => function () use (&$calls, $user): ?User {
+            $calls++;
+
+            return $calls === 1 ? null : $user;
+        },
+    ]);
+};
+
 $buildHandler = fn (
     FakeSsoConfigurationRepository $fakeSsoConfigurationRepository,
     FakeUserSsoIdentityRepository $fakeUserSsoIdentityRepository,
-    UserRepository $userRepository,
     FakeSsoAuthenticator $fakeSsoAuthenticator,
     FakeCommandBus $fakeCommandBus,
+    FakeQueryBus $fakeQueryBus,
     FakeEventCollector $fakeEventCollector,
 ): LoginViaSsoHandler => new LoginViaSsoHandler(
     $fakeSsoConfigurationRepository,
     $fakeUserSsoIdentityRepository,
-    $userRepository,
     new FakeSsoAuthenticatorRegistry($fakeSsoAuthenticator),
     $fakeCommandBus,
+    $fakeQueryBus,
     $fakeEventCollector,
     new FakeSsoLoginSession,
 );
 
-it('logs in an already-linked identity without provisioning', function () use ($ssoUser, $loginCommand, $buildHandler): void {
+it('logs in an already-linked identity without provisioning', function () use ($ssoUser, $loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration();
     $identity = SsoFixtures::identity();
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $identityRepo = new FakeUserSsoIdentityRepository([$identity->id->value => $identity]);
-    $userRepo = new FakeUserRepository([SsoFixtures::USER_ID => $ssoUser()]);
     $bus = new FakeCommandBus;
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, $identityRepo, $userRepo, new FakeSsoAuthenticator, $bus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, $identityRepo, new FakeSsoAuthenticator, $bus, $userByEmailBus($ssoUser()), $events);
 
     $loginViaSsoHandler->handle($loginCommand());
 
@@ -77,24 +91,24 @@ it('logs in an already-linked identity without provisioning', function () use ($
         ->and($events->collected[0])->toBeInstanceOf(SsoLoginSucceeded::class);
 });
 
-it('rejects a missing configuration', function () use ($loginCommand, $buildHandler): void {
+it('rejects a missing configuration', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $loginViaSsoHandler = $buildHandler(
         new FakeSsoConfigurationRepository,
         new FakeUserSsoIdentityRepository,
-        new FakeUserRepository,
         new FakeSsoAuthenticator,
         new FakeCommandBus,
+        $userByEmailBus(null),
         new FakeEventCollector,
     );
 
     $loginViaSsoHandler->handle($loginCommand());
 })->throws(SsoConfigurationNotFoundException::class);
 
-it('rejects the login when state does not match the stored handshake', function () use ($buildHandler): void {
+it('rejects the login when state does not match the stored handshake', function () use ($buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration();
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle(new LoginViaSsoCommand(
         configurationId: SsoFixtures::CONFIG_ID,
@@ -107,11 +121,11 @@ it('rejects the login when state does not match the stored handshake', function 
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('rejects a disabled configuration and records failure', function () use ($loginCommand, $buildHandler): void {
+it('rejects a disabled configuration and records failure', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(enabled: false);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle($loginCommand()))
         ->toThrow(SsoLoginRejectedException::class);
@@ -119,12 +133,12 @@ it('rejects a disabled configuration and records failure', function () use ($log
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('records authenticator errors as a failure event', function () use ($loginCommand, $buildHandler): void {
+it('records authenticator errors as a failure event', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration();
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $authenticator = new FakeSsoAuthenticator(throwOnComplete: true);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, $authenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, $authenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle($loginCommand()))
         ->toThrow(SsoLoginRejectedException::class);
@@ -132,11 +146,11 @@ it('records authenticator errors as a failure event', function () use ($loginCom
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('rejects linked-only when no link exists', function () use ($loginCommand, $buildHandler): void {
+it('rejects linked-only when no link exists', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::LinkedOnly);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle($loginCommand()))
         ->toThrow(SsoLoginRejectedException::class);
@@ -144,13 +158,12 @@ it('rejects linked-only when no link exists', function () use ($loginCommand, $b
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('activates an invited user via JIT', function () use ($ssoUser, $loginCommand, $buildHandler): void {
+it('activates an invited user via JIT', function () use ($ssoUser, $loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::InvitedOnly);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
-    $userRepo = new FakeUserRepository([SsoFixtures::USER_ID => $ssoUser(activated: false)]);
     $bus = new FakeCommandBus;
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, $userRepo, new FakeSsoAuthenticator, $bus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, $bus, $userByEmailBus($ssoUser(activated: false)), $events);
 
     $loginViaSsoHandler->handle($loginCommand());
 
@@ -158,11 +171,11 @@ it('activates an invited user via JIT', function () use ($ssoUser, $loginCommand
         ->and($bus->dispatched[1])->toBeInstanceOf(LinkSsoIdentityCommand::class);
 });
 
-it('rejects invited-only when no user exists with that email', function () use ($loginCommand, $buildHandler): void {
+it('rejects invited-only when no user exists with that email', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::InvitedOnly);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle($loginCommand()))
         ->toThrow(SsoLoginRejectedException::class);
@@ -170,13 +183,12 @@ it('rejects invited-only when no user exists with that email', function () use (
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('auto-creates an unknown user when JIT mode permits and domain matches', function () use ($ssoUser, $loginCommand, $buildHandler): void {
+it('auto-creates an unknown user when JIT mode permits and domain matches', function () use ($ssoUser, $loginCommand, $buildHandler, $stagedUserBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::AutoCreate, allowedEmailDomains: ['example.com']);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
-    $userRepo = new StagedUserRepository(provisionedUser: $ssoUser(activated: false));
     $bus = new FakeCommandBus;
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, $userRepo, new FakeSsoAuthenticator, $bus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, $bus, $stagedUserBus($ssoUser(activated: false)), $events);
 
     $loginViaSsoHandler->handle($loginCommand());
 
@@ -186,13 +198,12 @@ it('auto-creates an unknown user when JIT mode permits and domain matches', func
         ->and($events->collected[0])->toBeInstanceOf(SsoLoginSucceeded::class);
 });
 
-it('returns existing user for auto-create when one already exists', function () use ($ssoUser, $loginCommand, $buildHandler): void {
+it('returns existing user for auto-create when one already exists', function () use ($ssoUser, $loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::AutoCreate);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
-    $userRepo = new FakeUserRepository([SsoFixtures::USER_ID => $ssoUser(activated: false)]);
     $bus = new FakeCommandBus;
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, $userRepo, new FakeSsoAuthenticator, $bus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, $bus, $userByEmailBus($ssoUser(activated: false)), $events);
 
     $loginViaSsoHandler->handle($loginCommand());
 
@@ -200,11 +211,11 @@ it('returns existing user for auto-create when one already exists', function () 
         ->and($bus->dispatched[1])->toBeInstanceOf(LinkSsoIdentityCommand::class);
 });
 
-it('rejects auto-create when the email domain is not allowed', function () use ($loginCommand, $buildHandler): void {
+it('rejects auto-create when the email domain is not allowed', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::AutoCreate, allowedEmailDomains: ['acme.com']);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle($loginCommand()))
         ->toThrow(SsoLoginRejectedException::class);
@@ -212,11 +223,11 @@ it('rejects auto-create when the email domain is not allowed', function () use (
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('rejects auto-create when CreateUserCommand fails to materialise the user', function () use ($loginCommand, $buildHandler): void {
+it('rejects auto-create when CreateUserCommand fails to materialise the user', function () use ($loginCommand, $buildHandler, $userByEmailBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::AutoCreate, allowedEmailDomains: ['example.com']);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $events = new FakeEventCollector;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeUserRepository, new FakeSsoAuthenticator, new FakeCommandBus, $events);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, new FakeSsoAuthenticator, new FakeCommandBus, $userByEmailBus(null), $events);
 
     expect(fn () => $loginViaSsoHandler->handle($loginCommand()))
         ->toThrow(SsoLoginRejectedException::class);
@@ -224,13 +235,12 @@ it('rejects auto-create when CreateUserCommand fails to materialise the user', f
     expect($events->collected[0])->toBeInstanceOf(SsoLoginFailed::class);
 });
 
-it('passes the asserted name through into provisioning', function () use ($ssoUser, $loginCommand, $buildHandler): void {
+it('passes the asserted name through into provisioning', function () use ($ssoUser, $loginCommand, $buildHandler, $stagedUserBus): void {
     $configuration = SsoFixtures::configuration(jitMode: JitMode::AutoCreate, allowedEmailDomains: ['example.com']);
     $configRepo = new FakeSsoConfigurationRepository([$configuration->id->value => $configuration]);
     $authenticator = new FakeSsoAuthenticator(nextIdentity: new SsoIdentity('subject-1', 'user@example.com', 'Asserted Name'));
-    $userRepo = new StagedUserRepository(provisionedUser: $ssoUser());
     $bus = new FakeCommandBus;
-    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, $userRepo, $authenticator, $bus, new FakeEventCollector);
+    $loginViaSsoHandler = $buildHandler($configRepo, new FakeUserSsoIdentityRepository, $authenticator, $bus, $stagedUserBus($ssoUser()), new FakeEventCollector);
 
     $loginViaSsoHandler->handle($loginCommand());
 

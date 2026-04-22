@@ -12,7 +12,7 @@ use App\Contract\Command\CommandHandler;
 use App\Contract\IdGenerator;
 use App\Domain\Authorization\Contract\Command\SyncUserRolesCommand;
 use App\Domain\File\Contract\Command\StoreAvatarCommand;
-use App\Domain\File\Contract\Constant\AvatarNamespace;
+use App\Domain\File\Contract\ValueObject\AvatarNamespace;
 use App\Domain\Label\Contract\Command\SyncEntityLabelsCommand;
 use App\Domain\Team\Contract\Command\SyncUserTeamsCommand;
 use App\Domain\User\Contract\Command\UpdateUserCommand;
