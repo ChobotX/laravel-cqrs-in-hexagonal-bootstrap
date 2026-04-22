@@ -10,6 +10,8 @@ use App\Domain\Notification\Enum\NotificationLevel;
 use App\Domain\Notification\Handler\Command\SendNotificationHandler;
 use App\Domain\Notification\ValueObject\NotificationPreferences;
 use App\Domain\User\Contract\Entity\User;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use App\Domain\User\Contract\ValueObject\UserId;
 use App\Domain\User\ValueObject\Email;
 use App\Domain\User\ValueObject\UserName;
@@ -19,13 +21,13 @@ use Tests\Helper\FakeNotificationChannelSender;
 use Tests\Helper\FakeNotificationChannelSenderRegistry;
 use Tests\Helper\FakeNotificationPreferenceRepository;
 use Tests\Helper\FakeNotificationRepository;
-use Tests\Helper\FakeUserRepository;
+use Tests\Helper\FakeQueryBus;
 
 function createSendHandler(
     FakeNotificationRepository $fakeNotificationRepository,
     FakeNotificationPreferenceRepository $fakeNotificationPreferenceRepository,
     FakeNotificationChannelSenderRegistry $fakeNotificationChannelSenderRegistry,
-    FakeUserRepository $fakeUserRepository,
+    FakeQueryBus $fakeQueryBus,
     FakeIdGenerator $idGenerator,
     FakeEventCollector $fakeEventCollector,
 ): SendNotificationHandler {
@@ -33,13 +35,13 @@ function createSendHandler(
         $fakeNotificationRepository,
         $fakeNotificationPreferenceRepository,
         $fakeNotificationChannelSenderRegistry,
-        $fakeUserRepository,
+        $fakeQueryBus,
         $idGenerator,
         $fakeEventCollector,
     );
 }
 
-function userRepositoryForNotificationRecipients(): FakeUserRepository
+function userBusForNotificationRecipients(): FakeQueryBus
 {
     $makeUser = static fn (string $id): User => new User(
         new UserId($id),
@@ -57,7 +59,10 @@ function userRepositoryForNotificationRecipients(): FakeUserRepository
         $users[$id] = $makeUser($id);
     }
 
-    return new FakeUserRepository($users);
+    return new FakeQueryBus([
+        GetUserByIdQuery::class => fn (GetUserByIdQuery $query): User => $users[$query->id]
+            ?? throw new UserNotFoundException($query->id),
+    ]);
 }
 
 it('creates in-app notification for info level with default preferences', function (): void {
@@ -68,7 +73,7 @@ it('creates in-app notification for info level with default preferences', functi
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -99,7 +104,7 @@ it('collects NotificationCreated event', function (): void {
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -128,7 +133,7 @@ it('sends to email channel for warning level with default preferences', function
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -156,7 +161,7 @@ it('skips delivery when user is missing for an email channel', function (): void
     $eventCollector = new FakeEventCollector;
 
     $missingId = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: [$missingId],
@@ -187,7 +192,7 @@ it('uses stored preferences when available', function (): void {
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -210,7 +215,7 @@ it('sends to multiple recipients', function (): void {
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: [
@@ -245,7 +250,7 @@ it('falls back to defaults when preferences exist but not for given level', func
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -275,7 +280,7 @@ it('resolves channels per-recipient with different preferences', function (): vo
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: [
@@ -304,7 +309,7 @@ it('sends email for error level with default preferences', function (): void {
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userRepositoryForNotificationRecipients(), $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: ['550e8400-e29b-41d4-a716-446655440000'],
@@ -329,7 +334,7 @@ it('does nothing for empty recipientIds', function (): void {
     $idGenerator = new FakeIdGenerator;
     $eventCollector = new FakeEventCollector;
 
-    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, new FakeUserRepository, $idGenerator, $eventCollector);
+    $sendNotificationHandler = createSendHandler($repo, $prefRepo, $notificationChannelSenderRegistry, userBusForNotificationRecipients(), $idGenerator, $eventCollector);
 
     $sendNotificationHandler->handle(new SendNotificationCommand(
         recipientIds: [],

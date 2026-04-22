@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Notification\Handler\Command;
 
+use App\Contract\Bus\QueryBus;
 use App\Contract\Command\Command;
 use App\Contract\Command\CommandHandler;
 use App\Contract\Event\EventCollector;
@@ -19,8 +20,9 @@ use App\Domain\Notification\Contract\ValueObject\NotificationId;
 use App\Domain\Notification\Enum\NotificationLevel;
 use App\Domain\Notification\ValueObject\NotificationLink;
 use App\Domain\Notification\ValueObject\NotificationType;
-use App\Domain\User\Contract\Repository\UserRepository;
-use App\Domain\User\Contract\ValueObject\UserId;
+use App\Domain\User\Contract\Entity\User;
+use App\Domain\User\Contract\Exception\UserNotFoundException;
+use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use DateTimeImmutable;
 
 /** @implements CommandHandler<SendNotificationCommand> */
@@ -30,7 +32,7 @@ final readonly class SendNotificationHandler implements CommandHandler
         private NotificationRepository $notificationRepository,
         private NotificationPreferenceRepository $notificationPreferenceRepository,
         private NotificationChannelSenderRegistry $notificationChannelSenderRegistry,
-        private UserRepository $userRepository,
+        private QueryBus $queryBus,
         private IdGenerator $idGenerator,
         private EventCollector $eventCollector,
     ) {}
@@ -54,9 +56,11 @@ final readonly class SendNotificationHandler implements CommandHandler
         NotificationLevel $notificationLevel,
         ?NotificationLink $notificationLink,
     ): void {
-        $user = $this->userRepository->findById(new UserId($recipientId));
-
-        if (! $user instanceof \App\Domain\User\Contract\Entity\User) {
+        try {
+            /** @var User $user */
+            $user = $this->queryBus->dispatch(new GetUserByIdQuery(id: $recipientId));
+        } catch (UserNotFoundException) {
+            // @silent: unknown recipient means stale input; silently skip rather than fail entire batch.
             return;
         }
 
