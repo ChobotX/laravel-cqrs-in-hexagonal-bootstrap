@@ -17,9 +17,7 @@ use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
 use App\Domain\EmailTemplate\Exception\EmailTemplateNotFoundException;
 use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
 use App\Domain\User\Contract\Entity\User;
-use App\Domain\User\Contract\Exception\UserNotFoundException;
-use App\Domain\User\Contract\Repository\UserRepository;
-use App\Domain\User\Contract\ValueObject\UserId;
+use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use DateTimeImmutable;
 
 final readonly class DefaultTemplatedEmailDispatcher implements TemplatedEmailDispatcher
@@ -30,7 +28,6 @@ final readonly class DefaultTemplatedEmailDispatcher implements TemplatedEmailDi
 
     public function __construct(
         private EmailTemplateRepository $emailTemplateRepository,
-        private UserRepository $userRepository,
         private TemplateCompiler $templateCompiler,
         private EmailSender $emailSender,
         private QueryBus $queryBus,
@@ -51,11 +48,8 @@ final readonly class DefaultTemplatedEmailDispatcher implements TemplatedEmailDi
             throw new EmailTemplateNotFoundException($templateType, $locale);
         }
 
-        $user = $this->userRepository->findById(new UserId($userId));
-
-        if (! $user instanceof User) {
-            throw new UserNotFoundException($userId);
-        }
+        /** @var User $user */
+        $user = $this->queryBus->dispatch(new GetUserByIdQuery(id: $userId));
 
         $variables['tenantName'] = $this->queryBus->dispatch(new GetCurrentTenantNameQuery);
 
