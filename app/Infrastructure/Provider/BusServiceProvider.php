@@ -289,8 +289,10 @@ use App\Domain\Team\Contract\Query\GetTeamsForUsersQuery;
 use App\Domain\Team\Contract\Query\GetTeamTreeGridQuery;
 use App\Domain\Team\Contract\Query\GetTeamTreeQuery;
 use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
+use App\Domain\Team\Contract\Query\ListTeamMemberUserIdsQuery;
 use App\Domain\Team\Contract\Query\ListTeamMembersQuery;
 use App\Domain\Team\Contract\Query\ListTeamsQuery;
+use App\Domain\Team\Contract\Query\ListTeamSubtreeMemberUserIdsQuery;
 use App\Domain\Team\Contract\Query\SearchTeamsQuery;
 use App\Domain\Team\Handler\Command\AddTeamMemberHandler;
 use App\Domain\Team\Handler\Command\CreateTeamHandler;
@@ -306,8 +308,10 @@ use App\Domain\Team\Handler\Query\GetTeamsForUsersHandler;
 use App\Domain\Team\Handler\Query\GetTeamTreeGridHandler;
 use App\Domain\Team\Handler\Query\GetTeamTreeHandler;
 use App\Domain\Team\Handler\Query\GetUserTeamsHandler;
+use App\Domain\Team\Handler\Query\ListTeamMemberUserIdsHandler;
 use App\Domain\Team\Handler\Query\ListTeamMembersHandler;
 use App\Domain\Team\Handler\Query\ListTeamsHandler;
+use App\Domain\Team\Handler\Query\ListTeamSubtreeMemberUserIdsHandler;
 use App\Domain\Team\Handler\Query\SearchTeamsHandler;
 use App\Domain\Tenancy\Contract\Command\CreateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
@@ -619,6 +623,8 @@ final class BusServiceProvider extends ServiceProvider
                 GetTeamTreeQuery::class => GetTeamTreeHandler::class,
                 GetTeamTreeGridQuery::class => GetTeamTreeGridHandler::class,
                 ListTeamMembersQuery::class => ListTeamMembersHandler::class,
+                ListTeamMemberUserIdsQuery::class => ListTeamMemberUserIdsHandler::class,
+                ListTeamSubtreeMemberUserIdsQuery::class => ListTeamSubtreeMemberUserIdsHandler::class,
                 GetUserTeamsQuery::class => GetUserTeamsHandler::class,
                 GetTeamsForUsersQuery::class => GetTeamsForUsersHandler::class,
                 SearchTeamsQuery::class => SearchTeamsHandler::class,
