@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Domain\GridPreset\Handler\Query;
 
 use App\Contract\Auth\AuthorizationChecker;
+use App\Contract\Bus\QueryBus;
 use App\Contract\Query\Query;
 use App\Contract\Query\QueryHandler;
 use App\Domain\Authorization\Contract\Enum\AccessScope;
 use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
 use App\Domain\GridPreset\Contract\ValueObject\PresetShareCapabilities;
 use App\Domain\Team\Contract\Entity\Team;
-use App\Domain\Team\Contract\Repository\TeamMemberRepository;
-use App\Domain\Team\Contract\Repository\TeamRepository;
+use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
 
 /** @implements QueryHandler<GetPresetShareCapabilitiesQuery, PresetShareCapabilities> */
 final readonly class GetPresetShareCapabilitiesHandler implements QueryHandler
@@ -21,8 +21,7 @@ final readonly class GetPresetShareCapabilitiesHandler implements QueryHandler
 
     public function __construct(
         private AuthorizationChecker $authorizationChecker,
-        private TeamMemberRepository $teamMemberRepository,
-        private TeamRepository $teamRepository,
+        private QueryBus $queryBus,
     ) {}
 
     public function handle(Query $query): PresetShareCapabilities
@@ -39,14 +38,13 @@ final readonly class GetPresetShareCapabilitiesHandler implements QueryHandler
         $shareableTeams = [];
 
         if ($canShareTeam) {
-            $teamIds = $this->teamMemberRepository->directMemberTeamIds($query->userId);
+            /** @var list<Team> $teams */
+            $teams = $this->queryBus->dispatch(new GetUserTeamsQuery(userId: $query->userId));
 
-            if ($teamIds !== []) {
-                $shareableTeams = array_map(
-                    fn (Team $team): array => ['id' => $team->id->value, 'name' => $team->name->value],
-                    $this->teamRepository->findAll($teamIds),
-                );
-            }
+            $shareableTeams = array_map(
+                fn (Team $team): array => ['id' => $team->id->value, 'name' => $team->name->value],
+                $teams,
+            );
         }
 
         return new PresetShareCapabilities($canShareTeam, $canShareGlobal, $shareableTeams);

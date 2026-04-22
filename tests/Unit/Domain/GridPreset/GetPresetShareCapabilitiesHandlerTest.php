@@ -5,22 +5,28 @@ declare(strict_types=1);
 use App\Domain\GridPreset\Contract\Query\GetPresetShareCapabilitiesQuery;
 use App\Domain\GridPreset\Handler\Query\GetPresetShareCapabilitiesHandler;
 use App\Domain\Team\Contract\Entity\Team;
+use App\Domain\Team\Contract\Query\GetUserTeamsQuery;
 use App\Domain\Team\Contract\ValueObject\TeamId;
 use App\Domain\Team\Contract\ValueObject\TeamSlug;
 use App\Domain\Team\ValueObject\TeamName;
 use Tests\Helper\FakeAuthorizationChecker;
-use Tests\Helper\FakeTeamMemberRepository;
-use Tests\Helper\FakeTeamRepository;
+use Tests\Helper\FakeQueryBus;
+
+/** @param list<Team> $teams */
+function userTeamsBus(array $teams = []): FakeQueryBus
+{
+    return new FakeQueryBus([
+        GetUserTeamsQuery::class => $teams,
+    ]);
+}
 
 function shareCapabilitiesHandler(
     ?FakeAuthorizationChecker $fakeAuthorizationChecker = null,
-    ?FakeTeamMemberRepository $fakeTeamMemberRepository = null,
-    ?FakeTeamRepository $fakeTeamRepository = null,
+    ?FakeQueryBus $fakeQueryBus = null,
 ): GetPresetShareCapabilitiesHandler {
     return new GetPresetShareCapabilitiesHandler(
         $fakeAuthorizationChecker ?? new FakeAuthorizationChecker,
-        $fakeTeamMemberRepository ?? new FakeTeamMemberRepository,
-        $fakeTeamRepository ?? new FakeTeamRepository,
+        $fakeQueryBus ?? userTeamsBus(),
     );
 }
 
@@ -38,8 +44,7 @@ it('returns global and team share when user has all-scope permission', function 
 
     $presetShareCapabilities = shareCapabilitiesHandler(
         new FakeAuthorizationChecker(['teams.management.update']),
-        new FakeTeamMemberRepository(['user-1' => [$teamId]]),
-        new FakeTeamRepository([$teamId => $team]),
+        userTeamsBus([$team]),
     )->handle(new GetPresetShareCapabilitiesQuery('user-1'));
 
     expect($presetShareCapabilities->canShareTeam)->toBeTrue()
@@ -53,8 +58,7 @@ it('returns team share only when user has team-scope permission', function (): v
 
     $presetShareCapabilities = shareCapabilitiesHandler(
         new FakeAuthorizationChecker(['teams.management.update'], ['teams.management.update' => 'team']),
-        new FakeTeamMemberRepository(['user-1' => [$teamId]]),
-        new FakeTeamRepository([$teamId => $team]),
+        userTeamsBus([$team]),
     )->handle(new GetPresetShareCapabilitiesQuery('user-1'));
 
     expect($presetShareCapabilities->canShareTeam)->toBeTrue()
@@ -80,8 +84,7 @@ it('returns multiple teams when user belongs to several', function (): void {
 
     $presetShareCapabilities = shareCapabilitiesHandler(
         new FakeAuthorizationChecker(['teams.management.update']),
-        new FakeTeamMemberRepository(['user-1' => [$teamIdA, $teamIdB]]),
-        new FakeTeamRepository([$teamIdA => $teamA, $teamIdB => $teamB]),
+        userTeamsBus([$teamA, $teamB]),
     )->handle(new GetPresetShareCapabilitiesQuery('user-1'));
 
     expect($presetShareCapabilities->shareableTeams)->toHaveCount(2)
