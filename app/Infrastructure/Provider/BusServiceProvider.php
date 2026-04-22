@@ -97,6 +97,7 @@ use App\Domain\Authorization\Handler\Query\SearchRolesHandler;
 use App\Domain\Authorization\Middleware\AuthorizeAction;
 use App\Domain\Authorization\Middleware\ResolveScopeFilter;
 use App\Domain\EmailTemplate\Contract\Command\ResetEmailTemplateCommand;
+use App\Domain\EmailTemplate\Contract\Command\SeedDefaultEmailTemplatesCommand;
 use App\Domain\EmailTemplate\Contract\Command\SendTemplatedEmailCommand;
 use App\Domain\EmailTemplate\Contract\Command\UpdateEmailTemplateCommand;
 use App\Domain\EmailTemplate\Contract\Event\EmailTemplateReset;
@@ -108,6 +109,7 @@ use App\Domain\EmailTemplate\Contract\Query\ListEmailLogsQuery;
 use App\Domain\EmailTemplate\Contract\Query\ListEmailTemplatesQuery;
 use App\Domain\EmailTemplate\EventHandler\LogEmailOnSent;
 use App\Domain\EmailTemplate\Handler\Command\ResetEmailTemplateHandler;
+use App\Domain\EmailTemplate\Handler\Command\SeedDefaultEmailTemplatesHandler;
 use App\Domain\EmailTemplate\Handler\Command\SendTemplatedEmailHandler;
 use App\Domain\EmailTemplate\Handler\Command\UpdateEmailTemplateHandler;
 use App\Domain\EmailTemplate\Handler\Query\GetEmailTemplateHandler;
@@ -571,6 +573,7 @@ final class BusServiceProvider extends ServiceProvider
                 SetDefaultGridPresetCommand::class => SetDefaultGridPresetHandler::class,
                 UpdateTenantSettingsCommand::class => UpdateTenantSettingsHandler::class,
                 SendTemplatedEmailCommand::class => SendTemplatedEmailHandler::class,
+                SeedDefaultEmailTemplatesCommand::class => SeedDefaultEmailTemplatesHandler::class,
                 UpdateEmailTemplateCommand::class => UpdateEmailTemplateHandler::class,
                 ResetEmailTemplateCommand::class => ResetEmailTemplateHandler::class,
                 MarkUserActivatedCommand::class => MarkUserActivatedHandler::class,

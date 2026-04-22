@@ -26,7 +26,6 @@ use App\Domain\Label\Contract\Repository\LabelRepository;
 use App\Domain\Notification\Contract\Repository\NotificationPreferenceRepository;
 use App\Domain\Notification\Contract\Repository\NotificationRepository;
 use App\Domain\Notification\Contract\Service\NotificationBroadcaster;
-use App\Domain\Notification\Contract\Service\NotificationChannelSenderRegistry;
 use App\Domain\Notification\Contract\Service\RecipientResolver;
 use App\Domain\Notification\Service\DefaultRecipientResolver;
 use App\Domain\Registry\Contract\Repository\DefinitionRepository;
@@ -66,8 +65,6 @@ use App\Infrastructure\EmailTemplate\BladeTemplateCompiler;
 use App\Infrastructure\EmailTemplate\LaravelEmailSender;
 use App\Infrastructure\File\GdImageProcessor;
 use App\Infrastructure\File\LaravelFileStorage;
-use App\Infrastructure\Notification\ChannelSenderRegistry;
-use App\Infrastructure\Notification\EmailNotificationSender;
 use App\Infrastructure\Notification\LaravelNotificationBroadcaster;
 use App\Infrastructure\Registry\JsonSchemaSerializerImpl;
 use App\Infrastructure\Registry\OpisJsonSchemaValidator;
@@ -105,9 +102,6 @@ final class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(NotificationRepository::class, EloquentNotificationRepository::class);
         $this->app->bind(NotificationPreferenceRepository::class, EloquentNotificationPreferenceRepository::class);
         $this->app->bind(RecipientResolver::class, DefaultRecipientResolver::class);
-        $this->app->bind(NotificationChannelSenderRegistry::class, fn (): ChannelSenderRegistry => new ChannelSenderRegistry([
-            'email' => $this->app->make(EmailNotificationSender::class),
-        ]));
         $this->app->bind(NotificationBroadcaster::class, LaravelNotificationBroadcaster::class);
         $this->app->bind(GridPresetRepository::class, EloquentGridPresetRepository::class);
         $this->app->bind(FileRepository::class, EloquentFileRepository::class);

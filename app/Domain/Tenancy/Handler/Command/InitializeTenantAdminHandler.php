@@ -13,9 +13,9 @@ use App\Contract\IdGenerator;
 use App\Domain\Authorization\Contract\Command\AssignRoleToUserCommand;
 use App\Domain\Authorization\Contract\Command\CreateSystemRoleCommand;
 use App\Domain\Authorization\Contract\Command\SeedDefaultRolesCommand;
+use App\Domain\EmailTemplate\Contract\Command\SeedDefaultEmailTemplatesCommand;
 use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
-use App\Domain\Tenancy\Contract\Service\TenantDefaultEmailTemplateSeeder;
 use App\Domain\User\Contract\Command\CreateUserCommand;
 
 /** @implements CommandHandler<InitializeTenantAdminCommand> */
@@ -29,7 +29,6 @@ final readonly class InitializeTenantAdminHandler implements CommandHandler
 
     public function __construct(
         private TenantBootstrapper $tenantBootstrapper,
-        private TenantDefaultEmailTemplateSeeder $tenantDefaultEmailTemplateSeeder,
         private CommandBus $commandBus,
         private IdGenerator $idGenerator,
     ) {}
@@ -38,7 +37,7 @@ final readonly class InitializeTenantAdminHandler implements CommandHandler
     {
         $this->tenantBootstrapper->bootstrapBySlug($command->tenantSlug);
 
-        $this->tenantDefaultEmailTemplateSeeder->seed();
+        $this->commandBus->dispatch(new SeedDefaultEmailTemplatesCommand);
         $this->commandBus->dispatch(new SeedDefaultRolesCommand);
 
         $superAdminRoleId = $this->idGenerator->generate();
