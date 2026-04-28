@@ -58,11 +58,14 @@ use App\Presentation\Http\Controller\Web\Settings\ListEmailLogsController;
 use App\Presentation\Http\Controller\Web\Settings\ListEmailTemplatesController;
 use App\Presentation\Http\Controller\Web\Settings\PreviewEmailTemplateController;
 use App\Presentation\Http\Controller\Web\Settings\ResetEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\SendTestMailController;
+use App\Presentation\Http\Controller\Web\Settings\ShowMailSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowOwnTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowPasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowTenantSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\ShowTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateEmailTemplateController;
+use App\Presentation\Http\Controller\Web\Settings\UpdateMailSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateOwnTwoFactorSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdatePasswordRotationSettingsController;
 use App\Presentation\Http\Controller\Web\Settings\UpdateTenantSettingsController;
@@ -155,6 +158,9 @@ Route::middleware('auth')->group(function (): void {
     Route::put('/settings/password-rotation', UpdatePasswordRotationSettingsController::class)->name('settings.password-rotation.update');
     Route::get('/settings/two-factor', ShowTwoFactorSettingsController::class)->name('settings.two-factor');
     Route::put('/settings/two-factor', UpdateTwoFactorSettingsController::class)->name('settings.two-factor.update');
+    Route::get('/settings/mail', ShowMailSettingsController::class)->name('settings.mail');
+    Route::put('/settings/mail', UpdateMailSettingsController::class)->name('settings.mail.update');
+    Route::post('/settings/mail/test', SendTestMailController::class)->name('settings.mail.test');
 
     // Email Templates
     Route::get('/settings/email-templates', ListEmailTemplatesController::class)->name('settings.email-templates.index');

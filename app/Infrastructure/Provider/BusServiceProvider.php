@@ -322,17 +322,22 @@ use App\Domain\Tenancy\Contract\Command\InitializeTenantAdminCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateAllTenantsCommand;
 use App\Domain\Tenancy\Contract\Command\MigrateTenantCommand;
 use App\Domain\Tenancy\Contract\Command\RegisterTenantWithAdminCommand;
+use App\Domain\Tenancy\Contract\Command\UpdateTenantMailTransportCommand;
 use App\Domain\Tenancy\Contract\Command\UpdateTenantSettingsCommand;
+use App\Domain\Tenancy\Contract\Event\TenantMailTransportUpdated;
 use App\Domain\Tenancy\Contract\Event\TenantSettingsUpdated;
 use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
+use App\Domain\Tenancy\Contract\Query\GetTenantMailTransportQuery;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\Tenancy\Handler\Command\CreateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\InitializeTenantAdminHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateAllTenantsHandler;
 use App\Domain\Tenancy\Handler\Command\MigrateTenantHandler;
 use App\Domain\Tenancy\Handler\Command\RegisterTenantWithAdminHandler;
+use App\Domain\Tenancy\Handler\Command\UpdateTenantMailTransportHandler;
 use App\Domain\Tenancy\Handler\Command\UpdateTenantSettingsHandler;
 use App\Domain\Tenancy\Handler\Query\GetCurrentTenantNameHandler;
+use App\Domain\Tenancy\Handler\Query\GetTenantMailTransportHandler;
 use App\Domain\Tenancy\Handler\Query\GetTenantSettingsHandler;
 use App\Domain\User\Contract\Command\AcceptInviteCommand;
 use App\Domain\User\Contract\Command\AdminResetUserTwoFactorCommand;
@@ -478,6 +483,7 @@ final class BusServiceProvider extends ServiceProvider
                 EmailTemplateUpdated::class => [],
                 EmailTemplateReset::class => [],
                 TenantSettingsUpdated::class => [],
+                TenantMailTransportUpdated::class => [],
                 SsoConfigurationCreated::class => [],
                 SsoConfigurationUpdated::class => [],
                 SsoConfigurationDeleted::class => [],
@@ -572,6 +578,7 @@ final class BusServiceProvider extends ServiceProvider
                 DeleteGridPresetCommand::class => DeleteGridPresetHandler::class,
                 SetDefaultGridPresetCommand::class => SetDefaultGridPresetHandler::class,
                 UpdateTenantSettingsCommand::class => UpdateTenantSettingsHandler::class,
+                UpdateTenantMailTransportCommand::class => UpdateTenantMailTransportHandler::class,
                 SendTemplatedEmailCommand::class => SendTemplatedEmailHandler::class,
                 SeedDefaultEmailTemplatesCommand::class => SeedDefaultEmailTemplatesHandler::class,
                 UpdateEmailTemplateCommand::class => UpdateEmailTemplateHandler::class,
@@ -664,6 +671,7 @@ final class BusServiceProvider extends ServiceProvider
                 GetDefaultGridPresetQuery::class => GetDefaultGridPresetHandler::class,
                 GetPresetShareCapabilitiesQuery::class => GetPresetShareCapabilitiesHandler::class,
                 GetTenantSettingsQuery::class => GetTenantSettingsHandler::class,
+                GetTenantMailTransportQuery::class => GetTenantMailTransportHandler::class,
                 GetCurrentTenantNameQuery::class => GetCurrentTenantNameHandler::class,
                 ListAuditLogQuery::class => ListAuditLogHandler::class,
                 GetAuditLogByTraceIdQuery::class => GetAuditLogByTraceIdHandler::class,

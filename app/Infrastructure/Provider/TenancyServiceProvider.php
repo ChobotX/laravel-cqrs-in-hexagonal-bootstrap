@@ -6,6 +6,7 @@ namespace App\Infrastructure\Provider;
 
 use App\Contract\Tenancy\TenantContext;
 use App\Contract\Tenancy\TenantLogoStorage;
+use App\Domain\Tenancy\Contract\Repository\TenantMailTransportRepository;
 use App\Domain\Tenancy\Contract\Repository\TenantSettingsRepository;
 use App\Domain\Tenancy\Contract\Service\DevSchemaResetter;
 use App\Domain\Tenancy\Contract\Service\TenantBootstrapper;
@@ -13,6 +14,7 @@ use App\Domain\Tenancy\Contract\Service\TenantProvisioner;
 use App\Infrastructure\Dev\DevSchemaResetter as DevSchemaResetterImpl;
 use App\Infrastructure\File\TenantLogoFileStorage;
 use App\Infrastructure\Tenancy\ConsoleTenantBootstrap;
+use App\Infrastructure\Tenancy\EloquentTenantMailTransportRepository;
 use App\Infrastructure\Tenancy\EloquentTenantProvisioner;
 use App\Infrastructure\Tenancy\EloquentTenantSettingsRepository;
 use App\Infrastructure\Tenancy\ResolvedTenantContext;
@@ -47,6 +49,7 @@ final class TenancyServiceProvider extends ServiceProvider
             filesystem: $this->app->make(FilesystemManager::class)->disk('public'),
         ));
         $this->app->bind(TenantSettingsRepository::class, EloquentTenantSettingsRepository::class);
+        $this->app->bind(TenantMailTransportRepository::class, EloquentTenantMailTransportRepository::class);
         $this->app->bind(DevSchemaResetter::class, DevSchemaResetterImpl::class);
     }
 

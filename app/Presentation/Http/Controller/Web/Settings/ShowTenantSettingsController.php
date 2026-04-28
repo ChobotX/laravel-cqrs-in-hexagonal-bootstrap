@@ -7,6 +7,8 @@ namespace App\Presentation\Http\Controller\Web\Settings;
 use App\Contract\Attribute\RequiresPermission;
 use App\Contract\Bus\QueryBus;
 use App\Contract\Http\HttpStatus;
+use App\Domain\Tenancy\Contract\Enum\MailProvider;
+use App\Domain\Tenancy\Contract\Query\GetTenantMailTransportQuery;
 use App\Domain\Tenancy\Contract\Query\GetTenantSettingsQuery;
 use App\Domain\User\Contract\Query\GetPasswordRotationSettingsQuery;
 use App\Domain\User\Contract\Query\GetTwoFactorSettingsQuery;
@@ -36,6 +38,7 @@ final readonly class ShowTenantSettingsController
         ));
         $passwordRotationSettings = $this->queryBus->dispatch(new GetPasswordRotationSettingsQuery);
         $twoFactorSettings = $this->queryBus->dispatch(new GetTwoFactorSettingsQuery);
+        $mailTransport = $this->queryBus->dispatch(new GetTenantMailTransportQuery);
 
         return view('settings.tenant', [
             'settings' => $tenantSettings,
@@ -51,6 +54,21 @@ final readonly class ShowTenantSettingsController
             'twoFactorRequiredForAllUsers' => $twoFactorSettings->requiredForAllUsers,
             'twoFactorEmailOtpEnabled' => $twoFactorSettings->emailOtpEnabled,
             'twoFactorTotpEnabled' => $twoFactorSettings->totpEnabled,
+            'mailTransport' => $mailTransport,
+            'mailProviders' => MailProvider::cases(),
+            'mailProviderPresets' => $this->mailProviderPresets(),
         ]);
+    }
+
+    /** @return array<string, array{host: string, port: int, encryption: ?string}|null> */
+    private function mailProviderPresets(): array
+    {
+        $presets = [];
+
+        foreach (MailProvider::cases() as $mailProvider) {
+            $presets[$mailProvider->value] = $mailProvider->preset();
+        }
+
+        return $presets;
     }
 }

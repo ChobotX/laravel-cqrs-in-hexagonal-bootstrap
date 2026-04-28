@@ -2,12 +2,6 @@
 
 Planned work that is **not** yet in the codebase (implemented areas such as email templating and audit logging live in the app and layer READMEs).
 
-## Tenant configuration
-
-### Enable overriding default email provider
-
-- Offer Mailjet, Mailgun, and Mailpit (or equivalent) as tenant-configurable transports. Invite and password recovery should respect the tenant’s provider and from address.
-
 ## Tenant broadcast
 
 - Notifications to the whole tenant, explicit users, whole teams, or teams including subteams (text-length limited, plain text).

@@ -43,5 +43,12 @@ final readonly class EmailTemplateTypes
                 'tenantName' => ['description' => 'Organization name', 'sensitive' => false, 'sample' => 'Acme Corp'],
             ],
         ],
+        'mail_test' => [
+            'name' => 'Email Provider Test',
+            'description' => 'Sent on demand from the tenant Email Provider settings to verify SMTP delivery',
+            'variables' => [
+                'tenantName' => ['description' => 'Organization name', 'sensitive' => false, 'sample' => 'Acme Corp'],
+            ],
+        ],
     ];
 }

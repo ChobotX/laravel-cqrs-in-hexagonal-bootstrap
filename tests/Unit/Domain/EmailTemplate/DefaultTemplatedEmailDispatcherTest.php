@@ -8,7 +8,10 @@ use App\Domain\EmailTemplate\Contract\ValueObject\EmailTemplateLocale;
 use App\Domain\EmailTemplate\Contract\ValueObject\EmailTemplateType;
 use App\Domain\EmailTemplate\Exception\EmailTemplateNotFoundException;
 use App\Domain\EmailTemplate\Service\DefaultTemplatedEmailDispatcher;
+use App\Domain\Tenancy\Contract\Enum\MailProvider;
 use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
+use App\Domain\Tenancy\Contract\Query\GetTenantMailTransportQuery;
+use App\Domain\Tenancy\Contract\ValueObject\MailTransport;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Exception\UserNotFoundException;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
@@ -33,6 +36,17 @@ function makeDefaultDispatcher(
         $fakeEmailSender ?? new FakeEmailSender,
         new FakeQueryBus([
             GetCurrentTenantNameQuery::class => 'Test Org',
+            GetTenantMailTransportQuery::class => new MailTransport(
+                provider: MailProvider::Custom,
+                host: 'localhost',
+                port: 1025,
+                username: null,
+                password: null,
+                encryption: null,
+                fromAddress: 'no-reply@example.com',
+                fromName: 'Test',
+                isCustom: false,
+            ),
             GetUserByIdQuery::class => fn (GetUserByIdQuery $getUserByIdQuery): User => $usersById[$getUserByIdQuery->id]
                 ?? throw new UserNotFoundException($getUserByIdQuery->id),
         ]),

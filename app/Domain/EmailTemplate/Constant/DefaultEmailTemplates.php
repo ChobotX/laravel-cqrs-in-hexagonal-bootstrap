@@ -94,5 +94,21 @@ BLADE,
 </p>
 BLADE,
         ],
+        'mail_test:en' => [
+            'subject' => 'Email provider test from {{ $tenantName }}',
+            'body' => <<<'BLADE'
+<h2>It works.</h2>
+<p>This is a test email sent from the <strong>{{ $tenantName }}</strong> email provider configuration.</p>
+<p style="color: #6b7280; font-size: 14px;">If you can read this message in your inbox, your tenant's SMTP transport is delivering correctly.</p>
+BLADE,
+        ],
+        'mail_test:cs' => [
+            'subject' => 'Test poskytovatele e-mailu z {{ $tenantName }}',
+            'body' => <<<'BLADE'
+<h2>Funguje to.</h2>
+<p>Toto je testovací e-mail odeslaný z konfigurace poskytovatele pro <strong>{{ $tenantName }}</strong>.</p>
+<p style="color: #6b7280; font-size: 14px;">Pokud tuto zprávu vidíte ve své schránce, SMTP přenos vašeho nájemníka funguje správně.</p>
+BLADE,
+        ],
     ];
 }

@@ -76,4 +76,16 @@ final class FakeMailer implements Mailer
     {
         return null;
     }
+
+    public function html(string $html, callable $callback): void
+    {
+        $message = new Message(new Email);
+        $callback($message);
+        $email = $message->getSymfonyMessage();
+        $this->sent[] = [
+            'to' => $email->getTo()[0]->getAddress(),
+            'subject' => $email->getSubject() ?? '',
+            'body' => $html,
+        ];
+    }
 }

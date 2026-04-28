@@ -9,13 +9,24 @@
     @elseif ($activeTab === 'two-factor')
         <h1 class="mb-2 text-2xl font-semibold text-gray-900"
             data-testid="two-factor-title">{{ __('messages.settings.two_factor_title') }}</h1>
+    @elseif ($activeTab === 'mail')
+        <h1 class="mb-2 text-2xl font-semibold text-gray-900"
+            data-testid="mail-settings-title">{{ __('messages.settings.mail_title') }}</h1>
     @else
         <h1 class="mb-2 text-2xl font-semibold text-gray-900">{{ __('messages.settings.title') }}</h1>
     @endif
 
     <div class="mb-6">
         <p class="text-base text-gray-500 sm:text-sm">
-            {{ $activeTab === 'password-rotation' ? __('messages.settings.password_rotation_intro') : ($activeTab === 'two-factor' ? __('messages.settings.two_factor_intro') : __('messages.settings.subtitle')) }}
+            @if ($activeTab === 'password-rotation')
+                {{ __('messages.settings.password_rotation_intro') }}
+            @elseif ($activeTab === 'two-factor')
+                {{ __('messages.settings.two_factor_intro') }}
+            @elseif ($activeTab === 'mail')
+                {{ __('messages.settings.mail_intro') }}
+            @else
+                {{ __('messages.settings.subtitle') }}
+            @endif
         </p>
     </div>
 
@@ -29,6 +40,9 @@
         <a class="{{ $activeTab === 'two-factor' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }} inline-flex rounded-lg px-3 py-2 text-sm font-medium transition-colors"
            href="{{ route('settings.index', ['tab' => 'two-factor']) }}"
            title="{{ __('messages.settings.two_factor_title') }}">{{ __('messages.settings.two_factor_title') }}</a>
+        <a class="{{ $activeTab === 'mail' ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900' }} inline-flex rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+           href="{{ route('settings.index', ['tab' => 'mail']) }}"
+           title="{{ __('messages.settings.mail_title') }}">{{ __('messages.settings.mail_title') }}</a>
     </div>
 
     <div class="mb-6 max-w-lg">
@@ -94,6 +108,194 @@
                                           testId="password-rotation-save-button"
                                           :label="__('messages.settings.update_action')" />
                     </div>
+                </form>
+            </div>
+        @elseif ($activeTab === 'mail')
+            <div class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5"
+                 x-data="{
+                     useCustom: {{ $mailTransport->isCustom ? 'true' : 'false' }},
+                     provider: '{{ old('provider', $mailTransport->provider->value) }}',
+                     host: '{{ old('host', $mailTransport->host) }}',
+                     port: '{{ old('port', (string) $mailTransport->port) }}',
+                     encryption: '{{ old('encryption', $mailTransport->encryption ?? '') }}',
+                     presets: @json($mailProviderPresets),
+                     applyPreset() {
+                         const preset = this.presets[this.provider];
+                         if (preset) {
+                             this.host = preset.host;
+                             this.port = String(preset.port);
+                             this.encryption = preset.encryption ?? '';
+                         }
+                     },
+                 }">
+                <form class="space-y-5 p-6"
+                      method="POST"
+                      action="{{ route('settings.mail.update') }}">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="flex items-center gap-2">
+                        <input name="use_custom"
+                               type="hidden"
+                               value="0">
+                        <input class="h-4 w-4 cursor-pointer rounded border border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                               id="use_custom"
+                               name="use_custom"
+                               data-testid="mail-use-custom-checkbox"
+                               type="checkbox"
+                               value="1"
+                               x-model="useCustom">
+                        <label class="text-base font-medium text-gray-700 sm:text-sm"
+                               for="use_custom">{{ __('messages.settings.mail_use_custom') }}</label>
+                    </div>
+
+                    <div class="space-y-5"
+                         x-show="useCustom"
+                         x-cloak>
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="provider">{{ __('messages.settings.mail_provider') }}</label>
+                            <select class="block w-full cursor-pointer rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                    id="provider"
+                                    name="provider"
+                                    data-testid="mail-provider-select"
+                                    x-model="provider"
+                                    @change="applyPreset()">
+                                @foreach ($mailProviders as $providerOption)
+                                    <option value="{{ $providerOption->value }}">
+                                        {{ __('messages.settings.mail_provider_' . $providerOption->value) }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="host">{{ __('messages.settings.mail_host') }}</label>
+                            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                   id="host"
+                                   name="host"
+                                   data-testid="mail-host-input"
+                                   type="text"
+                                   x-model="host"
+                                   @error('host') aria-describedby="host-error" aria-invalid="true" @enderror>
+                            @error('host')
+                                <p class="mt-1 text-base text-red-600 sm:text-sm"
+                                   id="host-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="port">{{ __('messages.settings.mail_port') }}</label>
+                            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                   id="port"
+                                   name="port"
+                                   data-testid="mail-port-input"
+                                   type="number"
+                                   min="1"
+                                   max="65535"
+                                   x-model="port"
+                                   @error('port') aria-describedby="port-error" aria-invalid="true" @enderror>
+                            @error('port')
+                                <p class="mt-1 text-base text-red-600 sm:text-sm"
+                                   id="port-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="encryption">{{ __('messages.settings.mail_encryption') }}</label>
+                            <select class="block w-full cursor-pointer rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                    id="encryption"
+                                    name="encryption"
+                                    data-testid="mail-encryption-select"
+                                    x-model="encryption">
+                                <option value="">{{ __('messages.settings.mail_encryption_none') }}</option>
+                                <option value="tls">TLS</option>
+                                <option value="ssl">SSL</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="username">{{ __('messages.settings.mail_username') }}</label>
+                            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                   id="username"
+                                   name="username"
+                                   data-testid="mail-username-input"
+                                   type="text"
+                                   value="{{ old('username', $mailTransport->username ?? '') }}"
+                                   autocomplete="off">
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="password">{{ __('messages.settings.mail_password') }}</label>
+                            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                   id="password"
+                                   name="password"
+                                   data-testid="mail-password-input"
+                                   type="password"
+                                   placeholder="{{ $mailTransport->isCustom && $mailTransport->password !== null ? __('messages.settings.mail_password_set_placeholder') : '' }}"
+                                   autocomplete="new-password">
+                            <p class="mt-1 text-xs text-gray-400">{{ __('messages.settings.mail_password_hint') }}</p>
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="from_address">{{ __('messages.settings.mail_from_address') }}</label>
+                            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                   id="from_address"
+                                   name="from_address"
+                                   data-testid="mail-from-address-input"
+                                   type="email"
+                                   value="{{ old('from_address', $mailTransport->fromAddress) }}"
+                                   @error('from_address') aria-describedby="from-address-error" aria-invalid="true" @enderror>
+                            @error('from_address')
+                                <p class="mt-1 text-base text-red-600 sm:text-sm"
+                                   id="from-address-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div>
+                            <label class="mb-1.5 block text-base font-medium text-gray-700 sm:text-sm"
+                                   for="from_name">{{ __('messages.settings.mail_from_name') }}</label>
+                            <input class="block w-full rounded-lg border border-gray-300 px-3.5 py-2.5 text-base shadow-sm focus:border-indigo-600 focus:ring-2 focus:ring-indigo-600 sm:text-sm"
+                                   id="from_name"
+                                   name="from_name"
+                                   data-testid="mail-from-name-input"
+                                   type="text"
+                                   value="{{ old('from_name', $mailTransport->fromName) }}"
+                                   @error('from_name') aria-describedby="from-name-error" aria-invalid="true" @enderror>
+                            @error('from_name')
+                                <p class="mt-1 text-base text-red-600 sm:text-sm"
+                                   id="from-name-error">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-gray-500"
+                       x-show="!useCustom"
+                       x-cloak>
+                        {{ __('messages.settings.mail_default_in_use') }}
+                    </p>
+
+                    <div class="flex items-center gap-3 pt-2">
+                        <x-primary-button skip-permission
+                                          testId="mail-settings-save-button"
+                                          :label="__('messages.settings.update_action')" />
+                    </div>
+                </form>
+
+                <form class="border-t border-gray-100 px-6 py-4"
+                      method="POST"
+                      action="{{ route('settings.mail.test') }}">
+                    @csrf
+                    <p class="mb-3 text-base text-gray-600 sm:text-sm">{{ __('messages.settings.mail_test_hint') }}</p>
+                    <x-primary-button skip-permission
+                                      variant="secondary"
+                                      testId="mail-settings-send-test-button"
+                                      :label="__('messages.settings.mail_test_action')" />
                 </form>
             </div>
         @elseif ($activeTab === 'two-factor')

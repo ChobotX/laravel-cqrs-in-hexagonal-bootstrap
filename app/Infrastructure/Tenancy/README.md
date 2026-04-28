@@ -9,6 +9,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 +------------------------------+       +----------------------------------+
 | tenants                      |       | users, personal_access_tokens    |
 | tenant_domains               |       | tenant_preferences               |
+|                              |       | tenant_mail_settings             |
 |                              |       | password_rotation_settings       |
 |                              |       | user_password_history            |
 +------------------------------+       | teams, team_members              |
@@ -46,6 +47,7 @@ Landlord Schema (minimal)              Tenant Schema (per-tenant, FULL isolation
 | `ConsoleTenantBootstrap` | Infrastructure | Event listener for CLI tenant resolution |
 | `TenantBootstrapperImpl` | Infrastructure | Implements TenantBootstrapper contract |
 | `EloquentTenantSettingsRepository` | Infrastructure | Reads/writes organization display name and logo in tenant schema (`tenant_preferences`) via public disk; reads/writes display timezone there; landlord `tenants` holds routing metadata only |
+| `EloquentTenantMailTransportRepository` | Infrastructure | Reads/writes tenant-level SMTP override in `tenant_mail_settings` (singleton, encrypted password); falls back to a `MailTransport::default()` derived from `config('mail')` when the row is absent |
 
 ## Console Commands
 

@@ -16,6 +16,8 @@ use App\Domain\EmailTemplate\Contract\Service\TemplateCompiler;
 use App\Domain\EmailTemplate\Contract\Service\TemplatedEmailDispatcher;
 use App\Domain\EmailTemplate\Exception\EmailTemplateNotFoundException;
 use App\Domain\Tenancy\Contract\Query\GetCurrentTenantNameQuery;
+use App\Domain\Tenancy\Contract\Query\GetTenantMailTransportQuery;
+use App\Domain\Tenancy\Contract\ValueObject\MailTransport;
 use App\Domain\User\Contract\Entity\User;
 use App\Domain\User\Contract\Query\GetUserByIdQuery;
 use DateTimeImmutable;
@@ -53,13 +55,16 @@ final readonly class DefaultTemplatedEmailDispatcher implements TemplatedEmailDi
 
         $variables['tenantName'] = $this->queryBus->dispatch(new GetCurrentTenantNameQuery);
 
+        /** @var MailTransport $mailTransport */
+        $mailTransport = $this->queryBus->dispatch(new GetTenantMailTransportQuery);
+
         $renderedEmail = $this->templateCompiler->compile(
             $template->subjectTemplate,
             $template->bodyTemplate,
             $variables,
         );
 
-        $this->emailSender->sendHtml($user->email->value, $renderedEmail->subject, $renderedEmail->htmlBody);
+        $this->emailSender->sendHtml($mailTransport, $user->email->value, $renderedEmail->subject, $renderedEmail->htmlBody);
 
         $maskedVariables = $this->maskSensitive($templateType, $variables);
         $maskedRendered = $this->templateCompiler->compile(

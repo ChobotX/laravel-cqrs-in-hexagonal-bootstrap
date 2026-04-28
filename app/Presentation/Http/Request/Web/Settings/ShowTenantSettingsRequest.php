@@ -15,11 +15,13 @@ final class ShowTenantSettingsRequest extends FormRequest
 
     public const string TWO_FACTOR_TAB = 'two-factor';
 
+    public const string MAIL_TAB = 'mail';
+
     /** @return array<string, list<string>> */
     public function rules(): array
     {
         return [
-            'tab' => ['nullable', 'in:'.self::PASSWORD_ROTATION_TAB.','.self::TWO_FACTOR_TAB],
+            'tab' => ['nullable', 'in:'.self::PASSWORD_ROTATION_TAB.','.self::TWO_FACTOR_TAB.','.self::MAIL_TAB],
         ];
     }
 
@@ -37,6 +39,10 @@ final class ShowTenantSettingsRequest extends FormRequest
 
         if ($tab === self::TWO_FACTOR_TAB) {
             return self::TWO_FACTOR_TAB;
+        }
+
+        if ($tab === self::MAIL_TAB) {
+            return self::MAIL_TAB;
         }
 
         return 'general';
